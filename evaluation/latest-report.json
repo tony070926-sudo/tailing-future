@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.1-r2-physics-r3-atomistic-protocol",
-  "generatedAt": "2026-08-28T21:38:38.513Z",
+  "generatedAt": "2026-08-28T21:46:45.984Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-28",
-  "artifactDigest": "sha256:39ba5902d859913e7484e5241b5801000948d55833b3e42015044503908dadd4",
+  "artifactDigest": "sha256:88199aff8d8e3aaa271c0fe2e81235e4979a5932b10cb5ff36e1c6a254d1b3aa",
   "sourceFileCount": 94,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -97,7 +97,7 @@
     "scripts/source-scope.test.mjs": "sha256:314add07ca331d19ec7add171dd713cf6c737816ab5c9ca9da1e4308dd6b61ca",
     "scripts/validate-atomistic-plan.mjs": "sha256:f213ba182fc53be096e3132ade318204ba1a1b6df9a97864162aabcd4e03070d",
     "scripts/workflow-policy.mjs": "sha256:5fc0c8aaa2d3bcfe412b2b3d335fdffcf65f36c381b6b9c3690f2f5cefbfb942",
-    "scripts/workflow-policy.test.mjs": "sha256:abc3adc39a65f7346709cc69461182996f1a802bac9f1ad6f3b01153330bbbbd",
+    "scripts/workflow-policy.test.mjs": "sha256:9ef826bde498c39a3d954dd5fa622d15062abc56b9f864252897f66b752c5acf",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
     "vitest.config.ts": "sha256:8fc9ce24c9e8dd840d0aa944448b58222dad58b3481a2dcb26140940dddd4661"
@@ -194,7 +194,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 73281.93
+    "elapsedMs": 74420.05
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",

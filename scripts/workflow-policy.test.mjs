@@ -49,6 +49,10 @@ const pythonHostlistBuildScriptSource = readFileSync(
 const pythonHostlistVerifierSource = readFileSync(
   new URL('./atomistic/verify_derived_wheel.py', import.meta.url),
 );
+const atomisticResolveLockSource = readFileSync(
+  new URL('./atomistic/resolve_lock.py', import.meta.url),
+  'utf8',
+);
 const bootstrapOutcomeSource = readFileSync(
   new URL('./atomistic/write_bootstrap_outcome.py', import.meta.url),
 );
@@ -238,6 +242,12 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(createHash('sha256').update(pythonHostlistBuildScriptSource).digest('hex')).toBe(PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256);
     expect(createHash('sha256').update(pythonHostlistVerifierSource).digest('hex')).toBe(PYTHON_HOSTLIST_VERIFIER_SHA256);
     expect(createHash('sha256').update(bootstrapOutcomeSource).digest('hex')).toBe(ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256);
+    expect(atomisticResolveLockSource).toContain(
+      `PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_LOCK_SHA256}"`,
+    );
+    expect(atomisticResolveLockSource).toContain(
+      `PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256}"`,
+    );
   });
 
   it('rejects trigger, main guard, runtime, architecture and model-isolation drift', () => {
