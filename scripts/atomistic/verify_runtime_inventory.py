@@ -12,6 +12,68 @@ import zipfile
 from pathlib import Path, PurePosixPath
 
 
+PYTHON_HOSTLIST_WHEEL_FILENAME = "python_hostlist-2.3.0-py3-none-any.whl"
+ALLOWED_DATA_SCHEME_WHEEL_POLICY = {
+    "fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl": {
+        "sizeBytes": 4_999_800,
+        "sha256": "sha256:58dc6bb86a78d782f00f9190ca02c119cf5bbe2807536e361e18d42019f877d8",
+        "members": frozenset({
+        "fonttools-4.63.0.data/data/share/",
+        "fonttools-4.63.0.data/data/share/man/",
+        "fonttools-4.63.0.data/data/share/man/man1/",
+        "fonttools-4.63.0.data/data/share/man/man1/ttx.1",
+        }),
+    },
+    "plotly-7.0.0-py3-none-any.whl": {
+        "sizeBytes": 9_052_859,
+        "sha256": "sha256:78cbf7bd06d1b05bb3b8ec1b709864695229b55151b6f7530fbf55517ead6fdd",
+        "members": frozenset({
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/install.json",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/package.json",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/0.e889754e73c03c32.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/remoteEntry.6f1030bf65ead662.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/style.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/third-party-licenses.json",
+        }),
+    },
+    PYTHON_HOSTLIST_WHEEL_FILENAME: {
+        "sizeBytes": 39_523,
+        "sha256": "sha256:498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c",
+        "members": frozenset(
+            f"python_hostlist-2.3.0.data/data/share/man/man1/{name}.1"
+            for name in ("dbuck", "hostgrep", "hostlist", "pshbak")
+        ),
+    },
+    "sympy-1.14.0-py3-none-any.whl": {
+        "sizeBytes": 6_299_353,
+        "sha256": "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+        "members": frozenset({
+            "sympy-1.14.0.data/data/share/man/man1/isympy.1",
+        }),
+    },
+}
+PYTHON_HOSTLIST_ALLOWED_DATA_MEMBERS = ALLOWED_DATA_SCHEME_WHEEL_POLICY[
+    PYTHON_HOSTLIST_WHEEL_FILENAME
+]["members"]
+RESERVED_VENV_SCRIPT_ROOTS = frozenset({
+    "activate", "activate.csh", "activate.fish", "activate.nu", "activate.ps1",
+    "pip", "pip3", "pip3.12", "python", "python3", "python3.12",
+})
+SETUPTOOLS_RUNTIME_WHEEL_POLICY = {
+    "filename": "setuptools-84.0.0-py3-none-any.whl",
+    "name": "setuptools",
+    "version": "84.0.0",
+    "sizeBytes": 818_216,
+    "sha256": "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670",
+    "startupHook": {
+        "archivePath": "distutils-precedence.pth",
+        "installPath": "site-packages/distutils-precedence.pth",
+        "sizeBytes": 151,
+        "sha256": "sha256:2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+    },
+}
+
+
 MAX_MANIFEST_BYTES = 100_000_000
 MAX_WHEEL_BYTES = 1_500_000_000
 MAX_ARCHIVE_MEMBERS = 250_000
@@ -130,6 +192,10 @@ def inspect_install_inventory(path: Path, removals: list[object]) -> list[str]:
         opened = os.fstat(handle.fileno())
         if file_identity(opened) != file_identity(metadata):
             raise ValueError(f"{path.name}: wheel changed while it was being opened")
+        digest = hashlib.sha256()
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+        handle.seek(0)
         with zipfile.ZipFile(handle) as archive:
             members = archive.infolist()
             if len(members) > MAX_ARCHIVE_MEMBERS:
@@ -137,6 +203,15 @@ def inspect_install_inventory(path: Path, removals: list[object]) -> list[str]:
             member_by_name: dict[str, zipfile.ZipInfo] = {}
             for info in members:
                 validate_archive_member(path.name, info, member_by_name)
+                validate_reserved_venv_install_path(
+                    path.name, install_destination(info.filename)
+                )
+            validate_data_scheme_policy(
+                path.name,
+                opened.st_size,
+                f"sha256:{digest.hexdigest()}",
+                {info.filename for info in members if is_data_scheme_member(info.filename)},
+            )
             direct_dist_info_roots = sorted({
                 parts[0]
                 for info in members
@@ -158,6 +233,26 @@ def inspect_install_inventory(path: Path, removals: list[object]) -> list[str]:
                 path.name,
                 archive.read(entry_point) if entry_point is not None else None,
             ))
+            for install_path in install_paths:
+                validate_reserved_venv_install_path(path.name, install_path)
+            startup_hook_candidates = [
+                {
+                    "archivePath": info.filename,
+                    "installPath": install_destination(info.filename),
+                    "sizeBytes": info.file_size,
+                    "sha256": "sha256:" + hashlib.sha256(archive.read(info)).hexdigest(),
+                }
+                for info in members
+                if not info.is_dir()
+                and is_startup_hook_destination(install_destination(info.filename))
+            ]
+            validate_startup_hook_policy(
+                path.name,
+                opened.st_size,
+                f"sha256:{digest.hexdigest()}",
+                startup_hook_candidates,
+                removals,
+            )
             if len(install_paths) != len(set(install_paths)):
                 raise ValueError(f"{path.name}: runtime inventory found an intra-wheel path collision")
             for removal in removals:
@@ -166,7 +261,11 @@ def inspect_install_inventory(path: Path, removals: list[object]) -> list[str]:
                     raise ValueError(f"{path.name}: per-wheel removal owner differs")
                 archive_path = str(removal["archivePath"])
                 info = member_by_name.get(archive_path)
-                if info is None or info.is_dir() or install_destination(archive_path) != removal["installPath"]:
+                if (
+                    info is None
+                    or info.is_dir()
+                    or install_destination(archive_path) != removal["installPath"]
+                ):
                     raise ValueError(f"{path.name}: removal does not bind an installed archive member")
                 if info.file_size != removal["sizeBytes"]:
                     raise ValueError(f"{path.name}: removal member size differs")
@@ -216,6 +315,90 @@ def install_destination(member_name: str) -> str:
         prefix = "site-packages" if scheme in {"purelib", "platlib"} else scheme
         return "/".join((prefix, *parts[2:]))
     return "/".join(("site-packages", *parts))
+
+
+def is_data_scheme_member(member_name: str) -> bool:
+    parts = PurePosixPath(member_name).parts
+    return len(parts) >= 3 and parts[0].endswith(".data") and parts[1] == "data"
+
+
+def validate_data_scheme_policy(
+    wheel_name: str,
+    size_bytes: int,
+    wheel_sha256: str,
+    members: set[str],
+) -> None:
+    policy = ALLOWED_DATA_SCHEME_WHEEL_POLICY.get(wheel_name)
+    if not members:
+        if policy is not None:
+            raise ValueError(f"{wheel_name}: runtime inventory is missing reviewed .data/data members")
+        return
+    if (
+        policy is not None
+        and size_bytes == policy["sizeBytes"]
+        and wheel_sha256 == policy["sha256"]
+        and members == policy["members"]
+    ):
+        return
+    raise ValueError(
+        f"{wheel_name}: runtime inventory rejects the .data/data wheel identity or member set"
+    )
+
+
+def validate_reserved_venv_install_path(wheel_name: str, destination: str) -> None:
+    parts = PurePosixPath(destination).parts
+    if (
+        len(parts) >= 2
+        and parts[0] == "scripts"
+        and parts[1].lower() in RESERVED_VENV_SCRIPT_ROOTS
+    ):
+        raise ValueError(f"{wheel_name}: runtime inventory found a reserved venv script collision")
+    if len(parts) >= 2 and parts[0] == "site-packages":
+        root = parts[1].lower()
+        if root == "pip" or (root.startswith("pip-") and root.endswith(".dist-info")):
+            raise ValueError(f"{wheel_name}: runtime inventory found a seeded pip collision")
+
+
+def is_startup_hook_destination(destination: str) -> bool:
+    parts = tuple(part.lower() for part in PurePosixPath(destination).parts)
+    if len(parts) < 2 or parts[0] != "site-packages":
+        return False
+    if len(parts) == 2 and parts[1].endswith(".pth"):
+        return True
+    root = parts[1]
+    return any(
+        root == module or root.startswith(f"{module}.")
+        for module in ("sitecustomize", "usercustomize")
+    )
+
+
+def validate_startup_hook_policy(
+    wheel_name: str,
+    size_bytes: int,
+    wheel_sha256: str,
+    candidates: list[dict[str, object]],
+    declared_removals: list[object],
+) -> None:
+    for removal in declared_removals:
+        validate_removal_shape(removal)
+    if not candidates:
+        if declared_removals:
+            raise ValueError(f"{wheel_name}: runtime inventory found a removal without a startup hook")
+        return
+    policy = SETUPTOOLS_RUNTIME_WHEEL_POLICY
+    expected_candidate = policy["startupHook"]
+    expected_removal = {"wheelFilename": wheel_name, **expected_candidate}
+    if (
+        wheel_name != policy["filename"]
+        or size_bytes != policy["sizeBytes"]
+        or wheel_sha256 != policy["sha256"]
+        or candidates != [expected_candidate]
+        or declared_removals != [expected_removal]
+    ):
+        paths = sorted(str(candidate.get("archivePath")) for candidate in candidates)
+        raise ValueError(
+            f"{wheel_name}: runtime inventory rejects startup-hook candidates {paths}"
+        )
 
 
 def parse_entry_point_scripts(wheel_name: str, content: bytes | None) -> list[str]:

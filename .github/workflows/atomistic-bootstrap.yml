@@ -606,7 +606,7 @@ jobs:
           const planDigest = `sha256:${createHash('sha256').update(planBytes).digest('hex')}`;
           if (planDigest !== manifest.planDigest) throw new Error('Resolver manifest is bound to a different plan.');
           NODE
-          echo "ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
+          echo "bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
           python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
             --wheelhouse "$WHEELHOUSE" \
             --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
@@ -653,6 +653,7 @@ jobs:
               rm -- "$startup_hook"
               test ! -e "$startup_hook"
               unexpected_hooks="$(find /tmp/cold-venv/lib/python3.12/site-packages \
+                -mindepth 1 -maxdepth 1 \
                 \( -type f -o -type l -o -type d \) \
                 \( -iname \*.pth -o -iname sitecustomize -o -iname sitecustomize.\* \
                   -o -iname usercustomize -o -iname usercustomize.\* \) -print -quit)"
@@ -750,7 +751,7 @@ jobs:
           NODE
           }
           verify_frozen_wheelhouse
-          echo "ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
+          echo "bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
           python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
             --wheelhouse "$WHEELHOUSE" \
             --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"

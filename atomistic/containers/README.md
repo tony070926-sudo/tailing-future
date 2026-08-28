@@ -29,9 +29,17 @@ check`. The base image and Dockerfile frontend are digest-pinned.
 The exact setuptools 84.0.0 wheel contains one reviewed executable
 `distutils-precedence.pth`. The resolver binds its bytes and declares it as the
 only planned removal. Each Dockerfile rechecks the installed hook, deletes it
-before starting the next venv interpreter, rejects any remaining `.pth` or
-importable site/user customization module or package, and then runs isolated
-`pip check`. This is not a general startup-hook exception.
+before starting the next venv interpreter, rejects any remaining direct
+`site-packages/*.pth` or top-level importable site/user customization module or
+package, and then runs isolated `pip check`. Nested `.pth` package data such as
+TorchMetrics' LPIPS weights is not a site startup hook. This is not a general
+startup-hook exception.
+
+Prefix-relative `.data/data` payloads fail closed unless the complete wheel
+identity and complete member set match the reviewed FontTools, Plotly, SymPy,
+or `python-hostlist` policies. Resolver and independent-inventory checks also
+reserve the venv's Python, pip and activation paths so wheel scripts or entry
+points cannot replace the interpreter used for the post-install check.
 
 ```sh
 docker buildx build \

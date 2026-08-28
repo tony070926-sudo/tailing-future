@@ -231,6 +231,66 @@ then assert no startup hook remains before isolated `pip check`. A separate
 hash-bound verifier reconstructs every install path directly from wheel ZIP
 members and entry points after freeze and again before build, rechecks
 collisions/removal ownership, and independently recomputes raw and post-removal
-path digests. These checks are candidate evidence only; a third protected-main
-dispatch is still required to prove exact-lock generation, cold install, image
-build and checkpoint smoke inference.
+path digests. These checks were candidate evidence only and required the third
+protected-main dispatch recorded below.
+
+## Third real atomistic bootstrap feedback
+
+The resolver-compatibility candidate merged as protected-main commit
+`04f613fedea10be1f4985e32729ff73d4297066c`. Dispatch
+[`33219047585`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585)
+passed `guard`, `directories`, `bind`, `base`, `assets`, `structures` and
+`wheelhouse` for both matrix jobs. Both stopped at `resolve`; `freeze`,
+`cold-install`, `build` and `inference` were skipped.
+
+- MatterSim job
+  [`99009021460`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585/job/99009021460)
+  published artifact `9704488401`, 2,868 bytes, archive digest
+  `sha256:d29d46082edd0035558afa0ed9cb8ce499220e15e13146997300f90652c19cee`.
+- MACE job
+  [`99009021573`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585/job/99009021573)
+  published artifact `9704485367`, 3,749 bytes, archive digest
+  `sha256:f77fe3ece5edf92b8c88ed20633043933a1b4aa26b34b8762a3675f48cc953dc`.
+
+Both resolver logs identify the same rejected paths:
+`torchmetrics/functional/image/lpips_models/{alex,squeeze,vgg}.pth`. These are
+package-internal LPIPS weights, not site startup hooks. Independent artifact
+inspection verified API size/digest, ZIP structure, member modes/hashes,
+run/attempt/commit binding and declared-file equality. Both outcomes truthfully
+record `failureStage: resolve`, `inferenceSucceeded: false`,
+`predictionsPresent: false` and `evidenceClass: bootstrap-not-reproduced`.
+There are no lock, checkpoint-prediction or metric members. Artifact review
+found no other P1 or P2.
+
+## R4 startup-scope and physical-install review input
+
+CPython 3.12 site processing examines direct site-directory `.pth` children
+and imports customization modules by top-level name. R4 therefore limits the
+logical predicate and physical post-install scan to that boundary, while
+retaining a conservative case-insensitive fail-closed check. Tests cover the
+three exact TorchMetrics weight paths, nested vendored customization-looking
+names, direct hooks and `purelib`/`platlib` relocations.
+
+The review also found two real physical-install surfaces that were masked by
+the earlier false positive. Prefix-relative `.data/data` members can alias
+venv configuration, executables or site packages; wheel scripts and entry
+points can replace a seeded venv's Python or pip. R4 rejects the former unless
+the whole wheel identity and complete member set match the reviewed FontTools,
+Plotly, SymPy or `python-hostlist` `share` payloads. Resolver and independent
+inventory code both reserve Python, pip and activation scripts plus seeded pip
+package roots. The independent verifier also reclassifies direct startup hooks
+and requires its exact candidate set to match the byte-bound setuptools removal.
+
+An exact cp312/Linux target preflight downloaded 157 MatterSim wheels
+(675,408,593 bytes) and 44 MACE wheels (294,237,409 bytes). An independent
+implementation, which did not import the resolver, found zero physical path or
+reserved-venv collisions and no customization modules. The repository's final
+resolver and hash-bound verifier completed the full MatterSim closure with
+35,697 raw install files and one planned hook removal. MACE completed with
+21,843 raw files under a diagnostic substitution for the locally rebuilt
+hostlist ZIP only; members and installed-path digest match the previous Linux
+build, while checked-in policy binds the reviewed Linux SHA-256
+`498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c`.
+This preflight removes the known resolver blocker but does not prove Linux cold
+installation, container build, checkpoint deserialization or prediction. A
+fourth protected-main dispatch remains mandatory.

@@ -47,6 +47,53 @@ PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:dffc06ecc2faab2b6e0fe729ac1c16d
 PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84"
 PYTHON_HOSTLIST_MEMBER_DIGEST_DOMAIN = b"tf.python-hostlist-wheel-members/v1\0"
 PYTHON_HOSTLIST_INSTALL_PATH_DIGEST_DOMAIN = b"tf.python-hostlist-install-paths/v1\0"
+PYTHON_HOSTLIST_WHEEL_FILENAME = "python_hostlist-2.3.0-py3-none-any.whl"
+ALLOWED_DATA_SCHEME_WHEEL_POLICY = {
+    "fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl": {
+        "sizeBytes": 4_999_800,
+        "sha256": "sha256:58dc6bb86a78d782f00f9190ca02c119cf5bbe2807536e361e18d42019f877d8",
+        "members": frozenset({
+        "fonttools-4.63.0.data/data/share/",
+        "fonttools-4.63.0.data/data/share/man/",
+        "fonttools-4.63.0.data/data/share/man/man1/",
+        "fonttools-4.63.0.data/data/share/man/man1/ttx.1",
+        }),
+    },
+    "plotly-7.0.0-py3-none-any.whl": {
+        "sizeBytes": 9_052_859,
+        "sha256": "sha256:78cbf7bd06d1b05bb3b8ec1b709864695229b55151b6f7530fbf55517ead6fdd",
+        "members": frozenset({
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/install.json",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/package.json",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/0.e889754e73c03c32.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/remoteEntry.6f1030bf65ead662.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/style.js",
+        "plotly-7.0.0.data/data/share/jupyter/labextensions/jupyterlab-plotly/static/third-party-licenses.json",
+        }),
+    },
+    PYTHON_HOSTLIST_WHEEL_FILENAME: {
+        "sizeBytes": 39_523,
+        "sha256": "sha256:498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c",
+        "members": frozenset(
+            f"python_hostlist-2.3.0.data/data/share/man/man1/{name}.1"
+            for name in ("dbuck", "hostgrep", "hostlist", "pshbak")
+        ),
+    },
+    "sympy-1.14.0-py3-none-any.whl": {
+        "sizeBytes": 6_299_353,
+        "sha256": "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+        "members": frozenset({
+            "sympy-1.14.0.data/data/share/man/man1/isympy.1",
+        }),
+    },
+}
+PYTHON_HOSTLIST_ALLOWED_DATA_MEMBERS = ALLOWED_DATA_SCHEME_WHEEL_POLICY[
+    PYTHON_HOSTLIST_WHEEL_FILENAME
+]["members"]
+RESERVED_VENV_SCRIPT_ROOTS = frozenset({
+    "activate", "activate.csh", "activate.fish", "activate.nu", "activate.ps1",
+    "pip", "pip3", "pip3.12", "python", "python3", "python3.12",
+})
 SETUPTOOLS_RUNTIME_WHEEL_POLICY = {
     "filename": "setuptools-84.0.0-py3-none-any.whl",
     "name": "setuptools",
@@ -406,8 +453,11 @@ def inspect_wheel(path: Path) -> dict[str, object]:
                 path.name,
                 archive.read(entry_point_member) if entry_point_member is not None else None,
             )
+            for generated_script_path in generated_script_paths:
+                validate_reserved_venv_install_path(path.name, generated_script_path)
             startup_hook_candidates = []
             for info in members:
+                validate_reserved_venv_install_path(path.name, install_destination(info.filename))
                 if info.is_dir():
                     continue
                 destination = install_destination(info.filename)
@@ -441,6 +491,12 @@ def inspect_wheel(path: Path) -> dict[str, object]:
     if normalize_name(name) != normalize_name(dist_info_name) or metadata_version != dist_info_version:
         raise ValueError(f"{path.name}: dist-info distribution/version differs from METADATA")
     wheel_digest = f"sha256:{digest.hexdigest()}"
+    validate_data_scheme_policy(
+        path.name,
+        opened.st_size,
+        wheel_digest,
+        {info.filename for info in members if is_data_scheme_member(info.filename)},
+    )
     startup_hook_removals = validate_startup_hook_policy(
         path.name,
         name,
@@ -671,16 +727,64 @@ def install_destination(member_name: str) -> str:
     return "/".join(destination_parts)
 
 
+def is_data_scheme_member(member_name: str) -> bool:
+    parts = PurePosixPath(member_name).parts
+    return len(parts) >= 3 and parts[0].endswith(".data") and parts[1] == "data"
+
+
+def validate_data_scheme_policy(
+    wheel_name: str,
+    size_bytes: int,
+    wheel_sha256: str,
+    members: set[str],
+) -> None:
+    policy = ALLOWED_DATA_SCHEME_WHEEL_POLICY.get(wheel_name)
+    if not members:
+        if policy is not None:
+            raise ValueError(f"{wheel_name}: reviewed .data/data member set is missing")
+        return
+    if (
+        policy is not None
+        and size_bytes == policy["sizeBytes"]
+        and wheel_sha256 == policy["sha256"]
+        and members == policy["members"]
+    ):
+        return
+    raise ValueError(
+        f"{wheel_name}: .data/data wheel identity or complete member set is outside policy"
+    )
+
+
+def validate_reserved_venv_install_path(wheel_name: str, destination: str) -> None:
+    parts = PurePosixPath(destination).parts
+    if (
+        len(parts) >= 2
+        and parts[0] == "scripts"
+        and parts[1].lower() in RESERVED_VENV_SCRIPT_ROOTS
+    ):
+        raise ValueError(f"{wheel_name}: install path collides with a reserved venv script")
+    if len(parts) >= 2 and parts[0] == "site-packages":
+        root = parts[1].lower()
+        if root == "pip" or (root.startswith("pip-") and root.endswith(".dist-info")):
+            raise ValueError(f"{wheel_name}: install path collides with the venv's seeded pip")
+
+
 def is_startup_hook_destination(destination: str) -> bool:
     parts = tuple(part.lower() for part in PurePosixPath(destination).parts)
     if len(parts) < 2 or parts[0] != "site-packages":
         return False
-    if parts[-1].endswith(".pth"):
+    # Python's site bootstrap processes only .pth files that are direct
+    # children of a site-packages directory. Nested .pth payloads (for
+    # example, model weights) are inert data rather than startup hooks.
+    if len(parts) == 2 and parts[1].endswith(".pth"):
         return True
+    # sitecustomize and usercustomize are imported by top-level module name.
+    # Match their direct module/package root without treating vendored nested
+    # paths that happen to contain those names as importable customization.
+    root = parts[1]
     startup_modules = ("sitecustomize", "usercustomize")
     return any(
-        component == module or component.startswith(f"{module}.")
-        for component in parts[1:]
+        root == module or root.startswith(f"{module}.")
         for module in startup_modules
     )
 

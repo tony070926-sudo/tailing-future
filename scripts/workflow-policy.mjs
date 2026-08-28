@@ -16,13 +16,13 @@ export const PYTHON_HOSTLIST_BUILD_LOCK_SHA256 = 'dffc06ecc2faab2b6e0fe729ac1c16
 export const PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256 = 'f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84';
 export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5';
 export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23';
-export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5';
+export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
 export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
 export const SETUPTOOLS_STARTUP_HOOK_SHA256 = '2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224';
 export const ATOMISTIC_DOCKERFILE_DIGESTS = Object.freeze({
-  'atomistic/containers/mace.Dockerfile': 'sha256:1a949b17e0b05f150e5d255d8fc76693c23a092be0b29dbb636daccd1af86de7',
-  'atomistic/containers/mattersim.Dockerfile': 'sha256:0f17868091d5ad5bfdd54044940a989b3a25f2c48f899c113c4e527a0b9627eb',
+  'atomistic/containers/mace.Dockerfile': 'sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f',
+  'atomistic/containers/mattersim.Dockerfile': 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455',
 });
 
 const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262';
@@ -48,9 +48,9 @@ export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
   'Download one fresh resolved wheelhouse in the online phase': 'sha256:2ab1e2c82267cd46fd9ba80cf07ef329fec072bfab81167280afbe872ea2d3c8',
   'Resolve an exact lock from the offline wheelhouse': 'sha256:63d062b924b2ba0af093dfb4161f990e5de1ff677ea8a58096470e398f768964',
-  'Freeze and verify the exact resolved wheel set': 'sha256:0dd8705a35f66ea48dfc2622c895ce6bc4a40a5932f7ed1a4bf96e9c60a788d9',
-  'Prove a cold, hash-locked install with no network': 'sha256:647680c90eb2711926f1326d6468d4a94d9806f07ee96fb83b0814bc4f2c74a3',
-  'Build the isolated runtime image with no build-step network': 'sha256:225be7b8060aa9bf3b8c21c9eb684c907a50034eb38edde0677f3aa635b727d5',
+  'Freeze and verify the exact resolved wheel set': 'sha256:6fbf6725ea4fa98a87eea890d98ca654a83d743365796d68fece13a57afb6c5d',
+  'Prove a cold, hash-locked install with no network': 'sha256:743689e619cf42de5dd98c89ae1da4c11701588afe8a4e5268dcef1b8a2a2167',
+  'Build the isolated runtime image with no build-step network': 'sha256:ac982ce0b42d6ff4038973dd2ee49f5512bd120f7d034c3608fabc70bc1ba93b',
   'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:60fbef598f6d9e12bd01bfc334ee050de67b11d919f0bbf4ac01608a605ab3c3',
   'Stage only non-promotional bootstrap outputs': 'sha256:92fbe0ae394079db3fb00b32f1e473f2dce611c397bda5b4abab7fc3449341bf',
 });
@@ -411,6 +411,7 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     'rm -- "$startup_hook"',
     'test ! -e "$startup_hook"',
     'unexpected_hooks="$(find /tmp/cold-venv/lib/python3.12/site-packages',
+    '-mindepth 1 -maxdepth 1',
     '\\( -type f -o -type l -o -type d \\)',
     '-iname \\*.pth',
     '-iname sitecustomize -o -iname sitecustomize.\\*',
@@ -528,6 +529,7 @@ export function inspectDockerfileSource(relativePath, source) {
     'rm -- "$startup_hook"',
     'test ! -e "$startup_hook"',
     'unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages',
+    '-mindepth 1 -maxdepth 1',
     '\\( -type f -o -type l -o -type d \\)',
     "-iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*'",
     "-o -iname usercustomize -o -iname 'usercustomize.*'",
