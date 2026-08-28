@@ -1,6 +1,6 @@
-# R2 atomistic foundation-model reproduction freeze
+# R3 atomistic foundation-model reproduction protocol
 
-Status: **planned-not-reproduced** on 2026-08-28. This document freezes the next executable experiment; it is not evidence that either checkpoint has run locally.
+Status: **planned-not-reproduced** on 2026-08-29. This document freezes the next executable experiment and its evidence contract; it is not evidence that either checkpoint has run locally or in GitHub Actions.
 
 ## Why these two models
 
@@ -30,6 +30,41 @@ The MatterSim training corpus is not hash-public, so Random-TP cannot be called 
 5. Test translation, atom permutation and periodic-image invariance; rotate forces and stresses equivariantly; compare forces with finite differences.
 6. Publish energy/force/stress distributions, worst IDs, failure rate, batch-1 latency, throughput, memory and hardware provenance.
 7. Merkle-root canonical per-record outputs by sorted structure ID, and record runner/container/model/data digests.
+
+The raw Random-TP file is parsed by a standard-library-only trusted process. It
+emits a frozen structure-only JSONL bundle; energy, force and stress labels are
+never mounted into the model container. MatterSim and MACE run in separate
+dependency environments because their e3nn requirements conflict. The manual
+`Atomistic bootstrap predictions (non-promotional)` workflow is restricted to
+`main`, Linux/amd64 and 10 smoke IDs. It resolves and freezes a wheelhouse,
+proves a cold hash-locked install, builds without network access, and executes
+checkpoint inference in a non-root read-only container. Its artifacts are
+predictions and diagnostics only—not metrics, a receipt, an attestation or a
+reproduction claim.
+
+The image build context is a fresh temporary directory with exactly five
+regular files: `.dockerignore`, the selected Dockerfile, the generated
+hash-locked requirements file, `run_model.py` and `runtime_contract.py`.
+Wheel bytes enter only through a separately verified named BuildKit context.
+Unexpected files or symlinks fail before the build starts.
+
+Full promotion requires all 693 IDs from both models. Each energy, force and
+stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
+the worst ID/error pair and a duplicate-ID-forbidden per-record evidence root.
+An independent verifier owns finite-difference, invariance and batch-1 checks
+and must emit the canonical receipt bound to the exact plan bytes and trusted
+attestation claims.
+
+The future full-promotion guard must verify the GitHub artifact attestation
+cryptographically outside the candidate receipt. Its trusted observation must
+bind the certificate issuer and subject alternative name, repository and
+repository ID, signer workflow and signer digest, source digest/ref, run
+ID/attempt, hosted-runner class, raw bundle bytes and verified transparency-log
+or timestamp-authority time. The equivalent CLI policy is a pinned repository
+plus `--signer-workflow`, `--signer-digest`, `--source-digest`, `--source-ref`,
+the SLSA provenance predicate and `--deny-self-hosted-runners`. Decoded
+predicate fields alone are not a trust root. No `atomistic-full.yml` promotion
+workflow exists yet, so a registry edit to `reproduced` remains fail-closed.
 
 Run the manifest gate with:
 

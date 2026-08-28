@@ -1,0 +1,13 @@
+**
+!.dockerignore
+!atomistic/
+!atomistic/containers/
+!atomistic/containers/mattersim.Dockerfile
+!atomistic/containers/mace.Dockerfile
+!atomistic/locks/
+!atomistic/locks/mattersim.requirements.lock
+!atomistic/locks/mace.requirements.lock
+!scripts/
+!scripts/atomistic/
+!scripts/atomistic/run_model.py
+!scripts/atomistic/runtime_contract.py

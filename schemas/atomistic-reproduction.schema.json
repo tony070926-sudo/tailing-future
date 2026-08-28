@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-reproduction/0.1",
+  "$id": "https://tailing.future/schemas/atomistic-reproduction/0.2",
   "title": "Tailing Future Atomistic Reproduction Plan",
   "type": "object",
   "required": ["schemaVersion", "status", "frozenAt", "policy", "models", "benchmarks", "protocol", "excludedDefaults"],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-reproduction/0.1" },
+    "schemaVersion": { "const": "tf.atomistic-reproduction/0.2" },
     "status": { "const": "planned-not-reproduced" },
     "frozenAt": { "type": "string", "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$" },
     "policy": { "type": "string", "minLength": 20 },
@@ -136,30 +136,313 @@
             "frames": { "type": "integer", "minimum": 1 },
             "atoms": { "type": "integer", "minimum": 1 },
             "elements": { "type": "integer", "minimum": 1 },
-            "smokeIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+            "atomsPerFrame": { "type": "integer", "minimum": 1 },
+            "idSetSha256": { "$ref": "#/$defs/digest" },
+            "idManifestPath": { "const": "evaluation/atomistic/random-tp-id-manifest.txt" },
+            "smokeIds": { "$ref": "#/$defs/smokeIds" },
+            "smokeElements": { "type": "integer", "minimum": 1 },
             "smokeManifestSha256": { "$ref": "#/$defs/digest" },
-            "recordManifestSha256": { "$ref": "#/$defs/digest" }
+            "recordManifestSha256": { "$ref": "#/$defs/digest" },
+            "smokeRecordManifestSha256": { "$ref": "#/$defs/digest" },
+            "manifestCanonicalization": { "const": "tf.random-tp.record/v1" }
           },
           "additionalProperties": false
         },
         "cachePath": { "type": "string", "pattern": "^atomistic/[A-Za-z0-9_.+-]+$" },
         "limitations": { "type": "array", "items": { "type": "string", "minLength": 10 } }
       },
+      "allOf": [
+        {
+          "if": { "properties": { "role": { "const": "primary-like-for-like" } }, "required": ["role"] },
+          "then": {
+            "required": ["cachePath", "limitations"],
+            "properties": {
+              "artifact": {
+                "type": "object",
+                "required": ["url", "sizeBytes", "sha256", "frames", "atoms", "elements", "atomsPerFrame", "idSetSha256", "idManifestPath", "smokeIds", "smokeElements", "smokeManifestSha256", "recordManifestSha256", "smokeRecordManifestSha256", "manifestCanonicalization"]
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "protocol": {
       "type": "object",
-      "required": ["runner", "integrity", "metrics", "invariance", "randomTpAcceptance", "mdSmoke", "abstention"],
+      "required": ["runner", "integrity", "metrics", "invariance", "batchPolicy", "randomTpAcceptance", "mdSmoke", "abstention"],
       "properties": {
-        "runner": { "type": "object" },
-        "integrity": { "type": "array", "minItems": 3, "items": { "type": "string" } },
-        "metrics": { "type": "array", "minItems": 3, "items": { "type": "string" } },
-        "invariance": { "type": "object" },
-        "randomTpAcceptance": { "type": "object" },
-        "mdSmoke": { "type": "object" },
+        "runner": { "$ref": "#/$defs/runner" },
+        "integrity": { "type": "array", "minItems": 5, "uniqueItems": true, "items": { "type": "string", "minLength": 20 } },
+        "metrics": { "$ref": "#/$defs/metrics" },
+        "invariance": { "$ref": "#/$defs/invariance" },
+        "batchPolicy": { "$ref": "#/$defs/batchPolicy" },
+        "randomTpAcceptance": { "$ref": "#/$defs/randomTpAcceptance" },
+        "mdSmoke": {
+          "type": "object",
+          "required": ["structures", "temperaturesKelvin", "timeStepFemtoseconds", "seed", "prSteps", "nightlySteps", "firstRunPolicy"],
+          "properties": {
+            "structures": { "type": "array", "minItems": 3, "uniqueItems": true, "items": { "type": "string", "minLength": 5 } },
+            "temperaturesKelvin": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "type": "number", "exclusiveMinimum": 0 } },
+            "timeStepFemtoseconds": { "type": "number", "exclusiveMinimum": 0 },
+            "seed": { "type": "integer", "minimum": 0 },
+            "prSteps": { "type": "integer", "minimum": 1 },
+            "nightlySteps": { "type": "integer", "minimum": 1 },
+            "firstRunPolicy": { "type": "string", "minLength": 20 }
+          },
+          "additionalProperties": false
+        },
         "abstention": { "type": "array", "minItems": 3, "items": { "type": "string" } }
       },
       "additionalProperties": false
+    },
+    "runner": {
+      "type": "object",
+      "required": ["python", "platform", "architecture", "baseImage", "baseImageAmd64Digest", "dtype", "canonicalDevice", "batchSize", "threads", "networkPolicy", "isolation", "matterSimAdapter", "maceAdapter", "runnerDigest", "containerDigests", "dependencyLockDigests"],
+      "properties": {
+        "python": { "const": "3.12.13" },
+        "platform": { "const": "linux" },
+        "architecture": { "const": "x86_64" },
+        "baseImage": { "const": "python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2" },
+        "baseImageAmd64Digest": { "const": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af" },
+        "dtype": { "const": "float32" },
+        "canonicalDevice": { "const": "cpu" },
+        "batchSize": { "const": 1 },
+        "threads": { "const": 1 },
+        "networkPolicy": { "const": "fetch-online-run-offline" },
+        "isolation": { "const": "verified-pickle-in-networkless-unprivileged-read-only-container" },
+        "matterSimAdapter": { "const": "mattersim-ase-batch1-full3x3-eva3/v1" },
+        "maceAdapter": { "const": "mace-ase-batch1-full3x3-eva3/v1" },
+        "runnerDigest": { "$ref": "#/$defs/nullableDigest" },
+        "containerDigests": { "$ref": "#/$defs/twoModelDigests" },
+        "dependencyLockDigests": { "$ref": "#/$defs/twoModelDigests" }
+      },
+      "additionalProperties": false
+    },
+    "twoModelDigests": {
+      "type": "object",
+      "required": ["mattersim", "mace"],
+      "properties": {
+        "mattersim": { "$ref": "#/$defs/nullableDigest" },
+        "mace": { "$ref": "#/$defs/nullableDigest" }
+      },
+      "additionalProperties": false
+    },
+    "nullableDigest": { "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "metrics": {
+      "type": "object",
+      "required": ["definitionId", "energyError", "forceError", "stressGateError", "stressDiagnostics", "forceConvention", "stressConvention", "voigtOrder", "evA3ToGpa", "aggregation", "summation", "quantileMethod", "quantiles", "reportedStatistics", "worstTieBreak", "perIdMetricEvidenceRootProtocol", "reportDefinitions"],
+      "properties": {
+        "definitionId": { "const": "mattersim-model-card-frobenius/v1" },
+        "energyError": { "const": "absolute-total-energy-error-divided-by-frame-atom-count" },
+        "forceError": { "const": "mean-per-atom-l2-vector-error-per-frame" },
+        "stressGateError": { "const": "full-3x3-frobenius-error-in-gpa-per-frame" },
+        "stressDiagnostics": {
+          "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+          "items": { "enum": ["spectral-norm", "unweighted-voigt6-l2", "six-component-mae"] }
+        },
+        "forceConvention": { "const": "force-equals-negative-energy-gradient" },
+        "stressConvention": { "const": "ase-tensile-positive-pressure-negative-trace-over-three" },
+        "voigtOrder": { "const": ["xx", "yy", "zz", "yz", "xz", "xy"] },
+        "evA3ToGpa": { "const": 160.21766208 },
+        "aggregation": { "const": "equal-weight-structure-mean-float64" },
+        "summation": { "const": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1" },
+        "quantileMethod": { "const": "Hyndman-Fan-7-linear" },
+        "quantiles": { "const": [0.5, 0.9, 0.95, 0.99] },
+        "reportedStatistics": { "const": ["mean", "p50", "p90", "p95", "p99", "worst"] },
+        "worstTieBreak": { "const": "error-descending-then-ascii-id-ascending" },
+        "perIdMetricEvidenceRootProtocol": { "const": "sha256-merkle-canonical-json-array-model-id-metric-id-error-ascii-id-order-duplicate-id-forbidden/v1" },
+        "reportDefinitions": {
+          "type": "object",
+          "required": ["energy", "force", "stress"],
+          "properties": {
+            "energy": {
+              "type": "object",
+              "required": ["definition", "unit"],
+              "properties": {
+                "definition": { "const": "absolute-total-energy-error-divided-by-frame-atom-count" },
+                "unit": { "const": "eV/atom" }
+              },
+              "additionalProperties": false
+            },
+            "force": {
+              "type": "object",
+              "required": ["definition", "unit"],
+              "properties": {
+                "definition": { "const": "mean-per-atom-l2-vector-error-per-frame" },
+                "unit": { "const": "eV/angstrom" }
+              },
+              "additionalProperties": false
+            },
+            "stress": {
+              "type": "object",
+              "required": ["definition", "unit"],
+              "properties": {
+                "definition": { "const": "full-3x3-frobenius-error-in-gpa-per-frame" },
+                "unit": { "const": "GPa" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "invariance": {
+      "type": "object",
+      "required": ["structureIds", "translationFractionalShift", "translationConvention", "permutation", "permutationComparison", "properRotation", "rotationConvention", "rotationComparison", "periodicImageShift", "periodicImageComparison", "thresholds", "forceFiniteDifference", "stressFiniteDifference"],
+      "properties": {
+        "structureIds": { "$ref": "#/$defs/smokeIds" },
+        "translationFractionalShift": { "const": [0.173, 0.271, 0.389] },
+        "translationConvention": { "const": "row-cell-r-prime=r+[0.173,0.271,0.389]@A0-no-wrap-cell-unchanged/v1" },
+        "permutation": { "const": "reverse-atom-order/v1" },
+        "permutationComparison": { "const": "inverse-permute-forces-energy-and-stress-unchanged/v1" },
+        "properRotation": { "const": [[0, -1, 0], [1, 0, 0], [0, 0, 1]] },
+        "rotationConvention": { "const": "column-vector-R-row-positions-and-cell-right-multiply-R-transpose/v1" },
+        "rotationComparison": { "const": "force-back=F_rot@R-stress-back=R-transpose@S_rot@R-energy-unchanged/v1" },
+        "periodicImageShift": { "const": "zero-based-atom-i-r_i-prime=r_i+A0[i-mod-3]-cell-unchanged-no-wrap/v1" },
+        "periodicImageComparison": { "const": "energy-force-and-stress-unchanged/v1" },
+        "thresholds": {
+          "type": "object",
+          "required": ["energyMaxEv", "forceVectorMaxEvPerAngstrom", "stressFrobeniusMaxEvPerAngstrom3"],
+          "properties": {
+            "energyMaxEv": { "const": 0.0001 },
+            "forceVectorMaxEvPerAngstrom": { "const": 0.0001 },
+            "stressFrobeniusMaxEvPerAngstrom3": { "const": 0.00001 }
+          },
+          "additionalProperties": false
+        },
+        "forceFiniteDifference": {
+          "type": "object",
+          "required": ["selection", "axisConvention", "displacement", "stepsAngstrom", "centralDifference", "richardson", "absoluteToleranceEvPerAngstrom", "relativeTolerance", "scale", "rule", "allPass"],
+          "properties": {
+            "selection": { "const": "for-each-element-in-frozen-set-lexicographically-first-id-containing-element-lowest-zero-based-atom-index-axis-Z-modulo-3/v1" },
+            "axisConvention": { "const": "zero-based-x0-y1-z2" },
+            "displacement": { "const": "cartesian-coordinate-plus-minus-h-fixed-cell-and-other-coordinates/v1" },
+            "stepsAngstrom": { "const": [0.01, 0.005] },
+            "centralDifference": { "const": "F_h=-(E(q+h)-E(q-h))/(2h)" },
+            "richardson": { "const": "four-f-half-minus-f-full-over-three" },
+            "absoluteToleranceEvPerAngstrom": { "const": 0.02 },
+            "relativeTolerance": { "const": 0.01 },
+            "scale": { "const": "max(abs(analytic-force-component),abs(richardson-finite-difference))" },
+            "rule": { "const": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale" },
+            "allPass": { "const": "exactly-89-element-selections-each-pass-no-drop-no-reselection" }
+          },
+          "additionalProperties": false
+        },
+        "stressFiniteDifference": {
+          "type": "object",
+          "required": ["structureIds", "voigtModes", "deformation", "coordinateConvention", "strainBasis", "referenceVolume", "strainSteps", "centralDifference", "richardson", "comparison", "absoluteToleranceEvPerAngstrom3", "relativeTolerance", "scale", "rule", "allPass", "automaticSignSelectionAllowed"],
+          "properties": {
+            "structureIds": { "$ref": "#/$defs/smokeIds" },
+            "voigtModes": { "const": ["xx", "yy", "zz", "yz", "xz", "xy"] },
+            "deformation": { "const": "A_plus_minus=A0@(I_plus_minus_hE_mode)" },
+            "coordinateConvention": { "const": "fixed-fractional-coordinates" },
+            "strainBasis": { "const": "diagonal-one-engineering-shear-symmetric-one-half" },
+            "referenceVolume": { "const": "V0=abs(det(A0))" },
+            "strainSteps": { "const": [0.002, 0.001] },
+            "centralDifference": { "const": "sigma_h=(E(+h)-E(-h))/(2hV0)" },
+            "richardson": { "const": "sigma=(4sigma_h_over_2-sigma_h)/3" },
+            "comparison": { "const": "same-sign-corresponding-ASE-stress-component-no-sign-selection" },
+            "absoluteToleranceEvPerAngstrom3": { "const": 0.005 },
+            "relativeTolerance": { "const": 0.02 },
+            "scale": { "const": "max(abs(analytic-ASE-component),abs(richardson-finite-difference))" },
+            "rule": { "const": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale" },
+            "allPass": { "const": "exactly-10-structures-times-6-modes-pass-no-drop" },
+            "automaticSignSelectionAllowed": { "const": false }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchPolicy": {
+      "type": "object",
+      "required": ["canonicalBatchSize", "legacyGraphConverterBatchGreaterThanOneAllowed", "candidateBatchSizes", "orders", "chunking", "alignment", "equivalenceThresholds", "promotionRequirement"],
+      "properties": {
+        "canonicalBatchSize": { "const": 1 },
+        "legacyGraphConverterBatchGreaterThanOneAllowed": { "const": false },
+        "candidateBatchSizes": { "const": [2, 8, 64] },
+        "orders": { "const": ["sorted-id", "reverse-sorted-id"] },
+        "chunking": { "const": "contiguous-chunks-preserve-tail-no-drop-no-pad-no-duplicate/v1" },
+        "alignment": { "const": "restore-by-exact-id-before-componentwise-batch1-comparison/v1" },
+        "equivalenceThresholds": {
+          "type": "object",
+          "required": ["energyAbsoluteEv", "energyRelative", "forceComponentAbsoluteEvPerAngstrom", "forceComponentRelative", "stressComponentAbsoluteGpa", "stressComponentRelative"],
+          "properties": {
+            "energyAbsoluteEv": { "const": 0.0002 },
+            "energyRelative": { "const": 0.000002 },
+            "forceComponentAbsoluteEvPerAngstrom": { "const": 0.00002 },
+            "forceComponentRelative": { "const": 0.00001 },
+            "stressComponentAbsoluteGpa": { "const": 0.0002 },
+            "stressComponentRelative": { "const": 0.00002 }
+          },
+          "additionalProperties": false
+        },
+        "promotionRequirement": { "const": "all-693-per-id-arrays-match-batch1-before-accelerated-use" }
+      },
+      "additionalProperties": false
+    },
+    "randomTpAcceptance": {
+      "type": "object",
+      "required": ["requiredFrames", "requiredAtoms", "requiredElements", "requiredSuccesses", "allowedMissing", "allowedExtra", "allowedDuplicate", "allowedFailed", "matterSimStatus", "matterSimTargets", "matterSimTolerance", "maceStatus", "maceFirstRunPolicy", "claimBoundary"],
+      "properties": {
+        "requiredFrames": { "const": 693 },
+        "requiredAtoms": { "const": 11088 },
+        "requiredElements": { "const": 89 },
+        "requiredSuccesses": { "const": 693 },
+        "allowedMissing": { "const": 0 },
+        "allowedExtra": { "const": 0 },
+        "allowedDuplicate": { "const": 0 },
+        "allowedFailed": { "const": 0 },
+        "matterSimStatus": { "const": "REPRODUCED_MODEL_CARD_PROTOCOL" },
+        "matterSimTargets": {
+          "type": "object",
+          "required": ["energyMaeEvPerAtom", "forceVectorMaeEvPerAngstrom", "stressFrobeniusMaeGpa"],
+          "properties": {
+            "energyMaeEvPerAtom": { "const": 0.199 },
+            "forceVectorMaeEvPerAngstrom": { "const": 0.824 },
+            "stressFrobeniusMaeGpa": { "const": 1.999 }
+          },
+          "additionalProperties": false
+        },
+        "matterSimTolerance": {
+          "type": "object",
+          "required": ["rule", "relative", "energyAbsolute", "forceAbsolute", "stressAbsolute", "acceptedIntervals"],
+          "properties": {
+            "rule": { "const": "absolute-and-relative-must-both-pass-per-metric" },
+            "relative": { "const": 0.02 },
+            "energyAbsolute": { "const": 0.005 },
+            "forceAbsolute": { "const": 0.02 },
+            "stressAbsolute": { "const": 0.05 },
+            "acceptedIntervals": {
+              "type": "object",
+              "required": ["energyMaeEvPerAtom", "forceVectorMaeEvPerAngstrom", "stressFrobeniusMaeGpa"],
+              "properties": {
+                "energyMaeEvPerAtom": { "const": [0.19502, 0.20298] },
+                "forceVectorMaeEvPerAngstrom": { "const": [0.80752, 0.84048] },
+                "stressFrobeniusMaeGpa": { "const": [1.95902, 2.03898] }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "maceStatus": { "const": "ENGINEERING_BASELINE_COMPLETE" },
+        "maceFirstRunPolicy": { "type": "string", "minLength": 80 },
+        "claimBoundary": { "type": "string", "minLength": 80 }
+      },
+      "additionalProperties": false
+    },
+    "smokeIds": {
+      "const": [
+        "random-TP-000000", "random-TP-000005", "random-TP-000010", "random-TP-000095", "random-TP-000125",
+        "random-TP-000135", "random-TP-000200", "random-TP-000220", "random-TP-000369", "random-TP-000555"
+      ]
+    },
+    "vector3": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": { "type": "number" }
     }
   }
 }

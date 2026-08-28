@@ -1,0 +1,426 @@
+name: Tailing Sentinel Reporter
+
+on:
+  workflow_run:
+    workflows: [Tailing Sentinel]
+    types: [completed]
+
+permissions:
+  actions: read
+  pull-requests: write
+
+concurrency:
+  group: sentinel-report-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    if: github.event.workflow_run.event == 'pull_request'
+    permissions:
+      actions: read
+      pull-requests: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Validate the source run, pull request, and report artifact
+        id: validate
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          EXPECTED_REPOSITORY: tony070926-sudo/tailing-future
+          EXPECTED_REPOSITORY_ID: '1349498456'
+          EXPECTED_DEFAULT_BRANCH: main
+          EXPECTED_WORKFLOW_ID: '344526316'
+          EXPECTED_WORKFLOW_NAME: Tailing Sentinel
+          EXPECTED_WORKFLOW_PATH: .github/workflows/evaluate.yml
+          MAX_ARTIFACT_ARCHIVE_BYTES: '65536'
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const assert = (condition, message) => {
+              if (!condition) throw new Error(`Reporter trust check failed: ${message}`);
+            };
+            const integer = (value) => Number.isSafeInteger(Number(value)) && Number(value) > 0;
+            const same = (left, right) => String(left) === String(right);
+            const expected = Object.freeze({
+              repository: process.env.EXPECTED_REPOSITORY,
+              repositoryId: Number(process.env.EXPECTED_REPOSITORY_ID),
+              defaultBranch: process.env.EXPECTED_DEFAULT_BRANCH,
+              workflowId: Number(process.env.EXPECTED_WORKFLOW_ID),
+              workflowName: process.env.EXPECTED_WORKFLOW_NAME,
+              workflowPath: process.env.EXPECTED_WORKFLOW_PATH,
+              maxArchiveBytes: Number(process.env.MAX_ARTIFACT_ARCHIVE_BYTES),
+            });
+
+            assert(context.eventName === 'workflow_run', 'event must be workflow_run');
+            assert(context.payload.action === 'completed', 'workflow_run action must be completed');
+            assert(`${context.repo.owner}/${context.repo.repo}` === expected.repository, 'context repository name drifted');
+            assert(context.payload.repository?.id === expected.repositoryId, 'event repository id drifted');
+            assert(context.payload.repository?.full_name === expected.repository, 'event repository name drifted');
+
+            const eventRun = context.payload.workflow_run;
+            assert(eventRun && typeof eventRun === 'object', 'workflow_run payload is missing');
+            assert(integer(eventRun.id), 'source run id is invalid');
+            assert(integer(eventRun.run_attempt), 'source run attempt is invalid');
+            assert(eventRun.workflow_id === expected.workflowId, 'source workflow id drifted');
+            assert(eventRun.name === expected.workflowName, 'source workflow name drifted');
+            assert(eventRun.path === expected.workflowPath, 'source workflow path drifted');
+            assert(eventRun.event === 'pull_request', 'source event must be pull_request');
+            assert(eventRun.status === 'completed', 'source run is not completed');
+            assert(typeof eventRun.conclusion === 'string' && eventRun.conclusion.length > 0, 'source conclusion is missing');
+            assert(/^[0-9a-f]{40}$/.test(eventRun.head_sha), 'source head SHA is invalid');
+            assert(typeof eventRun.head_branch === 'string' && eventRun.head_branch.length > 0, 'source head branch is missing');
+            assert(eventRun.repository?.id === expected.repositoryId, 'source repository id drifted');
+            assert(eventRun.repository?.full_name === expected.repository, 'source repository name drifted');
+            assert(integer(eventRun.head_repository?.id), 'source head repository id is invalid');
+
+            const { owner, repo } = context.repo;
+            const repository = (await github.rest.repos.get({ owner, repo })).data;
+            assert(repository.id === expected.repositoryId, 'API repository id drifted');
+            assert(repository.full_name === expected.repository, 'API repository name drifted');
+            assert(repository.default_branch === expected.defaultBranch, 'default branch drifted');
+
+            const workflow = (await github.rest.actions.getWorkflow({
+              owner,
+              repo,
+              workflow_id: expected.workflowPath,
+            })).data;
+            assert(workflow.id === expected.workflowId, 'default-branch workflow id drifted');
+            assert(workflow.name === expected.workflowName, 'default-branch workflow name drifted');
+            assert(workflow.path === expected.workflowPath, 'default-branch workflow path drifted');
+            assert(workflow.state === 'active', 'default-branch workflow is not active');
+
+            const sourceRun = (await github.rest.actions.getWorkflowRun({
+              owner,
+              repo,
+              run_id: eventRun.id,
+            })).data;
+            assert(sourceRun.id === eventRun.id, 'API source run id mismatch');
+            assert(sourceRun.run_attempt === eventRun.run_attempt, 'API source run attempt mismatch');
+            assert(sourceRun.workflow_id === expected.workflowId, 'API source workflow id mismatch');
+            assert(sourceRun.name === expected.workflowName, 'API source workflow name mismatch');
+            assert(sourceRun.path === expected.workflowPath, 'API source workflow path mismatch');
+            assert(sourceRun.event === 'pull_request', 'API source event mismatch');
+            assert(sourceRun.status === 'completed', 'API source run is not completed');
+            assert(sourceRun.conclusion === eventRun.conclusion, 'API source conclusion mismatch');
+            assert(sourceRun.head_sha === eventRun.head_sha, 'API source head SHA mismatch');
+            assert(sourceRun.head_branch === eventRun.head_branch, 'API source head branch mismatch');
+            assert(sourceRun.repository?.id === expected.repositoryId, 'API source repository id mismatch');
+            assert(sourceRun.repository?.full_name === expected.repository, 'API source repository name mismatch');
+            assert(sourceRun.head_repository?.id === eventRun.head_repository.id, 'API source head repository mismatch');
+
+            const associatedResponse = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: sourceRun.head_sha,
+              per_page: 100,
+              page: 1,
+            });
+            assert(!String(associatedResponse.headers.link ?? '').includes('rel="next"'), 'source commit has too many pull-request associations');
+            const associated = associatedResponse.data;
+            const candidates = associated.filter((pull) =>
+              pull.base?.repo?.id === expected.repositoryId
+                && pull.head?.sha === sourceRun.head_sha
+                && pull.head?.repo?.id === sourceRun.head_repository.id
+                && pull.head?.ref === sourceRun.head_branch,
+            );
+            assert(candidates.length === 1, 'source commit must identify exactly one pull request');
+            const candidate = candidates[0];
+            assert(integer(candidate.id) && integer(candidate.number), 'associated pull request identity is invalid');
+
+            const pull = (await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: candidate.number,
+            })).data;
+            assert(pull.id === candidate.id, 'pull request id mismatch');
+            assert(pull.number === candidate.number, 'pull request number mismatch');
+            assert(pull.base?.repo?.id === expected.repositoryId, 'pull request base repository mismatch');
+            assert(pull.head?.repo?.id === sourceRun.head_repository.id, 'pull request head repository mismatch');
+            assert(pull.head?.sha === sourceRun.head_sha, 'pull request head SHA mismatch');
+            assert(pull.head?.ref === sourceRun.head_branch, 'pull request head branch mismatch');
+
+            for (const linked of [eventRun.pull_requests, sourceRun.pull_requests]) {
+              assert(Array.isArray(linked), 'source pull request collection is invalid');
+              assert(linked.length <= 1, 'source run links multiple pull requests');
+              if (linked.length === 1) {
+                assert(linked[0].id === pull.id, 'linked pull request id mismatch');
+                assert(linked[0].number === pull.number, 'linked pull request number mismatch');
+                assert(linked[0].base?.repo?.id === expected.repositoryId, 'linked pull request base mismatch');
+                assert(linked[0].head?.repo?.id === sourceRun.head_repository.id, 'linked pull request head repository mismatch');
+                assert(linked[0].head?.sha === sourceRun.head_sha, 'linked pull request head SHA mismatch');
+              }
+            }
+
+            const expectedArtifactName = `tailing-sentinel-pr-report-${sourceRun.id}-${sourceRun.run_attempt}`;
+            const listing = (await github.rest.actions.listWorkflowRunArtifacts({
+              owner,
+              repo,
+              run_id: sourceRun.id,
+              per_page: 100,
+            })).data;
+            assert(listing.total_count === listing.artifacts.length, 'source run has too many artifacts to validate atomically');
+            const matches = listing.artifacts.filter((artifact) => artifact.name === expectedArtifactName);
+            assert(matches.length === 1, 'expected report artifact name must resolve exactly once');
+            const artifact = matches[0];
+            assert(integer(artifact.id), 'report artifact id is invalid');
+            assert(artifact.expired === false, 'report artifact is expired');
+            assert(integer(artifact.size_in_bytes) && artifact.size_in_bytes <= expected.maxArchiveBytes, 'report artifact archive is outside the size bound');
+            assert(/^sha256:[0-9a-f]{64}$/.test(artifact.digest ?? ''), 'report artifact digest is invalid');
+            assert(artifact.workflow_run?.id === sourceRun.id, 'report artifact run id mismatch');
+            assert(artifact.workflow_run?.repository_id === expected.repositoryId, 'report artifact repository id mismatch');
+            assert(artifact.workflow_run?.head_repository_id === sourceRun.head_repository.id, 'report artifact head repository mismatch');
+            assert(artifact.workflow_run?.head_sha === sourceRun.head_sha, 'report artifact head SHA mismatch');
+
+            core.setOutput('validated', 'true');
+            core.setOutput('artifact_id', String(artifact.id));
+            core.setOutput('artifact_name', artifact.name);
+            core.setOutput('artifact_digest', artifact.digest);
+            core.setOutput('pr_id', String(pull.id));
+            core.setOutput('pr_number', String(pull.number));
+            core.setOutput('head_repository_id', String(sourceRun.head_repository.id));
+            core.setOutput('head_sha', sourceRun.head_sha);
+            core.setOutput('source_run_id', String(sourceRun.id));
+            core.setOutput('source_run_attempt', String(sourceRun.run_attempt));
+            core.setOutput('source_conclusion', sourceRun.conclusion);
+
+      - name: Download, bound, and publish the report as inert pull-request data
+        if: always() && steps.validate.outputs.validated == 'true'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          EXPECTED_REPOSITORY: tony070926-sudo/tailing-future
+          EXPECTED_REPOSITORY_ID: '1349498456'
+          EXPECTED_ARTIFACT_ID: ${{ steps.validate.outputs.artifact_id }}
+          EXPECTED_ARTIFACT_NAME: ${{ steps.validate.outputs.artifact_name }}
+          EXPECTED_ARTIFACT_DIGEST: ${{ steps.validate.outputs.artifact_digest }}
+          EXPECTED_PR_ID: ${{ steps.validate.outputs.pr_id }}
+          EXPECTED_PR_NUMBER: ${{ steps.validate.outputs.pr_number }}
+          EXPECTED_HEAD_REPOSITORY_ID: ${{ steps.validate.outputs.head_repository_id }}
+          EXPECTED_HEAD_SHA: ${{ steps.validate.outputs.head_sha }}
+          EXPECTED_SOURCE_RUN_ID: ${{ steps.validate.outputs.source_run_id }}
+          EXPECTED_SOURCE_RUN_ATTEMPT: ${{ steps.validate.outputs.source_run_attempt }}
+          EXPECTED_SOURCE_CONCLUSION: ${{ steps.validate.outputs.source_conclusion }}
+          MAX_ARTIFACT_ARCHIVE_BYTES: '65536'
+          MAX_REPORT_BYTES: '12000'
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const { createHash } = require('crypto');
+            const { TextDecoder } = require('util');
+            const { inflateRawSync } = require('zlib');
+            const assert = (condition, message) => {
+              if (!condition) throw new Error(`Reporter publish check failed: ${message}`);
+            };
+            const number = (name) => {
+              const value = Number(process.env[name]);
+              assert(Number.isSafeInteger(value) && value > 0, `${name} is invalid`);
+              return value;
+            };
+            const repositoryId = number('EXPECTED_REPOSITORY_ID');
+            const artifactId = number('EXPECTED_ARTIFACT_ID');
+            const pullId = number('EXPECTED_PR_ID');
+            const pullNumber = number('EXPECTED_PR_NUMBER');
+            const headRepositoryId = number('EXPECTED_HEAD_REPOSITORY_ID');
+            const sourceRunId = number('EXPECTED_SOURCE_RUN_ID');
+            const sourceRunAttempt = number('EXPECTED_SOURCE_RUN_ATTEMPT');
+            const maxArchiveBytes = number('MAX_ARTIFACT_ARCHIVE_BYTES');
+            const maxReportBytes = number('MAX_REPORT_BYTES');
+            const expectedRepository = process.env.EXPECTED_REPOSITORY;
+            const expectedArtifactName = process.env.EXPECTED_ARTIFACT_NAME;
+            const expectedArtifactDigest = process.env.EXPECTED_ARTIFACT_DIGEST;
+            const headSha = process.env.EXPECTED_HEAD_SHA;
+            const sourceConclusion = process.env.EXPECTED_SOURCE_CONCLUSION;
+            assert(`${context.repo.owner}/${context.repo.repo}` === expectedRepository, 'context repository drifted');
+            assert(/^[0-9a-f]{40}$/.test(headSha), 'head SHA is invalid');
+            assert(/^sha256:[0-9a-f]{64}$/.test(expectedArtifactDigest), 'artifact digest is invalid');
+            assert(expectedArtifactName === `tailing-sentinel-pr-report-${sourceRunId}-${sourceRunAttempt}`, 'artifact name drifted');
+
+            const { owner, repo } = context.repo;
+            const pull = (await github.rest.pulls.get({ owner, repo, pull_number: pullNumber })).data;
+            assert(pull.id === pullId, 'pull request id changed');
+            assert(pull.number === pullNumber, 'pull request number changed');
+            assert(pull.base?.repo?.id === repositoryId, 'pull request base repository changed');
+            assert(pull.head?.repo?.id === headRepositoryId, 'pull request head repository changed');
+            assert(pull.head?.sha === headSha, 'pull request head SHA changed');
+
+            const artifact = (await github.rest.actions.getArtifact({ owner, repo, artifact_id: artifactId })).data;
+            assert(artifact.name === expectedArtifactName, 'artifact name changed');
+            assert(artifact.digest === expectedArtifactDigest, 'artifact digest changed');
+            assert(artifact.expired === false, 'artifact expired before publication');
+            assert(artifact.size_in_bytes > 0 && artifact.size_in_bytes <= maxArchiveBytes, 'artifact archive size changed');
+            assert(artifact.workflow_run?.id === sourceRunId, 'artifact source run changed');
+            assert(artifact.workflow_run?.repository_id === repositoryId, 'artifact repository changed');
+            assert(artifact.workflow_run?.head_repository_id === headRepositoryId, 'artifact head repository changed');
+            assert(artifact.workflow_run?.head_sha === headSha, 'artifact head SHA changed');
+
+            const readUInt16 = (bytes, offset) => {
+              assert(offset >= 0 && offset + 2 <= bytes.length, 'ZIP uint16 read is out of bounds');
+              return bytes.readUInt16LE(offset);
+            };
+            const readUInt32 = (bytes, offset) => {
+              assert(offset >= 0 && offset + 4 <= bytes.length, 'ZIP uint32 read is out of bounds');
+              return bytes.readUInt32LE(offset);
+            };
+            const rejectZip64Extra = (extra) => {
+              let cursor = 0;
+              while (cursor < extra.length) {
+                assert(cursor + 4 <= extra.length, 'ZIP extra field is truncated');
+                const tag = extra.readUInt16LE(cursor);
+                const length = extra.readUInt16LE(cursor + 2);
+                cursor += 4;
+                assert(cursor + length <= extra.length, 'ZIP extra field payload is truncated');
+                assert(tag !== 0x0001, 'ZIP64 is forbidden');
+                cursor += length;
+              }
+            };
+            const crc32 = (bytes) => {
+              let crc = 0xffffffff;
+              for (const byte of bytes) {
+                crc ^= byte;
+                for (let bit = 0; bit < 8; bit += 1) {
+                  crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
+                }
+              }
+              return (crc ^ 0xffffffff) >>> 0;
+            };
+            const decodeReportArchive = (archive) => {
+              assert(archive.length > 0 && archive.length <= maxArchiveBytes, 'ZIP archive is outside the compressed-size bound');
+              assert(archive.length === artifact.size_in_bytes, 'ZIP archive size does not match artifact metadata');
+              const digest = `sha256:${createHash('sha256').update(archive).digest('hex')}`;
+              assert(digest === expectedArtifactDigest, 'ZIP archive digest does not match artifact metadata');
+
+              const eocdOffset = archive.length - 22;
+              assert(eocdOffset >= 0 && readUInt32(archive, eocdOffset) === 0x06054b50, 'ZIP must end in one comment-free EOCD record');
+              assert(readUInt16(archive, eocdOffset + 4) === 0 && readUInt16(archive, eocdOffset + 6) === 0, 'multi-disk ZIP archives are forbidden');
+              assert(readUInt16(archive, eocdOffset + 8) === 1 && readUInt16(archive, eocdOffset + 10) === 1, 'ZIP must contain exactly one member');
+              const centralSize = readUInt32(archive, eocdOffset + 12);
+              const centralOffset = readUInt32(archive, eocdOffset + 16);
+              assert(readUInt16(archive, eocdOffset + 20) === 0, 'ZIP comments are forbidden');
+              assert(centralOffset + centralSize === eocdOffset, 'ZIP central-directory bounds are invalid');
+              assert(centralSize >= 46 && readUInt32(archive, centralOffset) === 0x02014b50, 'ZIP central-directory entry is invalid');
+
+              const flags = readUInt16(archive, centralOffset + 8);
+              const method = readUInt16(archive, centralOffset + 10);
+              const expectedCrc = readUInt32(archive, centralOffset + 16);
+              const compressedSize = readUInt32(archive, centralOffset + 20);
+              const expandedSize = readUInt32(archive, centralOffset + 24);
+              const nameLength = readUInt16(archive, centralOffset + 28);
+              const extraLength = readUInt16(archive, centralOffset + 30);
+              const commentLength = readUInt16(archive, centralOffset + 32);
+              const diskStart = readUInt16(archive, centralOffset + 34);
+              const externalAttributes = readUInt32(archive, centralOffset + 38);
+              const localOffset = readUInt32(archive, centralOffset + 42);
+              assert((flags & ~0x080e) === 0 && (flags & 0x0001) === 0, 'encrypted or unsupported ZIP flags are forbidden');
+              assert(method === 0 || method === 8, 'ZIP member compression method is forbidden');
+              assert(expandedSize > 0 && expandedSize <= maxReportBytes, 'ZIP member exceeds the expanded-size bound');
+              assert(compressedSize <= maxArchiveBytes, 'ZIP member exceeds the compressed-size bound');
+              assert(diskStart === 0 && commentLength === 0, 'split members and member comments are forbidden');
+              assert(localOffset === 0, 'ZIP prefixes are forbidden');
+              assert((externalAttributes & 0x10) === 0, 'ZIP directory members are forbidden');
+              const unixType = (externalAttributes >>> 16) & 0xf000;
+              assert(unixType === 0 || unixType === 0x8000, 'ZIP member must be a regular file');
+
+              const centralNameStart = centralOffset + 46;
+              const centralNameEnd = centralNameStart + nameLength;
+              const centralExtraEnd = centralNameEnd + extraLength;
+              assert(centralExtraEnd + commentLength === eocdOffset, 'ZIP contains hidden central-directory data');
+              const centralName = new TextDecoder('utf-8', { fatal: true }).decode(archive.subarray(centralNameStart, centralNameEnd));
+              assert(centralName === 'latest-report.md', 'ZIP member path must be exactly latest-report.md');
+              rejectZip64Extra(archive.subarray(centralNameEnd, centralExtraEnd));
+
+              assert(readUInt32(archive, localOffset) === 0x04034b50, 'ZIP local header is invalid');
+              const localFlags = readUInt16(archive, localOffset + 6);
+              const localMethod = readUInt16(archive, localOffset + 8);
+              const localCrc = readUInt32(archive, localOffset + 14);
+              const localCompressedSize = readUInt32(archive, localOffset + 18);
+              const localExpandedSize = readUInt32(archive, localOffset + 22);
+              const localNameLength = readUInt16(archive, localOffset + 26);
+              const localExtraLength = readUInt16(archive, localOffset + 28);
+              assert(localFlags === flags && localMethod === method, 'ZIP local and central headers disagree');
+              const localNameStart = localOffset + 30;
+              const localNameEnd = localNameStart + localNameLength;
+              const localExtraEnd = localNameEnd + localExtraLength;
+              const localName = new TextDecoder('utf-8', { fatal: true }).decode(archive.subarray(localNameStart, localNameEnd));
+              assert(localName === centralName, 'ZIP local member path drifted');
+              rejectZip64Extra(archive.subarray(localNameEnd, localExtraEnd));
+              const dataEnd = localExtraEnd + compressedSize;
+              assert(dataEnd <= centralOffset, 'ZIP member data escapes its declared bounds');
+              const descriptorSize = centralOffset - dataEnd;
+              assert(descriptorSize === 0 || descriptorSize === 12 || descriptorSize === 16, 'ZIP contains hidden local data');
+              assert(Boolean(flags & 0x0008) === (descriptorSize > 0), 'ZIP descriptor flag and layout disagree');
+              if (descriptorSize > 0) {
+                const descriptorOffset = descriptorSize === 16 ? dataEnd + 4 : dataEnd;
+                if (descriptorSize === 16) assert(readUInt32(archive, dataEnd) === 0x08074b50, 'ZIP data descriptor signature is invalid');
+                assert(readUInt32(archive, descriptorOffset) === expectedCrc, 'ZIP descriptor CRC drifted');
+                assert(readUInt32(archive, descriptorOffset + 4) === compressedSize, 'ZIP descriptor compressed size drifted');
+                assert(readUInt32(archive, descriptorOffset + 8) === expandedSize, 'ZIP descriptor expanded size drifted');
+              } else {
+                assert(localCrc === expectedCrc, 'ZIP local CRC drifted');
+                assert(localCompressedSize === compressedSize, 'ZIP local compressed size drifted');
+                assert(localExpandedSize === expandedSize, 'ZIP local expanded size drifted');
+              }
+
+              const compressed = archive.subarray(localExtraEnd, dataEnd);
+              const expanded = method === 0
+                ? Buffer.from(compressed)
+                : inflateRawSync(compressed, { maxOutputLength: maxReportBytes });
+              assert(expanded.length === expandedSize, 'ZIP expanded size is inconsistent');
+              assert(crc32(expanded) === expectedCrc, 'ZIP member CRC is invalid');
+              return expanded;
+            };
+
+            let invalidReason = '';
+            let report = '';
+            try {
+              const response = await github.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
+                owner,
+                repo,
+                artifact_id: artifactId,
+                archive_format: 'zip',
+              });
+              const archive = Buffer.from(response.data);
+              const bytes = decodeReportArchive(archive);
+              report = new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/^\uFEFF/, '');
+              assert(report.trim().length > 0, 'Markdown report is empty');
+              assert(!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(report), 'Markdown report contains forbidden control characters');
+            } catch (error) {
+              invalidReason = error instanceof Error ? error.message : String(error);
+            }
+
+            if (invalidReason) {
+              report = '# Tailing Sentinel\n\n- Verdict: **REJECT**\n- The candidate-produced report was not published because it failed the bounded-data checks.';
+              core.warning(invalidReason);
+            }
+            report = report
+              .replace(/&(?:#0*64|#x0*40|commat);/gi, '@')
+              .replaceAll('@', '@\u200b');
+            assert(!/@[A-Za-z0-9_]/u.test(report), 'mention neutralization failed');
+
+            const marker = '<!-- tailing-sentinel -->';
+            const body = [
+              marker,
+              '> Candidate-produced Markdown rendered as untrusted data. Mentions are disabled.',
+              `> Source: Tailing Sentinel run ${sourceRunId}, attempt ${sourceRunAttempt}, commit \`${headSha}\`, conclusion \`${sourceConclusion}\`.`,
+              '',
+              report,
+            ].join('\n');
+            assert(Buffer.byteLength(body, 'utf8') <= 60000, 'comment body exceeds the publication bound');
+
+            const comments = (await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: pullNumber,
+              per_page: 100,
+              page: 1,
+            })).data;
+            const previous = comments.find((comment) =>
+              comment.user?.id === 41898282
+                && comment.user?.type === 'Bot'
+                && typeof comment.body === 'string'
+                && comment.body.startsWith(`${marker}\n`),
+            );
+            if (previous) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: pullNumber, body });
+            }
+            if (invalidReason) core.setFailed(`Report publication used the trusted rejection fallback: ${invalidReason}`);

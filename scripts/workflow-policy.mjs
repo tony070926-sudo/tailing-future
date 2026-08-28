@@ -1,0 +1,397 @@
+import { createHash } from 'node:crypto';
+import { load as parseYaml } from 'js-yaml';
+
+export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
+export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
+export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
+export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
+export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
+export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af';
+export const ATOMISTIC_BOOTSTRAP_NODE_VERSION = '24.16.0';
+export const ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX = 'https://download.pytorch.org/whl/cpu';
+export const ATOMISTIC_BOOTSTRAP_PYPI_INDEX = 'https://pypi.org/simple';
+
+const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262';
+const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020';
+const UPLOAD_ARTIFACT_ACTION = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02';
+const GITHUB_SCRIPT_ACTION = 'actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b';
+
+export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
+  'Validate the source run, pull request, and report artifact': 'sha256:8a17fc74830ecdf60a1405e28c47bded14f1221eabc060b96f612fcf7bb30153',
+  'Download, bound, and publish the report as inert pull-request data': 'sha256:8f4a717e751b99b5abb603fa72cdcac8d01e4d1e193c3c36da7fb062af455c0a',
+});
+
+// The shell programs are part of the supply-chain policy surface. Binding the
+// parsed run strings makes a weakened guard, alternate index, extra mount,
+// networked install/build or broader upload fail until policy and tests are
+// reviewed in the same change.
+export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
+  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:c880865bd6194ccdb40e5bed9294cd5d13111bfa64d7dc2e469ad7baadbaa002',
+  'Create fresh, model-isolated working directories': 'sha256:aebd99fabc0a66906c54e543b874ba9a1c6a6a3f2564e10696543033e241d566',
+  'Bind paths and runner constants from the frozen plan': 'sha256:9d8dca364a9ccfb380fc1e21f623d49a201ce992c37cbf4caa966cb348fc3b46',
+  'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
+  'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
+  'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
+  'Download one fresh resolved wheelhouse in the online phase': 'sha256:2f7911c25996055acd9c21c0bed90934212bdace82d84f8b39417d8d91bf33b8',
+  'Resolve an exact lock from the offline wheelhouse': 'sha256:1e9cdbd3767f1bec377a889ded62674a834a5f73c4eaff275b2b63916a90115f',
+  'Freeze and verify the exact resolved wheel set': 'sha256:44d2bd77897093ee4574e4d8527bf3550cc3c02048d9cb5c1fb8a7ce3be53738',
+  'Prove a cold, hash-locked install with no network': 'sha256:a4102dfa6b877412ecd04d8fa4cf2cb5da351a70b05540c2f8c0359452ef4d62',
+  'Build the isolated runtime image with no build-step network': 'sha256:d93c91c17c65e9d3861b597f85f7d3653250d7e500f9bfd4f3c339695e8c3138',
+  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:60fbef598f6d9e12bd01bfc334ee050de67b11d919f0bbf4ac01608a605ab3c3',
+  'Stage only non-promotional bootstrap outputs': 'sha256:ac8ae75c4dfa1d79373a727bfc970054dccf509bb33d2d9997025732654a7374',
+});
+
+export const DOCKERIGNORE_ALLOWLIST = Object.freeze([
+  '**',
+  '!.dockerignore',
+  '!atomistic/',
+  '!atomistic/containers/',
+  '!atomistic/containers/mattersim.Dockerfile',
+  '!atomistic/containers/mace.Dockerfile',
+  '!atomistic/locks/',
+  '!atomistic/locks/mattersim.requirements.lock',
+  '!atomistic/locks/mace.requirements.lock',
+  '!scripts/',
+  '!scripts/atomistic/',
+  '!scripts/atomistic/run_model.py',
+  '!scripts/atomistic/runtime_contract.py',
+]);
+
+export function inspectWorkflowSource(relativePath, source) {
+  const failures = [];
+  let workflow;
+  try {
+    workflow = parseYaml(source);
+  } catch (error) {
+    return [`${relativePath}: workflow YAML is invalid or contains duplicate keys (${error instanceof Error ? error.message : String(error)}).`];
+  }
+  if (!workflow || typeof workflow !== 'object' || Array.isArray(workflow)) return [`${relativePath}: workflow root must be a mapping.`];
+  const triggers = workflow.on;
+  if (triggers && typeof triggers === 'object' && !Array.isArray(triggers) && Object.hasOwn(triggers, 'pull_request_target')) failures.push(`${relativePath}: pull_request_target is forbidden.`);
+  if (triggers === 'pull_request_target' || (Array.isArray(triggers) && triggers.includes('pull_request_target'))) failures.push(`${relativePath}: pull_request_target is forbidden.`);
+  if (/curl\b[^\n|]*\|\s*(?:ba)?sh\b/i.test(source) || /wget\b[^\n|]*\|\s*(?:ba)?sh\b/i.test(source)) failures.push(`${relativePath}: network-to-shell pipelines are forbidden.`);
+
+  walk(workflow, (key, value) => {
+    if (key === 'uses' && typeof value === 'string') {
+      if (value.startsWith('./')) return;
+      if (value.startsWith('docker://')) {
+        if (!immutableOciReference(value.slice('docker://'.length))) failures.push(`${relativePath}: Docker action ${value} is not pinned by sha256 digest.`);
+        return;
+      }
+      const separator = value.lastIndexOf('@');
+      const revision = separator >= 0 ? value.slice(separator + 1) : '';
+      if (!/^[0-9a-f]{40}$/.test(revision)) failures.push(`${relativePath}: external action ${value} is not pinned to a full commit SHA.`);
+    }
+    if (key === 'image' && typeof value === 'string' && !immutableOciReference(value)) failures.push(`${relativePath}: container image ${value} is not pinned by sha256 digest.`);
+    if (key === 'container' && typeof value === 'string' && !immutableOciReference(value)) failures.push(`${relativePath}: job container ${value} is not pinned by sha256 digest.`);
+  });
+
+  for (const job of Object.values(workflow.jobs ?? {})) {
+    if (!job || typeof job !== 'object' || Array.isArray(job)) continue;
+    for (const step of job.steps ?? []) {
+      if (!step || typeof step !== 'object' || typeof step.uses !== 'string' || !step.uses.startsWith('actions/checkout@')) continue;
+      if (step.with?.['persist-credentials'] !== false) failures.push(`${relativePath}: actions/checkout must set persist-credentials: false.`);
+    }
+  }
+  if (relativePath === SENTINEL_EVALUATION_WORKFLOW_PATH) failures.push(...inspectSentinelEvaluationWorkflow(workflow));
+  if (relativePath === SENTINEL_REPORT_WORKFLOW_PATH) failures.push(...inspectSentinelReportWorkflow(workflow));
+  if (relativePath === ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapWorkflow(workflow));
+  return failures;
+}
+
+export function inspectSentinelEvaluationWorkflow(workflow) {
+  const failures = [];
+  const prefix = `${SENTINEL_EVALUATION_WORKFLOW_PATH}:`;
+  if (workflow.name !== 'Tailing Sentinel') failures.push(`${prefix} evaluation workflow name drifted.`);
+  if (!sameJson(workflow.on, {
+    push: { branches: ['**'] },
+    pull_request: null,
+    merge_group: null,
+  })) failures.push(`${prefix} evaluation triggers drifted.`);
+  if (!sameJson(workflow.permissions, { contents: 'read' })) failures.push(`${prefix} candidate evaluation must have only contents: read.`);
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs) ? workflow.jobs : {};
+  if (!sameJson(Object.keys(jobs), ['evaluate'])) failures.push(`${prefix} candidate workflow may contain only the read-only evaluate job.`);
+  const job = jobs.evaluate;
+  if (!job || typeof job !== 'object' || Array.isArray(job)) return [...failures, `${prefix} evaluate job is missing.`];
+  if (!sameJson(job.permissions, { contents: 'read' })) failures.push(`${prefix} evaluate job must have only contents: read.`);
+  if (job['runs-on'] !== 'ubuntu-24.04') failures.push(`${prefix} evaluate job must use ubuntu-24.04.`);
+
+  const steps = Array.isArray(job.steps) ? job.steps : [];
+  const reportUploads = steps.filter((step) => step?.uses === UPLOAD_ARTIFACT_ACTION
+    && step?.with?.name === 'tailing-sentinel-pr-report-${{ github.run_id }}-${{ github.run_attempt }}');
+  if (reportUploads.length !== 1 || !sameJson(reportUploads[0], {
+    if: "always() && github.event_name == 'pull_request'",
+    uses: UPLOAD_ARTIFACT_ACTION,
+    with: {
+      name: 'tailing-sentinel-pr-report-${{ github.run_id }}-${{ github.run_attempt }}',
+      path: 'evaluation/latest-report.md',
+      'if-no-files-found': 'error',
+      'retention-days': 1,
+    },
+  })) failures.push(`${prefix} candidate evaluation must upload exactly one short-lived, run-bound Markdown report artifact.`);
+  return failures;
+}
+
+export function inspectSentinelReportWorkflow(workflow) {
+  const failures = [];
+  const prefix = `${SENTINEL_REPORT_WORKFLOW_PATH}:`;
+  const expectedPermissions = { actions: 'read', 'pull-requests': 'write' };
+  if (workflow.name !== 'Tailing Sentinel Reporter') failures.push(`${prefix} reporter workflow name drifted.`);
+  if (!sameJson(workflow.on, {
+    workflow_run: {
+      workflows: ['Tailing Sentinel'],
+      types: ['completed'],
+    },
+  })) failures.push(`${prefix} reporter must run only after a completed Tailing Sentinel workflow_run.`);
+  if (!sameJson(workflow.permissions, expectedPermissions)) failures.push(`${prefix} reporter permissions must be exactly actions: read and pull-requests: write.`);
+  if (!sameJson(workflow.concurrency, {
+    group: 'sentinel-report-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}',
+    'cancel-in-progress': false,
+  })) failures.push(`${prefix} reporter concurrency must bind source run id and attempt.`);
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs) ? workflow.jobs : {};
+  if (!sameJson(Object.keys(jobs), ['report'])) failures.push(`${prefix} reporter must contain exactly one isolated job.`);
+  const job = jobs.report;
+  if (!job || typeof job !== 'object' || Array.isArray(job)) return [...failures, `${prefix} report job is missing.`];
+  if (!sameJson(Object.keys(job).sort(), ['if', 'permissions', 'runs-on', 'steps', 'timeout-minutes'].sort())) failures.push(`${prefix} reporter job contains an unreviewed key.`);
+  if (job.if !== "github.event.workflow_run.event == 'pull_request'") failures.push(`${prefix} reporter job must reject non-pull-request source events before executing.`);
+  if (!sameJson(job.permissions, expectedPermissions)) failures.push(`${prefix} reporter job permissions drifted.`);
+  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 5) failures.push(`${prefix} reporter must remain a bounded Ubuntu 24.04 job.`);
+
+  const steps = Array.isArray(job.steps) ? job.steps : [];
+  const expectedStepNames = [
+    'Validate the source run, pull request, and report artifact',
+    'Download, bound, and publish the report as inert pull-request data',
+  ];
+  if (!sameJson(steps.map((step) => step?.name), expectedStepNames)) failures.push(`${prefix} reporter step set or order drifted.`);
+  if (steps.some((step) => typeof step?.run === 'string' || String(step?.uses ?? '').startsWith('actions/checkout@') || String(step?.uses ?? '').startsWith('./'))) {
+    failures.push(`${prefix} reporter may not check out or execute candidate-controlled code.`);
+  }
+
+  const validate = steps[0];
+  const validateScript = validate?.with?.script;
+  if (!validate || validate.id !== 'validate' || validate.uses !== GITHUB_SCRIPT_ACTION
+      || !sameJson(Object.keys(validate).sort(), ['env', 'id', 'name', 'uses', 'with'].sort())
+      || !sameJson(validate.env, {
+        EXPECTED_REPOSITORY: 'tony070926-sudo/tailing-future',
+        EXPECTED_REPOSITORY_ID: '1349498456',
+        EXPECTED_DEFAULT_BRANCH: 'main',
+        EXPECTED_WORKFLOW_ID: '344526316',
+        EXPECTED_WORKFLOW_NAME: 'Tailing Sentinel',
+        EXPECTED_WORKFLOW_PATH: '.github/workflows/evaluate.yml',
+        MAX_ARTIFACT_ARCHIVE_BYTES: '65536',
+      })
+      || !sameJson(Object.keys(validate.with ?? {}).sort(), ['github-token', 'script'].sort())
+      || validate.with?.['github-token'] !== '${{ github.token }}'
+      || typeof validateScript !== 'string'
+      || sha256(validateScript) !== SENTINEL_REPORT_SCRIPT_DIGESTS[expectedStepNames[0]]) {
+    failures.push(`${prefix} source-run and artifact validation program drifted.`);
+  }
+
+  const publish = steps[1];
+  const publishScript = publish?.with?.script;
+  if (!publish || publish.if !== "always() && steps.validate.outputs.validated == 'true'"
+      || publish.uses !== GITHUB_SCRIPT_ACTION
+      || !sameJson(Object.keys(publish).sort(), ['env', 'if', 'name', 'uses', 'with'].sort())
+      || !sameJson(publish.env, {
+        EXPECTED_REPOSITORY: 'tony070926-sudo/tailing-future',
+        EXPECTED_REPOSITORY_ID: '1349498456',
+        EXPECTED_ARTIFACT_ID: '${{ steps.validate.outputs.artifact_id }}',
+        EXPECTED_ARTIFACT_NAME: '${{ steps.validate.outputs.artifact_name }}',
+        EXPECTED_ARTIFACT_DIGEST: '${{ steps.validate.outputs.artifact_digest }}',
+        EXPECTED_PR_ID: '${{ steps.validate.outputs.pr_id }}',
+        EXPECTED_PR_NUMBER: '${{ steps.validate.outputs.pr_number }}',
+        EXPECTED_HEAD_REPOSITORY_ID: '${{ steps.validate.outputs.head_repository_id }}',
+        EXPECTED_HEAD_SHA: '${{ steps.validate.outputs.head_sha }}',
+        EXPECTED_SOURCE_RUN_ID: '${{ steps.validate.outputs.source_run_id }}',
+        EXPECTED_SOURCE_RUN_ATTEMPT: '${{ steps.validate.outputs.source_run_attempt }}',
+        EXPECTED_SOURCE_CONCLUSION: '${{ steps.validate.outputs.source_conclusion }}',
+        MAX_ARTIFACT_ARCHIVE_BYTES: '65536',
+        MAX_REPORT_BYTES: '12000',
+      })
+      || !sameJson(Object.keys(publish.with ?? {}).sort(), ['github-token', 'script'].sort())
+      || publish.with?.['github-token'] !== '${{ github.token }}'
+      || typeof publishScript !== 'string'
+      || sha256(publishScript) !== SENTINEL_REPORT_SCRIPT_DIGESTS[expectedStepNames[1]]) {
+    failures.push(`${prefix} bounded Markdown publication program drifted.`);
+  }
+  return failures;
+}
+
+export function inspectAtomisticBootstrapWorkflow(workflow) {
+  const failures = [];
+  const prefix = `${ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH}:`;
+  if (!sameJson(workflow.on, { workflow_dispatch: null })) failures.push(`${prefix} bootstrap must be manual workflow_dispatch only, without inputs.`);
+  if (workflow.name !== 'Atomistic bootstrap predictions (non-promotional)') failures.push(`${prefix} workflow name must preserve the non-promotional boundary.`);
+  if (!sameJson(workflow.permissions, { contents: 'read' })) failures.push(`${prefix} permissions must be exactly contents: read with no id-token or attestation authority.`);
+  if (!sameJson(workflow.concurrency, {
+    group: 'atomistic-bootstrap-${{ github.ref }}-${{ github.sha }}',
+    'cancel-in-progress': false,
+  })) failures.push(`${prefix} concurrency binding drifted.`);
+  if (!sameJson(workflow.env, {
+    BASE_IMAGE: ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
+    BASE_IMAGE_AMD64_DIGEST: ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
+    DOCKERFILE_FRONTEND: PINNED_DOCKERFILE_FRONTEND,
+  })) failures.push(`${prefix} Node/Python container trust roots or Dockerfile frontend drifted.`);
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs) ? workflow.jobs : {};
+  if (!sameJson(Object.keys(jobs), ['bootstrap'])) failures.push(`${prefix} exactly one isolated bootstrap matrix job is allowed.`);
+  const job = jobs.bootstrap;
+  if (!job || typeof job !== 'object' || Array.isArray(job)) return [...failures, `${prefix} bootstrap job is missing.`];
+  if (!sameJson(Object.keys(job).sort(), ['env', 'name', 'runs-on', 'steps', 'strategy', 'timeout-minutes'].sort())) failures.push(`${prefix} bootstrap job contains an unreviewed key.`);
+  if (job.name !== '${{ matrix.model }} isolated bootstrap smoke'
+      || job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 240) {
+    failures.push(`${prefix} bootstrap must remain an Ubuntu 24.04 smoke job with the reviewed timeout.`);
+  }
+  if (!sameJson(job.strategy, {
+    'fail-fast': false,
+    'max-parallel': 2,
+    matrix: { model: ['mattersim', 'mace'] },
+  }) || !sameJson(job.env, {
+    MODEL: '${{ matrix.model }}',
+    PUBLISH_DIR: '${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}',
+  })) {
+    failures.push(`${prefix} MatterSim and MACE must remain separate matrix executions.`);
+  }
+
+  const steps = Array.isArray(job.steps) ? job.steps : [];
+  const expectedRunNames = Object.keys(ATOMISTIC_BOOTSTRAP_RUN_DIGESTS);
+  const expectedStepNames = [
+    'Check out the dispatched revision without credentials',
+    'Install the pinned JavaScript runtime',
+    ...expectedRunNames,
+    'Upload the allowlisted bootstrap bundle',
+  ];
+  if (!sameJson(steps.map((step) => step?.name), expectedStepNames)) failures.push(`${prefix} bootstrap step set or order drifted.`);
+
+  const checkout = steps.find((step) => step?.name === expectedStepNames[0]);
+  if (!sameJson(checkout, {
+    name: 'Check out the dispatched revision without credentials',
+    uses: CHECKOUT_ACTION,
+    with: { 'persist-credentials': false },
+  })) failures.push(`${prefix} checkout action or credential policy drifted.`);
+  const setupNode = steps.find((step) => step?.name === expectedStepNames[1]);
+  if (!sameJson(setupNode, {
+    name: 'Install the pinned JavaScript runtime',
+    uses: SETUP_NODE_ACTION,
+    with: { 'node-version': ATOMISTIC_BOOTSTRAP_NODE_VERSION },
+  })) failures.push(`${prefix} Node action or exact Node ${ATOMISTIC_BOOTSTRAP_NODE_VERSION} runtime drifted.`);
+
+  const runSteps = new Map();
+  for (const step of steps) {
+    if (typeof step?.run !== 'string') continue;
+    if (runSteps.has(step.name)) failures.push(`${prefix} duplicate named run step ${step.name}.`);
+    runSteps.set(step.name, step);
+  }
+  for (const [name, expectedDigest] of Object.entries(ATOMISTIC_BOOTSTRAP_RUN_DIGESTS)) {
+    const step = runSteps.get(name);
+    const expectedIf = name === 'Stage only non-promotional bootstrap outputs' ? 'always()' : undefined;
+    const expectedKeys = expectedIf ? ['id', 'if', 'name', 'run', 'shell'] : ['name', 'run', 'shell'];
+    if (!step || step.shell !== 'bash' || step.if !== expectedIf
+        || (expectedIf && step.id !== 'stage_outputs')
+        || !sameJson(Object.keys(step).sort(), expectedKeys.sort())
+        || sha256(step.run) !== expectedDigest) {
+      failures.push(`${prefix} reviewed shell program drifted: ${name}.`);
+    }
+  }
+
+  const upload = steps.find((step) => step?.name === expectedStepNames.at(-1));
+  if (!sameJson(upload, {
+    name: 'Upload the allowlisted bootstrap bundle',
+    if: "always() && steps.stage_outputs.outcome == 'success'",
+    uses: UPLOAD_ARTIFACT_ACTION,
+    with: {
+      name: 'tailing-atomistic-bootstrap-${{ matrix.model }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}',
+      path: '${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}',
+      'if-no-files-found': 'error',
+      'include-hidden-files': false,
+      'retention-days': 7,
+    },
+  })) failures.push(`${prefix} artifact upload must remain the exact non-promotional allowlisted bundle.`);
+
+  const executable = [...runSteps.values()].map((step) => step.run).join('\n');
+  const dockerRuns = executable.match(/\bdocker run\b/g) ?? [];
+  const amd64DockerRuns = executable.match(/\bdocker run --rm --platform=linux\/amd64\b/g) ?? [];
+  if (dockerRuns.length !== 6 || amd64DockerRuns.length !== dockerRuns.length) failures.push(`${prefix} every one of the six containers must be Linux/amd64.`);
+  const download = runSteps.get('Download one fresh resolved wheelhouse in the online phase')?.run ?? '';
+  const indexUrls = [...download.matchAll(/--index-url\s+(https:\/\/[^\s'"\\]+)/g)].map((match) => match[1]);
+  if (!sameJson(indexUrls, [ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX, ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX, ATOMISTIC_BOOTSTRAP_PYPI_INDEX])
+      || /--extra-index-url\b/.test(download)) {
+    failures.push(`${prefix} PyTorch wheels must use only the official CPU index and all remaining dependencies only PyPI plus the local wheelhouse.`);
+  }
+  const coldInstall = runSteps.get('Prove a cold, hash-locked install with no network')?.run ?? '';
+  if (!hasAll(coldInstall, ['--network=none', 'PIP_NO_INDEX=1', '--no-index', '--require-hashes', '--only-binary=:all:'])) failures.push(`${prefix} cold install must remain hash-locked and offline.`);
+  const build = runSteps.get('Build the isolated runtime image with no build-step network')?.run ?? '';
+  if (!hasAll(build, ['docker buildx build', '--network=none', '--platform=linux/amd64', '--build-context "wheelhouse=$WHEELHOUSE"', 'bootstrap-not-reproduced'])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline and bound to the private wheelhouse.`);
+  const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';
+  if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
+  if (/(^|[^a-z])(metrics?|receipts?|attest(?:ation)?)([^a-z]|$)/i.test(executable)
+      || /evidence-class=(?!bootstrap-not-reproduced)/.test(executable)
+      || /REPRODUCED_MODEL_CARD_PROTOCOL|ENGINEERING_BASELINE_COMPLETE/.test(executable)) {
+    failures.push(`${prefix} bootstrap executable may not compute metrics, receipts, attestations or promotional result classes.`);
+  }
+  return failures;
+}
+
+export function inspectDockerfileSource(relativePath, source) {
+  const failures = [];
+  const expectedDirective = `# syntax=${PINNED_DOCKERFILE_FRONTEND}`;
+  if (source.split(/\r?\n/, 1)[0] !== expectedDirective) failures.push(`${relativePath}: Dockerfile frontend must equal ${PINNED_DOCKERFILE_FRONTEND}.`);
+  const args = [...source.matchAll(/^\s*ARG\s+([^\s=]+)(?:=(\S+))?\s*$/gmi)];
+  const baseArgs = args.filter((match) => match[1] === 'BASE_IMAGE');
+  if (baseArgs.length !== 1 || baseArgs[0][2] !== undefined) failures.push(`${relativePath}: ARG BASE_IMAGE must be declared exactly once without a mutable default.`);
+
+  const stageAliases = new Set();
+  const fromReferences = [...source.matchAll(/^\s*FROM(?:\s+--platform=\S+)?\s+([^\s]+)(?:\s+AS\s+([A-Za-z0-9_.-]+))?\s*$/gmi)];
+  if (!fromReferences.length) failures.push(`${relativePath}: Dockerfile has no FROM instruction.`);
+  for (const [, reference, alias] of fromReferences) {
+    if (reference !== '${BASE_IMAGE}' && reference !== 'scratch' && !immutableOciReference(reference)) failures.push(`${relativePath}: FROM ${reference} is not an allowed pinned base reference.`);
+    if (alias) stageAliases.add(alias);
+  }
+  for (const match of source.matchAll(/^\s*COPY\s+--from=([^\s]+)\s+/gmi)) {
+    const reference = match[1];
+    if (reference !== 'wheelhouse' && !stageAliases.has(reference) && !immutableOciReference(reference)) failures.push(`${relativePath}: COPY --from=${reference} is not a declared stage, wheelhouse context or digest-pinned image.`);
+  }
+  for (const match of source.matchAll(/^\s*RUN\b([^\n]*)/gmi)) {
+    if (!/^\s+--network=none(?:\s|$)/.test(match[1])) failures.push(`${relativePath}: every RUN instruction must declare --network=none.`);
+    if (/--mount=type=(?:secret|ssh)\b/i.test(match[1])) failures.push(`${relativePath}: RUN secret and SSH mounts are forbidden.`);
+  }
+  if (/^\s*ADD\s+https?:\/\//gmi.test(source)) failures.push(`${relativePath}: remote ADD is forbidden.`);
+  return failures;
+}
+
+export function inspectDockerignoreSource(relativePath, source) {
+  const lines = source.endsWith('\n') ? source.slice(0, -1).split('\n') : [];
+  return JSON.stringify(lines) === JSON.stringify(DOCKERIGNORE_ALLOWLIST)
+    ? []
+    : [`${relativePath}: atomistic build context must use the exact deny-all allowlist.`];
+}
+
+function immutableOciReference(reference) {
+  return /^[A-Za-z0-9${}._/:+\-[\]]+@sha256:[0-9a-f]{64}$/.test(reference);
+}
+
+function hasAll(value, fragments) {
+  return fragments.every((fragment) => value.includes(fragment));
+}
+
+function sameJson(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function sha256(value) {
+  return `sha256:${createHash('sha256').update(value).digest('hex')}`;
+}
+
+function walk(value, visitor) {
+  if (Array.isArray(value)) {
+    for (const entry of value) walk(entry, visitor);
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  for (const [key, child] of Object.entries(value)) {
+    visitor(key, child);
+    walk(child, visitor);
+  }
+}

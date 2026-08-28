@@ -1,4 +1,4 @@
-# Research baseline — 2026-08-28
+# Research baseline — 2026-08-29
 
 ## AIDO method reference
 

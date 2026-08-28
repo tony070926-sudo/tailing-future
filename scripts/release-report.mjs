@@ -1,4 +1,4 @@
-export const gateNames = Object.freeze(['install', 'lint', 'typecheck', 'test', 'atomistic', 'build', 'audit']);
+export const gateNames = Object.freeze(['install', 'lint', 'typecheck', 'test', 'atomistic_manifest', 'build', 'audit']);
 export const runtimeKeys = Object.freeze(['architecture', 'node', 'platform']);
 export const physicsAbsoluteTolerance = 1e-12;
 export const physicsRelativeTolerance = 2e-3;

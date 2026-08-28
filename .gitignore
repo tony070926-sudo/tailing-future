@@ -25,6 +25,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+__pycache__/
+*.py[cod]
 
 # local environment
 .env*
@@ -37,4 +39,6 @@ next-env.d.ts
 /outputs/
 /work/
 /.playwright-cli/
+/.atomistic-cache/
+/.release-artifact/
 *.tsbuildinfo

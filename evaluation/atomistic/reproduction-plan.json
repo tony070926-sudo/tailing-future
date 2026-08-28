@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "tf.atomistic-reproduction/0.1",
+  "schemaVersion": "tf.atomistic-reproduction/0.2",
   "status": "planned-not-reproduced",
   "frozenAt": "2026-08-28",
   "policy": "No model enters numeric ranking until a locked local checkpoint, dataset and runner have produced a complete like-for-like result. Missing or corrupt assets fail closed; LJ and cached outputs are forbidden fallbacks.",
@@ -87,12 +87,18 @@
         "frames": 693,
         "atoms": 11088,
         "elements": 89,
+        "atomsPerFrame": 16,
+        "idSetSha256": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
+        "idManifestPath": "evaluation/atomistic/random-tp-id-manifest.txt",
         "smokeIds": [
           "random-TP-000000", "random-TP-000005", "random-TP-000010", "random-TP-000095", "random-TP-000125",
           "random-TP-000135", "random-TP-000200", "random-TP-000220", "random-TP-000369", "random-TP-000555"
         ],
+        "smokeElements": 89,
         "smokeManifestSha256": "sha256:858b009bddf8fe8d78114b1c227fd7756c49990ca84aaf7ee8e5aecd54967423",
-        "recordManifestSha256": "sha256:da1fe51feb008ee32b2c2df5130e940a195d73b4bdc44c021bfb1650907eb2e6"
+        "recordManifestSha256": "sha256:6afbbdc0cd745efaca4bf5d7a2a7604db9f1d1f59749b86d3c0a51d48f07893a",
+        "smokeRecordManifestSha256": "sha256:35c87d2440310bb226e800407c9bec39000f4e2934d2ca83ec4eea537e7ed8de",
+        "manifestCanonicalization": "tf.random-tp.record/v1"
       },
       "cachePath": "atomistic/random-TP.xyz",
       "limitations": [
@@ -121,38 +127,160 @@
   ],
   "protocol": {
     "runner": {
-      "python": "3.12",
-      "isolation": "network-disabled, unprivileged container after verified download",
+      "python": "3.12.13",
+      "platform": "linux",
+      "architecture": "x86_64",
+      "baseImage": "python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+      "baseImageAmd64Digest": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
       "dtype": "float32",
-      "deviceProfiles": ["cpu-smoke", "cuda-batch1"],
+      "canonicalDevice": "cpu",
+      "batchSize": 1,
+      "threads": 1,
+      "networkPolicy": "fetch-online-run-offline",
+      "isolation": "verified-pickle-in-networkless-unprivileged-read-only-container",
+      "matterSimAdapter": "mattersim-ase-batch1-full3x3-eva3/v1",
+      "maceAdapter": "mace-ase-batch1-full3x3-eva3/v1",
       "runnerDigest": null,
-      "containerDigest": null
+      "containerDigests": { "mattersim": null, "mace": null },
+      "dependencyLockDigests": { "mattersim": null, "mace": null }
     },
     "integrity": [
       "Verify source revision, byte length and SHA-256 before checkpoint deserialization.",
-      "Require 693 frames, 11088 atoms, 89 elements, unique IDs and complete finite E/F/stress arrays.",
+      "Parse the fixed dataset and require its exact ID-set and scientific record-manifest digests, 693 frames, 11088 atoms, 89 elements and 16 atoms per frame.",
+      "Require one finite energy scalar, 16x3 force array and symmetric 3x3 stress array for every exact input ID; missing, extra, duplicate and failed records are forbidden.",
       "Corrupt or missing checkpoints, records or output rows fail; fallback models and cached constants are forbidden.",
-      "Canonical per-record float64 outputs are Merkle-rooted by sorted structure ID."
+      "Prediction leaves exclude timing but bind the input record, model, checkpoint, runner and environment digests before a sorted-ID Merkle root is computed.",
+      "A model process may emit predictions and diagnostics only; an independent verifier computes metrics and the final receipt."
     ],
-    "metrics": [
-      "energy MAE in eV/atom with p50/p90/p95/p99/max and worst IDs",
-      "mean per-atom force-vector error in eV/angstrom plus component MAE/RMSE",
-      "stress Frobenius error in GPa plus six-component MAE and fixed ASE sign convention",
-      "failure rate, missing IDs, batch-1 p50/p95 latency, atoms/s and peak GPU memory"
-    ],
+    "metrics": {
+      "definitionId": "mattersim-model-card-frobenius/v1",
+      "energyError": "absolute-total-energy-error-divided-by-frame-atom-count",
+      "forceError": "mean-per-atom-l2-vector-error-per-frame",
+      "stressGateError": "full-3x3-frobenius-error-in-gpa-per-frame",
+      "stressDiagnostics": ["spectral-norm", "unweighted-voigt6-l2", "six-component-mae"],
+      "forceConvention": "force-equals-negative-energy-gradient",
+      "stressConvention": "ase-tensile-positive-pressure-negative-trace-over-three",
+      "voigtOrder": ["xx", "yy", "zz", "yz", "xz", "xy"],
+      "evA3ToGpa": 160.21766208,
+      "aggregation": "equal-weight-structure-mean-float64",
+      "summation": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1",
+      "quantileMethod": "Hyndman-Fan-7-linear",
+      "quantiles": [0.5, 0.9, 0.95, 0.99],
+      "reportedStatistics": ["mean", "p50", "p90", "p95", "p99", "worst"],
+      "worstTieBreak": "error-descending-then-ascii-id-ascending",
+      "perIdMetricEvidenceRootProtocol": "sha256-merkle-canonical-json-array-model-id-metric-id-error-ascii-id-order-duplicate-id-forbidden/v1",
+      "reportDefinitions": {
+        "energy": {
+          "definition": "absolute-total-energy-error-divided-by-frame-atom-count",
+          "unit": "eV/atom"
+        },
+        "force": {
+          "definition": "mean-per-atom-l2-vector-error-per-frame",
+          "unit": "eV/angstrom"
+        },
+        "stress": {
+          "definition": "full-3x3-frobenius-error-in-gpa-per-frame",
+          "unit": "GPa"
+        }
+      }
+    },
     "invariance": {
-      "translationEnergyMaxEv": 0.0001,
-      "permutationEnergyMaxEv": 0.0001,
-      "rotationForceMaxEvPerAngstrom": 0.0001,
-      "rotationStressMaxEvPerAngstrom3": 0.00001,
-      "finiteDifferenceForceRequired": true,
-      "periodicImageRequired": true
+      "structureIds": [
+        "random-TP-000000", "random-TP-000005", "random-TP-000010", "random-TP-000095", "random-TP-000125",
+        "random-TP-000135", "random-TP-000200", "random-TP-000220", "random-TP-000369", "random-TP-000555"
+      ],
+      "translationFractionalShift": [0.173, 0.271, 0.389],
+      "translationConvention": "row-cell-r-prime=r+[0.173,0.271,0.389]@A0-no-wrap-cell-unchanged/v1",
+      "permutation": "reverse-atom-order/v1",
+      "permutationComparison": "inverse-permute-forces-energy-and-stress-unchanged/v1",
+      "properRotation": [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
+      "rotationConvention": "column-vector-R-row-positions-and-cell-right-multiply-R-transpose/v1",
+      "rotationComparison": "force-back=F_rot@R-stress-back=R-transpose@S_rot@R-energy-unchanged/v1",
+      "periodicImageShift": "zero-based-atom-i-r_i-prime=r_i+A0[i-mod-3]-cell-unchanged-no-wrap/v1",
+      "periodicImageComparison": "energy-force-and-stress-unchanged/v1",
+      "thresholds": {
+        "energyMaxEv": 0.0001,
+        "forceVectorMaxEvPerAngstrom": 0.0001,
+        "stressFrobeniusMaxEvPerAngstrom3": 0.00001
+      },
+      "forceFiniteDifference": {
+        "selection": "for-each-element-in-frozen-set-lexicographically-first-id-containing-element-lowest-zero-based-atom-index-axis-Z-modulo-3/v1",
+        "axisConvention": "zero-based-x0-y1-z2",
+        "displacement": "cartesian-coordinate-plus-minus-h-fixed-cell-and-other-coordinates/v1",
+        "stepsAngstrom": [0.01, 0.005],
+        "centralDifference": "F_h=-(E(q+h)-E(q-h))/(2h)",
+        "richardson": "four-f-half-minus-f-full-over-three",
+        "absoluteToleranceEvPerAngstrom": 0.02,
+        "relativeTolerance": 0.01,
+        "scale": "max(abs(analytic-force-component),abs(richardson-finite-difference))",
+        "rule": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale",
+        "allPass": "exactly-89-element-selections-each-pass-no-drop-no-reselection"
+      },
+      "stressFiniteDifference": {
+        "structureIds": [
+          "random-TP-000000", "random-TP-000005", "random-TP-000010", "random-TP-000095", "random-TP-000125",
+          "random-TP-000135", "random-TP-000200", "random-TP-000220", "random-TP-000369", "random-TP-000555"
+        ],
+        "voigtModes": ["xx", "yy", "zz", "yz", "xz", "xy"],
+        "deformation": "A_plus_minus=A0@(I_plus_minus_hE_mode)",
+        "coordinateConvention": "fixed-fractional-coordinates",
+        "strainBasis": "diagonal-one-engineering-shear-symmetric-one-half",
+        "referenceVolume": "V0=abs(det(A0))",
+        "strainSteps": [0.002, 0.001],
+        "centralDifference": "sigma_h=(E(+h)-E(-h))/(2hV0)",
+        "richardson": "sigma=(4sigma_h_over_2-sigma_h)/3",
+        "comparison": "same-sign-corresponding-ASE-stress-component-no-sign-selection",
+        "absoluteToleranceEvPerAngstrom3": 0.005,
+        "relativeTolerance": 0.02,
+        "scale": "max(abs(analytic-ASE-component),abs(richardson-finite-difference))",
+        "rule": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale",
+        "allPass": "exactly-10-structures-times-6-modes-pass-no-drop",
+        "automaticSignSelectionAllowed": false
+      }
+    },
+    "batchPolicy": {
+      "canonicalBatchSize": 1,
+      "legacyGraphConverterBatchGreaterThanOneAllowed": false,
+      "candidateBatchSizes": [2, 8, 64],
+      "orders": ["sorted-id", "reverse-sorted-id"],
+      "chunking": "contiguous-chunks-preserve-tail-no-drop-no-pad-no-duplicate/v1",
+      "alignment": "restore-by-exact-id-before-componentwise-batch1-comparison/v1",
+      "equivalenceThresholds": {
+        "energyAbsoluteEv": 0.0002,
+        "energyRelative": 0.000002,
+        "forceComponentAbsoluteEvPerAngstrom": 0.00002,
+        "forceComponentRelative": 0.00001,
+        "stressComponentAbsoluteGpa": 0.0002,
+        "stressComponentRelative": 0.00002
+      },
+      "promotionRequirement": "all-693-per-id-arrays-match-batch1-before-accelerated-use"
     },
     "randomTpAcceptance": {
       "requiredFrames": 693,
-      "matterSimOfficialTargets": { "energyMaeEvPerAtom": 0.199, "forceMaeEvPerAngstrom": 0.824, "stressMaeGpa": 1.999 },
-      "matterSimTolerance": { "relative": 0.02, "energyAbsolute": 0.005, "forceAbsolute": 0.02, "stressAbsolute": 0.05 },
-      "maceFirstRunPolicy": "Blind engineering-completeness baseline only; it cannot support a superiority claim."
+      "requiredAtoms": 11088,
+      "requiredElements": 89,
+      "requiredSuccesses": 693,
+      "allowedMissing": 0,
+      "allowedExtra": 0,
+      "allowedDuplicate": 0,
+      "allowedFailed": 0,
+      "matterSimStatus": "REPRODUCED_MODEL_CARD_PROTOCOL",
+      "matterSimTargets": { "energyMaeEvPerAtom": 0.199, "forceVectorMaeEvPerAngstrom": 0.824, "stressFrobeniusMaeGpa": 1.999 },
+      "matterSimTolerance": {
+        "rule": "absolute-and-relative-must-both-pass-per-metric",
+        "relative": 0.02,
+        "energyAbsolute": 0.005,
+        "forceAbsolute": 0.02,
+        "stressAbsolute": 0.05,
+        "acceptedIntervals": {
+          "energyMaeEvPerAtom": [0.19502, 0.20298],
+          "forceVectorMaeEvPerAngstrom": [0.80752, 0.84048],
+          "stressFrobeniusMaeGpa": [1.95902, 2.03898]
+        }
+      },
+      "maceStatus": "ENGINEERING_BASELINE_COMPLETE",
+      "maceFirstRunPolicy": "Blind engineering-completeness baseline only; no offset fit, scale, sign selection or superiority claim is permitted after observing the result.",
+      "claimBoundary": "The fixed MatterSim source publishes formulas and rounded targets but no evaluator; passing is protocol-equivalent, not an official or bit-exact reproduction."
     },
     "mdSmoke": {
       "structures": ["mp-149_Si2.cif", "mp-2998_BaTiO3.cif", "mp-66_C2.cif"],
