@@ -27,7 +27,7 @@ export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
 // reviewed in the same change.
 export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:c880865bd6194ccdb40e5bed9294cd5d13111bfa64d7dc2e469ad7baadbaa002',
-  'Create fresh, model-isolated working directories': 'sha256:aebd99fabc0a66906c54e543b874ba9a1c6a6a3f2564e10696543033e241d566',
+  'Create fresh, model-isolated working directories': 'sha256:0ad77c738be2781873303b81aef6f50166343b5d4939148086f17f64c72e404f',
   'Bind paths and runner constants from the frozen plan': 'sha256:9d8dca364a9ccfb380fc1e21f623d49a201ce992c37cbf4caa966cb348fc3b46',
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
   'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
@@ -250,7 +250,6 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     matrix: { model: ['mattersim', 'mace'] },
   }) || !sameJson(job.env, {
     MODEL: '${{ matrix.model }}',
-    PUBLISH_DIR: '${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}',
   })) {
     failures.push(`${prefix} MatterSim and MACE must remain separate matrix executions.`);
   }
@@ -322,6 +321,14 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   }
   const coldInstall = runSteps.get('Prove a cold, hash-locked install with no network')?.run ?? '';
   if (!hasAll(coldInstall, ['--network=none', 'PIP_NO_INDEX=1', '--no-index', '--require-hashes', '--only-binary=:all:'])) failures.push(`${prefix} cold install must remain hash-locked and offline.`);
+  const directories = runSteps.get('Create fresh, model-isolated working directories')?.run ?? '';
+  if (!hasAll(directories, [
+    'test -n "${RUNNER_TEMP:-}"',
+    'test ! -L "$RUNNER_TEMP"',
+    'publish_dir="$RUNNER_TEMP/tailing-atomistic-publish/$MODEL"',
+    '"$output_dir" "$publish_dir"',
+    'echo "PUBLISH_DIR=$publish_dir"',
+  ])) failures.push(`${prefix} publish root must be derived from the trusted runner temp inside the first shell step.`);
   const build = runSteps.get('Build the isolated runtime image with no build-step network')?.run ?? '';
   if (!hasAll(build, ['docker buildx build', '--network=none', '--platform=linux/amd64', '--build-context "wheelhouse=$WHEELHOUSE"', 'bootstrap-not-reproduced'])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline and bound to the private wheelhouse.`);
   const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';

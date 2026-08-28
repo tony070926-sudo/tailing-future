@@ -89,3 +89,15 @@ atomistic-to-mesoscale-to-process learned transition model.
    any process recommendation. Acceptance: held-out transport evidence plus
    conservation and uncertainty gates, with recommendations remaining shadow
    mode.
+
+## First live-dispatch feedback
+
+After the protocol merged, GitHub recorded push-associated workflow parse
+failure
+[`33207671025`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33207671025)
+with zero jobs and zero artifacts; the subsequent dispatch API request was
+unavailable with the same parse error. GitHub does not expose `runner.temp` in
+job-level `env`. No checkpoint was loaded and no prediction artifact was
+produced. The next loop moves the publish-directory derivation into the first
+shell step using the hosted runner's absolute `RUNNER_TEMP`, while preserving
+the exact step-level upload destination and the reviewed artifact allowlist.
