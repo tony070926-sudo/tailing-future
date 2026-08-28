@@ -1,76 +1,154 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/world-state/0.1",
-  "title": "Tailing Future World State",
+  "$id": "https://tailing.future/schemas/world-state/0.2",
+  "title": "Tailing Future Thermochemical World State",
   "type": "object",
-  "required": ["schemaVersion", "stateId", "worldId", "time", "scaleStates", "conservationLedger", "uncertainty", "validityDomain", "provenance"],
+  "required": [
+    "schemaVersion", "worldId", "stateId", "stateDigest", "parentStateId", "stateNamespace",
+    "revision", "actionCount", "branchCount", "options", "md", "field", "species",
+    "initialTotalEnergy", "externalEnergy", "initialMomentum", "reservoirMomentum",
+    "cumulativeInterfaceEnergy", "couplingCoverage", "heatClosureResidual",
+    "exchangeClosureResidual", "reactionClosureResidual", "lastAction"
+  ],
   "properties": {
-    "schemaVersion": { "const": "tf.world/0.1" },
-    "stateId": { "type": "string", "minLength": 1 },
-    "parentStateId": { "type": ["string", "null"] },
+    "schemaVersion": { "const": "tf.world/0.2" },
     "worldId": { "type": "string", "minLength": 1 },
-    "time": {
-      "type": "object",
-      "required": ["value", "unit"],
-      "properties": { "value": { "type": "number", "minimum": 0 }, "unit": { "type": "string", "minLength": 1 } },
-      "additionalProperties": false
-    },
-    "scaleStates": {
-      "type": "object",
-      "required": ["atomistic"],
-      "properties": {
-        "electronic": { "$ref": "#/$defs/scaleState" },
-        "atomistic": { "$ref": "#/$defs/scaleState" },
-        "mesoscale": { "$ref": "#/$defs/scaleState" },
-        "continuum": { "$ref": "#/$defs/scaleState" },
-        "reactor": { "$ref": "#/$defs/scaleState" },
-        "process": { "$ref": "#/$defs/scaleState" }
-      },
-      "additionalProperties": false
-    },
-    "conservationLedger": {
-      "type": "object",
-      "required": ["particleCount", "massResidual", "energyResidual"],
-      "properties": {
-        "particleCount": { "type": "integer", "minimum": 0 },
-        "massResidual": { "type": "number" },
-        "energyResidual": { "type": "number" }
-      },
-      "additionalProperties": true
-    },
-    "uncertainty": {
-      "type": "object",
-      "required": ["numerical", "parameter", "modelForm"],
-      "properties": { "numerical": { "type": "object" }, "parameter": { "type": "object" }, "modelForm": { "type": "object" } }
-    },
-    "validityDomain": {
-      "type": "object",
-      "required": ["status", "limits"],
-      "properties": { "status": { "enum": ["in_domain", "out_of_domain", "unknown"] }, "limits": { "type": "object" } }
-    },
-    "provenance": {
-      "type": "object",
-      "required": ["codeCommit", "modelDigest", "dataSnapshot", "seed"],
-      "properties": {
-        "codeCommit": { "type": "string" },
-        "modelDigest": { "type": "string", "minLength": 1 },
-        "dataSnapshot": { "type": "string" },
-        "seed": { "type": "integer" }
-      }
-    }
+    "stateId": { "type": "string", "minLength": 1 },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "parentStateId": { "type": ["string", "null"] },
+    "stateNamespace": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "actionCount": { "type": "integer", "minimum": 0 },
+    "branchCount": { "type": "integer", "minimum": 0 },
+    "options": { "$ref": "#/$defs/options" },
+    "md": { "$ref": "#/$defs/moduleState" },
+    "field": { "$ref": "#/$defs/heatField" },
+    "species": { "type": "array", "minItems": 4, "items": { "enum": ["A", "B"] } },
+    "initialTotalEnergy": { "type": "number" },
+    "externalEnergy": { "type": "number" },
+    "initialMomentum": { "$ref": "#/$defs/vector2" },
+    "reservoirMomentum": { "$ref": "#/$defs/vector2" },
+    "cumulativeInterfaceEnergy": { "type": "number", "minimum": 0 },
+    "couplingCoverage": { "type": "number", "minimum": 0, "maximum": 1 },
+    "heatClosureResidual": { "type": "number", "minimum": 0 },
+    "exchangeClosureResidual": { "type": "number", "minimum": 0 },
+    "reactionClosureResidual": { "type": "number", "minimum": 0 },
+    "lastAction": { "anyOf": [{ "$ref": "#/$defs/action" }, { "type": "null" }] }
   },
   "additionalProperties": false,
   "$defs": {
-    "scaleState": {
+    "digest": { "type": "string", "pattern": "^fnv64:[0-9a-f]{16}$" },
+    "vector2": {
       "type": "object",
-      "required": ["artifactRef", "modelId", "role", "units"],
+      "required": ["x", "y"],
+      "properties": { "x": { "type": "number" }, "y": { "type": "number" } },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "count", "density", "temperatureKelvin", "timeStep", "cutoff", "seed", "gridWidth",
+        "gridHeight", "thermalDiffusivity", "fieldHeatCapacity", "couplingTau",
+        "reactionPreexponential", "reactionActivationReduced", "reactionHeatReduced"
+      ],
       "properties": {
-        "artifactRef": { "type": "string" },
-        "modelId": { "type": "string" },
-        "role": { "enum": ["solver", "surrogate", "closure", "prior", "policy", "decoder"] },
-        "units": { "type": "string" }
+        "count": { "type": "integer", "minimum": 4 },
+        "density": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1.4 },
+        "temperatureKelvin": { "type": "number", "minimum": 45, "maximum": 180 },
+        "timeStep": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.01 },
+        "cutoff": { "type": "number", "exclusiveMinimum": 1, "maximum": 4 },
+        "seed": { "type": "integer" },
+        "gridWidth": { "type": "integer", "minimum": 2 },
+        "gridHeight": { "type": "integer", "minimum": 2 },
+        "thermalDiffusivity": { "type": "number", "minimum": 0 },
+        "fieldHeatCapacity": { "type": "number", "exclusiveMinimum": 0 },
+        "couplingTau": { "type": "number", "exclusiveMinimum": 0 },
+        "reactionPreexponential": { "type": "number", "minimum": 0 },
+        "reactionActivationReduced": { "type": "number", "minimum": 0 },
+        "reactionHeatReduced": { "type": "number", "minimum": 0 }
       },
-      "additionalProperties": true
+      "additionalProperties": false
+    },
+    "particle": {
+      "type": "object",
+      "required": ["x", "y", "ux", "uy", "vx", "vy", "fx", "fy", "x0", "y0"],
+      "properties": {
+        "x": { "type": "number" }, "y": { "type": "number" }, "ux": { "type": "number" }, "uy": { "type": "number" },
+        "vx": { "type": "number" }, "vy": { "type": "number" }, "fx": { "type": "number" }, "fy": { "type": "number" },
+        "x0": { "type": "number" }, "y0": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "moduleState": {
+      "type": "object",
+      "required": [
+        "schemaVersion", "stateId", "stateDigest", "parentStateId", "step", "options",
+        "targetTemperatureReduced", "box", "particles", "initialEnergy", "stateNamespace", "revision", "branchCount"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "tf.module-state/0.2" },
+        "stateId": { "type": "string", "minLength": 1 },
+        "stateDigest": { "$ref": "#/$defs/digest" },
+        "parentStateId": { "type": ["string", "null"] },
+        "step": { "type": "integer", "minimum": 0 },
+        "options": { "$ref": "#/$defs/moduleOptions" },
+        "targetTemperatureReduced": { "type": "number", "exclusiveMinimum": 0 },
+        "box": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": { "width": { "type": "number", "exclusiveMinimum": 0 }, "height": { "type": "number", "exclusiveMinimum": 0 } },
+          "additionalProperties": false
+        },
+        "particles": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/particle" } },
+        "initialEnergy": { "type": "number" },
+        "stateNamespace": { "type": "string", "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 0 },
+        "branchCount": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "moduleOptions": {
+      "type": "object",
+      "required": ["count", "density", "temperatureKelvin", "timeStep", "cutoff", "thermostatTau", "seed"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 4 },
+        "density": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1.4 },
+        "temperatureKelvin": { "type": "number", "exclusiveMinimum": 0, "maximum": 600 },
+        "timeStep": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.01 },
+        "cutoff": { "type": "number", "exclusiveMinimum": 1, "maximum": 4 },
+        "thermostatTau": { "anyOf": [{ "type": "number", "exclusiveMinimum": 0 }, { "type": "null" }] },
+        "seed": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "heatField": {
+      "type": "object",
+      "required": ["width", "height", "boxWidth", "boxHeight", "diffusivity", "heatCapacity", "minimumTemperatureReduced", "values"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 2 },
+        "height": { "type": "integer", "minimum": 2 },
+        "boxWidth": { "type": "number", "exclusiveMinimum": 0 },
+        "boxHeight": { "type": "number", "exclusiveMinimum": 0 },
+        "diffusivity": { "type": "number", "minimum": 0 },
+        "heatCapacity": { "type": "number", "exclusiveMinimum": 0 },
+        "minimumTemperatureReduced": { "type": "number", "exclusiveMinimum": 0 },
+        "values": { "type": "array", "minItems": 4, "items": { "type": "number", "exclusiveMinimum": 0 } }
+      },
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "required": ["schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId", "appliedAtStep", "parameters"],
+      "properties": {
+        "schemaVersion": { "const": "tf.action/0.2" },
+        "actionId": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["step", "set_field_temperature", "inject_heat_pulse", "branch"] },
+        "parentStateId": { "type": "string", "minLength": 1 },
+        "resultingStateId": { "type": "string", "minLength": 1 },
+        "appliedAtStep": { "type": "integer", "minimum": 0 },
+        "parameters": { "type": "object", "additionalProperties": { "type": ["number", "string"] } }
+      },
+      "additionalProperties": false
     }
   }
 }

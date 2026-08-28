@@ -1,29 +1,64 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/evaluation-report/0.1",
+  "$id": "https://tailing.future/schemas/evaluation-report/0.2",
   "title": "Tailing Sentinel Evaluation Report",
   "type": "object",
-  "required": ["schemaVersion", "candidateVersion", "baselineSnapshotDate", "weightedScore", "hardGateFailures", "dimensions", "comparators", "gaps", "verdict"],
+  "required": [
+    "schemaVersion", "candidateVersion", "generatedAt", "baselineSnapshotDate", "artifactDigest",
+    "sourceFileCount", "runtime", "upstreamGates", "verification", "evidenceManifest",
+    "weightedScore", "hardGateFailures", "dimensions", "comparators", "gaps", "verdict"
+  ],
   "properties": {
-    "schemaVersion": { "const": "tf.evaluation/0.1" },
-    "candidateVersion": { "type": "string" },
+    "schemaVersion": { "const": "tf.evaluation/0.2" },
+    "candidateVersion": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
     "baselineSnapshotDate": { "type": "string", "format": "date" },
+    "artifactDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sourceFileCount": { "type": "integer", "minimum": 1 },
+    "runtime": { "type": "object" },
+    "upstreamGates": { "type": "object" },
+    "verification": {
+      "type": "object",
+      "required": ["physics", "schemas", "elapsedMs"],
+      "properties": {
+        "physics": { "type": ["object", "null"] },
+        "schemas": {
+          "type": "object",
+          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics"],
+          "properties": {
+            "world": { "type": "boolean" },
+            "action": { "type": "boolean" },
+            "actionMutationCorpus": { "type": "boolean" },
+            "runtimeActionSemantics": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "elapsedMs": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "evidenceManifest": { "type": "object", "additionalProperties": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" } },
     "weightedScore": { "type": "number", "minimum": 0, "maximum": 100 },
     "hardGateFailures": { "type": "array", "items": { "type": "string" } },
-    "dimensions": { "type": "array", "items": { "$ref": "#/$defs/dimension" } },
+    "dimensions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/dimension" } },
     "comparators": { "type": "array", "items": { "type": "object" } },
-    "gaps": { "type": "array", "items": { "$ref": "#/$defs/gap" } },
+    "gaps": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/gap" } },
     "verdict": { "enum": ["accept", "reject", "conditional"] }
   },
+  "additionalProperties": false,
   "$defs": {
     "dimension": {
       "type": "object",
-      "required": ["id", "label", "weight", "score", "evidence"],
+      "required": ["id", "label", "displayLabel", "weight", "score", "promotionFloor", "summary", "evidence", "evidenceArtifacts", "nextAction", "acceptanceTest"],
       "properties": {
-        "id": { "type": "string" }, "label": { "type": "string" },
+        "id": { "type": "string" }, "label": { "type": "string" }, "displayLabel": { "type": "string" },
         "weight": { "type": "number", "minimum": 0 }, "score": { "type": "integer", "minimum": 0, "maximum": 4 },
-        "evidence": { "type": "array", "items": { "type": "string" } }
-      }
+        "promotionFloor": { "type": "integer", "minimum": 0, "maximum": 4 }, "summary": { "type": "string" },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "evidenceArtifacts": { "type": "array", "items": { "type": "string" } },
+        "nextAction": { "type": "string" }, "acceptanceTest": { "type": "string" }
+      },
+      "additionalProperties": false
     },
     "gap": {
       "type": "object",
@@ -31,7 +66,8 @@
       "properties": {
         "severity": { "enum": ["P0", "P1", "P2", "P3"] }, "dimension": { "type": "string" },
         "evidence": { "type": "string" }, "recommendedChange": { "type": "string" }, "acceptanceTest": { "type": "string" }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }

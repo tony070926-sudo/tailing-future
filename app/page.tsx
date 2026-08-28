@@ -1,11 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import scorecard from '@/evaluation/current-scorecard.json' with { type: 'json' };
+import latestReport from '@/evaluation/latest-report.json' with { type: 'json' };
+import comparatorRegistry from '@/evaluation/baselines/registry.json' with { type: 'json' };
+import { ARGON_UNITS } from '@/lib/simulation/lennard-jones';
 import {
-  ARGON_UNITS,
-  LennardJonesSimulation,
-  type SimulationSnapshot,
-} from '@/lib/simulation/lennard-jones';
+  ThermochemicalWorld,
+  type ThermochemicalSnapshot,
+} from '@/lib/simulation/thermochemical-world';
 
 type View = 'lab' | 'architecture' | 'sentinel';
 
@@ -13,40 +16,44 @@ const SCALE_STEPS = [
   { label: '电子', detail: '量子态', status: 'planned' },
   { label: '原子', detail: '分子动力学', status: 'active' },
   { label: '介观', detail: '微结构演化', status: 'planned' },
-  { label: '连续体', detail: '多物理场', status: 'planned' },
+  { label: '连续体', detail: '二维热场', status: 'active' },
   { label: '工艺', detail: '流程优化', status: 'planned' },
 ] as const;
 
 const ARCHITECTURE_LAYERS = [
   { id: 'L0', scale: '电子 / 量子', state: '电子密度 · 能带 · 势垒', anchor: 'DFT / Quantum ESPRESSO', ai: 'Hamiltonian / density surrogate', status: '规划' },
-  { id: 'L1', scale: '原子 / 分子', state: '元素 · 坐标 · 速度 · 晶胞', anchor: 'MD / LAMMPS / ASE', ai: 'UMA · MACE · MatterSim', status: '原型' },
-  { id: 'L2', scale: '介观 / 微结构', state: '相场 · 晶粒 · 缺陷 · 孔隙', anchor: 'MOOSE / CALPHAD / kMC', ai: 'neural operator / closure', status: '规划' },
-  { id: 'L3', scale: '连续体 / 部件', state: '温度 · 浓度 · 流场 · 应力', anchor: 'OpenFOAM / FEniCSx', ai: 'FNO / MeshGraphNet', status: '规划' },
+  { id: 'L1', scale: '原子 / 分子', state: '坐标 · 速度 · A/B 内部标签', anchor: 'force-shifted LJ / Verlet', ai: '未来：TECE · Equiformer · MACE', status: '原型' },
+  { id: 'L2', scale: '介观 / 微结构', state: '相场 · 晶粒 · 缺陷 · 孔隙', anchor: 'PFHub / MOOSE / CALPHAD', ai: 'neural operator / closure', status: '规划' },
+  { id: 'L3', scale: '连续体 / 部件', state: '温度场 · 通量 · 边界条件', anchor: 'periodic Fourier heat solver', ai: 'closure calibration / UQ', status: '原型' },
   { id: 'L4', scale: '反应器 / 设备', state: '动力学 · 传递 · RTD · 结垢', anchor: 'Cantera / CFD / PBM', ai: 'hybrid ROM / state model', status: '规划' },
   { id: 'L5', scale: '流程 / 工厂', state: '物流 · 库存 · KPI · 约束', anchor: 'IDAES / Pyomo / DAE', ai: 'advisory policy / MPC', status: '规划' },
 ] as const;
 
-const SCORECARD = [
-  ['状态 / 动作 / 观测契约', 8, 1, 'schema + replay'],
-  ['数据与来源追踪', 8, 0, '尚无训练数据'],
-  ['原子层物理', 12, 1, 'LJ toy solver'],
-  ['介观层', 8, 0, '未接入'],
-  ['连续场', 10, 0, '未接入'],
-  ['反应器与流程', 10, 0, '未接入'],
-  ['跨尺度耦合', 14, 0, '仅接口设计'],
-  ['多轮世界行为', 8, 1, '确定性回放'],
-  ['UQ / OOD', 8, 0, '尚无拒答校准'],
-  ['可复现性与成本', 6, 1, '固定种子 + CI'],
-  ['可视化真实性', 4, 1, '状态绑定标签'],
-  ['安全 / 许可 / 治理', 4, 1, 'advisory-only'],
-] as const;
+const EVIDENCE_LABELS: Record<string, string> = {
+  claim: '厂商 / 作者声明',
+  auditable: '公开产物可审计',
+  reference: '社区参考',
+  reproduced: '本项目已复现',
+};
 
-const COMPARATORS = [
-  { name: 'AIDO Cell 1.0', role: '跨领域架构参照', evidence: '厂商报告', gap: '缺少共享多尺度状态与多模态 decoder' },
-  { name: 'UMA / MatterSim / MACE', role: '原子基础模型', evidence: '论文 / 模型卡', gap: '尚未跑公共 held-out 原子基准' },
-  { name: 'PhysicsNeMo / MOOSE', role: '连续体与介观', evidence: '官方文档', gap: '尚未接入 PDE / phase-field 求解器' },
-  { name: 'IDAES / Aspen Hybrid', role: '流程与混合模型', evidence: '官方文档', gap: '尚无设备或流程状态' },
-] as const;
+const COMPARATOR_GAPS: Record<string, string> = {
+  'aido-cell-1.0': '借鉴持久状态与动作原语；24/31 仍是闭源 alpha 自报。',
+  'equiformerv3-dens-oam': '尚未在锁定 runner 重跑推理。',
+  'tece-oam-rra-1.0': '热输运前沿产物可审计，尚无本地复现。',
+  'mattersim-1.0.0-5m': '待固定 checkpoint、数据切分与成本。',
+  'mace-mpa-0': '待作为第二个开放控制组复现。',
+  'pfhub-benchmark-3': 'Fourier 门已过，尚未完成相场—热耦合。',
+  'cantera-3.2-cstr': 'A/B 标签不是反应器；下一轮先锁定 CSTR。',
+  'idaes-2.12': '尚无设备、flowsheet 或优化建议。',
+};
+
+const NEXT_ACTIONS: Record<string, string> = {
+  process: '锁定并复现 Cantera 3.2 CSTR 全轨迹',
+  atomistic: '在同一 held-out 集重跑两个开放原子基础势',
+  mesoscale: '实现 NIST PFHub BM3 相场—热耦合基准',
+};
+
+const weightedScore = scorecard.dimensions.reduce((total, dimension) => total + dimension.weight * dimension.score / 4, 0);
 
 export default function Home() {
   const [activeView, setActiveView] = useState<View>('lab');
@@ -54,7 +61,7 @@ export default function Home() {
   return (
     <main className="app-shell">
       <Header activeView={activeView} onViewChange={setActiveView} />
-      {activeView === 'lab' && <SimulationLab />}
+      <SimulationLab active={activeView === 'lab'} />
       {activeView === 'architecture' && <ArchitectureView />}
       {activeView === 'sentinel' && <SentinelView />}
     </main>
@@ -77,99 +84,145 @@ function Header({ activeView, onViewChange }: { activeView: View; onViewChange: 
       <nav className="view-nav" aria-label="产品视图">
         {items.map((item) => <button type="button" key={item.id} className={activeView === item.id ? 'active' : ''} onClick={() => onViewChange(item.id)}>{item.label}</button>)}
       </nav>
-      <div className="topbar-actions"><span className="pulse-dot" /><span className="evidence-state">R0 · E1 解析演示</span></div>
+      <div className="topbar-actions"><span className="pulse-dot" /><span className="evidence-state">R1 · E2 热化学耦合</span></div>
     </header>
   );
 }
 
-function SimulationLab() {
+function SimulationLab({ active }: { active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number | null>(null);
-  const lastUiUpdateRef = useRef(0);
-  const [initialSimulation] = useState(() => new LennardJonesSimulation());
-  const simulationRef = useRef(initialSimulation);
-  const [snapshot, setSnapshot] = useState<SimulationSnapshot>(() => initialSimulation.observe());
+  const lastPresentedAtRef = useRef(0);
+  const lastWallTimeRef = useRef<number | null>(null);
+  const stepAccumulatorRef = useRef(0);
+  const [initialWorld] = useState(() => new ThermochemicalWorld());
+  const worldRef = useRef(initialWorld);
+  const [snapshot, setSnapshot] = useState<ThermochemicalSnapshot>(() => initialWorld.observe());
+  const committedSnapshotRef = useRef(snapshot);
   const [running, setRunning] = useState(true);
   const [temperature, setTemperature] = useState(92);
   const [branchCount, setBranchCount] = useState(0);
-  const [eventNote, setEventNote] = useState('初始状态已创建');
+  const [eventNote, setEventNote] = useState('共享热化学状态已创建');
   const [error, setError] = useState<string | null>(null);
   const prefersReducedMotion = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, getServerReducedMotion);
-  const isAdvancing = running && !prefersReducedMotion;
+  const isAdvancing = running && !prefersReducedMotion && active;
 
-  const resetSimulation = useCallback(() => {
-    const next = new LennardJonesSimulation({ temperatureKelvin: temperature });
-    simulationRef.current = next;
-    setSnapshot(next.observe());
-    setBranchCount(0);
-    setError(null);
-    setEventNote('已回到确定性初始状态');
-  }, [temperature]);
-
-  const cloneBranch = useCallback(() => {
-    const branch = simulationRef.current!.clone();
-    simulationRef.current = branch;
-    setSnapshot(branch.observe());
-    setBranchCount((count) => count + 1);
-    setEventNote(`已从 step ${branch.stepCount} 克隆实验分支`);
+  const present = useCallback((next: ThermochemicalSnapshot) => {
+    setSnapshot(next);
   }, []);
 
+  const resetWorld = useCallback(() => {
+    const next = new ThermochemicalWorld({ temperatureKelvin: temperature });
+    worldRef.current = next;
+    stepAccumulatorRef.current = 0;
+    lastWallTimeRef.current = null;
+    lastPresentedAtRef.current = 0;
+    present(next.observe());
+    setBranchCount(0);
+    setError(null);
+    setEventNote('已回到带完整账本的确定性初始状态');
+  }, [present, temperature]);
+
+  const cloneBranch = useCallback(() => {
+    const branch = worldRef.current.clone(branchCount + 1);
+    worldRef.current = branch;
+    const next = branch.observe();
+    present(next);
+    setBranchCount((count) => count + 1);
+    setEventNote(`分支动作：从 step ${branch.stepCount} 克隆 · ${next.lastAction?.actionId ?? 'branch'}`);
+  }, [branchCount, present]);
+
   const changeTemperature = (kelvin: number) => {
-    setTemperature(kelvin);
-    simulationRef.current!.setTargetTemperatureKelvin(kelvin);
-    setEventNote(`动作：热浴目标设为 ${kelvin} K`);
+    try {
+      const next = worldRef.current.setFieldTemperatureKelvin(kelvin);
+      setTemperature(kelvin);
+      present(next);
+      setError(null);
+      setEventNote(`外部热动作：连续场设为 ${kelvin} K · 已记入 Qext`);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '热动作被适用域拒绝');
+    }
+  };
+
+  const injectPulse = () => {
+    try {
+      const next = worldRef.current.injectCentralHeatPulse(45);
+      present(next);
+      setError(null);
+      setEventNote('动作：中心热脉冲 +45 K equivalent · 已记入 Qext');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '热脉冲被适用域拒绝');
+    }
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext('2d');
-    if (!context) return;
+    if (!active) return;
+    const render = (wallTime: number) => {
+      const world = worldRef.current;
+      if (lastWallTimeRef.current === null) lastWallTimeRef.current = wallTime;
+      const elapsedSeconds = Math.min((wallTime - lastWallTimeRef.current) / 1000, 0.1);
+      lastWallTimeRef.current = wallTime;
+      let current = world.observe();
 
-    const resize = () => {
-      const bounds = canvas.getBoundingClientRect();
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(bounds.width * ratio);
-      canvas.height = Math.floor(bounds.height * ratio);
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    };
-
-    const render = (time: number) => {
-      const simulation = simulationRef.current!;
-      let current = simulation.observe();
       if (isAdvancing && !error) {
-        try {
-          current = simulation.advance(3);
-        } catch (cause) {
-          setRunning(false);
-          setError(cause instanceof Error ? cause.message : '数值状态异常');
+        stepAccumulatorRef.current += elapsedSeconds * 180;
+        const steps = Math.min(Math.floor(stepAccumulatorRef.current), 18);
+        if (steps > 0) {
+          stepAccumulatorRef.current -= steps;
+          try {
+            current = world.advance(steps);
+          } catch (cause) {
+            setRunning(false);
+            setError(cause instanceof Error ? cause.message : '数值状态异常');
+          }
         }
       }
-      drawSimulation(context, current, canvas.clientWidth, canvas.clientHeight);
-      if (time - lastUiUpdateRef.current > 180) {
-        lastUiUpdateRef.current = time;
+
+      if (wallTime - lastPresentedAtRef.current > 100) {
+        lastPresentedAtRef.current = wallTime;
         setSnapshot(current);
       }
       frameRef.current = requestAnimationFrame(render);
     };
 
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
+    lastWallTimeRef.current = null;
     frameRef.current = requestAnimationFrame(render);
     return () => {
-      observer.disconnect();
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     };
-  }, [isAdvancing, error]);
+  }, [active, error, isAdvancing]);
 
-  const { metrics } = snapshot;
-  const timeStepFs = 0.002 * ARGON_UNITS.timePicoseconds * 1000;
+  useLayoutEffect(() => {
+    committedSnapshotRef.current = snapshot;
+    if (!active) return;
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+    sizeSimulationCanvas(canvas, context);
+    drawSimulation(context, snapshot, canvas.clientWidth, canvas.clientHeight);
+  }, [active, snapshot]);
+
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+    const redrawCommittedState = () => {
+      sizeSimulationCanvas(canvas, context);
+      drawSimulation(context, committedSnapshotRef.current, canvas.clientWidth, canvas.clientHeight);
+    };
+    const observer = new ResizeObserver(redrawCommittedState);
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [active]);
+
+  const { metrics, conservation } = snapshot;
+  const timeStepFs = initialWorld.options.timeStep * ARGON_UNITS.timePicoseconds * 1000;
 
   return (
-    <div className="workspace">
+    <div className="workspace" hidden={!active}>
       <aside className="scale-rail" aria-label="多尺度模型层级">
-        <div className="rail-heading"><span>尺度栈</span><small>01 / 05</small></div>
+        <div className="rail-heading"><span>尺度栈</span><small>02 / 05 active</small></div>
         <ol>{SCALE_STEPS.map((step, index) => (
           <li key={step.label} className={step.status === 'active' ? 'active' : ''}>
             <span className="step-index">0{index + 1}</span>
@@ -177,50 +230,59 @@ function SimulationLab() {
             <span className="step-state" aria-hidden="true" />
           </li>
         ))}</ol>
-        <div className="model-note"><span>MODEL BASIS</span><p>Force-shifted Lennard–Jones</p><small>2D · reduced units · velocity Verlet</small></div>
+        <div className="model-note"><span>MODEL BASIS</span><p>LJ + Fourier heat + A→B</p><small>2D · symmetric split · explicit ledger</small></div>
       </aside>
 
       <section className="simulation-stage">
         <div className="stage-heading">
-          <div><p className="eyebrow">MICROSCOPIC STATE / 微观状态</p><h1>从粒子运动，连接到工艺决策。</h1></div>
-          <div className={`stage-status ${isAdvancing ? '' : 'paused'}`}><span />{error ? '数值保护已触发' : isAdvancing ? '真实数值步进中' : prefersReducedMotion ? '减弱动态模式' : '已暂停'}</div>
+          <div><p className="eyebrow">THERMOCHEMICAL WORLD / 热化学世界</p><h1>看见能量如何在粒子、热场与反应间流动。</h1></div>
+          <div className={`stage-status ${isAdvancing ? '' : 'paused'}`}><span />{error ? '适用域保护已触发' : isAdvancing ? '固定步时钟运行中' : prefersReducedMotion ? '减弱动态模式' : '已暂停'}</div>
         </div>
         <div className="viewport-card">
-          <canvas ref={canvasRef} className="particle-canvas" aria-label="二维 Lennard-Jones 粒子动力学可视化" />
+          <canvas ref={canvasRef} className="particle-canvas" aria-label="同一状态中的二维粒子、连续热场与反应标签可视化" />
           <div className="viewport-grid" aria-hidden="true" />
-          <div className="viewport-label top-left"><span>ARGON-LIKE PROXY</span><b>2D triangular / {snapshot.particles.length} particles</b></div>
-          <div className="viewport-label top-right"><span>VELOCITY VERLET</span><b>{timeStepFs.toFixed(2)} fs / step</b></div>
-          <div className="state-stamp"><span>STATE</span>{snapshot.stateId}</div>
+          <div className="viewport-label top-left"><span>A / B INTERNAL LABELS</span><b>{snapshot.particles.length} particles · {snapshot.field.width}×{snapshot.field.height} thermal cells</b></div>
+          <div className="viewport-label top-right"><span>SYMMETRIC OPERATOR SPLIT</span><b>{timeStepFs.toFixed(2)} fs / MD step</b></div>
+          <div className="state-stamp"><span>STATE</span>{snapshot.stateId}<small>{snapshot.stateDigest}</small></div>
+          <div className="heat-legend" aria-hidden="true"><span>低温</span><i /><span>高温</span><b><em />A</b><b><em />B</b></div>
           <div className="axis-glyph" aria-hidden="true"><i className="axis-x" /><i className="axis-y" /><em>x</em><strong>y</strong></div>
-          <div className="honesty-badge"><span>数值演示</span>二维 · 经典 · 无量纲；不用于工程决策</div>
+          <div className="honesty-badge"><span>保守 toy world</span>载热介质独立；A/B 非真实化学物种；不用于工程决策</div>
         </div>
         <div className="transport-bar">
           <div className="transport-buttons">
             <button type="button" onClick={() => setRunning((value) => !value)} aria-label={isAdvancing ? '暂停仿真' : '继续仿真'}>{isAdvancing ? 'Ⅱ' : '▶'}</button>
-            <button type="button" onClick={resetSimulation} aria-label="重置仿真">↺</button>
+            <button type="button" onClick={resetWorld} aria-label="重置仿真">↺</button>
             <button type="button" className="branch-button" onClick={cloneBranch}>分支 +</button>
+            <button type="button" className="pulse-button" onClick={injectPulse}>热脉冲</button>
           </div>
-          <div className="timeline"><div className="timeline-copy"><span>{eventNote}</span><b>{snapshot.step.toLocaleString()} steps · {snapshot.timePicoseconds.toFixed(2)} ps</b></div><div className="timeline-track"><i style={{ width: `${18 + (snapshot.step % 12000) / 148}%` }} /></div></div>
-          <label className="temperature-control"><span>热浴目标</span><input type="range" min="45" max="180" value={temperature} onChange={(event) => changeTemperature(Number(event.target.value))} aria-label="热浴目标温度" /><b>{temperature} K</b></label>
+          <div className="timeline"><div className="timeline-copy"><span>{error ?? eventNote}</span><b>{snapshot.step.toLocaleString()} steps · {snapshot.timePicoseconds.toFixed(2)} ps</b></div><div className="timeline-track"><i style={{ width: `${18 + (snapshot.step % 12000) / 148}%` }} /></div></div>
+          <label className="temperature-control"><span>连续热场</span><input type="range" min="55" max="170" value={temperature} onChange={(event) => changeTemperature(Number(event.target.value))} aria-label="连续热场温度" /><b>{temperature} K</b></label>
         </div>
       </section>
 
       <aside className="telemetry-panel">
-        <div className="telemetry-heading"><span>STATE VECTOR</span><small>{branchCount} branch</small></div>
-        <div className="metric-primary"><span>势能 / 粒子</span><strong>{metrics.potentialEnergyPerParticle.toFixed(3)} <small>ε</small></strong><div className="sparkline" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /></div></div>
+        <div className="telemetry-heading"><span>SHARED STATE</span><small>{branchCount} branch</small></div>
+        <div className="metric-primary"><span>总能量闭合 / Eref</span><strong>{Math.abs(conservation.relativeEnergyResidual).toExponential(2)}</strong><div className="sparkline" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /></div></div>
         <dl className="metric-grid">
-          <div><dt>实际温度</dt><dd>{metrics.temperatureKelvin.toFixed(1)} K</dd></div>
-          <div><dt>压力估计</dt><dd>{metrics.pressureReduced.toFixed(2)} P*</dd></div>
-          <div><dt>配位数</dt><dd>{metrics.coordinationNumber.toFixed(2)}</dd></div>
-          <div><dt>均方位移</dt><dd>{metrics.meanSquaredDisplacement.toFixed(3)} σ²</dd></div>
+          <div><dt>粒子温度</dt><dd>{metrics.particleTemperatureKelvin.toFixed(1)} K</dd></div>
+          <div><dt>热场均温</dt><dd>{metrics.fieldTemperatureKelvin.toFixed(1)} K</dd></div>
+          <div><dt>B 转化率</dt><dd>{(metrics.conversionFraction * 100).toFixed(1)}%</dd></div>
+          <div><dt>耦合覆盖</dt><dd>{(metrics.couplingCoverage * 100).toFixed(0)}%</dd></div>
         </dl>
-        <div className="coupling-card">
-          <div className="card-title"><span>尺度桥接</span><small>1 / 4 prototype</small></div>
-          <div className="bridge-row active"><i />原子 → 扩散 proxy<b>MSD 可观测</b></div>
-          <div className="bridge-row"><i />介观 → 本构关系<b>待校准</b></div>
-          <div className="bridge-row"><i />连续体 → 反应器<b>待连接</b></div>
+        <div className="ledger-card">
+          <div className="card-title"><span>守恒账本</span><small>{snapshot.validityDomain.status === 'in_domain' ? 'IN DOMAIN' : 'ABSTAIN'}</small></div>
+          <div><span>质量 / 物种残差</span><b>{conservation.massResidual} / {conservation.speciesResidual}</b></div>
+          <div><span>动量残差</span><b>{conservation.momentumResidual.toExponential(1)}</b></div>
+          <div><span>交换闭合</span><b>{conservation.exchangeClosureResidual.toExponential(1)}</b></div>
+          <div><span>外部热 Qext</span><b>{conservation.externalEnergyReduced.toFixed(2)} ε</b></div>
         </div>
-        <div className="confidence-card"><div className="confidence-top"><span>证据等级</span><b>E1 · 解析 toy case</b></div><p>力连续性、有限差分、动量、周期边界、确定性回放与 NVE 能量漂移已进入自动测试。尚无真实材料或工厂验证。</p></div>
+        <div className="coupling-card">
+          <div className="card-title"><span>尺度桥接</span><small>2 verified primitives</small></div>
+          <div className="bridge-row active"><i />原子 ↔ 连续热场<b>局部 COM 能量交换</b></div>
+          <div className="bridge-row active"><i />A→B → 热场<b>冻结 hazard + 放热账本</b></div>
+          <div className="bridge-row"><i />介观 → 反应器<b>待 PFHub / Cantera</b></div>
+        </div>
+        <div className="confidence-card"><div className="confidence-top"><span>证据等级</span><b>E2 · 可执行原型</b></div><p>24 项自动测试覆盖解析热扩散、守恒闭合、状态完整性、事务回滚、分支回放与 OOD 拒绝。参数尚未对真实材料校准。</p></div>
       </aside>
     </div>
   );
@@ -229,7 +291,7 @@ function SimulationLab() {
 function ArchitectureView() {
   return (
     <section className="content-view architecture-view">
-      <div className="view-intro"><div><p className="eyebrow">TAILING CORE / SYSTEM MAP</p><h1>不是一个万能模型，而是一套可验证的尺度协议。</h1></div><p>显式物理状态由可信求解器锚定，AI 负责表征、闭合、代理与候选设计；任何尺度桥都必须携带单位、守恒残差、不确定性与来源。</p></div>
+      <div className="view-intro"><div><p className="eyebrow">TAILING CORE / SYSTEM MAP</p><h1>先验证尺度协议，再让 AI 学习未知闭合。</h1></div><p>R1 已让原子状态、连续热场与反应标签共享同一个不可变状态和能量账本。基础模型只会替换明确标注的 surrogate / closure，不绕过守恒门禁。</p></div>
       <div className="layer-stack">
         {ARCHITECTURE_LAYERS.map((layer, index) => (
           <article className={layer.status === '原型' ? 'layer-card active' : 'layer-card'} key={layer.id}>
@@ -242,59 +304,70 @@ function ArchitectureView() {
         ))}
       </div>
       <div className="core-contract">
-        <div><span>SHARED WORLD STATE</span><b>composition · structure · fields · equipment · uncertainty · provenance</b></div>
-        <div><span>ACTION</span><b>perturb · step · branch · replay · abstain</b></div>
-        <div><span>HARD GATES</span><b>mass · elements · momentum · energy · domain · safety</b></div>
+        <div><span>SHARED WORLD STATE</span><b>particles · thermal field · species · ledger · UQ · provenance</b></div>
+        <div><span>TYPED ACTION</span><b>step · heat · pulse · branch · replay · abstain</b></div>
+        <div><span>HARD GATES</span><b>schema · identity · mass · momentum · energy · domain</b></div>
       </div>
-      <div className="roadmap-row"><span><b>R0</b> 可信核心</span><i /><span><b>R1</b> 独立模块</span><i /><span><b>R2</b> 尺度连接</span><i /><span><b>R3</b> 设备耦合</span><i /><span><b>R4+</b> 流程 / Foundry</span></div>
+      <div className="roadmap-row"><span><b>R0</b> LJ 核心</span><i /><span className="current"><b>R1</b> 热化学桥</span><i /><span><b>R2</b> PFHub / Cantera</span><i /><span><b>R3</b> 真实材料</span><i /><span><b>R4+</b> 流程 / Foundry</span></div>
     </section>
   );
 }
 
 function SentinelView() {
-  const weightedScore = SCORECARD.reduce((total, [, weight, score]) => total + Number(weight) * Number(score) / 4, 0);
   return (
     <section className="content-view sentinel-view">
-      <div className="view-intro"><div><p className="eyebrow">TAILING SENTINEL / ITERATION 00</p><h1>每次构建都要留下证据，也要暴露差距。</h1></div><div className="score-orbit"><strong>{weightedScore.toFixed(1)}</strong><span>/ 100<br />证据成熟度</span></div></div>
+      <div className="view-intro"><div><p className="eyebrow">TAILING SENTINEL / ITERATION 01</p><h1>候选版本必须同时通过物理、契约与证据门。</h1></div><div className="score-orbit"><strong>{weightedScore.toFixed(1)}</strong><span>/ 100<br />证据成熟度</span><em>{latestReport.verdict.toUpperCase()}</em></div></div>
       <div className="sentinel-grid">
         <article className="scorecard-panel panel-block">
-          <div className="panel-heading"><span>锁定评分卡</span><small>0–4 evidence scale</small></div>
-          <div className="score-table">{SCORECARD.map(([label, weight, score, note]) => (
-            <div className="score-row" key={label}>
-              <span className="score-label">{label}<small>{note}</small></span>
-              <span className="score-weight">{weight}%</span>
-              <span className="score-track"><i style={{ width: `${Number(score) * 25}%` }} /></span>
-              <b>E{score}</b>
+          <div className="panel-heading"><span>锁定评分卡</span><small>{scorecard.candidateVersion}</small></div>
+          <div className="score-table">{scorecard.dimensions.map((dimension) => (
+            <div className="score-row" key={dimension.id}>
+              <span className="score-label">{dimension.displayLabel}<small>{dimension.summary}</small></span>
+              <span className="score-weight">{dimension.weight}%</span>
+              <span className="score-track"><i style={{ width: `${dimension.score * 25}%` }} /></span>
+              <b>E{dimension.score}</b>
             </div>
           ))}</div>
-          <p className="score-disclaimer">总分只表示工程与证据成熟度，不代表达到 SOTA。任何守恒、安全或许可硬门槛失败都会直接阻断版本晋级。</p>
+          <p className="score-disclaimer">29.5 只表示证据成熟度，不代表模型精度或达到 SOTA。CLAIM / AUDITABLE 不会被计作本项目复现结果。</p>
         </article>
         <article className="loop-panel panel-block">
           <div className="panel-heading"><span>监督闭环</span><small>champion / challenger</small></div>
           <ol className="loop-steps">
-            <li className="complete"><i>01</i><span><b>SOTA Scout</b><small>刷新官方模型卡与论文</small></span></li>
-            <li className="complete"><i>02</i><span><b>Builder</b><small>生成候选与 run manifest</small></span></li>
-            <li className="active"><i>03</i><span><b>Independent Evaluator</b><small>只读运行物理与回归门禁</small></span></li>
-            <li><i>04</i><span><b>Gap Planner</b><small>最多输出 3 个验收任务</small></span></li>
-            <li><i>05</i><span><b>Supervisor Gate</b><small>accept / reject / conditional</small></span></li>
+            <li className="complete"><i>01</i><span><b>SOTA Scout</b><small>锁定一手来源、版本与证据等级</small></span></li>
+            <li className="complete"><i>02</i><span><b>Builder</b><small>生成候选、schema 与 artifact digest</small></span></li>
+            <li className="complete"><i>03</i><span><b>Independent Evaluator</b><small>只读运行解析、守恒和回归门禁</small></span></li>
+            <li className="active"><i>04</i><span><b>Gap Planner</b><small>只交付三项可验收任务</small></span></li>
+            <li><i>05</i><span><b>Supervisor Gate</b><small>accept / conditional / reject</small></span></li>
           </ol>
-          <div className="loop-rule">Builder 不能批准自己；LLM 解释证据，但不能替代数值测试。</div>
+          <div className="loop-rule">CI 任一上游门禁失败都会生成新的 REJECT；本地未报告状态保持 CONDITIONAL，且不会复用旧 PASS。</div>
         </article>
       </div>
       <article className="comparators-panel panel-block">
-        <div className="panel-heading"><span>外部比较器注册表</span><small>snapshot · 2026-08-28</small></div>
+        <div className="panel-heading"><span>外部比较器注册表</span><small>snapshot · {comparatorRegistry.snapshotDate}</small></div>
         <div className="comparator-head"><span>比较器</span><span>角色</span><span>证据</span><span>当前最大差距</span></div>
-        {COMPARATORS.map((item) => <div className="comparator-row" key={item.name}><b>{item.name}</b><span>{item.role}</span><em>{item.evidence}</em><p>{item.gap}</p></div>)}
+        {comparatorRegistry.comparators.map((item) => <div className="comparator-row" key={item.id}><b>{item.name}</b><span>{item.scope}</span><em>{EVIDENCE_LABELS[item.evidenceClass]}</em><p>{COMPARATOR_GAPS[item.id] ?? item.reason}</p></div>)}
       </article>
-      <div className="next-gaps"><span>NEXT ITERATION</span><b>P0 · 固化 world-state 与 scorecard schema</b><b>P0 · 接入两个开放原子模型公共基准</b><b>P1 · 建立多孔催化最窄端到端耦合</b></div>
+      <div className="next-gaps"><span>NEXT ITERATION · SENTINEL OUTPUT</span>{latestReport.gaps.map((gap) => <b key={gap.dimension}>{gap.severity} · {NEXT_ACTIONS[gap.dimension] ?? gap.recommendedChange}</b>)}</div>
     </section>
   );
 }
 
-function drawSimulation(context: CanvasRenderingContext2D, snapshot: SimulationSnapshot, width: number, height: number) {
+function sizeSimulationCanvas(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+  const bounds = canvas.getBoundingClientRect();
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const width = Math.max(1, Math.floor(bounds.width * ratio));
+  const height = Math.max(1, Math.floor(bounds.height * ratio));
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function drawSimulation(context: CanvasRenderingContext2D, snapshot: ThermochemicalSnapshot, width: number, height: number) {
   context.clearRect(0, 0, width, height);
   const gradient = context.createRadialGradient(width * 0.5, height * 0.48, 0, width * 0.5, height * 0.48, width * 0.65);
-  gradient.addColorStop(0, 'rgba(57, 104, 93, 0.18)');
+  gradient.addColorStop(0, 'rgba(57, 104, 93, 0.12)');
   gradient.addColorStop(0.6, 'rgba(14, 21, 22, 0.03)');
   gradient.addColorStop(1, 'rgba(8, 12, 13, 0)');
   context.fillStyle = gradient;
@@ -304,32 +377,71 @@ function drawSimulation(context: CanvasRenderingContext2D, snapshot: SimulationS
   const scale = Math.min((width - padding * 2) / snapshot.box.width, (height - padding * 2) / snapshot.box.height);
   const offsetX = (width - snapshot.box.width * scale) / 2;
   const offsetY = (height - snapshot.box.height * scale) / 2;
-  const points = snapshot.particles.map((particle) => ({ x: offsetX + particle.x * scale, y: offsetY + particle.y * scale, speed: Math.hypot(particle.vx, particle.vy) }));
+  const fieldWidth = snapshot.box.width * scale / snapshot.field.width;
+  const fieldHeight = snapshot.box.height * scale / snapshot.field.height;
+  const range = Math.max(snapshot.field.maxKelvin - snapshot.field.minKelvin, 8);
+
+  context.save();
+  context.beginPath();
+  context.rect(offsetX, offsetY, snapshot.box.width * scale, snapshot.box.height * scale);
+  context.clip();
+  snapshot.field.valuesKelvin.forEach((temperature, index) => {
+    const cellX = index % snapshot.field.width;
+    const cellY = Math.floor(index / snapshot.field.width);
+    const normalized = Math.min(1, Math.max(0, (temperature - snapshot.field.minKelvin) / range));
+    context.fillStyle = heatColor(normalized);
+    context.fillRect(offsetX + cellX * fieldWidth, offsetY + cellY * fieldHeight, fieldWidth + 0.7, fieldHeight + 0.7);
+  });
+
+  const points = snapshot.particles.map((particle) => ({
+    x: offsetX + particle.x * scale,
+    y: offsetY + particle.y * scale,
+    speed: Math.hypot(particle.vx, particle.vy),
+    species: particle.species,
+  }));
 
   context.lineWidth = 0.7;
   for (let i = 0; i < points.length; i += 1) {
     for (let j = i + 1; j < points.length; j += 1) {
-      const dx = snapshot.particles[j].x - snapshot.particles[i].x;
-      const dy = snapshot.particles[j].y - snapshot.particles[i].y;
+      const dx = minimumImage(snapshot.particles[j].x - snapshot.particles[i].x, snapshot.box.width);
+      const dy = minimumImage(snapshot.particles[j].y - snapshot.particles[i].y, snapshot.box.height);
       const distance = Math.hypot(dx, dy);
-      if (distance < 1.42) {
-        context.strokeStyle = `rgba(117, 180, 166, ${Math.max(0.025, 0.13 - distance * 0.055)})`;
-        context.beginPath(); context.moveTo(points[i].x, points[i].y); context.lineTo(points[j].x, points[j].y); context.stroke();
-      }
+      if (distance >= 1.42) continue;
+      context.strokeStyle = `rgba(159, 205, 193, ${Math.max(0.03, 0.15 - distance * 0.06)})`;
+      context.beginPath();
+      context.moveTo(points[i].x, points[i].y);
+      context.lineTo(points[i].x + dx * scale, points[i].y + dy * scale);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(points[j].x, points[j].y);
+      context.lineTo(points[j].x - dx * scale, points[j].y - dy * scale);
+      context.stroke();
     }
   }
 
-  points.forEach((point, index) => {
-    const tracer = index % 17 === 0;
-    const radius = 2.6 + Math.min(point.speed, 2) * 0.55;
+  points.forEach((point) => {
+    const isProduct = point.species === 'B';
+    const radius = 2.6 + Math.min(point.speed, 2) * 0.5;
     const halo = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius * 3.8);
-    halo.addColorStop(0, tracer ? 'rgba(225, 176, 96, .98)' : 'rgba(139, 218, 198, .96)');
-    halo.addColorStop(0.3, tracer ? 'rgba(225, 176, 96, .34)' : 'rgba(139, 218, 198, .28)');
+    halo.addColorStop(0, isProduct ? 'rgba(229, 164, 91, .98)' : 'rgba(139, 218, 198, .96)');
+    halo.addColorStop(0.3, isProduct ? 'rgba(229, 164, 91, .34)' : 'rgba(139, 218, 198, .28)');
     halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    context.fillStyle = halo; context.beginPath(); context.arc(point.x, point.y, radius * 3.8, 0, Math.PI * 2); context.fill();
-    context.fillStyle = tracer ? '#e3b267' : '#99d7c7'; context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2); context.fill();
+    context.fillStyle = halo;
+    context.beginPath(); context.arc(point.x, point.y, radius * 3.8, 0, Math.PI * 2); context.fill();
+    context.fillStyle = isProduct ? '#e4a45e' : '#99d7c7';
+    context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2); context.fill();
   });
+  context.restore();
 }
+
+function heatColor(value: number) {
+  const cold = [25, 83, 96];
+  const hot = [208, 118, 61];
+  const channel = (index: number) => Math.round(cold[index] + (hot[index] - cold[index]) * value);
+  return `rgba(${channel(0)}, ${channel(1)}, ${channel(2)}, ${0.18 + value * 0.38})`;
+}
+
+function minimumImage(delta: number, extent: number) { return delta - extent * Math.round(delta / extent); }
 
 function subscribeReducedMotion(callback: () => void) {
   const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -338,5 +450,4 @@ function subscribeReducedMotion(callback: () => void) {
 }
 
 function getReducedMotion() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
-
 function getServerReducedMotion() { return false; }

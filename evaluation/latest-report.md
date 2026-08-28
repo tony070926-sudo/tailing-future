@@ -1,26 +1,31 @@
-# Tailing Sentinel — 0.1.0-r0
+# Tailing Sentinel — 0.2.0-r1-thermochemical
 
 - Verdict: **CONDITIONAL**
-- Evidence maturity: **10.50 / 100** (not a SOTA score)
+- Evidence maturity: **29.50 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-28**
-- Artifact: `sha256:9932fe12fbe5cc690c45b7355731f62ba598ea4407b6a91dee818c3c939f66a5`
+- Artifact: `sha256:12109986b25614b41c5338e51516b16f099e5fab9ec9e822721cf151dbffa81f` across 52 source files
 
 ## Hard gates
 
-- PASS — no preregistered hard-gate failure in the lightweight R0 suite.
+- PASS — executable R1 physics, schema, evidence and promotion-floor gates passed.
+
+## Executable verification
+
+- Fourier L2: 1.701e-4; coupled energy residual: 5.506e-5; momentum residual: 4.291e-14.
+- World/action schemas and negative mutation corpus: PASS; evaluator runtime: 1696.1 ms.
 
 ## Next iteration gaps
 
-1. **P0 · coupling** — Implement typed atomistic-to-transport bridge.
+1. **P1 · atomistic** — Reproduce two pinned open foundation potentials on one locked held-out benchmark.
+   - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests.
+   - Acceptance: Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests.
+2. **P1 · mesoscale** — Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.
    - Evidence: No executable evidence in the current candidate.
-   - Acceptance: Unit check passes and interface conservation residual is below 1%.
-2. **P0 · atomistic** — Run two open foundation potentials on a locked held-out subset.
-   - Evidence: force finite-difference test; NVE drift test; momentum conservation test
-   - Acceptance: Energy, force, stress, stability, OOD and cost metrics reproduced for two models.
-3. **P0 · contract** — Validate immutable state and typed actions end-to-end.
-   - Evidence: schemas/world-state.schema.json; deterministic replay test
-   - Acceptance: Schema, clone, replay and branch isolation all pass in CI.
+   - Acceptance: Free energy, solid fraction, tip position and zero contour meet preregistered PFHub tolerances.
+3. **P1 · process** — Reproduce a pinned Cantera 3.2 CSTR before adding any process recommendation.
+   - Evidence: No executable evidence in the current candidate.
+   - Acceptance: Species, temperature and energy trajectories match the locked Cantera reference and close balances below 0.1%.
 
 ## Interpretation boundary
 
-This score measures evidence and engineering maturity only. Vendor-reported capabilities are not treated as reproduced numerical baselines, and the R0 browser solver is not a real-material or industrial-process predictor.
+This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R1 is a reduced-unit thermochemical verification world, not a real-material, reactor or industrial-process predictor.

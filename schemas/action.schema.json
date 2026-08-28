@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/action/0.2",
+  "title": "Tailing Future World Action",
+  "type": "object",
+  "required": ["schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId", "appliedAtStep", "parameters"],
+  "properties": {
+    "schemaVersion": { "const": "tf.action/0.2" },
+    "actionId": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["step", "set_field_temperature", "inject_heat_pulse", "branch"] },
+    "parentStateId": { "type": "string", "minLength": 1 },
+    "resultingStateId": { "type": "string", "minLength": 1 },
+    "appliedAtStep": { "type": "integer", "minimum": 0 },
+    "parameters": { "type": "object" }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "kind": { "const": "step" },
+        "parameters": {
+          "type": "object",
+          "required": ["substeps"],
+          "properties": { "substeps": { "type": "integer", "minimum": 1, "maximum": 10000 } },
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "properties": {
+        "kind": { "const": "set_field_temperature" },
+        "parameters": {
+          "type": "object",
+          "required": ["temperatureKelvin", "externalEnergyReduced"],
+          "properties": {
+            "temperatureKelvin": { "type": "number", "minimum": 45, "maximum": 180 },
+            "externalEnergyReduced": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "properties": {
+        "kind": { "const": "inject_heat_pulse" },
+        "parameters": {
+          "type": "object",
+          "required": ["deltaKelvin", "externalEnergyReduced"],
+          "properties": {
+            "deltaKelvin": { "type": "number", "exclusiveMinimum": 0, "maximum": 80 },
+            "externalEnergyReduced": { "type": "number", "exclusiveMinimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "properties": {
+        "kind": { "const": "branch" },
+        "parameters": {
+          "type": "object",
+          "required": ["fromStep", "branchOrdinal"],
+          "properties": {
+            "fromStep": { "type": "integer", "minimum": 0 },
+            "branchOrdinal": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,67 +1,68 @@
 {
-  "schemaVersion": "tf.comparators/0.1",
+  "schemaVersion": "tf.comparators/0.2",
   "snapshotDate": "2026-08-28",
-  "policy": "Only reproduced like-for-like results enter numeric rankings; vendor claims remain reported-only.",
+  "policy": "CLAIM never enters numeric ranking; AUDITABLE means public artifacts can be checked; only Tailing Future REPRODUCED like-for-like runs may enter candidate rankings.",
   "comparators": [
     {
-      "id": "aido-cell-1.0",
-      "name": "AIDO Cell 1.0",
-      "scope": "stateful multi-scale world-model architecture",
-      "source": "https://genbio.ai/aido-cell-simulator/",
-      "revision": "public release page, accessed 2026-08-28",
-      "evidence": "vendor_reported",
-      "comparable": false,
-      "reason": "Cross-domain architecture reference; closed alpha and not a materials accuracy baseline."
+      "id": "aido-cell-1.0", "name": "AIDO Cell 1.0", "scope": "persistent multi-scale state, actions and multimodal readouts",
+      "source": "https://genbio.ai/research/AIDO%20Cell%20V1%20-%20Technical%20Report%20-%2018%20Aug%202026.pdf",
+      "revision": "technical report, 2026-08-18", "evidenceClass": "claim", "claimOwner": "GenBio AI", "comparable": false,
+      "sourceCommit": null, "sourceDigest": "sha256:4f25869b149a0064cc71381febf2599ca1e95c891be1d7d66c83a8797dbab508",
+      "benchmarkCommit": null, "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Cross-domain architecture reference; closed alpha and not an independently reproduced materials baseline."
     },
     {
-      "id": "uma",
-      "name": "Universal Models for Atoms (UMA)",
-      "scope": "atomistic energies, forces and stresses",
-      "source": "https://fair-chem.github.io/uma/",
-      "revision": "registry snapshot 2026-08-28",
-      "evidence": "official_model_card",
-      "comparable": false,
-      "reason": "No locked common dataset and reproduced run yet."
+      "id": "equiformerv3-dens-oam", "name": "EquiformerV3+DeNS-OAM", "scope": "crystal stability and phonon benchmark artifacts",
+      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/equiformer_v3/equiformer-v3-oam.yml",
+      "revision": "Matbench Discovery commit 0ba474661cf615d10987ba9a2acb8132943aa491", "evidenceClass": "auditable", "claimOwner": "model authors / Matbench Discovery", "comparable": false,
+      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "sourceDigest": "sha256:a4c54eb80f81c547b9b650ca780560894300b5e842f43700d184a8b3a1d11781",
+      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Public prediction artifacts are auditable, but Tailing Future has not rerun inference."
     },
     {
-      "id": "mattersim",
-      "name": "MatterSim",
-      "scope": "atomistic energies, forces, stresses and MD",
-      "source": "https://github.com/microsoft/mattersim/blob/main/MODEL_CARD.md",
-      "revision": "registry snapshot 2026-08-28",
-      "evidence": "official_model_card",
-      "comparable": false,
-      "reason": "No locked common dataset and reproduced run yet."
+      "id": "tece-oam-rra-1.0", "name": "TECE-OAM-RRA-1.0", "scope": "crystal stability and phonon thermal-conductivity artifacts",
+      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/tace/tece-oam-rra-1.0.yml",
+      "revision": "v2026.07.05 / Matbench Discovery commit 0ba474661cf615d10987ba9a2acb8132943aa491", "evidenceClass": "auditable", "claimOwner": "model authors / Matbench Discovery", "comparable": false,
+      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "sourceDigest": "sha256:c6a8ad405876afa9103a63aaae7e0f5adaf7977bae0f982e7a782c85ede009cb",
+      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Lowest reported kappa_SRME (0.0927) in the locked Matbench PhononDB-103 snapshot; Tailing Future has not rerun it."
     },
     {
-      "id": "mace-foundations",
-      "name": "MACE Foundation Models",
-      "scope": "atomistic interatomic potentials",
-      "source": "https://github.com/ACEsuit/mace-foundations",
-      "revision": "registry snapshot 2026-08-28",
-      "evidence": "official_repository",
-      "comparable": false,
-      "reason": "License and checkpoint must be pinned before comparison."
+      "id": "mattersim-1.0.0-5m", "name": "MatterSim-v1.0.0-5M", "scope": "open atomistic energy, force, stress and MD baseline",
+      "source": "https://github.com/microsoft/mattersim/blob/c6801fd33df2a8cd6a103fb177d4f12d8d5a362e/MODEL_CARD.md",
+      "revision": "v1.0.0-5M model card commit c6801fd / Matbench snapshot 0ba4746", "evidenceClass": "auditable", "claimOwner": "Microsoft Research", "comparable": false,
+      "sourceCommit": "c6801fd33df2a8cd6a103fb177d4f12d8d5a362e", "sourceDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
+      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Open lightweight reproduction control; Tailing Future has not executed the checkpoint."
     },
     {
-      "id": "physicsnemo",
-      "name": "NVIDIA PhysicsNeMo",
-      "scope": "physics-ML framework and neural operators",
-      "source": "https://docs.nvidia.com/physicsnemo/latest/index.html",
-      "revision": "registry snapshot 2026-08-28",
-      "evidence": "official_documentation",
-      "comparable": false,
-      "reason": "Framework reference, not a single ready-made material world model."
+      "id": "mace-mpa-0", "name": "MACE-MPA-0", "scope": "open atomistic interatomic-potential control",
+      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/mace/mace-mpa-0.yml",
+      "revision": "Matbench Discovery commit 0ba474661cf615d10987ba9a2acb8132943aa491", "evidenceClass": "auditable", "claimOwner": "MACE authors / Matbench Discovery", "comparable": false,
+      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "sourceDigest": "sha256:eaf91e0403a89f76f252479ae81b76e61c311c8c246f8e9afebe83583fe24b11",
+      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Second open reproduction control; exact checkpoint and runner are not yet pinned locally."
     },
     {
-      "id": "idaes",
-      "name": "IDAES",
-      "scope": "process systems engineering and optimization",
-      "source": "https://idaes.org/overview/",
-      "revision": "registry snapshot 2026-08-28",
-      "evidence": "official_documentation",
-      "comparable": false,
-      "reason": "Process anchor planned; no coupled flowsheet in R0."
+      "id": "pfhub-benchmark-3", "name": "NIST PFHub Benchmark 3", "scope": "coupled phase-field and heat-diffusion reference",
+      "source": "https://github.com/usnistgov/pfhub/blob/316f242042af2c086e030864f2af201e0bee8618/benchmarks/benchmark3.ipynb", "revision": "PFHub commit 316f242042af2c086e030864f2af201e0bee8618", "evidenceClass": "reference", "claimOwner": "NIST PFHub", "comparable": false,
+      "sourceCommit": "316f242042af2c086e030864f2af201e0bee8618", "sourceDigest": "sha256:0443ae7019a4495b1cf2ebaa46cca2bb90c63e508154701f5b575ed91e15ba27",
+      "benchmarkCommit": "316f242042af2c086e030864f2af201e0bee8618", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Community reference for the next mesoscale coupling stage; not implemented in R1."
+    },
+    {
+      "id": "cantera-3.2-cstr", "name": "Cantera 3.2 CSTR", "scope": "reactor kinetics and energy-balance reference",
+      "source": "https://github.com/Cantera/cantera/blob/4a8358eb80cfeb50474386b5f9ec0b3a83519889/samples/python/reactors/continuous_reactor.py", "revision": "Cantera v3.2.0 commit 4a8358eb80cfeb50474386b5f9ec0b3a83519889", "evidenceClass": "reference", "claimOwner": "Cantera project", "comparable": false,
+      "sourceCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "sourceDigest": "sha256:72843e6c153c21ae18ff9d310b6b48fbcf37255ab599ed4c647cea48cb970e49",
+      "benchmarkCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Pinned reactor reference planned for R2; R1 A/B labels are not a reactor model."
+    },
+    {
+      "id": "idaes-2.12", "name": "IDAES 2.12", "scope": "process systems, unit models and constrained optimization",
+      "source": "https://github.com/IDAES/idaes-pse/blob/995ef18fd835473a63047fd2ac69dd9fa4101fe8/idaes/models/unit_models/cstr.py", "revision": "IDAES 2.12.0 commit 995ef18fd835473a63047fd2ac69dd9fa4101fe8", "evidenceClass": "reference", "claimOwner": "IDAES project", "comparable": false,
+      "sourceCommit": "995ef18fd835473a63047fd2ac69dd9fa4101fe8", "sourceDigest": "sha256:1917784f75050eb05be74f86d0b5007e13466a30272957f80a41f2353540c24c",
+      "benchmarkCommit": "995ef18fd835473a63047fd2ac69dd9fa4101fe8", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "Process anchor for later stages; no coupled flowsheet exists in R1."
     }
   ]
 }

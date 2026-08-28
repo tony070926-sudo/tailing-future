@@ -2,7 +2,7 @@
 
 ## R0 — trustworthy core
 
-Status: current candidate.
+Status: completed foundation.
 
 - immutable world state and typed module roles;
 - deterministic LJ solver, observation, branch and replay;
@@ -10,40 +10,52 @@ Status: current candidate.
 - truth-labelled browser visualization;
 - Sentinel scorecard and comparator registry.
 
-## R1 — independently verified modules
+## R1 — conservative thermochemical bridge
 
+Status: current candidate.
+
+- executable world/action schemas and physical state digests;
+- transactional LJ module state with unique branch identities;
+- analytic periodic heat solver and Fourier verification;
+- conservative local particle/field exchange and reaction-energy ledger;
+- single-state particle, heat-map, reaction and conservation visualization;
+- executable Sentinel aggregation with upstream-failure rejection.
+
+## R2 — independently reproduced modules
+
+- independent-review entry gates: grid-invariant heat capacity density, Fourier convergence order at least 1.8, analytic two-reservoir exchange, forced single-reaction energy closure, full parameter/resource envelopes and multi-seed long-horizon tails;
 - dataset manifests for Materials Project, JARVIS, NOMAD and Open Catalyst subsets;
-- like-for-like evaluation of at least two open atomistic foundation potentials;
-- LAMMPS and Cantera offline reference jobs;
+- like-for-like evaluation of at least two pinned open atomistic foundation potentials;
+- NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 
-## R2 — first real scale bridge
+## R3 — first calibrated material bridge
 
 - choose one narrow porous heterogeneous-catalyst system;
 - adsorption/reaction energies → microkinetics → effective transport;
 - PFHub phase-field benchmark;
 - unit, sensitivity, conservation and uncertainty tests.
 
-## R3 — equipment coupling
+## R4 — equipment coupling
 
 - validated porous-pellet or single-reactor model;
 - continuum hot spots and transfer limits;
 - reference solver replay and lab/pilot calibration.
 
-## R4 — process world model
+## R5 — process world model
 
 - IDAES dynamic flowsheet and process constraints;
 - common state across reactor and flowsheet;
 - AI candidate recommendations only in shadow mode;
 - independent high-fidelity replay before any recommendation is shown.
 
-## R5 — Foundry loop
+## R6 — Foundry loop
 
 - active learning chooses the next valuable calculation or experiment;
 - new evidence updates the model and its validity domain;
 - champion/challenger evaluation remains isolated.
 
-## R6 — controlled industrial advisory
+## R7 — controlled industrial advisory
 
 - application-specific V&V and calibrated uncertainty;
 - HAZOP/LOPA and enterprise change-control integration;

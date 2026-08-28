@@ -21,9 +21,9 @@ LLM agents interpret results and propose work; they do not replace numerical tes
 
 ## Per-change automation
 
-GitHub Actions runs lint, deterministic solver tests, Sentinel evaluation and the production build for every push and pull request. The resulting JSON and Markdown reports are uploaded as artifacts. Pull requests receive one updated Sentinel summary.
+GitHub Actions runs installation, lint, deterministic solver tests, production build, dependency audit and Sentinel aggregation for every push and pull request. Each upstream step reports its outcome even after another step fails. Before aggregation, the workflow removes the checked-in report; if aggregation itself crashes, the pull request receives a new REJECT notice rather than a stale PASS. After Sentinel writes the run-specific report, the workflow rebuilds the frontend so the displayed scorecard consumes that same report, then uploads the JSON and Markdown evidence artifacts.
 
-The comparator registry pins source, revision, evidence type and snapshot date. A stale registry blocks promotion. Vendor figures stay `vendor_reported`; only like-for-like reproduced runs may become numerical baselines.
+The comparator registry pins source, claim owner, revision, evidence class, benchmark commit, checkpoint/data/runner digests and snapshot date. A stale registry blocks promotion. `CLAIM` never enters a numerical ranking; `AUDITABLE` only says public artifacts can be inspected; only local like-for-like `REPRODUCED` runs may become numerical baselines.
 
 ## Promotion rules
 
@@ -48,8 +48,12 @@ These are development gates, not universal certification limits:
 - total pair force near floating-point zero;
 - NVE relative energy drift below `1e-3` for the locked stable 10,000-step case;
 - deterministic replay for a fixed seed and action sequence;
-- future continuum toy case: normalized conservation residual at most `1e-3`;
-- future cross-scale interface: residual at most `1%`;
+- periodic Fourier-mode normalized L2 error below `2e-3` and field-energy residual below `5e-12`;
+- closed thermochemical trajectory total-energy residual below `2e-3 Eref` and momentum residual below `1e-9`;
+- cell-local exchange and reaction closure accumulated near floating-point precision;
+- at least `90%` of particles covered by cells with two or more particles in the locked coupling run;
+- serialized world and every applied action validate against the executable 0.2 schemas;
+- rejected actions and failed transitions leave the prior serialized state byte-for-byte unchanged;
 - future process balance: mass and energy error at most `0.1%`;
 - no automatic command path to PLC, DCS or SIS.
 
@@ -58,9 +62,9 @@ These are development gates, not universal certification limits:
 | Level | Meaning |
 |---|---|
 | E0 | no executable evidence or marketing-only claim |
-| E1 | analytic toy case or deterministic demo |
-| E2 | reproducible public held-out benchmark |
-| E3 | OOD, cross-solver or blind experimental holdout |
+| E1 | executable component or analytic toy case |
+| E2 | reproducible multi-component verification with locked contracts and conservation gates |
+| E3 | public held-out, OOD, cross-solver or blind experimental validation |
 | E4 | external independent replication or real industrial blind test |
 
 The weighted score measures evidence maturity only. It never means “percent toward scientific truth” or “percent of SOTA”.

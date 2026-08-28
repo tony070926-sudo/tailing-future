@@ -1,20 +1,101 @@
 {
-  "schemaVersion": "tf.scorecard/0.1",
-  "candidateVersion": "0.1.0-r0",
+  "schemaVersion": "tf.scorecard/0.2",
+  "candidateVersion": "0.2.0-r1-thermochemical",
   "baselineSnapshotDate": "2026-08-28",
   "hardGateFailures": [],
   "dimensions": [
-    { "id": "contract", "label": "State/action/observer contract", "weight": 8, "score": 1, "evidence": ["schemas/world-state.schema.json", "deterministic replay test"], "nextAction": "Validate immutable state and typed actions end-to-end.", "acceptanceTest": "Schema, clone, replay and branch isolation all pass in CI." },
-    { "id": "data", "label": "Data and provenance", "weight": 8, "score": 0, "evidence": [], "nextAction": "Add hashed, licensed public atomistic benchmark manifests.", "acceptanceTest": "Every dataset entry has digest, license, units and split lineage." },
-    { "id": "atomistic", "label": "Atomistic physics", "weight": 12, "score": 1, "evidence": ["force finite-difference test", "NVE drift test", "momentum conservation test"], "nextAction": "Run two open foundation potentials on a locked held-out subset.", "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics reproduced for two models." },
-    { "id": "mesoscale", "label": "Mesoscale", "weight": 8, "score": 0, "evidence": [], "nextAction": "Add one PFHub manufactured benchmark.", "acceptanceTest": "Phase fraction and free-energy behavior meet preregistered tolerance." },
-    { "id": "continuum", "label": "Continuum fields", "weight": 10, "score": 0, "evidence": [], "nextAction": "Implement a Fourier heat mode benchmark.", "acceptanceTest": "Normalized L2 error below 2% and conservation residual below 1e-3." },
-    { "id": "process", "label": "Reactor and process", "weight": 10, "score": 0, "evidence": [], "nextAction": "Define a narrow porous-catalyst reactor case.", "acceptanceTest": "Material and energy balance error below 0.1% on a locked case." },
-    { "id": "coupling", "label": "Cross-scale coupling", "weight": 14, "score": 0, "evidence": [], "nextAction": "Implement typed atomistic-to-transport bridge.", "acceptanceTest": "Unit check passes and interface conservation residual is below 1%." },
-    { "id": "world_rollout", "label": "Multi-turn world behavior", "weight": 8, "score": 1, "evidence": ["branch and replay test"], "nextAction": "Add 1/5/20-horizon error curves and action ordering tests.", "acceptanceTest": "No state collision, NaN or ordering regression across locked actions." },
-    { "id": "uq_ood", "label": "Uncertainty and OOD", "weight": 8, "score": 0, "evidence": [], "nextAction": "Define domain limits and abstention contract.", "acceptanceTest": "Out-of-domain actions are rejected with machine-readable reason." },
-    { "id": "repro_cost", "label": "Reproducibility and cost", "weight": 6, "score": 1, "evidence": ["seeded deterministic test", "GitHub workflow"], "nextAction": "Record p50/p95 latency and two-run digest.", "acceptanceTest": "Two clean runners reproduce the evaluation bundle." },
-    { "id": "visual_truth", "label": "Visualization truthfulness", "weight": 4, "score": 1, "evidence": ["state ID and model-basis labels in UI"], "nextAction": "Bind every plot and frame to one timestamp.", "acceptanceTest": "Browser test confirms matching state IDs and timestamps." },
-    { "id": "safety", "label": "Safety, license and governance", "weight": 4, "score": 1, "evidence": ["advisory-only product boundary"], "nextAction": "Add dependency and model-license gate.", "acceptanceTest": "SBOM/license job passes and no control-output endpoint exists." }
+    {
+      "id": "contract", "label": "State/action/observer contract", "displayLabel": "状态 / 动作 / 观测契约", "weight": 8, "score": 2, "promotionFloor": 2,
+      "summary": "schema + digest + atomic replay",
+      "evidence": ["Executable world/action schemas, state digests, unique branches and transactional rollback."],
+      "evidenceArtifacts": ["schemas/world-state.schema.json", "schemas/action.schema.json", "lib/simulation/lennard-jones.test.ts", "lib/simulation/thermochemical-world.test.ts"],
+      "nextAction": "Move the runtime into a worker-backed append-only action log.",
+      "acceptanceTest": "Fresh worker restoration reproduces state digest, parent chain and ordered actions across 1/5/20 horizons."
+    },
+    {
+      "id": "data", "label": "Data and provenance", "displayLabel": "数据与来源追踪", "weight": 8, "score": 0, "promotionFloor": 0,
+      "summary": "尚无训练数据",
+      "evidence": [], "evidenceArtifacts": [],
+      "nextAction": "Add hashed, licensed public atomistic benchmark manifests.",
+      "acceptanceTest": "Every dataset entry has digest, license, units, electronic-structure settings and split lineage."
+    },
+    {
+      "id": "atomistic", "label": "Atomistic physics", "displayLabel": "原子层物理", "weight": 12, "score": 1, "promotionFloor": 1,
+      "summary": "LJ 求解器 + 守恒回归",
+      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests."],
+      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts"],
+      "nextAction": "Reproduce two pinned open foundation potentials on one locked held-out benchmark.",
+      "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
+    },
+    {
+      "id": "mesoscale", "label": "Mesoscale", "displayLabel": "介观层", "weight": 8, "score": 0, "promotionFloor": 0,
+      "summary": "尚未接入",
+      "evidence": [], "evidenceArtifacts": [],
+      "nextAction": "Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.",
+      "acceptanceTest": "Free energy, solid fraction, tip position and zero contour meet preregistered PFHub tolerances."
+    },
+    {
+      "id": "continuum", "label": "Continuum fields", "displayLabel": "连续热场", "weight": 10, "score": 2, "promotionFloor": 2,
+      "summary": "Fourier PDE + 解析门禁",
+      "evidence": ["Periodic 2D heat solver, automatic CFL subcycling, maximum principle and analytic Fourier decay."],
+      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts"],
+      "nextAction": "Replace fixed per-cell heat capacity with an area-scaled heat-capacity density, then add grid convergence and a community coupled-field benchmark.",
+      "acceptanceTest": "Domain heat capacity is grid-invariant, Fourier order is at least 1.8, and PFHub case outputs match the locked reference envelope."
+    },
+    {
+      "id": "process", "label": "Reactor and process", "displayLabel": "反应器与流程", "weight": 10, "score": 0, "promotionFloor": 0,
+      "summary": "仅 A→B 标签，非反应器",
+      "evidence": [], "evidenceArtifacts": [],
+      "nextAction": "Reproduce a pinned Cantera 3.2 CSTR before adding any process recommendation.",
+      "acceptanceTest": "Species, temperature and energy trajectories match the locked Cantera reference and close balances below 0.1%."
+    },
+    {
+      "id": "coupling", "label": "Cross-scale coupling", "displayLabel": "跨尺度耦合", "weight": 14, "score": 2, "promotionFloor": 2,
+      "summary": "MD ↔ 热场 ↔ 反应账本",
+      "evidence": ["Cell-COM thermal exchange, frozen Arrhenius hazards, symmetric split and explicit energy closures."],
+      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts", "schemas/world-state.schema.json"],
+      "nextAction": "Add analytic two-reservoir exchange and forced single-reaction closure gates before replacing hand-set coefficients with a calibrated narrow material bridge.",
+      "acceptanceTest": "Analytic exchange and forced reaction ledgers close independently, interface closure remains below 1e-10 Eref, and held-out transport quantities remain inside calibrated intervals."
+    },
+    {
+      "id": "world_rollout", "label": "Multi-turn world behavior", "displayLabel": "多轮世界行为", "weight": 8, "score": 2, "promotionFloor": 2,
+      "summary": "typed action + branch + replay",
+      "evidence": ["Content-disambiguated state/action IDs, complete integrity digests, idempotent branch tokens, full-state serialization and deterministic counter RNG."],
+      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts", "schemas/action.schema.json"],
+      "nextAction": "Persist append-only histories and quantify rollout error at 1/5/20 horizons.",
+      "acceptanceTest": "No state collision, ordering ambiguity, NaN or unexplained error growth across locked action sequences."
+    },
+    {
+      "id": "uq_ood", "label": "Uncertainty and OOD", "displayLabel": "UQ / OOD", "weight": 8, "score": 1, "promotionFloor": 1,
+      "summary": "动作域拒绝，尚无校准 UQ",
+      "evidence": ["Machine-readable rejection for unsupported temperatures, pulse sizes, horizons and reaction hazards."],
+      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts"],
+      "nextAction": "Bound density, grid size, diffusivity, heat capacity, kinetics and subcycling cost before separating and calibrating numerical, parameter and model-form uncertainty.",
+      "acceptanceTest": "Every supported parameter has a machine-readable envelope and cost limit; locked 90% intervals cover 85–95% in-domain and abstain on preregistered OOD cases."
+    },
+    {
+      "id": "repro_cost", "label": "Reproducibility and cost", "displayLabel": "可复现性与成本", "weight": 6, "score": 1, "promotionFloor": 1,
+      "summary": "固定随机流 + CI 门禁",
+      "evidence": ["Counter-based reaction randomness, deterministic replay, and a configured GitHub CI gate whose outcomes are recorded per report."],
+      "evidenceArtifacts": [".github/workflows/evaluate.yml", "lib/simulation/thermochemical-world.test.ts"],
+      "nextAction": "Record p50/p95 runtime, platform fingerprint and two-run artifact equality.",
+      "acceptanceTest": "Two clean runners reproduce the manifest and stay inside the preregistered latency envelope."
+    },
+    {
+      "id": "visual_truth", "label": "Visualization truthfulness", "displayLabel": "可视化真实性", "weight": 4, "score": 2, "promotionFloor": 2,
+      "summary": "粒子 / 热场 / 账本同帧",
+      "evidence": ["Canvas heat field, particle species, state ID, timestamp and ledger are derived from one observation snapshot."],
+      "evidenceArtifacts": ["app/page.tsx", "lib/simulation/thermochemical-world.ts"],
+      "nextAction": "Add selectable state probes and downloadable immutable observations.",
+      "acceptanceTest": "A sampled pixel/cell/particle probe resolves to the displayed state digest and numeric source."
+    },
+    {
+      "id": "safety", "label": "Safety, license and governance", "displayLabel": "安全 / 许可 / 治理", "weight": 4, "score": 1, "promotionFloor": 1,
+      "summary": "advisory-only + claim lint",
+      "evidence": ["Visible toy-model boundary, claim lint, a configured dependency-audit gate and no control-output endpoint."],
+      "evidenceArtifacts": ["docs/SAFETY.md", "scripts/evaluate.mjs", ".github/workflows/evaluate.yml"],
+      "nextAction": "Add model/data license manifests and an SBOM artifact.",
+      "acceptanceTest": "Dependency, model and dataset license gates pass and no direct control endpoint exists."
+    }
   ]
 }

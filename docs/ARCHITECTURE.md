@@ -72,18 +72,20 @@ L4 → L5  unit-operation ROM / stream map / dynamic constraints
 
 A missing scale separation or failed residual produces `abstain`; it must not be hidden by a smooth visualization.
 
-## R0 implementation
+## R1 implementation
 
-R0 uses a 2D force-shifted Lennard–Jones system in reduced units. It is a real numerical calculation but only a toy physical world:
+R1 is a 2D reduced-unit thermochemical verification world. It is a real numerical calculation but still a toy physical world:
 
-- periodic box and minimum-image convention;
-- velocity-Verlet integrator;
-- weak Berendsen-style temperature coupling when enabled;
-- potential, kinetic energy, pressure estimate, coordination and MSD observations;
-- immutable observation IDs, serialization, replay and branch namespace;
-- browser drawing directly from the same state object.
+- private force-shifted Lennard–Jones state, exact requested density, minimum-image validation and transactional velocity-Verlet steps;
+- a periodic finite-difference Fourier heat field with automatic CFL subcycling;
+- conservative cell-local energy exchange using peculiar velocities around each cell center of mass;
+- equal-mass, equal-potential A/B internal labels with frozen counter-randomized Arrhenius hazards;
+- symmetric `H/2 → X/2 → R/2 → MD → R/2 → X/2 → H/2` operator ordering;
+- explicit mechanical, field, chemical, external-heat, interface and reaction closure ledgers;
+- `tf.world/0.2` / `tf.action/0.2`, state digests, parent chains, unique siblings, complete replay and atomic action rollback;
+- a browser frame assembled from one immutable observation snapshot.
 
-The solver does not contain electronic structure, real chemistry, 3D geometry, a material-specific potential, phase equilibria, turbulence or process equipment. Argon constants are used only to provide an approximate time/temperature interpretation of the reduced units.
+The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.
 
 ## System components
 

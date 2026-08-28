@@ -3,6 +3,7 @@ import {
   forceShiftedPotential,
   forceShiftedRadialDerivative,
   LennardJonesSimulation,
+  type ParticleState,
 } from './lennard-jones';
 
 describe('force-shifted Lennard-Jones pair model', () => {
@@ -57,10 +58,76 @@ describe('LennardJonesSimulation', () => {
     original.advance(120);
     const baseStateId = original.observe().stateId;
     const replay = LennardJonesSimulation.fromSerialized(original.serialize());
-    const branch = original.clone();
-    expect(replay.advance(30).particles).toEqual(original.advance(30).particles);
+    const branch = original.clone(1);
+    const replayed = replay.advance(30);
+    const continued = original.advance(30);
+    expect(replayed).toEqual(continued);
     expect(branch.observe().parentStateId).toBe(baseStateId);
     expect(branch.observe().stateId).not.toBe(original.observe().stateId);
+  });
+
+  it('changes identity for parameters and actions and gives sibling branches unique IDs', () => {
+    const first = new LennardJonesSimulation({ count: 48, density: 0.78, seed: 99 });
+    const changedParameter = new LennardJonesSimulation({ count: 48, density: 0.81, seed: 99 });
+    expect(first.observe().stateId).not.toBe(changedParameter.observe().stateId);
+    const beforeAction = first.observe().stateId;
+    first.setTargetTemperatureKelvin(110);
+    expect(first.observe().stateId).not.toBe(beforeAction);
+    const firstBranch = first.clone(1);
+    const secondBranch = first.clone(2);
+    expect(firstBranch.observe().stateId).not.toBe(secondBranch.observe().stateId);
+    expect(firstBranch.observe().stateDigest).not.toBe(secondBranch.observe().stateDigest);
+    expect(firstBranch.observe().particles).toEqual(secondBranch.observe().particles);
+    expect(firstBranch.observe().metrics).toEqual(secondBranch.observe().metrics);
+    const idempotentBranch = first.clone(1);
+    expect(idempotentBranch.observe()).toEqual(firstBranch.observe());
+    const divergentFirst = first.clone(3);
+    const divergentSecond = first.clone(3);
+    divergentFirst.setTargetTemperatureKelvin(100);
+    divergentSecond.setTargetTemperatureKelvin(120);
+    expect(divergentFirst.observe().stateId).not.toBe(divergentSecond.observe().stateId);
+    expect(() => (first.clone as unknown as (ordinal?: number) => LennardJonesSimulation).call(first)).toThrow('positive safe integer');
+  });
+
+  it('returns immutable-by-copy observations and records the requested density exactly', () => {
+    const simulation = new LennardJonesSimulation({ count: 48, density: 0.84, seed: 14 });
+    const snapshot = simulation.observe();
+    const originalX = snapshot.particles[0].x;
+    (snapshot.particles[0] as { x: number }).x += 10;
+    expect(simulation.observe().particles[0].x).toBe(originalX);
+    expect(Object.isFrozen(simulation.options)).toBe(true);
+    expect(Object.isFrozen(simulation.box)).toBe(true);
+    expect(snapshot.metrics.densityReduced).toBeCloseTo(0.84, 14);
+  });
+
+  it('rolls back a failed numerical transition byte-for-byte', () => {
+    const simulation = new LennardJonesSimulation({ count: 48, density: 0.78, seed: 5 });
+    const internal = simulation as unknown as { particles: ParticleState[] };
+    internal.particles[1].x = internal.particles[0].x;
+    internal.particles[1].y = internal.particles[0].y;
+    const before = simulation.serialize();
+    expect(() => simulation.advance()).toThrow('particle overlap');
+    expect(simulation.serialize()).toEqual(before);
+  });
+
+  it('rejects non-finite, non-integral and minimum-image-invalid configurations', () => {
+    expect(() => new LennardJonesSimulation({ count: Number.NaN })).toThrow();
+    expect(() => new LennardJonesSimulation({ count: 48.5 })).toThrow();
+    expect(() => new LennardJonesSimulation({ count: 48, temperatureKelvin: -1 })).toThrow();
+    expect(() => new LennardJonesSimulation({ count: 48, thermostatTau: 0 })).toThrow();
+    expect(() => new LennardJonesSimulation({ count: 8, cutoff: 2.5 })).toThrow('minimum-image');
+  });
+
+  it('binds serialized identity and energy metadata into the module digest', () => {
+    const simulation = new LennardJonesSimulation({ count: 48, seed: 27 });
+    simulation.advance(12);
+    const energyTamper = structuredClone(simulation.serialize());
+    energyTamper.initialEnergy += 1;
+    expect(() => LennardJonesSimulation.fromSerialized(energyTamper)).toThrow('digest mismatch');
+
+    const identityTamper = structuredClone(simulation.serialize());
+    identityTamper.stateId = `${identityTamper.stateId}-forged`;
+    expect(() => LennardJonesSimulation.fromSerialized(identityTamper)).toThrow('identity is inconsistent');
   });
 
   it('limits NVE energy drift for a stable trajectory', () => {

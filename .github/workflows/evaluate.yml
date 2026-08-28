@@ -23,13 +23,46 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
-      - id: sentinel
+      - id: install
         continue-on-error: true
+        run: npm ci
+      - id: lint
+        if: always()
+        continue-on-error: true
+        run: npm run lint
+      - id: typecheck
+        if: always()
+        continue-on-error: true
+        run: npm run typecheck
+      - id: test
+        if: always()
+        continue-on-error: true
+        run: npm test
+      - id: build
+        if: always()
+        continue-on-error: true
+        run: npm run build
+      - id: audit
+        if: always()
+        continue-on-error: true
+        run: npm audit --audit-level=low
+      - if: always()
+        run: rm -f evaluation/latest-report.json evaluation/latest-report.md
+      - id: sentinel
+        if: always()
+        continue-on-error: true
+        env:
+          TAILING_INSTALL_STATUS: ${{ steps.install.outcome }}
+          TAILING_LINT_STATUS: ${{ steps.lint.outcome }}
+          TAILING_TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
+          TAILING_TEST_STATUS: ${{ steps.test.outcome }}
+          TAILING_BUILD_STATUS: ${{ steps.build.outcome }}
+          TAILING_AUDIT_STATUS: ${{ steps.audit.outcome }}
         run: npm run evaluate
+      - id: report_build
+        if: always()
+        continue-on-error: true
+        run: npm run build
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -43,7 +76,11 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- tailing-sentinel -->';
-            const body = `${marker}\n${fs.readFileSync('evaluation/latest-report.md', 'utf8')}`;
+            const reportPath = 'evaluation/latest-report.md';
+            const report = fs.existsSync(reportPath)
+              ? fs.readFileSync(reportPath, 'utf8')
+              : '# Tailing Sentinel\n\n- Verdict: **REJECT**\n- Evaluator failed before producing a fresh report; no prior report was reused.';
+            const body = `${marker}\n${report}`;
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
@@ -53,5 +90,15 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
             }
-      - if: steps.sentinel.outcome == 'failure'
-        run: exit 1
+      - if: always()
+        env:
+          INSTALL_STATUS: ${{ steps.install.outcome }}
+          LINT_STATUS: ${{ steps.lint.outcome }}
+          TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
+          TEST_STATUS: ${{ steps.test.outcome }}
+          BUILD_STATUS: ${{ steps.build.outcome }}
+          AUDIT_STATUS: ${{ steps.audit.outcome }}
+          SENTINEL_STATUS: ${{ steps.sentinel.outcome }}
+          REPORT_BUILD_STATUS: ${{ steps.report_build.outcome }}
+        run: |
+          node -e "const failed = ['INSTALL','LINT','TYPECHECK','TEST','BUILD','AUDIT','SENTINEL','REPORT_BUILD'].filter(name => process.env[name + '_STATUS'] !== 'success'); if (failed.length) { console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }"

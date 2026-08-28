@@ -1,6 +1,6 @@
 # Safety and use boundary
 
-Tailing Future R0 is a low-consequence, reduced-unit numerical lab. It is not a material certification tool, process package, HAZOP/LOPA system or operating procedure.
+Tailing Future R1 is a low-consequence, reduced-unit thermochemical verification lab. Its heat field is an independent numerical carrier and A/B are passive internal labels. It is not a real material, chemical-reaction model, certification tool, process package, HAZOP/LOPA system or operating procedure.
 
 Hard product boundaries:
 
