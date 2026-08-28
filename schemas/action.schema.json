@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/action/0.2",
+  "$id": "https://tailing.future/schemas/action/0.3",
   "title": "Tailing Future World Action",
   "type": "object",
   "required": ["schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId", "appliedAtStep", "parameters"],
   "properties": {
-    "schemaVersion": { "const": "tf.action/0.2" },
+    "schemaVersion": { "const": "tf.action/0.3" },
     "actionId": { "type": "string", "minLength": 1 },
     "kind": { "enum": ["step", "set_field_temperature", "inject_heat_pulse", "branch"] },
     "parentStateId": { "type": "string", "minLength": 1 },
@@ -44,10 +44,15 @@
         "kind": { "const": "inject_heat_pulse" },
         "parameters": {
           "type": "object",
-          "required": ["deltaKelvin", "externalEnergyReduced"],
+          "required": ["deltaKelvin", "energyReduced", "externalEnergyReduced", "xFraction", "yFraction", "widthFraction", "profileVersion"],
           "properties": {
             "deltaKelvin": { "type": "number", "exclusiveMinimum": 0, "maximum": 80 },
-            "externalEnergyReduced": { "type": "number", "exclusiveMinimum": 0 }
+            "energyReduced": { "type": "number", "exclusiveMinimum": 0 },
+            "externalEnergyReduced": { "type": "number", "exclusiveMinimum": 0 },
+            "xFraction": { "const": 0.52 },
+            "yFraction": { "const": 0.48 },
+            "widthFraction": { "const": 0.12 },
+            "profileVersion": { "const": "periodic-gaussian-area-v1" }
           },
           "additionalProperties": false
         }

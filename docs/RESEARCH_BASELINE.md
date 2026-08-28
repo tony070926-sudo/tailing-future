@@ -10,9 +10,9 @@ Important boundary: the public AIDO Cell claims, including its benchmark coverag
 
 - [EquiformerV3+DeNS-OAM locked Matbench record](https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/equiformer_v3/equiformer-v3-oam.yml) — current auditable crystal-discovery comparator;
 - [TECE-OAM-RRA-1.0 locked Matbench record](https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/tace/tece-oam-rra-1.0.yml) — current auditable phonon/thermal-transport comparator;
-- [UMA documentation](https://fair-chem.github.io/uma/) — multi-domain atomistic foundation-model candidate, currently claim/model-card evidence only;
-- [MatterSim model card](https://github.com/microsoft/mattersim/blob/main/MODEL_CARD.md) — open reproduction control with explicit scope and limitations;
-- [MACE-MPA-0 locked Matbench record](https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/mace/mace-mpa-0.yml) — second open reproduction control;
+- [UMA fixed gated model card](https://huggingface.co/facebook/UMA/tree/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2) — multi-domain context only; FAIR Chemistry terms prevent its use as the industrial default;
+- [MatterSim model card at commit `40a1eb8`](https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/MODEL_CARD.md) — open reproduction control with explicit scope and limitations;
+- [MACE source at commit `4d2da09`](https://github.com/ACEsuit/mace/blob/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/README.md) — fixed source that explicitly supports the MPA-0 identity and 89-element scope;
 - [CHGNet paper](https://www.nature.com/articles/s42256-023-00716-3) — energy, force, stress and magnetic-moment training scope;
 - [Open Catalyst](https://opencatalystproject.org/) — catalytic structures and ID/OOD evaluation;
 - [Matbench Discovery](https://www.nature.com/articles/s42256-025-01055-1) — discovery benchmark and leakage/fair-comparison concerns;

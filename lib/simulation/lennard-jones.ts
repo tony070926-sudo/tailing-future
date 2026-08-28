@@ -1,3 +1,5 @@
+import { digestValue, shortDigest } from './digest.ts';
+
 export const ARGON_UNITS = {
   epsilonOverKelvin: 119.8,
   sigmaAngstrom: 3.405,
@@ -60,7 +62,7 @@ export type SimulationSnapshot = {
 };
 
 export type SerializedSimulation = {
-  schemaVersion: 'tf.module-state/0.2';
+  schemaVersion: 'tf.module-state/0.3';
   stateId: string;
   stateDigest: string;
   parentStateId: string | null;
@@ -186,7 +188,7 @@ export class LennardJonesSimulation {
 
   serialize(): SerializedSimulation {
     return {
-      schemaVersion: 'tf.module-state/0.2',
+      schemaVersion: 'tf.module-state/0.3',
       stateId: this._stateId,
       stateDigest: this.stateDigest(),
       parentStateId: this._parentStateId,
@@ -215,13 +217,14 @@ export class LennardJonesSimulation {
   }
 
   static fromSerialized(state: SerializedSimulation): LennardJonesSimulation {
-    if (state.schemaVersion !== 'tf.module-state/0.2') throw new Error('unsupported module-state schema');
-    const simulation = new LennardJonesSimulation(state.options);
-    const rootNamespace = `tfm-${simulation.options.seed.toString(36)}-${optionsFingerprint(simulation.options)}`;
+    if (state.schemaVersion !== 'tf.module-state/0.3') throw new Error('unsupported module-state schema');
+    assertSerializedSimulationPayload(state);
+    const rootNamespace = `tfm-${state.options.seed.toString(36)}-${optionsFingerprint(state.options)}`;
     if (!state.stateNamespace.match(new RegExp(`^${escapeRegExp(rootNamespace)}(?:-b[0-9a-z]+)*$`))) throw new Error('serialized module namespace is invalid');
-    if (!Number.isInteger(state.step) || state.step < 0 || !Number.isInteger(state.revision) || state.revision < 0 || !Number.isInteger(state.branchCount) || state.branchCount < 0) throw new Error('serialized module counters are invalid');
-    if (!Number.isFinite(state.targetTemperatureReduced) || state.targetTemperatureReduced <= 0 || !Number.isFinite(state.initialEnergy)) throw new Error('serialized module energy metadata is invalid');
-    if (state.particles.length !== simulation.particles.length) throw new Error('particle count does not match options');
+    if (!isStateIdFor(state.stateId, state.stateNamespace, state.step, state.revision)) throw new Error('serialized module-state identity is inconsistent');
+    if (serializedSimulationDigest(state) !== state.stateDigest) throw new Error('serialized module-state digest mismatch');
+
+    const simulation = new LennardJonesSimulation(state.options);
     simulation.particles.splice(0, simulation.particles.length, ...state.particles.map((particle) => ({ ...particle })));
     simulation._step = state.step;
     simulation._stateId = state.stateId;
@@ -232,7 +235,6 @@ export class LennardJonesSimulation {
     simulation.targetTemperatureReduced = state.targetTemperatureReduced;
     simulation.initialEnergy = state.initialEnergy;
     simulation.forceSummary = simulation.computeForces();
-    if (!isStateIdFor(state.stateId, state.stateNamespace, state.step, state.revision)) throw new Error('serialized module-state identity is inconsistent');
     if (simulation.stateDigest() !== state.stateDigest) throw new Error('serialized module-state digest mismatch');
     return simulation;
   }
@@ -425,8 +427,8 @@ export class LennardJonesSimulation {
   private totalEnergy() { return this.kineticEnergy() + this.forceSummary.potential; }
 
   private stateDigest() {
-    return digestValue({
-      schemaVersion: 'tf.module-state/0.2',
+    return serializedSimulationDigest({
+      schemaVersion: 'tf.module-state/0.3',
       stateId: this._stateId,
       parentStateId: this._parentStateId,
       step: this._step,
@@ -476,28 +478,82 @@ function isStateIdFor(candidate: string, namespace: string, step: number, revisi
 }
 
 function optionsFingerprint(options: Required<Omit<SimulationOptions, 'thermostatTau'>> & { thermostatTau: number | null }) {
-  const source = [options.count, options.density, options.temperatureKelvin, options.timeStep, options.cutoff, options.thermostatTau ?? 'nve'].join('|');
-  let hash = 2166136261;
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return (hash >>> 0).toString(36);
+  return shortDigest([options.count, options.density, options.temperatureKelvin, options.timeStep, options.cutoff, options.thermostatTau ?? 'nve']);
 }
 
-function digestValue(value: unknown) {
-  const source = JSON.stringify(value);
-  let first = 2166136261;
-  let second = 2246822519;
-  for (let index = 0; index < source.length; index += 1) {
-    const code = source.charCodeAt(index);
-    first = Math.imul(first ^ code, 16777619);
-    second = Math.imul(second ^ code, 3266489917);
-  }
-  return `fnv64:${(first >>> 0).toString(16).padStart(8, '0')}${(second >>> 0).toString(16).padStart(8, '0')}`;
+function serializedSimulationDigest(state: Omit<SerializedSimulation, 'stateDigest'> | SerializedSimulation) {
+  return digestValue({
+    schemaVersion: state.schemaVersion,
+    stateId: state.stateId,
+    parentStateId: state.parentStateId,
+    step: state.step,
+    stateNamespace: state.stateNamespace,
+    revision: state.revision,
+    branchCount: state.branchCount,
+    targetTemperatureReduced: state.targetTemperatureReduced,
+    options: {
+      count: state.options.count,
+      density: state.options.density,
+      temperatureKelvin: state.options.temperatureKelvin,
+      timeStep: state.options.timeStep,
+      cutoff: state.options.cutoff,
+      thermostatTau: state.options.thermostatTau,
+      seed: state.options.seed,
+    },
+    box: { width: state.box.width, height: state.box.height },
+    particles: state.particles.map((particle) => ({
+      x: particle.x,
+      y: particle.y,
+      ux: particle.ux,
+      uy: particle.uy,
+      vx: particle.vx,
+      vy: particle.vy,
+      fx: particle.fx,
+      fy: particle.fy,
+      x0: particle.x0,
+      y0: particle.y0,
+    })),
+    initialEnergy: state.initialEnergy,
+  });
 }
 
-function shortDigest(value: unknown) { return digestValue(value).slice('fnv64:'.length); }
+function assertSerializedSimulationPayload(state: SerializedSimulation) {
+  assertExactKeys(state, [
+    'schemaVersion', 'stateId', 'stateDigest', 'parentStateId', 'step', 'options', 'targetTemperatureReduced',
+    'box', 'particles', 'initialEnergy', 'stateNamespace', 'revision', 'branchCount',
+  ], 'serialized module state');
+  assertExactKeys(state.options, ['count', 'density', 'temperatureKelvin', 'timeStep', 'cutoff', 'thermostatTau', 'seed'], 'serialized module options');
+  assertExactKeys(state.box, ['width', 'height'], 'serialized module box');
+
+  if (typeof state.stateId !== 'string' || typeof state.stateNamespace !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(state.stateDigest)) {
+    throw new Error('serialized module identity metadata is invalid');
+  }
+  if (state.parentStateId !== null && typeof state.parentStateId !== 'string') throw new Error('serialized module parent identity is invalid');
+  if (!Number.isSafeInteger(state.step) || state.step < 0 || !Number.isSafeInteger(state.revision) || state.revision < 0 || !Number.isSafeInteger(state.branchCount) || state.branchCount < 0) {
+    throw new Error('serialized module counters are invalid');
+  }
+  const numericOptions = [state.options.count, state.options.density, state.options.temperatureKelvin, state.options.timeStep, state.options.cutoff, state.options.seed];
+  if (!numericOptions.every(Number.isFinite) || (state.options.thermostatTau !== null && !Number.isFinite(state.options.thermostatTau))) {
+    throw new Error('serialized module options must be finite');
+  }
+  if (!Number.isSafeInteger(state.options.count) || state.options.count < 4 || !Array.isArray(state.particles) || state.particles.length !== state.options.count) {
+    throw new Error('particle count does not match options');
+  }
+  if (![state.box.width, state.box.height].every(Number.isFinite) || !(state.box.width > 0 && state.box.height > 0)) throw new Error('serialized module box is invalid');
+  if (!Number.isFinite(state.targetTemperatureReduced) || state.targetTemperatureReduced <= 0 || !Number.isFinite(state.initialEnergy)) throw new Error('serialized module energy metadata is invalid');
+  state.particles.forEach((particle) => {
+    assertExactKeys(particle, ['x', 'y', 'ux', 'uy', 'vx', 'vy', 'fx', 'fy', 'x0', 'y0'], 'serialized particle state');
+    if (![particle.x, particle.y, particle.ux, particle.uy, particle.vx, particle.vy, particle.fx, particle.fy, particle.x0, particle.y0].every(Number.isFinite)) {
+      throw new Error('serialized module particle state must be finite');
+    }
+  });
+}
+
+function assertExactKeys(value: object, expected: readonly string[], label: string) {
+  const keys = Object.keys(value).sort();
+  const sortedExpected = [...expected].sort();
+  if (keys.length !== sortedExpected.length || keys.some((key, index) => key !== sortedExpected[index])) throw new Error(`${label} has unexpected fields`);
+}
 
 export function lennardJonesPotential(distance: number) {
   if (!(distance > 0)) throw new Error('distance must be positive');

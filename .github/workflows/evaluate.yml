@@ -38,6 +38,10 @@ jobs:
         if: always()
         continue-on-error: true
         run: npm test
+      - id: atomistic
+        if: always()
+        continue-on-error: true
+        run: npm run atomistic:validate
       - id: build
         if: always()
         continue-on-error: true
@@ -56,6 +60,7 @@ jobs:
           TAILING_LINT_STATUS: ${{ steps.lint.outcome }}
           TAILING_TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
           TAILING_TEST_STATUS: ${{ steps.test.outcome }}
+          TAILING_ATOMISTIC_STATUS: ${{ steps.atomistic.outcome }}
           TAILING_BUILD_STATUS: ${{ steps.build.outcome }}
           TAILING_AUDIT_STATUS: ${{ steps.audit.outcome }}
         run: npm run evaluate
@@ -96,9 +101,10 @@ jobs:
           LINT_STATUS: ${{ steps.lint.outcome }}
           TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
           TEST_STATUS: ${{ steps.test.outcome }}
+          ATOMISTIC_STATUS: ${{ steps.atomistic.outcome }}
           BUILD_STATUS: ${{ steps.build.outcome }}
           AUDIT_STATUS: ${{ steps.audit.outcome }}
           SENTINEL_STATUS: ${{ steps.sentinel.outcome }}
           REPORT_BUILD_STATUS: ${{ steps.report_build.outcome }}
         run: |
-          node -e "const failed = ['INSTALL','LINT','TYPECHECK','TEST','BUILD','AUDIT','SENTINEL','REPORT_BUILD'].filter(name => process.env[name + '_STATUS'] !== 'success'); if (failed.length) { console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }"
+          node -e "const failed = ['INSTALL','LINT','TYPECHECK','TEST','ATOMISTIC','BUILD','AUDIT','SENTINEL','REPORT_BUILD'].filter(name => process.env[name + '_STATUS'] !== 'success'); if (failed.length) { console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }"

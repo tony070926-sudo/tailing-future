@@ -12,7 +12,7 @@ Status: completed foundation.
 
 ## R1 — conservative thermochemical bridge
 
-Status: current candidate.
+Status: completed narrow baseline.
 
 - executable world/action schemas and physical state digests;
 - transactional LJ module state with unique branch identities;
@@ -23,9 +23,11 @@ Status: current candidate.
 
 ## R2 — independently reproduced modules
 
-- independent-review entry gates: grid-invariant heat capacity density, Fourier convergence order at least 1.8, analytic two-reservoir exchange, forced single-reaction energy closure, full parameter/resource envelopes and multi-seed long-horizon tails;
-- dataset manifests for Materials Project, JARVIS, NOMAD and Open Catalyst subsets;
-- like-for-like evaluation of at least two pinned open atomistic foundation potentials;
+Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented; no atomistic checkpoint inference has run.
+
+- completed entry gates: grid-invariant heat capacity density, three-mode Fourier convergence, analytic two-reservoir exchange, atomic forced-reaction closure, full parameter/resource envelopes and 8×5,000 tails;
+- completed manifest gates: record-level Materials Project, JARVIS, NOMAD and Open Catalyst provenance plans;
+- next: like-for-like complete Random-TP inference with pinned MatterSim 5M and MACE-MPA-0 bytes;
 - NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 

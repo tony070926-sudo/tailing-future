@@ -1,22 +1,24 @@
-# Tailing Sentinel — 0.2.0-r1-thermochemical
+# Tailing Sentinel — 0.3.0-r2-physics-and-atomistic-freeze
 
 - Verdict: **CONDITIONAL**
-- Evidence maturity: **29.50 / 100** (not a SOTA score)
+- Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-28**
-- Artifact: `sha256:12109986b25614b41c5338e51516b16f099e5fab9ec9e822721cf151dbffa81f` across 52 source files
+- Evaluated revision: **local working tree**
+- Artifact: `sha256:2215cd79a89c80b2268c5dde78a8666f4b707e2ffaf8e0dbb5c19bb68f063283` across 48 source files
 
 ## Hard gates
 
-- PASS — executable R1 physics, schema, evidence and promotion-floor gates passed.
+- PASS — executable R2 numerical, schema, manifest and promotion-floor gates passed.
 
 ## Executable verification
 
-- Fourier L2: 1.701e-4; coupled energy residual: 5.506e-5; momentum residual: 4.291e-14.
-- World/action schemas and negative mutation corpus: PASS; evaluator runtime: 1696.1 ms.
+- Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
+- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog: PASS (manifest only); evaluator runtime: 73282.0 ms.
+- Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps
 
-1. **P1 · atomistic** — Reproduce two pinned open foundation potentials on one locked held-out benchmark.
+1. **P1 · atomistic** — Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.
    - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests.
    - Acceptance: Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests.
 2. **P1 · mesoscale** — Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.
@@ -28,4 +30,4 @@
 
 ## Interpretation boundary
 
-This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R1 is a reduced-unit thermochemical verification world, not a real-material, reactor or industrial-process predictor.
+This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R2 is still a reduced-unit thermochemical verification world with a manifest-only atomistic plan, not a real-material, reactor or industrial-process predictor.

@@ -12,8 +12,8 @@ SPEC_FREEZE → BUILD → BUILDER_SELF_CHECK → INDEPENDENT_EVAL
 
 - **SOTA Scout** reads primary papers, official model cards, versions and licenses. It updates a proposed registry diff but does not change the current gate silently.
 - **Builder** implements one bounded hypothesis and supplies the code, seed, data hashes and run manifest. It cannot approve its own candidate.
-- **Isolated Runner** executes deterministic checks and produces the immutable evaluation bundle.
-- **Scientific Evaluator** reads the candidate, locked rubric and bundle. It evaluates numerical, statistical, OOD, conservation and safety evidence without modifying the implementation.
+- **Isolated Runner** executes deterministic checks and produces a run-specific evaluation bundle.
+- **Scientific Evaluator** reads the candidate, reviewed rubric and bundle. It evaluates numerical, statistical, OOD, conservation and safety evidence without modifying the implementation.
 - **Gap Planner** emits at most three next tasks, each with evidence and an executable acceptance test.
 - **Supervisor** promotes a candidate only when P0 findings are absent and all relevant hard gates pass.
 
@@ -21,9 +21,11 @@ LLM agents interpret results and propose work; they do not replace numerical tes
 
 ## Per-change automation
 
-GitHub Actions runs installation, lint, deterministic solver tests, production build, dependency audit and Sentinel aggregation for every push and pull request. Each upstream step reports its outcome even after another step fails. Before aggregation, the workflow removes the checked-in report; if aggregation itself crashes, the pull request receives a new REJECT notice rather than a stale PASS. After Sentinel writes the run-specific report, the workflow rebuilds the frontend so the displayed scorecard consumes that same report, then uploads the JSON and Markdown evidence artifacts.
+GitHub Actions runs installation, lint, deterministic solver tests, manifest validation, production build, dependency audit and Sentinel aggregation for every push and pull request. Each upstream step reports its outcome even after another step fails. Before aggregation, the workflow removes the checked-in report; if aggregation itself crashes, the pull request receives a new REJECT notice rather than a stale PASS. Sentinel hashes the exact Git-tracked plus non-ignored source set into a per-file manifest, records the CI commit, rebuilds the frontend, then uploads the JSON and Markdown evidence artifacts. Cloudflare release fetches remote `main`, requires its strict Sentinel check, downloads that exact CI report, compares the source manifest with the clean local checkout and rechecks remote `main` before deploy.
 
 The comparator registry pins source, claim owner, revision, evidence class, benchmark commit, checkpoint/data/runner digests and snapshot date. A stale registry blocks promotion. `CLAIM` never enters a numerical ranking; `AUDITABLE` only says public artifacts can be inspected; only local like-for-like `REPRODUCED` runs may become numerical baselines.
+
+The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 
 ## Promotion rules
 
@@ -49,10 +51,12 @@ These are development gates, not universal certification limits:
 - NVE relative energy drift below `1e-3` for the locked stable 10,000-step case;
 - deterministic replay for a fixed seed and action sequence;
 - periodic Fourier-mode normalized L2 error below `2e-3` and field-energy residual below `5e-12`;
-- closed thermochemical trajectory total-energy residual below `2e-3 Eref` and momentum residual below `1e-9`;
-- cell-local exchange and reaction closure accumulated near floating-point precision;
-- at least `90%` of particles covered by cells with two or more particles in the locked coupling run;
-- serialized world and every applied action validate against the executable 0.2 schemas;
+- closed thermochemical trajectory total-energy residual below `2e-3 Eref` and raw/ledger momentum residual below `1e-10`;
+- each closure operator below `1e-12 Eref` and cumulative absolute closure below `1e-10 Eref`;
+- three two-dimensional Fourier modes show observed order at least `1.8`, finest-grid error below `5e-4`, and grid-invariant total heat capacity;
+- eight preregistered seeds run 5,000 steps with p95 energy residual at most `3e-4`, maximum at most `5e-4`, deterministic checkpoint continuation and minimum coupling coverage `90%`;
+- serialized world and every applied action validate against the executable 0.3 schemas;
+- the atomistic manifest locks two checkpoint hashes, Random-TP bytes and a fail-closed isolated-runner protocol without claiming local reproduction;
 - rejected actions and failed transitions leave the prior serialized state byte-for-byte unchanged;
 - future process balance: mass and energy error at most `0.1%`;
 - no automatic command path to PLC, DCS or SIS.

@@ -4,19 +4,43 @@
   "title": "Tailing Sentinel Evaluation Report",
   "type": "object",
   "required": [
-    "schemaVersion", "candidateVersion", "generatedAt", "baselineSnapshotDate", "artifactDigest",
-    "sourceFileCount", "runtime", "upstreamGates", "verification", "evidenceManifest",
-    "weightedScore", "hardGateFailures", "dimensions", "comparators", "gaps", "verdict"
+    "schemaVersion", "candidateVersion", "generatedAt", "sourceRevision", "baselineSnapshotDate", "artifactDigest",
+    "sourceFileCount", "sourceManifest", "runtime", "upstreamGates", "verification", "evidenceManifest",
+    "weightedScore", "hardGateFailures", "dimensions", "comparators", "excludedDefaults", "gaps", "verdict"
   ],
   "properties": {
     "schemaVersion": { "const": "tf.evaluation/0.2" },
     "candidateVersion": { "type": "string", "minLength": 1 },
     "generatedAt": { "type": "string", "format": "date-time" },
+    "sourceRevision": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
     "baselineSnapshotDate": { "type": "string", "format": "date" },
     "artifactDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
     "sourceFileCount": { "type": "integer", "minimum": 1 },
-    "runtime": { "type": "object" },
-    "upstreamGates": { "type": "object" },
+    "sourceManifest": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" } },
+    "runtime": {
+      "type": "object",
+      "required": ["node", "platform", "architecture"],
+      "properties": {
+        "node": { "type": "string", "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+" },
+        "platform": { "type": "string", "minLength": 1 },
+        "architecture": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "upstreamGates": {
+      "type": "object",
+      "required": ["install", "lint", "typecheck", "test", "atomistic", "build", "audit"],
+      "properties": {
+        "install": { "$ref": "#/$defs/gateStatus" },
+        "lint": { "$ref": "#/$defs/gateStatus" },
+        "typecheck": { "$ref": "#/$defs/gateStatus" },
+        "test": { "$ref": "#/$defs/gateStatus" },
+        "atomistic": { "$ref": "#/$defs/gateStatus" },
+        "build": { "$ref": "#/$defs/gateStatus" },
+        "audit": { "$ref": "#/$defs/gateStatus" }
+      },
+      "additionalProperties": false
+    },
     "verification": {
       "type": "object",
       "required": ["physics", "schemas", "elapsedMs"],
@@ -24,12 +48,14 @@
         "physics": { "type": ["object", "null"] },
         "schemas": {
           "type": "object",
-          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics"],
+          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics", "atomisticPlan", "datasetCatalog"],
           "properties": {
             "world": { "type": "boolean" },
             "action": { "type": "boolean" },
             "actionMutationCorpus": { "type": "boolean" },
-            "runtimeActionSemantics": { "type": "boolean" }
+            "runtimeActionSemantics": { "type": "boolean" },
+            "atomisticPlan": { "type": "boolean" },
+            "datasetCatalog": { "type": "boolean" }
           },
           "additionalProperties": false
         },
@@ -42,11 +68,13 @@
     "hardGateFailures": { "type": "array", "items": { "type": "string" } },
     "dimensions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/dimension" } },
     "comparators": { "type": "array", "items": { "type": "object" } },
+    "excludedDefaults": { "type": "array", "minItems": 1, "items": { "type": "object" } },
     "gaps": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/gap" } },
     "verdict": { "enum": ["accept", "reject", "conditional"] }
   },
   "additionalProperties": false,
   "$defs": {
+    "gateStatus": { "enum": ["success", "failure", "cancelled", "skipped", "not-reported-local"] },
     "dimension": {
       "type": "object",
       "required": ["id", "label", "displayLabel", "weight", "score", "promotionFloor", "summary", "evidence", "evidenceArtifacts", "nextAction", "acceptanceTest"],

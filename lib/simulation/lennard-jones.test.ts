@@ -121,9 +121,18 @@ describe('LennardJonesSimulation', () => {
   it('binds serialized identity and energy metadata into the module digest', () => {
     const simulation = new LennardJonesSimulation({ count: 48, seed: 27 });
     simulation.advance(12);
+    expect(simulation.serialize().stateDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
     const energyTamper = structuredClone(simulation.serialize());
     energyTamper.initialEnergy += 1;
     expect(() => LennardJonesSimulation.fromSerialized(energyTamper)).toThrow('digest mismatch');
+
+    const boxTamper = structuredClone(simulation.serialize());
+    boxTamper.box.width += 1;
+    expect(() => LennardJonesSimulation.fromSerialized(boxTamper)).toThrow('digest mismatch');
+
+    const forceTamper = structuredClone(simulation.serialize());
+    forceTamper.particles[0].fx += 1;
+    expect(() => LennardJonesSimulation.fromSerialized(forceTamper)).toThrow('digest mismatch');
 
     const identityTamper = structuredClone(simulation.serialize());
     identityTamper.stateId = `${identityTamper.stateId}-forged`;

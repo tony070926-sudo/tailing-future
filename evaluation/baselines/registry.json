@@ -29,40 +29,41 @@
     },
     {
       "id": "mattersim-1.0.0-5m", "name": "MatterSim-v1.0.0-5M", "scope": "open atomistic energy, force, stress and MD baseline",
-      "source": "https://github.com/microsoft/mattersim/blob/c6801fd33df2a8cd6a103fb177d4f12d8d5a362e/MODEL_CARD.md",
-      "revision": "v1.0.0-5M model card commit c6801fd / Matbench snapshot 0ba4746", "evidenceClass": "auditable", "claimOwner": "Microsoft Research", "comparable": false,
-      "sourceCommit": "c6801fd33df2a8cd6a103fb177d4f12d8d5a362e", "sourceDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
-      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Open lightweight reproduction control; Tailing Future has not executed the checkpoint."
+      "source": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/MODEL_CARD.md",
+      "revision": "MatterSim package v1.2.5 / model v1.0.0-5M / source commit 40a1eb8", "evidenceClass": "auditable", "claimOwner": "Microsoft Research", "comparable": false,
+      "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "sourceDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
+      "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5", "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9", "runnerDigest": null,
+      "reason": "Checkpoint and Random-TP bytes are pinned for the R2 reproduction; no local inference runner result exists yet."
     },
     {
       "id": "mace-mpa-0", "name": "MACE-MPA-0", "scope": "open atomistic interatomic-potential control",
-      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/mace/mace-mpa-0.yml",
-      "revision": "Matbench Discovery commit 0ba474661cf615d10987ba9a2acb8132943aa491", "evidenceClass": "auditable", "claimOwner": "MACE authors / Matbench Discovery", "comparable": false,
-      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "sourceDigest": "sha256:eaf91e0403a89f76f252479ae81b76e61c311c8c246f8e9afebe83583fe24b11",
-      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Second open reproduction control; exact checkpoint and runner are not yet pinned locally."
+      "source": "https://github.com/ACEsuit/mace/blob/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/README.md",
+      "revision": "mace-torch v0.3.16 commit 4d2da09; MPA-0 release asset locked separately", "evidenceClass": "auditable", "claimOwner": "MACE authors", "comparable": false,
+      "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e", "sourceDigest": "sha256:1ef0c309a49cf7d1035ab581b1ddc8284c678658ba375a132c4d5fcefd833038",
+      "checkpointSource": "https://github.com/ACEsuit/mace-foundations/releases/tag/mace_mpa_0",
+      "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638", "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9", "runnerDigest": null,
+      "reason": "Checkpoint and shared Random-TP bytes are pinned; the blind engineering baseline has not been executed."
     },
     {
       "id": "pfhub-benchmark-3", "name": "NIST PFHub Benchmark 3", "scope": "coupled phase-field and heat-diffusion reference",
       "source": "https://github.com/usnistgov/pfhub/blob/316f242042af2c086e030864f2af201e0bee8618/benchmarks/benchmark3.ipynb", "revision": "PFHub commit 316f242042af2c086e030864f2af201e0bee8618", "evidenceClass": "reference", "claimOwner": "NIST PFHub", "comparable": false,
       "sourceCommit": "316f242042af2c086e030864f2af201e0bee8618", "sourceDigest": "sha256:0443ae7019a4495b1cf2ebaa46cca2bb90c63e508154701f5b575ed91e15ba27",
       "benchmarkCommit": "316f242042af2c086e030864f2af201e0bee8618", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Community reference for the next mesoscale coupling stage; not implemented in R1."
+      "reason": "Community reference for the next mesoscale coupling stage; not implemented in the R2 candidate."
     },
     {
       "id": "cantera-3.2-cstr", "name": "Cantera 3.2 CSTR", "scope": "reactor kinetics and energy-balance reference",
       "source": "https://github.com/Cantera/cantera/blob/4a8358eb80cfeb50474386b5f9ec0b3a83519889/samples/python/reactors/continuous_reactor.py", "revision": "Cantera v3.2.0 commit 4a8358eb80cfeb50474386b5f9ec0b3a83519889", "evidenceClass": "reference", "claimOwner": "Cantera project", "comparable": false,
       "sourceCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "sourceDigest": "sha256:72843e6c153c21ae18ff9d310b6b48fbcf37255ab599ed4c647cea48cb970e49",
       "benchmarkCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Pinned reactor reference planned for R2; R1 A/B labels are not a reactor model."
+      "reason": "Pinned reactor reference for the next iteration; the current A/B labels are not a reactor model."
     },
     {
       "id": "idaes-2.12", "name": "IDAES 2.12", "scope": "process systems, unit models and constrained optimization",
       "source": "https://github.com/IDAES/idaes-pse/blob/995ef18fd835473a63047fd2ac69dd9fa4101fe8/idaes/models/unit_models/cstr.py", "revision": "IDAES 2.12.0 commit 995ef18fd835473a63047fd2ac69dd9fa4101fe8", "evidenceClass": "reference", "claimOwner": "IDAES project", "comparable": false,
       "sourceCommit": "995ef18fd835473a63047fd2ac69dd9fa4101fe8", "sourceDigest": "sha256:1917784f75050eb05be74f86d0b5007e13466a30272957f80a41f2353540c24c",
       "benchmarkCommit": "995ef18fd835473a63047fd2ac69dd9fa4101fe8", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Process anchor for later stages; no coupled flowsheet exists in R1."
+      "reason": "Process anchor for later stages; no coupled flowsheet exists in the current candidate."
     }
   ]
 }

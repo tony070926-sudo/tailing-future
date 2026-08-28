@@ -72,17 +72,19 @@ L4 → L5  unit-operation ROM / stream map / dynamic constraints
 
 A missing scale separation or failed residual produces `abstain`; it must not be hidden by a smooth visualization.
 
-## R1 implementation
+## R2 numerical implementation
 
-R1 is a 2D reduced-unit thermochemical verification world. It is a real numerical calculation but still a toy physical world:
+R2 currently remains a 2D reduced-unit thermochemical verification world. It is a real numerical calculation but still a toy physical world:
 
 - private force-shifted Lennard–Jones state, exact requested density, minimum-image validation and transactional velocity-Verlet steps;
-- a periodic finite-difference Fourier heat field with automatic CFL subcycling;
-- conservative cell-local energy exchange using peculiar velocities around each cell center of mass;
+- a periodic finite-difference Fourier heat field with area heat-capacity density, grid-independent pulse energy and automatic CFL subcycling;
+- conservative cell-local energy exchange using an exact two-reservoir kernel and peculiar velocities around each cell center of mass;
 - equal-mass, equal-potential A/B internal labels with frozen counter-randomized Arrhenius hazards;
 - symmetric `H/2 → X/2 → R/2 → MD → R/2 → X/2 → H/2` operator ordering;
-- explicit mechanical, field, chemical, external-heat, interface and reaction closure ledgers;
-- `tf.world/0.2` / `tf.action/0.2`, state digests, parent chains, unique siblings, complete replay and atomic action rollback;
+- explicit mechanical, field, chemical, external-heat, interface and reaction closure ledgers with normalized maximum-operator and cumulative gates;
+- `tf.world/0.3` / `tf.action/0.3`, parent chains, unique siblings, deterministic checkpoint continuation and atomic action rollback;
+- three-mode two-dimensional Fourier convergence and an 8×5,000-step PR ensemble tail;
+- pinned MatterSim / MACE / Random-TP manifests that remain `planned-not-reproduced` until isolated runners generate complete E/F/stress artifacts;
 - a browser frame assembled from one immutable observation snapshot.
 
 The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.

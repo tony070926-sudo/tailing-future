@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "tf.atomistic-reproduction/0.1",
+  "status": "planned-not-reproduced",
+  "frozenAt": "2026-08-28",
+  "policy": "No model enters numeric ranking until a locked local checkpoint, dataset and runner have produced a complete like-for-like result. Missing or corrupt assets fail closed; LJ and cached outputs are forbidden fallbacks.",
+  "models": [
+    {
+      "id": "mattersim-v1.0.0-5m",
+      "role": "active",
+      "evidenceClass": "auditable",
+      "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "sourceUrl": "https://github.com/microsoft/mattersim/tree/40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "license": "MIT",
+      "package": {
+        "name": "mattersim",
+        "version": "1.2.5",
+        "filename": "mattersim-1.2.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "url": "https://files.pythonhosted.org/packages/63/00/5ebc37661b3333793b2861827439cc8e2a3129dd0c9694d54028328650ef/mattersim-1.2.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "sizeBytes": 755919,
+        "sha256": "sha256:1b5e46ba56efa5c1e93372ad32321300fa5e1f07dd9188a11b727bd578cf8d7f",
+        "pythonTag": "cp312",
+        "abiTag": "cp312",
+        "platformTag": "manylinux_2_17_x86_64.manylinux2014_x86_64",
+        "requiresPython": ">=3.12",
+        "cachePath": "atomistic/packages/mattersim-1.2.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+      },
+      "checkpoint": {
+        "url": "https://raw.githubusercontent.com/microsoft/mattersim/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/pretrained_models/mattersim-v1.0.0-5M.pth",
+        "sizeBytes": 91176875,
+        "sha256": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5"
+      },
+      "outputs": ["energy_eV", "forces_eV_per_angstrom", "stress_eV_per_angstrom3"],
+      "intendedUse": "Research and experimental atomistic energy, force, stress and molecular-dynamics evaluation; real-world materials use requires additional validation.",
+      "outOfScope": ["industrial control or safety decisions", "unvalidated polymers, surfaces, interfaces and long-range interactions", "quantitative use outside the documented chemical and thermodynamic envelope"],
+      "levelOfTheory": "Materials-Project-like PBE/PBE+U training convention documented by MatterSim; not experimental ground truth.",
+      "energyConvention": "Use raw model outputs with one frozen ASE stress/sign/unit conversion; do not mix with corrected formation energies without an explicit transform.",
+      "defaultAliasAllowed": false,
+      "cachePath": "atomistic/mattersim-v1.0.0-5M.pth"
+    },
+    {
+      "id": "mace-mpa-0-medium",
+      "role": "challenger",
+      "evidenceClass": "auditable",
+      "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+      "sourceUrl": "https://github.com/ACEsuit/mace/tree/4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+      "license": "MIT",
+      "package": {
+        "name": "mace-torch",
+        "version": "0.3.16",
+        "filename": "mace_torch-0.3.16-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/6d/4d/07293363e4abe6484c9ee4d705e5953421a6b6e2a74e4d7fb58abea729cf/mace_torch-0.3.16-py3-none-any.whl",
+        "sizeBytes": 316021,
+        "sha256": "sha256:b80407edf6b2a1ec8523668c2a36852d20927ce1c3c56b70983a9f2dc53233ad",
+        "pythonTag": "py3",
+        "abiTag": "none",
+        "platformTag": "any",
+        "requiresPython": ">=3.9",
+        "cachePath": "atomistic/packages/mace_torch-0.3.16-py3-none-any.whl"
+      },
+      "checkpoint": {
+        "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mpa_0/mace-mpa-0-medium.model",
+        "sizeBytes": 79462305,
+        "sha256": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638"
+      },
+      "outputs": ["energy_eV", "forces_eV_per_angstrom", "stress_eV_per_angstrom3"],
+      "intendedUse": "Research comparison and atomistic simulation with explicit checkpoint paths and documented MPA-0 domain checks.",
+      "outOfScope": ["industrial control or safety decisions", "unsupported chemical or strain regimes", "direct comparison of raw PBE+U energies with MP2020-corrected energies"],
+      "levelOfTheory": "Raw PBE+U MPA-0 convention trained on MPTrj plus sAlex structures.",
+      "energyConvention": "Raw PBE+U energies; never compare directly to MP2020-corrected energies without a frozen correction protocol.",
+      "defaultAliasAllowed": false,
+      "cachePath": "atomistic/mace-mpa-0-medium.model"
+    }
+  ],
+  "benchmarks": [
+    {
+      "id": "mattersim-random-tp",
+      "role": "primary-like-for-like",
+      "evidenceClass": "auditable",
+      "source": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/data/benchmarks/random-TP.xyz",
+      "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "license": "MIT repository license; redistribution remains disabled pending dataset-specific confirmation",
+      "redistribute": false,
+      "artifact": {
+        "url": "https://raw.githubusercontent.com/microsoft/mattersim/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/data/benchmarks/random-TP.xyz",
+        "sizeBytes": 1514015,
+        "sha256": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+        "frames": 693,
+        "atoms": 11088,
+        "elements": 89,
+        "smokeIds": [
+          "random-TP-000000", "random-TP-000005", "random-TP-000010", "random-TP-000095", "random-TP-000125",
+          "random-TP-000135", "random-TP-000200", "random-TP-000220", "random-TP-000369", "random-TP-000555"
+        ],
+        "smokeManifestSha256": "sha256:858b009bddf8fe8d78114b1c227fd7756c49990ca84aaf7ee8e5aecd54967423",
+        "recordManifestSha256": "sha256:da1fe51feb008ee32b2c2df5130e940a195d73b4bdc44c021bfb1650907eb2e6"
+      },
+      "cachePath": "atomistic/random-TP.xyz",
+      "limitations": [
+        "The MatterSim training corpus is closed, so Random-TP is not certified leakage-free by hash.",
+        "The file lacks per-frame temperature and pressure metadata; stress and volume are only OOD proxies.",
+        "The benchmark was produced by the MatterSim authors and may contain vendor-selection bias."
+      ]
+    },
+    {
+      "id": "matbench-discovery-wbm",
+      "role": "independent-stability",
+      "evidenceClass": "reference",
+      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/data/wbm/readme.md",
+      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491",
+      "license": "NOASSERTION for raw WBM redistribution",
+      "redistribute": false,
+      "artifact": {
+        "url": "https://archive.materialscloud.org/record/2021.68",
+        "sha256": null
+      },
+      "limitations": [
+        "The upstream record does not expose a clear redistribution license or locked artifact digest; the null digest explicitly blocks local reproduction.",
+        "Published MatterSim and MACE metrics remain external auditable records until checkpoint inference is rerun."
+      ]
+    }
+  ],
+  "protocol": {
+    "runner": {
+      "python": "3.12",
+      "isolation": "network-disabled, unprivileged container after verified download",
+      "dtype": "float32",
+      "deviceProfiles": ["cpu-smoke", "cuda-batch1"],
+      "runnerDigest": null,
+      "containerDigest": null
+    },
+    "integrity": [
+      "Verify source revision, byte length and SHA-256 before checkpoint deserialization.",
+      "Require 693 frames, 11088 atoms, 89 elements, unique IDs and complete finite E/F/stress arrays.",
+      "Corrupt or missing checkpoints, records or output rows fail; fallback models and cached constants are forbidden.",
+      "Canonical per-record float64 outputs are Merkle-rooted by sorted structure ID."
+    ],
+    "metrics": [
+      "energy MAE in eV/atom with p50/p90/p95/p99/max and worst IDs",
+      "mean per-atom force-vector error in eV/angstrom plus component MAE/RMSE",
+      "stress Frobenius error in GPa plus six-component MAE and fixed ASE sign convention",
+      "failure rate, missing IDs, batch-1 p50/p95 latency, atoms/s and peak GPU memory"
+    ],
+    "invariance": {
+      "translationEnergyMaxEv": 0.0001,
+      "permutationEnergyMaxEv": 0.0001,
+      "rotationForceMaxEvPerAngstrom": 0.0001,
+      "rotationStressMaxEvPerAngstrom3": 0.00001,
+      "finiteDifferenceForceRequired": true,
+      "periodicImageRequired": true
+    },
+    "randomTpAcceptance": {
+      "requiredFrames": 693,
+      "matterSimOfficialTargets": { "energyMaeEvPerAtom": 0.199, "forceMaeEvPerAngstrom": 0.824, "stressMaeGpa": 1.999 },
+      "matterSimTolerance": { "relative": 0.02, "energyAbsolute": 0.005, "forceAbsolute": 0.02, "stressAbsolute": 0.05 },
+      "maceFirstRunPolicy": "Blind engineering-completeness baseline only; it cannot support a superiority claim."
+    },
+    "mdSmoke": {
+      "structures": ["mp-149_Si2.cif", "mp-2998_BaTiO3.cif", "mp-66_C2.cif"],
+      "temperaturesKelvin": [300, 1000],
+      "timeStepFemtoseconds": 0.5,
+      "seed": 20260828,
+      "prSteps": 200,
+      "nightlySteps": 2000,
+      "firstRunPolicy": "Publish drift, minimum distance and maximum force before freezing a non-regression threshold."
+    },
+    "abstention": [
+      "unsupported element or composition",
+      "strain, temperature or system size outside the frozen envelope",
+      "checkpoint, dataset, runner or unit provenance mismatch",
+      "process optimization request before reactor and flowsheet layers are validated"
+    ]
+  },
+  "excludedDefaults": [
+    {
+      "id": "facebook-uma",
+      "reason": "The weights require identity-gated acceptance of FAIR Chemistry terms whose AUP restricts critical infrastructure, transportation, heavy machinery and nuclear uses; it is SOTA context only, not an industrial default.",
+      "source": "https://huggingface.co/facebook/UMA/tree/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2",
+      "revision": "f611b917d9c68566bbbeccbb0aa0f7cad1696cb2",
+      "gating": "manual",
+      "license": "FAIR Chemistry License with separate Acceptable Use Policy",
+      "industrialDefaultAllowed": false,
+      "restrictedCategories": ["critical infrastructure", "transportation", "heavy machinery", "nuclear"],
+      "obligations": ["identity-gated terms acceptance", "geographic and trade-control compliance", "redistribution and disclosure compliance", "acceptable-use review before every intended deployment"],
+      "legalEvidence": [
+        {
+          "kind": "model-card-and-embedded-use-policy",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/README.md",
+          "sizeBytes": 15421,
+          "gitBlobSha1": "c6075181c41e089da3f34e364e4204df175d89da",
+          "sha256": "sha256:fb36209d8c19c5cc86d6bdf1402201159fc8883d7402ed349d2aa1fd3f0aa4ca",
+          "accessStatus": "public-fixed-revision"
+        },
+        {
+          "kind": "license",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/LICENSE",
+          "sizeBytes": 6485,
+          "gitBlobSha1": "7b7be3ce1f4cb4331c06c00c5178d7f5d5d9874f",
+          "sha256": "sha256:9dbfc25ed718f486587677d3eab6212aae5044859473a1229f6a26f44e22c0b0",
+          "accessStatus": "public-fixed-revision"
+        },
+        {
+          "kind": "acceptable-use-policy",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/USE_POLICY.md",
+          "sizeBytes": 4057,
+          "gitBlobSha1": "5d196e5d2707b4246db795151489edeb05c5eed8",
+          "sha256": null,
+          "accessStatus": "identity-gated; anonymous fixed-revision GET returns HTTP 401"
+        }
+      ]
+    }
+  ]
+}

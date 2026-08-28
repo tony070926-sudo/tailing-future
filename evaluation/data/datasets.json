@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "tf.dataset-catalog/0.1",
+  "frozenAt": "2026-08-28",
+  "policy": "Catalog entries are provenance plans, not locally reproduced data. NOASSERTION or access-controlled sources may not be mirrored or promoted until a record-level license gate passes.",
+  "datasets": [
+    {
+      "id": "materials-project",
+      "access": "API key or anonymous AWS Open Data subsets",
+      "license": "record-level terms; access-controlled and BY-NC batches exist",
+      "redistribute": false,
+      "source": "https://docs.materialsproject.org/downloading-data/how-do-i-download-the-materials-project-database",
+      "requiredProvenance": ["db_version", "material_id", "task_id", "batch_id", "builder_meta.license", "query_sha256", "response_sha256"]
+    },
+    {
+      "id": "jarvis-dft-v11",
+      "access": "anonymous Figshare download",
+      "license": "CC-BY-4.0",
+      "redistribute": true,
+      "source": "https://doi.org/10.6084/m9.figshare.6815699.v11",
+      "fileId": "64391379",
+      "sizeBytes": 48447610,
+      "sha256": "sha256:f9e0a3309f0000d5de1ec9e49c93963109ea45e63f451103f8f6595d2eabf7f5",
+      "requiredProvenance": ["doi_version", "file_id", "functional", "pseudopotential", "record_sha256"]
+    },
+    {
+      "id": "nomad-public",
+      "access": "anonymous owner=public API",
+      "license": "public content CC-BY-4.0; metadata CC0 by default",
+      "redistribute": true,
+      "source": "https://nomad-lab.eu/nomad-lab/terms.html",
+      "requiredProvenance": ["entry_id", "upload_id", "entry_license", "archive_sha256", "parser", "nomad_version", "electronic_structure_method"]
+    },
+    {
+      "id": "open-catalyst-oc20-oc22",
+      "access": "anonymous official CDN",
+      "license": "CC-BY-4.0",
+      "redistribute": true,
+      "source": "https://github.com/Open-Catalyst-Project/Open-Catalyst-Dataset/tree/302c1febe5124f21c035e0328e9c343a378c8256",
+      "requiredProvenance": ["split", "official_md5", "download_sha256", "reference_energy_convention", "functional", "record_sha256"]
+    }
+  ]
+}

@@ -1,10 +1,61 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
-  "candidateVersion": "0.2.0-r1-thermochemical",
-  "generatedAt": "2026-08-28T12:51:36.243Z",
+  "candidateVersion": "0.3.0-r2-physics-and-atomistic-freeze",
+  "generatedAt": "2026-08-28T15:07:29.918Z",
+  "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-28",
-  "artifactDigest": "sha256:12109986b25614b41c5338e51516b16f099e5fab9ec9e822721cf151dbffa81f",
-  "sourceFileCount": 52,
+  "artifactDigest": "sha256:2215cd79a89c80b2268c5dde78a8666f4b707e2ffaf8e0dbb5c19bb68f063283",
+  "sourceFileCount": 48,
+  "sourceManifest": {
+    ".github/CODEOWNERS": "sha256:e9e0e355e645f451b0cc246bac05aeec52cfd881f167540a92cea06e32e43bf5",
+    ".github/ISSUE_TEMPLATE/gap.yml": "sha256:1bb098efada033d9dc069a8083115488861cc8d4ac24f130d3f7e31b3835c8b1",
+    ".github/pull_request_template.md": "sha256:ccc7bac029108b664d18031021c9c367bdd9251c71a54c893d534c32b50906a2",
+    ".github/workflows/comparator-refresh.yml": "sha256:798117725b6bbc0a648bd6fc057ef8d1363c3fecef45dd11bc34170661e771db",
+    ".github/workflows/evaluate.yml": "sha256:63b9a3f1cda2995de5a5f57fec33e82ae4aefa3fc5db6579dc9035f6c4537bbf",
+    ".gitignore": "sha256:d52407ed44071060e15193b3efd6bac603521cccab8adde10e919b1c1f9c583d",
+    ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
+    "README.md": "sha256:0fc72c0ae5345a1bee01731cc2b51d73d58c497b9b6591a9a1afdbc35203eff4",
+    "app/globals.css": "sha256:0be2c001c75b93143652d02a6518af50e28c6a871ee1406c6205be07a70fd241",
+    "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
+    "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
+    "docs/ARCHITECTURE.md": "sha256:011dddd5380698eced2a5f48a4866e1c97c52a8e80a6ea352279a18bc49759cc",
+    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:d043c25e405c49462666b6206f3e288a6e648975a8d3b16c71f208aa79b41d33",
+    "docs/EVALUATION_LOOP.md": "sha256:42012ce6ede03770fc47dae6bb5f11b12cd65d9288cba2b59c317895788cf5b8",
+    "docs/RESEARCH_BASELINE.md": "sha256:f27eb2fd70e424f463c4502d377976a0bd36e497407a45c1caf1299c6da99e62",
+    "docs/ROADMAP.md": "sha256:1b174b250fb7b3de629fa7e4a5b4d8ab6aa0ddb23b0286b4f963244c02eb3d68",
+    "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
+    "eslint.config.mjs": "sha256:5c697206f302dadc0c8b7b2f7a707257dab15129a2149872b0f84ea1ac17d263",
+    "evaluation/agent-contracts/builder.md": "sha256:09a208eaebfa78ed5a9e2b86869bc66acb526a548777e06871360166d695eb9b",
+    "evaluation/agent-contracts/evaluator.md": "sha256:aa88228362db081b2eda50233d60358434c810a2d91a137f433fe87e5f402990",
+    "evaluation/agent-contracts/gap-planner.md": "sha256:5eaa4572fc502ea0fb0e1bffd59dbfbc5d93636482850b11c127f3ffad1d6dc5",
+    "evaluation/agent-contracts/sota-scout.md": "sha256:8437c3736e2b2b7e1b0e0d1d89627cd62f15b2b47dac9f25597cbe2cebf38529",
+    "evaluation/atomistic/reproduction-plan.json": "sha256:48e3a8f55d47de71b561dbad9623d368bfa788a4707e6d6f1696ccdf4a69ef1c",
+    "evaluation/baselines/registry.json": "sha256:3414f22c0fac517c2a746aeaa7228da9bffcdfd184aeb6641eb1d04eda2b609a",
+    "evaluation/current-scorecard.json": "sha256:a40de152bb0d4eab066b01eccf82e17c3268da0c003834a4ab6a2951b7f45d47",
+    "evaluation/data/datasets.json": "sha256:fbf43a262cb7389af0f3ae842fd75d9e42b7574cf0c3d8a308e195cf6ebb3b66",
+    "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
+    "lib/simulation/digest.ts": "sha256:e7a00c74a6011697323c771edfbb93739774dd4d0cda4cde0438c63f6f221a76",
+    "lib/simulation/lennard-jones.test.ts": "sha256:0fe9d5028718e5cfaf6dedf229328799efa58b74ddbd335302961519e02306ed",
+    "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
+    "lib/simulation/thermochemical-world.test.ts": "sha256:2753797cb0a901dc52a7c04807368e79220b4d863f8433f9edb54b53fca48397",
+    "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
+    "next.config.ts": "sha256:d063bebef3a4878ae82f9f9547c2c9675b8b6945ab23702932dcb63a011a9fc9",
+    "package-lock.json": "sha256:fe0ef480acbde7e6536a2eef546be518ac348909037c15e1942d91cc3e99128a",
+    "package.json": "sha256:d95a3d0a11d50c595d120d19870e706558c597828fe26d88ac92dd8d7013709c",
+    "public/og.png": "sha256:a6edd893a29c3436f2f0c7919edfd1d2e612ad491b3f63f38e20af9e29c148c6",
+    "schemas/action.schema.json": "sha256:f80094a63dc37e10c033b9981cfbbe423182bd4aebcff1e22cfb70cd2dd4aa18",
+    "schemas/atomistic-reproduction.schema.json": "sha256:67118e996f630c47bc329d51945180393d2a1d0d0111ed50f9b5d928c96706bc",
+    "schemas/evaluation-report.schema.json": "sha256:0335c69083625ab4b7cc31c133bc56c517fb1f172bca9718e139f7c7a8f39637",
+    "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
+    "scripts/evaluate.mjs": "sha256:7f88e49e08c6c251fdb5bf7dfdabb1f04433fc96aaf26f50d6f41b866ee60270",
+    "scripts/release-cloudflare.mjs": "sha256:24c2d2a8e460c59353f1b2d488919953f798a65000bfde58a67df629b3c08edf",
+    "scripts/release-report.mjs": "sha256:8ddf6b400e9dc86f9527d348d0a7a4bd2cbe9267c8cbb0a27d3f815ea56437e5",
+    "scripts/release-report.test.mjs": "sha256:f5ede980312652b5d41565ba51d9e9e7eab5205de94647198477408b3c536dc6",
+    "scripts/validate-atomistic-plan.mjs": "sha256:d1151ba52d4670256ea18209b7a67dfe31b574f35ee8b814891e33210f280aa9",
+    "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
+    "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
+    "vitest.config.ts": "sha256:8fc9ce24c9e8dd840d0aa944448b58222dad58b3481a2dcb26140940dddd4661"
+  },
   "runtime": {
     "node": "v24.16.0",
     "platform": "darwin",
@@ -15,6 +66,7 @@
     "lint": "not-reported-local",
     "typecheck": "not-reported-local",
     "test": "not-reported-local",
+    "atomistic": "not-reported-local",
     "build": "not-reported-local",
     "audit": "not-reported-local"
   },
@@ -22,40 +74,101 @@
     "physics": {
       "heatModeRelativeL2Error": 0.00017011862599198085,
       "heatEnergyResidual": 0,
-      "coupledEnergyResidual": 0.000055055822236493506,
-      "momentumResidual": 4.291009899470623e-14,
+      "fourierMinimumObservedOrder": 1.9133821882919244,
+      "fourierMaximumEnergyResidual": 1.0362081563168122e-15,
+      "gridHeatCapacitySpread": 0,
+      "gridEnergySpread": 7.105427357601002e-15,
+      "analyticExchangeDifferenceError": 0,
+      "analyticExchangeClosureResidual": 0,
+      "analyticExchangeMatrix": {
+        "cases": 73,
+        "maximumDifferenceRatioError": 0,
+        "maximumTemperatureError": 2.220446049250313e-16,
+        "maximumRelativeClosureResidual": 2.26287495465e-16,
+        "maximumSemigroupError": 2.220446049250313e-16,
+        "equalTemperatureEnergyExchange": 0
+      },
+      "forcedReactionClosureResidual": 5.689893001203927e-16,
+      "forcedReactionConsumedA": 1,
+      "forcedReactionProducedB": 1,
+      "coupledEnergyResidual": 0.00004849491976821505,
+      "momentumResidual": 2.085203252048161e-14,
+      "rawParticleMomentumResidual": 1.350215678031751e-13,
       "speciesResidual": 0,
       "massResidual": 0,
-      "interfaceEnergyMoved": 69.84015209124664,
+      "interfaceEnergyMoved": 297.29397388458176,
       "couplingCoverage": 1,
-      "reactionCount": 14,
-      "heatClosureResidual": 1.0743406164692715e-11,
-      "exchangeClosureResidual": 9.911012288643661e-11,
-      "reactionClosureResidual": 1.3933298959045715e-14,
+      "minimumCouplingCoverage": 1,
+      "reactionCount": 35,
+      "heatClosureResidual": 4.7684522996860323e-11,
+      "exchangeClosureResidual": 5.662129966277352e-10,
+      "reactionClosureResidual": 1.3056396241939439e-13,
+      "heatClosureRelative": 2.9313829203488066e-13,
+      "exchangeClosureRelative": 3.4807669308201827e-12,
+      "reactionClosureRelative": 8.026356255560663e-16,
+      "maximumOperatorClosureRelative": 1.7472108003867123e-16,
       "deterministicReplay": true,
-      "inDomain": true
+      "inDomain": true,
+      "ensemble": {
+        "profile": "pr",
+        "seeds": [
+          73,
+          97,
+          131,
+          163,
+          197,
+          229,
+          263,
+          307
+        ],
+        "horizonSteps": 5000,
+        "energyResidualTail": {
+          "p50": 0.00003938393649304396,
+          "p95": 0.00005187394130440896,
+          "p99": 0.00005332951981230788,
+          "maximum": 0.00005369341443928261,
+          "worstSeed": 131
+        },
+        "maximumEnergyResidual": 0.00005369341443928261,
+        "maximumMomentumResidual": 9.180878372997513e-14,
+        "maximumRawParticleMomentumResidual": 1.350215678031751e-13,
+        "minimumCouplingCoverage": 0.984375,
+        "minimumReactionCount": 30,
+        "deterministicContinuations": 8,
+        "allInDomain": true
+      }
     },
     "schemas": {
       "world": true,
       "action": true,
       "actionMutationCorpus": true,
-      "runtimeActionSemantics": true
+      "runtimeActionSemantics": true,
+      "atomisticPlan": true,
+      "datasetCatalog": true
     },
-    "elapsedMs": 1696.15
+    "elapsedMs": 73282.04
   },
   "evidenceManifest": {
-    "schemas/world-state.schema.json": "sha256:91c3e9cbb0eb9b76892fae156ad3d32eeaa9730ecc69b3b6e25fa99ce85ef537",
-    "schemas/action.schema.json": "sha256:a1242a1a5c1ff50377842eda8ca852508cbde5b9c5fdbb592452828013eb97b4",
-    "lib/simulation/lennard-jones.test.ts": "sha256:6c05101c7fbbd1461fb4ef5cfe7c32089b8bfb67d60438c8dc5e8574c6ba9d7f",
-    "lib/simulation/thermochemical-world.test.ts": "sha256:7734518cfbfe42d5664ba9eabfb1c480a23152fdf4d4d6624323971ab3b1b00d",
-    "lib/simulation/lennard-jones.ts": "sha256:41d446b10c2eb42338467176eb52ae158b519196b631c9d197297bd97265c566",
-    "lib/simulation/thermochemical-world.ts": "sha256:ce0af6d795f846378d2bc8ce249176610447b5a71b71ddc88c29c2a5ed66dd65",
-    ".github/workflows/evaluate.yml": "sha256:b5ec3c28063320fe03575b712e7354e05d1c42d5d2a6cd93905b2eaf883fbcd6",
-    "app/page.tsx": "sha256:4377eef83e1e0b644171e462306af001364b9b932e64110048af8c7bf76eb0c6",
-    "docs/SAFETY.md": "sha256:01c4d373cfb8357a9d6f110b6f600a946e468532933d659cd57b536a6b4a6854",
-    "scripts/evaluate.mjs": "sha256:1fe02e03e748e8b9810128de8143e202068b95ae9ceccfe61dca68ccc497ea4e"
+    "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
+    "schemas/action.schema.json": "sha256:f80094a63dc37e10c033b9981cfbbe423182bd4aebcff1e22cfb70cd2dd4aa18",
+    "lib/simulation/digest.ts": "sha256:e7a00c74a6011697323c771edfbb93739774dd4d0cda4cde0438c63f6f221a76",
+    "lib/simulation/lennard-jones.test.ts": "sha256:0fe9d5028718e5cfaf6dedf229328799efa58b74ddbd335302961519e02306ed",
+    "lib/simulation/thermochemical-world.test.ts": "sha256:2753797cb0a901dc52a7c04807368e79220b4d863f8433f9edb54b53fca48397",
+    "evaluation/atomistic/reproduction-plan.json": "sha256:48e3a8f55d47de71b561dbad9623d368bfa788a4707e6d6f1696ccdf4a69ef1c",
+    "evaluation/data/datasets.json": "sha256:fbf43a262cb7389af0f3ae842fd75d9e42b7574cf0c3d8a308e195cf6ebb3b66",
+    "schemas/atomistic-reproduction.schema.json": "sha256:67118e996f630c47bc329d51945180393d2a1d0d0111ed50f9b5d928c96706bc",
+    "scripts/validate-atomistic-plan.mjs": "sha256:d1151ba52d4670256ea18209b7a67dfe31b574f35ee8b814891e33210f280aa9",
+    "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
+    "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
+    ".github/workflows/evaluate.yml": "sha256:63b9a3f1cda2995de5a5f57fec33e82ae4aefa3fc5db6579dc9035f6c4537bbf",
+    "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
+    "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
+    "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
+    "scripts/evaluate.mjs": "sha256:7f88e49e08c6c251fdb5bf7dfdabb1f04433fc96aaf26f50d6f41b866ee60270",
+    "scripts/release-cloudflare.mjs": "sha256:24c2d2a8e460c59353f1b2d488919953f798a65000bfde58a67df629b3c08edf",
+    "scripts/release-report.test.mjs": "sha256:f5ede980312652b5d41565ba51d9e9e7eab5205de94647198477408b3c536dc6"
   },
-  "weightedScore": 29.5,
+  "weightedScore": 41,
   "hardGateFailures": [],
   "dimensions": [
     {
@@ -67,11 +180,12 @@
       "promotionFloor": 2,
       "summary": "schema + digest + atomic replay",
       "evidence": [
-        "Executable world/action schemas, state digests, unique branches and transactional rollback."
+        "Executable world/action schemas, SHA-256 state digests, deterministic ordinal branch namespaces and transactional rollback."
       ],
       "evidenceArtifacts": [
         "schemas/world-state.schema.json",
         "schemas/action.schema.json",
+        "lib/simulation/digest.ts",
         "lib/simulation/lennard-jones.test.ts",
         "lib/simulation/thermochemical-world.test.ts"
       ],
@@ -83,13 +197,20 @@
       "label": "Data and provenance",
       "displayLabel": "数据与来源追踪",
       "weight": 8,
-      "score": 0,
+      "score": 1,
       "promotionFloor": 0,
-      "summary": "尚无训练数据",
-      "evidence": [],
-      "evidenceArtifacts": [],
-      "nextAction": "Add hashed, licensed public atomistic benchmark manifests.",
-      "acceptanceTest": "Every dataset entry has digest, license, units, electronic-structure settings and split lineage."
+      "summary": "哈希与许可清单，尚未本地下载",
+      "evidence": [
+        "Pinned MatterSim Random-TP model/data hashes, a fail-closed reproduction protocol, and a record-level MP/JARVIS/NOMAD/OC20 license catalog; status remains manifest-only."
+      ],
+      "evidenceArtifacts": [
+        "evaluation/atomistic/reproduction-plan.json",
+        "evaluation/data/datasets.json",
+        "schemas/atomistic-reproduction.schema.json",
+        "scripts/validate-atomistic-plan.mjs"
+      ],
+      "nextAction": "Download the locked Random-TP bytes and both checkpoints into an isolated cache, then verify every digest before deserialization.",
+      "acceptanceTest": "The cache verifier confirms exact byte lengths and SHA-256 values; Random-TP parses as 693 frames, 11,088 atoms, 89 elements, with no skipped record."
     },
     {
       "id": "atomistic",
@@ -106,7 +227,7 @@
         "lib/simulation/lennard-jones.ts",
         "lib/simulation/lennard-jones.test.ts"
       ],
-      "nextAction": "Reproduce two pinned open foundation potentials on one locked held-out benchmark.",
+      "nextAction": "Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {
@@ -127,18 +248,18 @@
       "label": "Continuum fields",
       "displayLabel": "连续热场",
       "weight": 10,
-      "score": 2,
+      "score": 3,
       "promotionFloor": 2,
-      "summary": "Fourier PDE + 解析门禁",
+      "summary": "面积热容 + 二维二阶收敛",
       "evidence": [
-        "Periodic 2D heat solver, automatic CFL subcycling, maximum principle and analytic Fourier decay."
+        "Area heat-capacity density keeps total heat capacity and pulse energy grid-independent; three two-dimensional Fourier modes converge at observed order at least 1.8 through the production CFL path."
       ],
       "evidenceArtifacts": [
         "lib/simulation/thermochemical-world.ts",
         "lib/simulation/thermochemical-world.test.ts"
       ],
-      "nextAction": "Replace fixed per-cell heat capacity with an area-scaled heat-capacity density, then add grid convergence and a community coupled-field benchmark.",
-      "acceptanceTest": "Domain heat capacity is grid-invariant, Fourier order is at least 1.8, and PFHub case outputs match the locked reference envelope."
+      "nextAction": "Implement the pinned NIST PFHub Benchmark 3 phase-field / heat case without weakening the current grid-convergence gates.",
+      "acceptanceTest": "PFHub free energy, solid fraction, tip position and zero contour meet preregistered tolerances while total field energy remains grid-invariant."
     },
     {
       "id": "process",
@@ -158,19 +279,19 @@
       "label": "Cross-scale coupling",
       "displayLabel": "跨尺度耦合",
       "weight": 14,
-      "score": 2,
+      "score": 3,
       "promotionFloor": 2,
-      "summary": "MD ↔ 热场 ↔ 反应账本",
+      "summary": "解析交换 + 原子反应结算",
       "evidence": [
-        "Cell-COM thermal exchange, frozen Arrhenius hazards, symmetric split and explicit energy closures."
+        "The production path uses an exact two-reservoir kernel verified across 73 cases, fail-closed temperature limits, and an atomic multi-cell A-to-B settlement with independently normalized operator closures."
       ],
       "evidenceArtifacts": [
         "lib/simulation/thermochemical-world.ts",
         "lib/simulation/thermochemical-world.test.ts",
         "schemas/world-state.schema.json"
       ],
-      "nextAction": "Add analytic two-reservoir exchange and forced single-reaction closure gates before replacing hand-set coefficients with a calibrated narrow material bridge.",
-      "acceptanceTest": "Analytic exchange and forced reaction ledgers close independently, interface closure remains below 1e-10 Eref, and held-out transport quantities remain inside calibrated intervals."
+      "nextAction": "Replace hand-set coefficients with a calibrated one-way atomistic-to-field readout for one locked material, then validate held-out transport observables.",
+      "acceptanceTest": "Coarse-grid energy and momentum integrals remain invariant, Galilean boosts preserve local temperature, and held-out transport quantities lie inside calibrated intervals."
     },
     {
       "id": "world_rollout",
@@ -196,17 +317,17 @@
       "label": "Uncertainty and OOD",
       "displayLabel": "UQ / OOD",
       "weight": 8,
-      "score": 1,
+      "score": 2,
       "promotionFloor": 1,
-      "summary": "动作域拒绝，尚无校准 UQ",
+      "summary": "完整资源域，尚无校准 UQ",
       "evidence": [
-        "Machine-readable rejection for unsupported temperatures, pulse sizes, horizons and reaction hazards."
+        "Machine-readable envelopes now cover count, uint32 seed, density, grid occupancy/aspect, cutoff, diffusivity, heat capacity, coupling, kinetics, horizon and exact work budgets; eight-seed tails are gated."
       ],
       "evidenceArtifacts": [
         "lib/simulation/thermochemical-world.ts",
         "lib/simulation/thermochemical-world.test.ts"
       ],
-      "nextAction": "Bound density, grid size, diffusivity, heat capacity, kinetics and subcycling cost before separating and calibrating numerical, parameter and model-form uncertainty.",
+      "nextAction": "Separate numerical, parameter and model-form uncertainty, then calibrate atomistic ensemble intervals on held-out structures.",
       "acceptanceTest": "Every supported parameter has a machine-readable envelope and cost limit; locked 90% intervals cover 85–95% in-domain and abstain on preregistered OOD cases."
     },
     {
@@ -214,17 +335,17 @@
       "label": "Reproducibility and cost",
       "displayLabel": "可复现性与成本",
       "weight": 6,
-      "score": 1,
+      "score": 2,
       "promotionFloor": 1,
-      "summary": "固定随机流 + CI 门禁",
+      "summary": "8×5000 经验尾部 + 成本预算",
       "evidence": [
-        "Counter-based reaction randomness, deterministic replay, and a configured GitHub CI gate whose outcomes are recorded per report."
+        "Eight preregistered seeds run for 5,000 steps with deterministic checkpoint continuation, empirical p50/p95/p99/max summaries, worst-seed reporting and exact pair/heat/reaction work envelopes."
       ],
       "evidenceArtifacts": [
         ".github/workflows/evaluate.yml",
         "lib/simulation/thermochemical-world.test.ts"
       ],
-      "nextAction": "Record p50/p95 runtime, platform fingerprint and two-run artifact equality.",
+      "nextAction": "Run the 32-seed × 10,000-step promotion profile on two clean Linux runners and compare canonical artifacts.",
       "acceptanceTest": "Two clean runners reproduce the manifest and stay inside the preregistered latency envelope."
     },
     {
@@ -236,14 +357,14 @@
       "promotionFloor": 2,
       "summary": "粒子 / 热场 / 账本同帧",
       "evidence": [
-        "Canvas heat field, particle species, state ID, timestamp and ledger are derived from one observation snapshot."
+        "Canvas heat field, particle labels, fixed 20–260 K scale, state ID, ledger and click probe are derived from one observation snapshot; the exact observation can be downloaded."
       ],
       "evidenceArtifacts": [
         "app/page.tsx",
         "lib/simulation/thermochemical-world.ts"
       ],
-      "nextAction": "Add selectable state probes and downloadable immutable observations.",
-      "acceptanceTest": "A sampled pixel/cell/particle probe resolves to the displayed state digest and numeric source."
+      "nextAction": "Package a signed, immutable replay bundle that binds the observation, action chain and release provenance.",
+      "acceptanceTest": "A clean browser replays the downloaded bundle and reproduces every sampled pixel/cell/particle value under the same release commit and digest."
     },
     {
       "id": "safety",
@@ -254,15 +375,20 @@
       "promotionFloor": 1,
       "summary": "advisory-only + claim lint",
       "evidence": [
-        "Visible toy-model boundary, claim lint, a configured dependency-audit gate and no control-output endpoint."
+        "Visible toy-model boundary, claim lint, pinned package/model/data license catalogs, an explicit fail-closed UMA exclusion, a green-commit Cloudflare release guard, dependency audit and no control-output endpoint."
       ],
       "evidenceArtifacts": [
         "docs/SAFETY.md",
+        "evaluation/atomistic/reproduction-plan.json",
+        "evaluation/data/datasets.json",
+        "evaluation/reviews/2026-08-28-r2-release-review.md",
         "scripts/evaluate.mjs",
+        "scripts/release-cloudflare.mjs",
+        "scripts/release-report.test.mjs",
         ".github/workflows/evaluate.yml"
       ],
-      "nextAction": "Add model/data license manifests and an SBOM artifact.",
-      "acceptanceTest": "Dependency, model and dataset license gates pass and no direct control endpoint exists."
+      "nextAction": "Generate a CycloneDX SBOM and freeze the remaining dataset legal bytes and attribution obligations.",
+      "acceptanceTest": "Dependency, package, model, dataset and SBOM policy gates pass; unresolved legal bytes abstain and no direct control endpoint exists."
     }
   ],
   "comparators": [
@@ -321,35 +447,36 @@
       "id": "mattersim-1.0.0-5m",
       "name": "MatterSim-v1.0.0-5M",
       "scope": "open atomistic energy, force, stress and MD baseline",
-      "source": "https://github.com/microsoft/mattersim/blob/c6801fd33df2a8cd6a103fb177d4f12d8d5a362e/MODEL_CARD.md",
-      "revision": "v1.0.0-5M model card commit c6801fd / Matbench snapshot 0ba4746",
+      "source": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/MODEL_CARD.md",
+      "revision": "MatterSim package v1.2.5 / model v1.0.0-5M / source commit 40a1eb8",
       "evidenceClass": "auditable",
       "claimOwner": "Microsoft Research",
       "comparable": false,
-      "sourceCommit": "c6801fd33df2a8cd6a103fb177d4f12d8d5a362e",
+      "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
       "sourceDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
-      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491",
-      "checkpointDigest": null,
-      "datasetDigest": null,
+      "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5",
+      "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
       "runnerDigest": null,
-      "reason": "Open lightweight reproduction control; Tailing Future has not executed the checkpoint."
+      "reason": "Checkpoint and Random-TP bytes are pinned for the R2 reproduction; no local inference runner result exists yet."
     },
     {
       "id": "mace-mpa-0",
       "name": "MACE-MPA-0",
       "scope": "open atomistic interatomic-potential control",
-      "source": "https://github.com/janosh/matbench-discovery/blob/0ba474661cf615d10987ba9a2acb8132943aa491/models/mace/mace-mpa-0.yml",
-      "revision": "Matbench Discovery commit 0ba474661cf615d10987ba9a2acb8132943aa491",
+      "source": "https://github.com/ACEsuit/mace/blob/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/README.md",
+      "revision": "mace-torch v0.3.16 commit 4d2da09; MPA-0 release asset locked separately",
       "evidenceClass": "auditable",
-      "claimOwner": "MACE authors / Matbench Discovery",
+      "claimOwner": "MACE authors",
       "comparable": false,
-      "sourceCommit": "0ba474661cf615d10987ba9a2acb8132943aa491",
-      "sourceDigest": "sha256:eaf91e0403a89f76f252479ae81b76e61c311c8c246f8e9afebe83583fe24b11",
-      "benchmarkCommit": "0ba474661cf615d10987ba9a2acb8132943aa491",
-      "checkpointDigest": null,
-      "datasetDigest": null,
+      "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+      "sourceDigest": "sha256:1ef0c309a49cf7d1035ab581b1ddc8284c678658ba375a132c4d5fcefd833038",
+      "checkpointSource": "https://github.com/ACEsuit/mace-foundations/releases/tag/mace_mpa_0",
+      "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638",
+      "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
       "runnerDigest": null,
-      "reason": "Second open reproduction control; exact checkpoint and runner are not yet pinned locally."
+      "reason": "Checkpoint and shared Random-TP bytes are pinned; the blind engineering baseline has not been executed."
     },
     {
       "id": "pfhub-benchmark-3",
@@ -366,7 +493,7 @@
       "checkpointDigest": null,
       "datasetDigest": null,
       "runnerDigest": null,
-      "reason": "Community reference for the next mesoscale coupling stage; not implemented in R1."
+      "reason": "Community reference for the next mesoscale coupling stage; not implemented in the R2 candidate."
     },
     {
       "id": "cantera-3.2-cstr",
@@ -383,7 +510,7 @@
       "checkpointDigest": null,
       "datasetDigest": null,
       "runnerDigest": null,
-      "reason": "Pinned reactor reference planned for R2; R1 A/B labels are not a reactor model."
+      "reason": "Pinned reactor reference for the next iteration; the current A/B labels are not a reactor model."
     },
     {
       "id": "idaes-2.12",
@@ -400,7 +527,56 @@
       "checkpointDigest": null,
       "datasetDigest": null,
       "runnerDigest": null,
-      "reason": "Process anchor for later stages; no coupled flowsheet exists in R1."
+      "reason": "Process anchor for later stages; no coupled flowsheet exists in the current candidate."
+    }
+  ],
+  "excludedDefaults": [
+    {
+      "id": "facebook-uma",
+      "reason": "The weights require identity-gated acceptance of FAIR Chemistry terms whose AUP restricts critical infrastructure, transportation, heavy machinery and nuclear uses; it is SOTA context only, not an industrial default.",
+      "source": "https://huggingface.co/facebook/UMA/tree/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2",
+      "revision": "f611b917d9c68566bbbeccbb0aa0f7cad1696cb2",
+      "gating": "manual",
+      "license": "FAIR Chemistry License with separate Acceptable Use Policy",
+      "industrialDefaultAllowed": false,
+      "restrictedCategories": [
+        "critical infrastructure",
+        "transportation",
+        "heavy machinery",
+        "nuclear"
+      ],
+      "obligations": [
+        "identity-gated terms acceptance",
+        "geographic and trade-control compliance",
+        "redistribution and disclosure compliance",
+        "acceptable-use review before every intended deployment"
+      ],
+      "legalEvidence": [
+        {
+          "kind": "model-card-and-embedded-use-policy",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/README.md",
+          "sizeBytes": 15421,
+          "gitBlobSha1": "c6075181c41e089da3f34e364e4204df175d89da",
+          "sha256": "sha256:fb36209d8c19c5cc86d6bdf1402201159fc8883d7402ed349d2aa1fd3f0aa4ca",
+          "accessStatus": "public-fixed-revision"
+        },
+        {
+          "kind": "license",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/LICENSE",
+          "sizeBytes": 6485,
+          "gitBlobSha1": "7b7be3ce1f4cb4331c06c00c5178d7f5d5d9874f",
+          "sha256": "sha256:9dbfc25ed718f486587677d3eab6212aae5044859473a1229f6a26f44e22c0b0",
+          "accessStatus": "public-fixed-revision"
+        },
+        {
+          "kind": "acceptable-use-policy",
+          "url": "https://huggingface.co/facebook/UMA/resolve/f611b917d9c68566bbbeccbb0aa0f7cad1696cb2/USE_POLICY.md",
+          "sizeBytes": 4057,
+          "gitBlobSha1": "5d196e5d2707b4246db795151489edeb05c5eed8",
+          "sha256": null,
+          "accessStatus": "identity-gated; anonymous fixed-revision GET returns HTTP 401"
+        }
+      ]
     }
   ],
   "gaps": [
@@ -408,7 +584,7 @@
       "severity": "P1",
       "dimension": "atomistic",
       "evidence": "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests.",
-      "recommendedChange": "Reproduce two pinned open foundation potentials on one locked held-out benchmark.",
+      "recommendedChange": "Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {
