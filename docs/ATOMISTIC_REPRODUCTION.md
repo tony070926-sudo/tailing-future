@@ -45,7 +45,14 @@ reproduction claim.
 The resolver treats only one direct top-level `.dist-info` directory as wheel
 metadata, rejects case-variant or `.egg-info` roots and any `.data` relocation
 that adds to an installed metadata root, and keeps genuinely vendored nested
-metadata as ordinary RECORD-hashed payload.
+metadata as ordinary RECORD-hashed payload. It also rejects the prefix-relative
+`.data/data` scheme, which could otherwise alias the venv's `site-packages`,
+executables or configuration. The only exceptions bind the complete wheel
+identity and complete observed member set for the reviewed FontTools, Plotly,
+SymPy and `python-hostlist` `share/man` or `share/jupyter` payloads. The latter
+also remains constrained by its package-specific dual-build verifier. Venv
+Python, pip and activation scripts plus seeded pip package roots are reserved
+against wheel-file and generated-entry-point collisions.
 Pre-release and development wheel versions fail closed. The
 MatterSim bootstrap explicitly fixes `pymatgen==2025.4.17` and
 `pymatgen-io-validation==0.1.2`, avoiding the overlapping paths in the 2026
@@ -53,14 +60,18 @@ MatterSim bootstrap explicitly fixes `pymatgen==2025.4.17` and
 runtime setuptools dependency is fixed to the reviewed 84.0.0 wheel. Its sole
 `distutils-precedence.pth` is accepted only when both the complete wheel and
 hook bytes match their frozen digests, recorded as a planned removal, and
-deleted before the next venv interpreter starts. Every other `.pth` and every
-importable `sitecustomize` or `usercustomize` module/package form remains
-forbidden.
+deleted before the next venv interpreter starts. Every other direct
+`site-packages` `.pth`, plus every directly importable top-level `sitecustomize`
+or `usercustomize` module/package form, remains forbidden.
+Nested `.pth` payloads such as packaged model weights and nested vendored
+customization-looking names are ordinary RECORD-hashed data, not Python site
+startup hooks.
 
 A separately hash-bound verifier runs after freeze and again immediately before
 the image build. It parses the wheel ZIP members and entry points independently,
-rechecks path and file/directory collisions, and recomputes both the raw and
-post-removal install-path digests instead of trusting the resolver manifest.
+reclassifies direct startup hooks, rechecks path and file/directory collisions,
+and recomputes both the raw and post-removal install-path digests instead of
+trusting the resolver manifest.
 
 The image build context is a fresh temporary directory with exactly five
 regular files: `.dockerignore`, the selected Dockerfile, the generated
@@ -102,8 +113,33 @@ TAILING_ATOMISTIC_CACHE=/absolute/cache node scripts/validate-atomistic-plan.mjs
 
 MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy, 0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the manifest. MACE has no locked official Random-TP target: its first complete blind run may establish an engineering baseline, but cannot be used to claim superiority. Until checkpoint, dataset and runner digests are all present, both models remain `AUDITABLE`, never `REPRODUCED` or numerically comparable.
 
-Two protected-main bootstrap dispatches have run. The first stopped during
-wheelhouse construction; the second passed wheelhouse construction but stopped
-during offline exact-lock resolution. Neither reached cold install, image
+Three protected-main bootstrap dispatches have run. The first stopped during
+wheelhouse construction; the second and third passed wheelhouse construction
+but stopped during offline exact-lock resolution. None reached cold install, image
 build, checkpoint deserialization or inference. Their bounded outcome
 artifacts therefore remain `bootstrap-not-reproduced`.
+
+The third dispatch,
+[`33219047585`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585),
+ran at protected-main commit
+`04f613fedea10be1f4985e32729ff73d4297066c`. Both jobs rejected the same three
+TorchMetrics LPIPS weight files under
+`torchmetrics/functional/image/lpips_models/{alex,squeeze,vgg}.pth`; these are
+nested RECORD-hashed model data, not direct `site-packages/*.pth` startup
+files. The MatterSim artifact `9704488401` has digest
+`sha256:d29d46082edd0035558afa0ed9cb8ce499220e15e13146997300f90652c19cee`;
+the MACE artifact `9704485367` has digest
+`sha256:f77fe3ece5edf92b8c88ed20633043933a1b4aa26b34b8762a3675f48cc953dc`.
+Independent inspection found no artifact safety or run-binding violation; both
+truthfully report `failureStage: resolve` and no predictions.
+
+The current remediation applies the direct-child startup boundary and was
+preflighted against complete cp312/Linux target wheelhouses: 157 MatterSim
+wheels (675,408,593 bytes) and 44 MACE wheels (294,237,409 bytes). It also
+binds the exact safe `.data/data` `share` payloads and reserves venv Python,
+pip and activation paths. The final resolver and independent inventory verifier
+completed all 157 MatterSim wheels (35,697 raw install files); the 44-wheel MACE
+diagnostic completed after substituting only the local hostlist ZIP hash, while
+checked-in policy binds the reviewed Linux dual-build digest
+`498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c`.
+A fourth protected Linux dispatch is still required.

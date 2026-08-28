@@ -323,14 +323,152 @@ class ResolveLockTests(unittest.TestCase):
             "sitecustomize/__init__.py",
             "sitecustomize.pyc",
             "sitecustomize.cpython-312-x86_64-linux-gnu.so",
-            "vendor/usercustomize/__init__.py",
+            "usercustomize/__init__.py",
             "USERCUSTOMIZE.PY",
+            "probe-1.0.data/purelib/startup.pth",
+            "probe-1.0.data/platlib/sitecustomize.py",
         ):
             with self.subTest(path=unsafe_path), tempfile.TemporaryDirectory() as temporary:
                 wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
                 make_wheel(wheel, "probe", "1.0", extra_files={unsafe_path: b"unsafe"})
                 with self.assertRaisesRegex(ValueError, "startup-hook path is forbidden"):
                     resolve_lock.inspect_wheel(wheel)
+
+    def test_allows_nested_pth_payloads_and_vendored_customization_names(self) -> None:
+        inert_payloads = {
+            "torchmetrics/functional/image/lpips_models/alex.pth": b"weights-a",
+            "torchmetrics/functional/image/lpips_models/squeeze.pth": b"weights-b",
+            "torchmetrics/functional/image/lpips_models/vgg.pth": b"weights-c",
+            "probe/_vendor/sitecustomize/__init__.py": b"vendored",
+            "probe/_vendor/usercustomize/__init__.py": b"vendored",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+            make_wheel(wheel, "probe", "1.0", extra_files=inert_payloads)
+            inspected = resolve_lock.inspect_wheel(wheel)
+
+        self.assertEqual(inspected["startupHookRemovals"], [])
+        self.assertTrue(
+            all(
+                f"site-packages/{path}" in inspected["installPaths"]
+                for path in inert_payloads
+            )
+        )
+
+    def test_rejects_data_scheme_prefix_aliases_except_reviewed_hostlist_manpages(self) -> None:
+        unsafe_paths = (
+            "probe-1.0.data/data/lib/python3.12/site-packages/evil.pth",
+            "probe-1.0.data/data/lib64/python3.12/site-packages/sitecustomize.py",
+            "probe-1.0.data/data/bin/python",
+            "probe-1.0.data/data/pyvenv.cfg",
+        )
+        for unsafe_path in unsafe_paths:
+            with self.subTest(path=unsafe_path), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                make_wheel(wheel, "probe", "1.0", extra_files={unsafe_path: b"unsafe"})
+                with self.assertRaisesRegex(ValueError, r"\.data/data wheel identity"):
+                    resolve_lock.inspect_wheel(wheel)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            wheel = Path(temporary).resolve() / resolve_lock.PYTHON_HOSTLIST_WHEEL_FILENAME
+            allowed = {
+                path: b"manual"
+                for path in resolve_lock.PYTHON_HOSTLIST_ALLOWED_DATA_MEMBERS
+            }
+            make_wheel(wheel, "python-hostlist", "2.3.0", extra_files=allowed)
+            synthetic_policy = dict(resolve_lock.ALLOWED_DATA_SCHEME_WHEEL_POLICY)
+            synthetic_policy[wheel.name] = {
+                "sizeBytes": wheel.stat().st_size,
+                "sha256": digest(wheel.read_bytes()),
+                "members": resolve_lock.PYTHON_HOSTLIST_ALLOWED_DATA_MEMBERS,
+            }
+            with patch.object(resolve_lock, "ALLOWED_DATA_SCHEME_WHEEL_POLICY", synthetic_policy):
+                inspected = resolve_lock.inspect_wheel(wheel)
+            self.assertTrue(
+                all(
+                    f"data/share/man/man1/{name}.1" in inspected["installPaths"]
+                    for name in ("dbuck", "hostgrep", "hostlist", "pshbak")
+                )
+            )
+
+            near_miss = Path(temporary).resolve() / "python_hostlist-2.3.0-1-py3-none-any.whl"
+            make_wheel(
+                near_miss,
+                "python-hostlist",
+                "2.3.0",
+                extra_files={
+                    "python_hostlist-2.3.0.data/data/share/man/man1/extra.1": b"unsafe",
+                },
+            )
+            with self.assertRaisesRegex(ValueError, r"\.data/data wheel identity"):
+                resolve_lock.inspect_wheel(near_miss)
+
+    def test_exact_data_scheme_policy_binds_identity_and_complete_member_set(self) -> None:
+        wheel_name = "fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl"
+        policy = resolve_lock.ALLOWED_DATA_SCHEME_WHEEL_POLICY[wheel_name]
+        members = set(policy["members"])
+        resolve_lock.validate_data_scheme_policy(
+            wheel_name,
+            policy["sizeBytes"],
+            policy["sha256"],
+            members,
+        )
+        mutations = (
+            ("filename", f"forged-{wheel_name}", policy["sizeBytes"], policy["sha256"], members),
+            ("size", wheel_name, policy["sizeBytes"] + 1, policy["sha256"], members),
+            ("digest", wheel_name, policy["sizeBytes"], "sha256:" + "0" * 64, members),
+            ("missing", wheel_name, policy["sizeBytes"], policy["sha256"], set(sorted(members)[1:])),
+            (
+                "extra",
+                wheel_name,
+                policy["sizeBytes"],
+                policy["sha256"],
+                {*members, "fonttools-4.63.0.data/data/extra"},
+            ),
+        )
+        for label, candidate_name, size_bytes, wheel_sha256, candidate_members in mutations:
+            with self.subTest(case=label):
+                with self.assertRaisesRegex(ValueError, r"\.data/data"):
+                    resolve_lock.validate_data_scheme_policy(
+                        candidate_name, size_bytes, wheel_sha256, candidate_members
+                    )
+
+    def test_rejects_preexisting_venv_script_and_seeded_pip_collisions(self) -> None:
+        unsafe_files = ("pip/__init__.py",)
+        for unsafe_path in unsafe_files:
+            with self.subTest(path=unsafe_path), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                make_wheel(wheel, "probe", "1.0", extra_files={unsafe_path: b"unsafe"})
+                with self.assertRaisesRegex(ValueError, r"reserved venv script|seeded pip"):
+                    resolve_lock.inspect_wheel(wheel)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            pip_wheel = Path(temporary).resolve() / "pip-25.0.1-py3-none-any.whl"
+            make_wheel(pip_wheel, "pip", "25.0.1")
+            with self.assertRaisesRegex(ValueError, "seeded pip"):
+                resolve_lock.inspect_wheel(pip_wheel)
+
+        for reserved_name in sorted(resolve_lock.RESERVED_VENV_SCRIPT_ROOTS):
+            tested_name = "Activate.ps1" if reserved_name == "activate.ps1" else reserved_name
+            for source in ("wheel-script", "entry-point"):
+                with self.subTest(name=tested_name, source=source), tempfile.TemporaryDirectory() as temporary:
+                    wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                    if source == "wheel-script":
+                        make_wheel(
+                            wheel,
+                            "probe",
+                            "1.0",
+                            extra_files={f"probe-1.0.data/scripts/{tested_name}": b"unsafe"},
+                        )
+                    else:
+                        make_wheel(
+                            wheel,
+                            "probe",
+                            "1.0",
+                            entry_points={tested_name: "probe.cli:main"},
+                        )
+                    with self.assertRaisesRegex(ValueError, "reserved venv script"):
+                        resolve_lock.inspect_wheel(wheel)
 
     def test_main_binds_the_exact_runtime_inventory_after_hook_removal(self) -> None:
         hook = (

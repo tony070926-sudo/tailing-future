@@ -53,13 +53,23 @@ size, SHA-256, hook path, size and SHA-256 all match the reviewed constants. It
 records the hook in both raw-wheel and planned-runtime inventories. The cold
 install and both image builds verify the installed file again, remove it before
 the next venv Python process, assert that no startup hook remains, and only then
-run `pip check`. All other `.pth` paths and all importable `sitecustomize` or
-`usercustomize` module/package forms fail closed.
+run `pip check`. All other direct `site-packages/*.pth` paths and all top-level
+importable `sitecustomize` or `usercustomize` module/package forms fail closed;
+nested `.pth` model/data payloads remain ordinary RECORD-hashed files.
+
+The wheel `data` installation scheme is prefix-relative, so an unrestricted
+`.data/data` member could otherwise alias venv configuration, executables, or
+site packages. The resolver and independent verifier allow only the exact
+reviewed FontTools, Plotly, SymPy and `python-hostlist` wheel identities with
+their complete known `share/man` or `share/jupyter` member sets. They also
+reject wheel files or generated entry points that collide with the venv's
+Python, pip or activation scripts and seeded pip package roots.
 
 The freeze and build stages also run the independently hash-bound
 `verify_runtime_inventory.py`. It reconstructs install paths directly from the
-wheel ZIP members and entry points, rechecks collisions, verifies the declared
-removal bytes and ownership, and recomputes both raw and runtime inventories.
+wheel ZIP members and entry points, independently reclassifies direct startup
+hooks, rechecks collisions, verifies the declared removal bytes and ownership,
+and recomputes both raw and runtime inventories.
 
 ## Source-only bootstrap exception
 

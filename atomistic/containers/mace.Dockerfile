@@ -29,6 +29,7 @@ RUN --network=none model_wheel=/wheelhouse/mace_torch-0.3.16-py3-none-any.whl &&
     rm -- "$startup_hook" && \
     test ! -e "$startup_hook" && \
     unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages \
+      -mindepth 1 -maxdepth 1 \
       \( -type f -o -type l -o -type d \) \
       \( -iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*' -o -iname usercustomize -o -iname 'usercustomize.*' \) \
       -print -quit)" && \
@@ -42,6 +43,7 @@ RUN --network=none groupadd --gid 65532 tailing && \
     chown 65532:65532 /work
 COPY --from=builder /opt/tailing-venv /opt/tailing-venv
 RUN --network=none unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages \
+      -mindepth 1 -maxdepth 1 \
       \( -type f -o -type l -o -type d \) \
       \( -iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*' -o -iname usercustomize -o -iname 'usercustomize.*' \) \
       -print -quit)" && \

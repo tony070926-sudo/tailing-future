@@ -260,6 +260,11 @@ describe('Dockerfile source policy', () => {
         );
       expect(reordered).not.toBe(source);
       expect(inspectDockerfileSource(relativePath, reordered), `${relativePath} reordered`).not.toEqual([]);
+      expect(source.match(/-mindepth 1 -maxdepth 1/g)).toHaveLength(2);
+      expect(
+        inspectDockerfileSource(relativePath, source.replace('-mindepth 1 -maxdepth 1', '-mindepth 1')),
+        `${relativePath} with recursive startup-hook scan`,
+      ).not.toEqual([]);
       expect(ATOMISTIC_DOCKERFILE_DIGESTS[relativePath]).toMatch(/^sha256:[0-9a-f]{64}$/);
     }
   });
@@ -308,6 +313,7 @@ describe('atomistic bootstrap supply-chain policy', () => {
     const workflow = parseYaml(atomisticBootstrapSource);
     const coldInstall = namedStep(workflow, 'Prove a cold, hash-locked install with no network').run;
     expect(coldInstall).toContain("sh -euc '");
+    expect(coldInstall).toContain('-mindepth 1 -maxdepth 1');
     expect(coldInstall).toContain('-iname \\*.pth');
     expect(coldInstall).toContain('-iname sitecustomize.\\*');
     expect(coldInstall).toContain('unexpected_hooks="$(find');
