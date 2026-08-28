@@ -1,0 +1,37 @@
+name: Sentinel gap
+description: A versioned, evidence-backed gap for the next iteration
+title: '[Sentinel] '
+labels: ['sentinel', 'gap']
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: [P0, P1, P2, P3]
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Candidate and baseline values, artifact links, source status and confidence.
+    validations:
+      required: true
+  - type: textarea
+    id: cause
+    attributes:
+      label: Likely cause and proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Executable acceptance test
+    validations:
+      required: true
+  - type: checkboxes
+    id: blocking
+    attributes:
+      label: Promotion gate
+      options:
+        - label: This gap blocks release promotion.

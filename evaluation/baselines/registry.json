@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "tf.comparators/0.1",
+  "snapshotDate": "2026-08-28",
+  "policy": "Only reproduced like-for-like results enter numeric rankings; vendor claims remain reported-only.",
+  "comparators": [
+    {
+      "id": "aido-cell-1.0",
+      "name": "AIDO Cell 1.0",
+      "scope": "stateful multi-scale world-model architecture",
+      "source": "https://genbio.ai/aido-cell-simulator/",
+      "revision": "public release page, accessed 2026-08-28",
+      "evidence": "vendor_reported",
+      "comparable": false,
+      "reason": "Cross-domain architecture reference; closed alpha and not a materials accuracy baseline."
+    },
+    {
+      "id": "uma",
+      "name": "Universal Models for Atoms (UMA)",
+      "scope": "atomistic energies, forces and stresses",
+      "source": "https://fair-chem.github.io/uma/",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_model_card",
+      "comparable": false,
+      "reason": "No locked common dataset and reproduced run yet."
+    },
+    {
+      "id": "mattersim",
+      "name": "MatterSim",
+      "scope": "atomistic energies, forces, stresses and MD",
+      "source": "https://github.com/microsoft/mattersim/blob/main/MODEL_CARD.md",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_model_card",
+      "comparable": false,
+      "reason": "No locked common dataset and reproduced run yet."
+    },
+    {
+      "id": "mace-foundations",
+      "name": "MACE Foundation Models",
+      "scope": "atomistic interatomic potentials",
+      "source": "https://github.com/ACEsuit/mace-foundations",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_repository",
+      "comparable": false,
+      "reason": "License and checkpoint must be pinned before comparison."
+    },
+    {
+      "id": "physicsnemo",
+      "name": "NVIDIA PhysicsNeMo",
+      "scope": "physics-ML framework and neural operators",
+      "source": "https://docs.nvidia.com/physicsnemo/latest/index.html",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_documentation",
+      "comparable": false,
+      "reason": "Framework reference, not a single ready-made material world model."
+    },
+    {
+      "id": "idaes",
+      "name": "IDAES",
+      "scope": "process systems engineering and optimization",
+      "source": "https://idaes.org/overview/",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_documentation",
+      "comparable": false,
+      "reason": "Process anchor planned; no coupled flowsheet in R0."
+    }
+  ]
+}

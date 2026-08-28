@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/world-state/0.1",
+  "title": "Tailing Future World State",
+  "type": "object",
+  "required": ["schemaVersion", "stateId", "worldId", "time", "scaleStates", "conservationLedger", "uncertainty", "validityDomain", "provenance"],
+  "properties": {
+    "schemaVersion": { "const": "tf.world/0.1" },
+    "stateId": { "type": "string", "minLength": 1 },
+    "parentStateId": { "type": ["string", "null"] },
+    "worldId": { "type": "string", "minLength": 1 },
+    "time": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": { "value": { "type": "number", "minimum": 0 }, "unit": { "type": "string", "minLength": 1 } },
+      "additionalProperties": false
+    },
+    "scaleStates": {
+      "type": "object",
+      "required": ["atomistic"],
+      "properties": {
+        "electronic": { "$ref": "#/$defs/scaleState" },
+        "atomistic": { "$ref": "#/$defs/scaleState" },
+        "mesoscale": { "$ref": "#/$defs/scaleState" },
+        "continuum": { "$ref": "#/$defs/scaleState" },
+        "reactor": { "$ref": "#/$defs/scaleState" },
+        "process": { "$ref": "#/$defs/scaleState" }
+      },
+      "additionalProperties": false
+    },
+    "conservationLedger": {
+      "type": "object",
+      "required": ["particleCount", "massResidual", "energyResidual"],
+      "properties": {
+        "particleCount": { "type": "integer", "minimum": 0 },
+        "massResidual": { "type": "number" },
+        "energyResidual": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["numerical", "parameter", "modelForm"],
+      "properties": { "numerical": { "type": "object" }, "parameter": { "type": "object" }, "modelForm": { "type": "object" } }
+    },
+    "validityDomain": {
+      "type": "object",
+      "required": ["status", "limits"],
+      "properties": { "status": { "enum": ["in_domain", "out_of_domain", "unknown"] }, "limits": { "type": "object" } }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["codeCommit", "modelDigest", "dataSnapshot", "seed"],
+      "properties": {
+        "codeCommit": { "type": "string" },
+        "modelDigest": { "type": "string", "minLength": 1 },
+        "dataSnapshot": { "type": "string" },
+        "seed": { "type": "integer" }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "scaleState": {
+      "type": "object",
+      "required": ["artifactRef", "modelId", "role", "units"],
+      "properties": {
+        "artifactRef": { "type": "string" },
+        "modelId": { "type": "string" },
+        "role": { "enum": ["solver", "surrogate", "closure", "prior", "policy", "decoder"] },
+        "units": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

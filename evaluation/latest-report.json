@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "tf.evaluation/0.1",
+  "candidateVersion": "0.1.0-r0",
+  "generatedAt": "2026-08-28T10:44:07.420Z",
+  "baselineSnapshotDate": "2026-08-28",
+  "artifactDigest": "sha256:486c5baa2d8869ad5069fa6f7f75ca5729470bd31f0617db4405167229f57f03",
+  "runtime": {
+    "node": "v24.16.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "weightedScore": 10.5,
+  "hardGateFailures": [],
+  "dimensions": [
+    {
+      "id": "contract",
+      "label": "State/action/observer contract",
+      "weight": 8,
+      "score": 1,
+      "evidence": [
+        "schemas/world-state.schema.json",
+        "deterministic replay test"
+      ],
+      "nextAction": "Validate immutable state and typed actions end-to-end.",
+      "acceptanceTest": "Schema, clone, replay and branch isolation all pass in CI."
+    },
+    {
+      "id": "data",
+      "label": "Data and provenance",
+      "weight": 8,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Add hashed, licensed public atomistic benchmark manifests.",
+      "acceptanceTest": "Every dataset entry has digest, license, units and split lineage."
+    },
+    {
+      "id": "atomistic",
+      "label": "Atomistic physics",
+      "weight": 12,
+      "score": 1,
+      "evidence": [
+        "force finite-difference test",
+        "NVE drift test",
+        "momentum conservation test"
+      ],
+      "nextAction": "Run two open foundation potentials on a locked held-out subset.",
+      "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics reproduced for two models."
+    },
+    {
+      "id": "mesoscale",
+      "label": "Mesoscale",
+      "weight": 8,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Add one PFHub manufactured benchmark.",
+      "acceptanceTest": "Phase fraction and free-energy behavior meet preregistered tolerance."
+    },
+    {
+      "id": "continuum",
+      "label": "Continuum fields",
+      "weight": 10,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Implement a Fourier heat mode benchmark.",
+      "acceptanceTest": "Normalized L2 error below 2% and conservation residual below 1e-3."
+    },
+    {
+      "id": "process",
+      "label": "Reactor and process",
+      "weight": 10,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Define a narrow porous-catalyst reactor case.",
+      "acceptanceTest": "Material and energy balance error below 0.1% on a locked case."
+    },
+    {
+      "id": "coupling",
+      "label": "Cross-scale coupling",
+      "weight": 14,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Implement typed atomistic-to-transport bridge.",
+      "acceptanceTest": "Unit check passes and interface conservation residual is below 1%."
+    },
+    {
+      "id": "world_rollout",
+      "label": "Multi-turn world behavior",
+      "weight": 8,
+      "score": 1,
+      "evidence": [
+        "branch and replay test"
+      ],
+      "nextAction": "Add 1/5/20-horizon error curves and action ordering tests.",
+      "acceptanceTest": "No state collision, NaN or ordering regression across locked actions."
+    },
+    {
+      "id": "uq_ood",
+      "label": "Uncertainty and OOD",
+      "weight": 8,
+      "score": 0,
+      "evidence": [],
+      "nextAction": "Define domain limits and abstention contract.",
+      "acceptanceTest": "Out-of-domain actions are rejected with machine-readable reason."
+    },
+    {
+      "id": "repro_cost",
+      "label": "Reproducibility and cost",
+      "weight": 6,
+      "score": 1,
+      "evidence": [
+        "seeded deterministic test",
+        "GitHub workflow"
+      ],
+      "nextAction": "Record p50/p95 latency and two-run digest.",
+      "acceptanceTest": "Two clean runners reproduce the evaluation bundle."
+    },
+    {
+      "id": "visual_truth",
+      "label": "Visualization truthfulness",
+      "weight": 4,
+      "score": 1,
+      "evidence": [
+        "state ID and model-basis labels in UI"
+      ],
+      "nextAction": "Bind every plot and frame to one timestamp.",
+      "acceptanceTest": "Browser test confirms matching state IDs and timestamps."
+    },
+    {
+      "id": "safety",
+      "label": "Safety, license and governance",
+      "weight": 4,
+      "score": 1,
+      "evidence": [
+        "advisory-only product boundary"
+      ],
+      "nextAction": "Add dependency and model-license gate.",
+      "acceptanceTest": "SBOM/license job passes and no control-output endpoint exists."
+    }
+  ],
+  "comparators": [
+    {
+      "id": "aido-cell-1.0",
+      "name": "AIDO Cell 1.0",
+      "scope": "stateful multi-scale world-model architecture",
+      "source": "https://genbio.ai/aido-cell-simulator/",
+      "revision": "public release page, accessed 2026-08-28",
+      "evidence": "vendor_reported",
+      "comparable": false,
+      "reason": "Cross-domain architecture reference; closed alpha and not a materials accuracy baseline."
+    },
+    {
+      "id": "uma",
+      "name": "Universal Models for Atoms (UMA)",
+      "scope": "atomistic energies, forces and stresses",
+      "source": "https://fair-chem.github.io/uma/",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_model_card",
+      "comparable": false,
+      "reason": "No locked common dataset and reproduced run yet."
+    },
+    {
+      "id": "mattersim",
+      "name": "MatterSim",
+      "scope": "atomistic energies, forces, stresses and MD",
+      "source": "https://github.com/microsoft/mattersim/blob/main/MODEL_CARD.md",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_model_card",
+      "comparable": false,
+      "reason": "No locked common dataset and reproduced run yet."
+    },
+    {
+      "id": "mace-foundations",
+      "name": "MACE Foundation Models",
+      "scope": "atomistic interatomic potentials",
+      "source": "https://github.com/ACEsuit/mace-foundations",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_repository",
+      "comparable": false,
+      "reason": "License and checkpoint must be pinned before comparison."
+    },
+    {
+      "id": "physicsnemo",
+      "name": "NVIDIA PhysicsNeMo",
+      "scope": "physics-ML framework and neural operators",
+      "source": "https://docs.nvidia.com/physicsnemo/latest/index.html",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_documentation",
+      "comparable": false,
+      "reason": "Framework reference, not a single ready-made material world model."
+    },
+    {
+      "id": "idaes",
+      "name": "IDAES",
+      "scope": "process systems engineering and optimization",
+      "source": "https://idaes.org/overview/",
+      "revision": "registry snapshot 2026-08-28",
+      "evidence": "official_documentation",
+      "comparable": false,
+      "reason": "Process anchor planned; no coupled flowsheet in R0."
+    }
+  ],
+  "gaps": [
+    {
+      "severity": "P0",
+      "dimension": "coupling",
+      "evidence": "No executable evidence in the current candidate.",
+      "recommendedChange": "Implement typed atomistic-to-transport bridge.",
+      "acceptanceTest": "Unit check passes and interface conservation residual is below 1%."
+    },
+    {
+      "severity": "P0",
+      "dimension": "atomistic",
+      "evidence": "force finite-difference test; NVE drift test; momentum conservation test",
+      "recommendedChange": "Run two open foundation potentials on a locked held-out subset.",
+      "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics reproduced for two models."
+    },
+    {
+      "severity": "P0",
+      "dimension": "contract",
+      "evidence": "schemas/world-state.schema.json; deterministic replay test",
+      "recommendedChange": "Validate immutable state and typed actions end-to-end.",
+      "acceptanceTest": "Schema, clone, replay and branch isolation all pass in CI."
+    }
+  ],
+  "verdict": "conditional"
+}

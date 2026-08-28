@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/evaluation-report/0.1",
+  "title": "Tailing Sentinel Evaluation Report",
+  "type": "object",
+  "required": ["schemaVersion", "candidateVersion", "baselineSnapshotDate", "weightedScore", "hardGateFailures", "dimensions", "comparators", "gaps", "verdict"],
+  "properties": {
+    "schemaVersion": { "const": "tf.evaluation/0.1" },
+    "candidateVersion": { "type": "string" },
+    "baselineSnapshotDate": { "type": "string", "format": "date" },
+    "weightedScore": { "type": "number", "minimum": 0, "maximum": 100 },
+    "hardGateFailures": { "type": "array", "items": { "type": "string" } },
+    "dimensions": { "type": "array", "items": { "$ref": "#/$defs/dimension" } },
+    "comparators": { "type": "array", "items": { "type": "object" } },
+    "gaps": { "type": "array", "items": { "$ref": "#/$defs/gap" } },
+    "verdict": { "enum": ["accept", "reject", "conditional"] }
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "required": ["id", "label", "weight", "score", "evidence"],
+      "properties": {
+        "id": { "type": "string" }, "label": { "type": "string" },
+        "weight": { "type": "number", "minimum": 0 }, "score": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "evidence": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "required": ["severity", "dimension", "evidence", "recommendedChange", "acceptanceTest"],
+      "properties": {
+        "severity": { "enum": ["P0", "P1", "P2", "P3"] }, "dimension": { "type": "string" },
+        "evidence": { "type": "string" }, "recommendedChange": { "type": "string" }, "acceptanceTest": { "type": "string" }
+      }
+    }
+  }
+}
