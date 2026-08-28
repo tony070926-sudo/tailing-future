@@ -32,7 +32,6 @@ jobs:
         model: [mattersim, mace]
     env:
       MODEL: ${{ matrix.model }}
-      PUBLISH_DIR: ${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}
     steps:
       - name: Check out the dispatched revision without credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -58,6 +57,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test -n "${RUNNER_TEMP:-}"
+          case "$RUNNER_TEMP" in
+            /*) ;;
+            *) echo "RUNNER_TEMP must be absolute" >&2; exit 1 ;;
+          esac
+          test -d "$RUNNER_TEMP"
+          test ! -L "$RUNNER_TEMP"
           task_root="$(mktemp -d "$RUNNER_TEMP/tailing-atomistic-${MODEL}.XXXXXX")"
           cache_root="$task_root/cache"
           wheelhouse="$task_root/wheelhouse"
@@ -67,10 +73,11 @@ jobs:
           inference_input_dir="$task_root/inference-inputs"
           build_context="$task_root/build-context"
           output_dir="$task_root/output"
+          publish_dir="$RUNNER_TEMP/tailing-atomistic-publish/$MODEL"
           install -d -m 0700 \
             "$cache_root" "$wheelhouse" "$lock_dir" "$manifest_dir" \
             "$structure_dir" "$inference_input_dir" "$build_context" \
-            "$output_dir" "$PUBLISH_DIR"
+            "$output_dir" "$publish_dir"
           {
             echo "ATOMISTIC_ROOT=$task_root"
             echo "CACHE_ROOT=$cache_root"
@@ -81,6 +88,7 @@ jobs:
             echo "INFERENCE_INPUT_DIR=$inference_input_dir"
             echo "BUILD_CONTEXT=$build_context"
             echo "OUTPUT_DIR=$output_dir"
+            echo "PUBLISH_DIR=$publish_dir"
           } >> "$GITHUB_ENV"
 
       - name: Bind paths and runner constants from the frozen plan

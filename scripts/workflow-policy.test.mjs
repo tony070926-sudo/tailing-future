@@ -231,7 +231,20 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ['frontend drift', (workflow) => { workflow.env.DOCKERFILE_FRONTEND = `docker/dockerfile:1.7@sha256:${'3'.repeat(64)}`; }],
       ['runner OS drift', (workflow) => { workflow.jobs.bootstrap['runs-on'] = 'macos-14'; }],
       ['joint model execution', (workflow) => { workflow.jobs.bootstrap.strategy.matrix.model = ['mattersim-and-mace']; }],
-      ['publish root drift', (workflow) => { workflow.jobs.bootstrap.env.PUBLISH_DIR = '${{ env.UNSET }}/'; }],
+      ['publish root drift', (workflow) => {
+        const step = namedStep(workflow, 'Create fresh, model-isolated working directories');
+        step.run = step.run.replace(
+          'publish_dir="$RUNNER_TEMP/tailing-atomistic-publish/$MODEL"',
+          'publish_dir="/tmp/unreviewed"',
+        );
+      }],
+      ['publish directory creation drift', (workflow) => {
+        const step = namedStep(workflow, 'Create fresh, model-isolated working directories');
+        step.run = step.run.replace(
+          '"$output_dir" "$publish_dir"',
+          '"$output_dir" "$PUBLISH_DIR"',
+        );
+      }],
       ['unreviewed job key', (workflow) => { workflow.jobs.bootstrap.container = ATOMISTIC_BOOTSTRAP_BASE_IMAGE; }],
     ];
     for (const [label, mutate] of cases) {
