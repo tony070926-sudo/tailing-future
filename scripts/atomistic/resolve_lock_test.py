@@ -19,6 +19,50 @@ main = resolve_lock.main
 
 
 class ResolveLockTests(unittest.TestCase):
+    def test_mace_source_only_dependency_is_a_frozen_root(self) -> None:
+        self.assertIn("python-hostlist==2.3.0", resolve_lock.ROOT_REQUIREMENTS["mace"])
+
+    def test_derived_wheel_provenance_binds_source_builder_and_wheelhouse_bytes(self) -> None:
+        manifest, distributions = make_derived_provenance()
+        content = (json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        summary = resolve_lock.validate_derived_wheel_provenance(
+            content,
+            distributions,
+            "python:3.12.13-slim-bookworm@sha256:" + "a" * 64,
+        )
+        self.assertEqual(summary["manifestDigest"], digest(content))
+        self.assertEqual(summary["wheelSha256"], "sha256:" + "b" * 64)
+        self.assertFalse(summary["promotionEligible"])
+
+        mutations = (
+            ("source", lambda value: value["source"].update({"sizeBytes": 1})),
+            ("builder", lambda value: value["builder"].update({"buildScriptDigest": "sha256:" + "c" * 64})),
+            ("wheel", lambda value: value["wheel"].update({"sha256": "sha256:" + "d" * 64})),
+            ("member digest", lambda value: value["wheel"].update({"memberDigest": "sha256:" + "0" * 64})),
+            ("installed path digest", lambda value: value["wheel"].update({"installedPathDigest": "sha256:" + "1" * 64})),
+            ("reproducibility", lambda value: value["reproducibility"].update({"byteIdentical": False})),
+            ("promotion", lambda value: value.update({"promotionEligible": True})),
+        )
+        for label, mutate in mutations:
+            with self.subTest(case=label):
+                forged = json.loads(json.dumps(manifest))
+                mutate(forged)
+                forged_bytes = json.dumps(forged, sort_keys=True).encode()
+                with self.assertRaises(ValueError):
+                    resolve_lock.validate_derived_wheel_provenance(
+                        forged_bytes,
+                        distributions,
+                        "python:3.12.13-slim-bookworm@sha256:" + "a" * 64,
+                    )
+
+        duplicate = content.rstrip(b"\n")[:-1] + b',"schemaVersion":"forged"}'
+        with self.assertRaisesRegex(ValueError, "duplicate key"):
+            resolve_lock.validate_derived_wheel_provenance(
+                duplicate,
+                distributions,
+                "python:3.12.13-slim-bookworm@sha256:" + "a" * 64,
+            )
+
     def test_generates_exact_dependency_closure_and_deterministic_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary).resolve()
@@ -317,6 +361,51 @@ class ResolveLockTests(unittest.TestCase):
                         "--plan", str(plan_path), "--model", "mattersim",
                     ])
             self.assertFalse((outside / "created").exists())
+
+
+def make_derived_provenance() -> tuple[dict[str, object], dict[str, dict[str, object]]]:
+    wheel = {
+        "filename": "python_hostlist-2.3.0-py3-none-any.whl",
+        "name": "python_hostlist",
+        "normalizedName": "python-hostlist",
+        "version": "2.3.0",
+        "tag": "py3-none-any",
+        "sizeBytes": 123_456,
+        "sha256": "sha256:" + "b" * 64,
+        "archiveMemberCount": 14,
+        "expandedSizeBytes": 234_567,
+        "memberDigest": "sha256:" + "e" * 64,
+        "installedPathDigest": "sha256:" + "f" * 64,
+    }
+    manifest = {
+        "schemaVersion": resolve_lock.DERIVED_WHEEL_PROVENANCE_SCHEMA_VERSION,
+        "derivationId": "python-hostlist-2.3.0",
+        "promotionEligible": False,
+        "source": dict(resolve_lock.PYTHON_HOSTLIST_SOURCE),
+        "builder": {
+            "image": "python:3.12.13-slim-bookworm@sha256:" + "a" * 64,
+            "buildToolLockDigest": resolve_lock.PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST,
+            "buildScriptDigest": resolve_lock.PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST,
+        },
+        "reproducibility": {
+            "firstBuildDigest": wheel["sha256"],
+            "secondBuildDigest": wheel["sha256"],
+            "byteIdentical": True,
+        },
+        "wheel": wheel,
+    }
+    distribution = {
+        "filename": wheel["filename"],
+        "version": wheel["version"],
+        "sizeBytes": wheel["sizeBytes"],
+        "sha256": wheel["sha256"],
+        "archiveMemberCount": wheel["archiveMemberCount"],
+        "expandedSizeBytes": wheel["expandedSizeBytes"],
+        "installPathDigest": "sha256:" + "0" * 64,
+        "_derivedMemberDigest": wheel["memberDigest"],
+        "_derivedInstalledPathDigest": wheel["installedPathDigest"],
+    }
+    return manifest, {"python-hostlist": distribution}
 
 
 def make_complete_wheelhouse(

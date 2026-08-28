@@ -33,3 +33,44 @@ reported as reproduced until the following sequence passes for each model:
 Only after that review may a production `*.requirements.lock` be added. The
 Dockerfiles deliberately reference the currently absent production locks so an
 unlocked image build fails instead of silently resolving newer dependencies.
+
+## Source-only bootstrap exception
+
+MACE 0.3.16 declares `python-hostlist` as a runtime dependency, while the
+[python-hostlist 2.3.0 PyPI release](https://pypi.org/project/python-hostlist/)
+publishes no wheel. The bootstrap therefore has one narrowly scoped exception
+to the wheel-only download rule:
+
+- `python-hostlist==2.3.0` is an explicit bootstrap root rather than an
+  unconstrained transitive selection;
+- the exact official sdist, `setuptools==80.9.0`, and `wheel==0.45.1` bytes are
+  downloaded from immutable file URLs and checked against frozen sizes and
+  SHA-256 digests without executing the sdist;
+- two fresh Linux/amd64 builders receive only those read-only inputs, have no
+  network or checkout/runtime-wheelhouse access, and must emit byte-identical
+  `python_hostlist-2.3.0-py3-none-any.whl` files;
+- a dedicated verifier rejects unexpected metadata, payload, RECORD, archive,
+  path, startup-hook and resource-boundary behavior, then emits bounded
+  deterministic provenance;
+- the offline resolver must bind that provenance to the exact derived wheel in
+  the final wheelhouse manifest. The sdist and build tools never enter the
+  runtime wheelhouse.
+
+This exception is bootstrap evidence only. Its provenance always records
+`promotionEligible: false`, and the enclosing run remains
+`bootstrap-not-reproduced`. A first-run output digest must not become a
+production trust root in the same run. Before any production lock or binary
+redistribution, an independent review must freeze the accepted wheel digest and
+member inventory (or replace it with an upstream wheel/MACE dependency fix) and
+confirm the package's GPL-2.0-or-later redistribution obligations.
+
+## Failure evidence
+
+After checkout and pinned tool setup, an always-running step attempts to stage
+`manifests/bootstrap-outcome.json`, including when any of the twelve reviewed
+shell stages fails. It records the fixed stage sequence, the first failure
+stage, whether inference succeeded, whether predictions exist, and the exact
+allowlisted files that were published. It cannot promote evidence: its only
+evidence class is `bootstrap-not-reproduced`. If checkout, the action runtime,
+or the outcome writer itself cannot run safely, upload is skipped instead of
+fabricating an artifact.

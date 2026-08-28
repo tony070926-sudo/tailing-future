@@ -68,18 +68,22 @@ atomistic-to-mesoscale-to-process learned transition model.
   recorded CLI fixture.
 - The attestation proves the GitHub-hosted runner class, not CPU or memory-model
   truth. `hardwareDigest` currently proves only consistency with the receipt.
-- The new reporter requires a post-merge pull request to obtain its first live
-  `workflow_run` exercise.
-- Linux/amd64 wheel resolution, BuildKit behavior and real checkpoint runtime
-  compatibility remain untested until the manual bootstrap runs.
+- The reporter has passed its first live `workflow_run` exercise, but its
+  Node 20 action runtime was forced to Node 24 by GitHub and should be watched
+  for future action-runtime changes.
+- Linux/amd64 asset fetch and preprocessing have run on GitHub. Dependency
+  closure, cold install, BuildKit behavior and real checkpoint runtime
+  compatibility remain unproven because the first bootstrap stopped in the
+  wheelhouse stage.
 
 ## Next-loop inputs
 
-1. Merge the protocol through protected CI, then run both ten-frame,
-   non-promotional bootstrap matrix jobs. Acceptance: exact model/package/data
-   digests, isolated cold install, ten finite E/F/stress records and bounded
-   diagnostics for each model.
-2. Convert the successful smoke environment into frozen runner, container and
+1. Merge the wheelhouse remediation through protected CI, then rerun both
+   ten-frame, non-promotional bootstrap matrix jobs. Acceptance: exact
+   model/package/data digests, isolated cold install, ten finite E/F/stress
+   records and bounded diagnostics for each model, plus a truthful outcome
+   manifest for every success or failure.
+2. Convert a successful smoke environment into frozen runner, container and
    dependency-lock digests; add a real GitHub CLI attestation fixture and the
    independent full-run verifier. Acceptance: all 693 Random-TP structures for
    both models, six per-ID metric roots, invariance and finite-difference gates,
@@ -101,3 +105,74 @@ job-level `env`. No checkpoint was loaded and no prediction artifact was
 produced. The next loop moves the publish-directory derivation into the first
 shell step using the hosted runner's absolute `RUNNER_TEMP`, while preserving
 the exact step-level upload destination and the reviewed artifact allowlist.
+
+The parse correction subsequently passed both pull-request Sentinel checks,
+the first live default-branch reporter run
+[`33208639878`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33208639878),
+and the protected-main Sentinel run
+[`33208879671`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33208879671).
+The reporter's source run, artifact, candidate SHA and pull-request identities
+were independently audited with no open P0/P1.
+
+## First real atomistic bootstrap feedback
+
+The first executable ten-frame matrix dispatch,
+[`33209101610`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33209101610),
+ran at protected-main commit
+`f3c9693f7b60eb2e044c8f38858d10d54cc29762`. Both jobs verified the immutable
+base, fetched and hash-checked the selected model/checkpoint/dataset assets, and
+preprocessed the exact structure subset. Both then failed in the online
+wheelhouse stage before lock resolution, cold install, image build, checkpoint
+deserialization or inference:
+
+- MACE job
+  [`98977621593`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33209101610/job/98977621593)
+  could not satisfy `python-hostlist` under `--only-binary=:all:` because PyPI
+  provides 2.3.0 only as an sdist.
+- MatterSim job
+  [`98977621761`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33209101610/job/98977621761)
+  exhausted the unchanged 1 GiB `/tmp` boundary while pip downloaded
+  `warp-lang`; the resolver cache and temporary response duplicated large
+  wheel bytes.
+
+The two bounded artifacts contain only fetched-asset and structure manifests:
+
+- MatterSim artifact `9700871156`, archive digest
+  `sha256:71cfcf558ccd00baf6dda4c6ca5c0a8d9e04d34d967453c89b403f56f1d4d716`;
+- MACE artifact `9700869145`, archive digest
+  `sha256:f884f3f08968fa78b86e87b29eea400bd3b102e060a271476f6321aee8dbf311`.
+
+No checkpoint was loaded, no prediction was produced, and no scientific metric
+was evaluated. The evidence status therefore remains
+`bootstrap-not-reproduced` / `planned-not-reproduced`.
+
+## Current remediation candidate
+
+The next candidate keeps the 3 GiB memory and 1 GiB `/tmp` limits unchanged,
+but disables pip's cache for each download so response bytes are not retained
+twice. For MACE it adds an exact `python-hostlist==2.3.0` root and a dedicated
+source-only derivation boundary: frozen source/build-tool hashes, two fresh
+networkless read-only Linux/amd64 builds, byte-identity, strict wheel
+verification and resolver-bound provenance. The sdist/build tools do not enter
+the runtime wheelhouse.
+
+After checkout and pinned tool setup, an always-running step attempts to emit a
+run-bound `bootstrap-outcome.json` on success or any reviewed shell-stage
+failure. Its fixed stage order and allowlist distinguish “assets fetched,”
+“lock resolved,” “inference succeeded,” and “predictions present” without
+inferring success from artifact existence. Checkout/action-runtime or writer
+failure instead skips upload; it never fabricates an outcome artifact.
+
+Independent reviewers found no bootstrap-blocking P0/P1 in this remediation.
+Their lower-priority findings were closed before PR: early-stage staging now
+uses a bounded `RUNNER_TEMP` fallback, inference status is conservative, the
+aggregate artifact cap includes the newly written outcome, the offline
+resolver independently recomputes the derived wheel's member/install-path
+digests, and staging rechecks the frozen provenance digest recorded by that
+resolver.
+They did identify a production gate that remains deliberately open: the first
+derived wheel cannot approve itself. A later production candidate must freeze
+an independently reviewed output/member digest (or adopt an upstream wheel or
+MACE dependency correction), strengthen source-to-wheel payload binding, and
+complete GPL-2.0-or-later redistribution review. Until then this mechanism is
+non-promotional bootstrap infrastructure only.
