@@ -3,7 +3,7 @@
 - Verdict: **CONDITIONAL**
 - Evidence maturity: **10.50 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-28**
-- Artifact: `sha256:999cdf095b5d02a56bc7080c0c3055e45f2ea756172d7d0448068cdaceb11276`
+- Artifact: `sha256:9932fe12fbe5cc690c45b7355731f62ba598ea4407b6a91dee818c3c939f66a5`
 
 ## Hard gates
 

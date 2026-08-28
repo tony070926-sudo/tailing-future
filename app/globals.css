@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 :root {
+  --font-geist-sans: Inter, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-geist-mono: "SFMono-Regular", "Roboto Mono", "Cascadia Code", monospace;
   --ink: #e5e9e5;
   --muted: #77827e;
   --line: rgba(165, 188, 180, 0.13);
@@ -14,7 +16,7 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; background: var(--base); }
-body { color: var(--ink); font-family: var(--font-geist-sans), "PingFang SC", "Microsoft YaHei", sans-serif; text-rendering: optimizeLegibility; }
+body { color: var(--ink); font-family: var(--font-geist-sans); text-rendering: optimizeLegibility; }
 button, input { font: inherit; }
 button { color: inherit; }
 
