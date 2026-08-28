@@ -2,6 +2,7 @@
 # MACE must remain isolated from MatterSim because this environment requires
 # e3nn==0.4.4 while MatterSim requires e3nn>=0.5.0.
 mace-torch==0.3.16
+python-hostlist==2.3.0
 torch==2.8.0+cpu
 ase==3.28.0
 e3nn==0.4.4

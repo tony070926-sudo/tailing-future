@@ -10,6 +10,12 @@ export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203
 export const ATOMISTIC_BOOTSTRAP_NODE_VERSION = '24.16.0';
 export const ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX = 'https://download.pytorch.org/whl/cpu';
 export const ATOMISTIC_BOOTSTRAP_PYPI_INDEX = 'https://pypi.org/simple';
+export const PYTHON_HOSTLIST_SDIST_URL = 'https://files.pythonhosted.org/packages/90/cc/bb6395c3f2b6bb739b1d3fc0e71f94e6a1c2e256df496237cbfd13cd74a6/python_hostlist-2.3.0.tar.gz';
+export const PYTHON_HOSTLIST_SDIST_SHA256 = 'e1a0b18e525a5fca573cb9862799f11b3f2bd3ba7aec70c4ecd8b95341bb71ea';
+export const PYTHON_HOSTLIST_BUILD_LOCK_SHA256 = 'dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120';
+export const PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256 = 'f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84';
+export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5';
+export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23';
 
 const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262';
 const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020';
@@ -27,18 +33,49 @@ export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
 // reviewed in the same change.
 export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:c880865bd6194ccdb40e5bed9294cd5d13111bfa64d7dc2e469ad7baadbaa002',
-  'Create fresh, model-isolated working directories': 'sha256:0ad77c738be2781873303b81aef6f50166343b5d4939148086f17f64c72e404f',
+  'Create fresh, model-isolated working directories': 'sha256:6d5ca8c98e1a9fea8634ca7dccc9d8fda9b1a50f8c86e64b3c264a47b4e3655b',
   'Bind paths and runner constants from the frozen plan': 'sha256:9d8dca364a9ccfb380fc1e21f623d49a201ce992c37cbf4caa966cb348fc3b46',
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
   'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
-  'Download one fresh resolved wheelhouse in the online phase': 'sha256:2f7911c25996055acd9c21c0bed90934212bdace82d84f8b39417d8d91bf33b8',
-  'Resolve an exact lock from the offline wheelhouse': 'sha256:1e9cdbd3767f1bec377a889ded62674a834a5f73c4eaff275b2b63916a90115f',
-  'Freeze and verify the exact resolved wheel set': 'sha256:44d2bd77897093ee4574e4d8527bf3550cc3c02048d9cb5c1fb8a7ce3be53738',
+  'Download one fresh resolved wheelhouse in the online phase': 'sha256:2ab1e2c82267cd46fd9ba80cf07ef329fec072bfab81167280afbe872ea2d3c8',
+  'Resolve an exact lock from the offline wheelhouse': 'sha256:63d062b924b2ba0af093dfb4161f990e5de1ff677ea8a58096470e398f768964',
+  'Freeze and verify the exact resolved wheel set': 'sha256:fedc4ce77b499d238655d94a43bd9fbba411d4749bfba63de6ffda9b3919c2f1',
   'Prove a cold, hash-locked install with no network': 'sha256:a4102dfa6b877412ecd04d8fa4cf2cb5da351a70b05540c2f8c0359452ef4d62',
   'Build the isolated runtime image with no build-step network': 'sha256:d93c91c17c65e9d3861b597f85f7d3653250d7e500f9bfd4f3c339695e8c3138',
   'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:60fbef598f6d9e12bd01bfc334ee050de67b11d919f0bbf4ac01608a605ab3c3',
-  'Stage only non-promotional bootstrap outputs': 'sha256:ac8ae75c4dfa1d79373a727bfc970054dccf509bb33d2d9997025732654a7374',
+  'Stage only non-promotional bootstrap outputs': 'sha256:92fbe0ae394079db3fb00b32f1e473f2dce611c397bda5b4abab7fc3449341bf',
+});
+
+const ATOMISTIC_BOOTSTRAP_STEP_IDS = Object.freeze({
+  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'guard',
+  'Create fresh, model-isolated working directories': 'directories',
+  'Bind paths and runner constants from the frozen plan': 'bind',
+  'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'base',
+  'Fetch and hash-check the selected assets': 'assets',
+  'Preprocess structures without mounting any model checkpoint': 'structures',
+  'Download one fresh resolved wheelhouse in the online phase': 'wheelhouse',
+  'Resolve an exact lock from the offline wheelhouse': 'resolve',
+  'Freeze and verify the exact resolved wheel set': 'freeze',
+  'Prove a cold, hash-locked install with no network': 'cold_install',
+  'Build the isolated runtime image with no build-step network': 'build',
+  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'inference',
+  'Stage only non-promotional bootstrap outputs': 'stage_outputs',
+});
+
+const ATOMISTIC_BOOTSTRAP_OUTCOME_ENV = Object.freeze({
+  STAGE_GUARD: '${{ steps.guard.outcome }}',
+  STAGE_DIRECTORIES: '${{ steps.directories.outcome }}',
+  STAGE_BIND: '${{ steps.bind.outcome }}',
+  STAGE_BASE: '${{ steps.base.outcome }}',
+  STAGE_ASSETS: '${{ steps.assets.outcome }}',
+  STAGE_STRUCTURES: '${{ steps.structures.outcome }}',
+  STAGE_WHEELHOUSE: '${{ steps.wheelhouse.outcome }}',
+  STAGE_RESOLVE: '${{ steps.resolve.outcome }}',
+  STAGE_FREEZE: '${{ steps.freeze.outcome }}',
+  STAGE_COLD_INSTALL: '${{ steps.cold_install.outcome }}',
+  STAGE_BUILD: '${{ steps.build.outcome }}',
+  STAGE_INFERENCE: '${{ steps.inference.outcome }}',
 });
 
 export const DOCKERIGNORE_ALLOWLIST = Object.freeze([
@@ -286,9 +323,10 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   for (const [name, expectedDigest] of Object.entries(ATOMISTIC_BOOTSTRAP_RUN_DIGESTS)) {
     const step = runSteps.get(name);
     const expectedIf = name === 'Stage only non-promotional bootstrap outputs' ? 'always()' : undefined;
-    const expectedKeys = expectedIf ? ['id', 'if', 'name', 'run', 'shell'] : ['name', 'run', 'shell'];
+    const expectedKeys = expectedIf ? ['env', 'id', 'if', 'name', 'run', 'shell'] : ['id', 'name', 'run', 'shell'];
     if (!step || step.shell !== 'bash' || step.if !== expectedIf
-        || (expectedIf && step.id !== 'stage_outputs')
+        || step.id !== ATOMISTIC_BOOTSTRAP_STEP_IDS[name]
+        || (expectedIf && !sameJson(step.env, ATOMISTIC_BOOTSTRAP_OUTCOME_ENV))
         || !sameJson(Object.keys(step).sort(), expectedKeys.sort())
         || sha256(step.run) !== expectedDigest) {
       failures.push(`${prefix} reviewed shell program drifted: ${name}.`);
@@ -312,15 +350,58 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   const executable = [...runSteps.values()].map((step) => step.run).join('\n');
   const dockerRuns = executable.match(/\bdocker run\b/g) ?? [];
   const amd64DockerRuns = executable.match(/\bdocker run --rm --platform=linux\/amd64\b/g) ?? [];
-  if (dockerRuns.length !== 6 || amd64DockerRuns.length !== dockerRuns.length) failures.push(`${prefix} every one of the six containers must be Linux/amd64.`);
+  if (dockerRuns.length !== 8 || amd64DockerRuns.length !== dockerRuns.length) failures.push(`${prefix} every declared container must be Linux/amd64.`);
   const download = runSteps.get('Download one fresh resolved wheelhouse in the online phase')?.run ?? '';
   const indexUrls = [...download.matchAll(/--index-url\s+(https:\/\/[^\s'"\\]+)/g)].map((match) => match[1]);
   if (!sameJson(indexUrls, [ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX, ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX, ATOMISTIC_BOOTSTRAP_PYPI_INDEX])
       || /--extra-index-url\b/.test(download)) {
     failures.push(`${prefix} PyTorch wheels must use only the official CPU index and all remaining dependencies only PyPI plus the local wheelhouse.`);
   }
+  const noCacheDownloads = download.match(/--no-cache-dir\b/g) ?? [];
+  if (noCacheDownloads.length !== 4 || /PIP_CACHE_DIR|--cache-dir\b/.test(download)
+      || !hasAll(download, ['--memory=3g', '--memory-swap=3g', '--tmpfs /tmp:rw,exec,nosuid,nodev,size=1g,mode=1777'])) {
+    failures.push(`${prefix} all four resolver downloads must disable caching inside the unchanged 1 GiB tmpfs and 3 GiB memory boundary.`);
+  }
+  const sourceBuildStart = download.indexOf('if [ "$MODEL" = mace ]; then');
+  const sourceBuildDelimiter = '\nfi\ndocker run --rm';
+  const sourceBuildEnd = download.indexOf(sourceBuildDelimiter, sourceBuildStart);
+  const sourceBuild = sourceBuildStart >= 0 && sourceBuildEnd > sourceBuildStart
+    ? download.slice(sourceBuildStart, sourceBuildEnd + '\nfi'.length)
+    : '';
+  if (!hasAll(sourceBuild, [
+    PYTHON_HOSTLIST_SDIST_URL,
+    '37326',
+    PYTHON_HOSTLIST_SDIST_SHA256,
+    'setuptools-80.9.0-py3-none-any.whl',
+    '062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922',
+    'wheel-0.45.1-py3-none-any.whl',
+    '708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248',
+    PYTHON_HOSTLIST_BUILD_LOCK_SHA256,
+    PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256,
+    PYTHON_HOSTLIST_VERIFIER_SHA256,
+    'for derived_output in "$SOURCE_BUILD_A" "$SOURCE_BUILD_B"',
+    '--network=none',
+    '--read-only',
+    '--user="$(id -u):$(id -g)"',
+    '--cap-drop=ALL',
+    '--security-opt=no-new-privileges=true',
+    '--mount "type=bind,src=$SOURCE_BUILD_INPUTS,dst=/inputs,readonly"',
+    '--mount "type=bind,src=$derived_output,dst=/output"',
+    'cmp --silent',
+  ]) || sourceBuild.includes('$GITHUB_WORKSPACE') || sourceBuild.includes('src=$WHEELHOUSE')) {
+    failures.push(`${prefix} the source-only python-hostlist dependency must be hash-pinned and built twice in networkless builders without workspace or runtime-wheelhouse access.`);
+  }
   const coldInstall = runSteps.get('Prove a cold, hash-locked install with no network')?.run ?? '';
   if (!hasAll(coldInstall, ['--network=none', 'PIP_NO_INDEX=1', '--no-index', '--require-hashes', '--only-binary=:all:'])) failures.push(`${prefix} cold install must remain hash-locked and offline.`);
+  const resolve = runSteps.get('Resolve an exact lock from the offline wheelhouse')?.run ?? '';
+  if (!hasAll(resolve, [
+    '--network=none',
+    'derived_manifest="$MANIFEST_DIR/python-hostlist.derived-wheel.manifest.json"',
+    'derived_mount=(--mount "type=bind,src=$MANIFEST_DIR,dst=/manifests,readonly")',
+    'derived_arguments=(--derived-wheel-manifest /manifests/python-hostlist.derived-wheel.manifest.json)',
+    '"${derived_mount[@]}"',
+    '"${derived_arguments[@]}"',
+  ])) failures.push(`${prefix} MACE resolution must bind the verified derived-wheel provenance inside the offline resolver.`);
   const directories = runSteps.get('Create fresh, model-isolated working directories')?.run ?? '';
   if (!hasAll(directories, [
     'test -n "${RUNNER_TEMP:-}"',
@@ -333,6 +414,30 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   if (!hasAll(build, ['docker buildx build', '--network=none', '--platform=linux/amd64', '--build-context "wheelhouse=$WHEELHOUSE"', 'bootstrap-not-reproduced'])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline and bound to the private wheelhouse.`);
   const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';
   if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
+  const staging = runSteps.get('Stage only non-promotional bootstrap outputs')?.run ?? '';
+  if (!hasAll(staging, [
+    'scripts/atomistic/write_bootstrap_outcome.py',
+    ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
+    '--model "$MODEL"',
+    '--commit-sha "$GITHUB_SHA"',
+    '--run-id "$GITHUB_RUN_ID"',
+    '--run-attempt "$GITHUB_RUN_ATTEMPT"',
+    '--publish-root "$PUBLISH_DIR"',
+    '--stage "guard=$STAGE_GUARD"',
+    '--stage "directories=$STAGE_DIRECTORIES"',
+    '--stage "bind=$STAGE_BIND"',
+    '--stage "base=$STAGE_BASE"',
+    '--stage "assets=$STAGE_ASSETS"',
+    '--stage "structures=$STAGE_STRUCTURES"',
+    '--stage "wheelhouse=$STAGE_WHEELHOUSE"',
+    '--stage "resolve=$STAGE_RESOLVE"',
+    '--stage "freeze=$STAGE_FREEZE"',
+    '--stage "cold-install=$STAGE_COLD_INSTALL"',
+    '--stage "build=$STAGE_BUILD"',
+    '--stage "inference=$STAGE_INFERENCE"',
+    'wheelhouse.get("derivedWheelProvenance", {}).get("manifestDigest")',
+    'staged derived-wheel provenance differs from the resolver binding',
+  ])) failures.push(`${prefix} staging must publish one run-bound, ordered non-promotional outcome manifest.`);
   if (/(^|[^a-z])(metrics?|receipts?|attest(?:ation)?)([^a-z]|$)/i.test(executable)
       || /evidence-class=(?!bootstrap-not-reproduced)/.test(executable)
       || /REPRODUCED_MODEL_CARD_PROTOCOL|ENGINEERING_BASELINE_COMPLETE/.test(executable)) {

