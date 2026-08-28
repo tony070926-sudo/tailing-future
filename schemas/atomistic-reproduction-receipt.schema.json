@@ -1,0 +1,859 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-reproduction-receipt/0.1",
+  "title": "Tailing Future Atomistic Reproduction Receipt",
+  "description": "A fail-closed evidence receipt. A plan or smoke receipt is explicitly ineligible for scientific promotion; only a complete, independently verified full receipt can be considered by promotion policy. Promotion loading additionally rejects duplicate JSON member names and requires sorted-key ECMAScript canonical JSON encoded as UTF-8 with exactly one trailing LF.",
+  "type": "object",
+  "required": ["schemaVersion", "profile", "claimEligible", "status", "createdAt", "plan", "source"],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-reproduction-receipt/0.1" },
+    "profile": { "enum": ["plan", "smoke", "full"] },
+    "claimEligible": { "type": "boolean" },
+    "status": { "enum": ["planned-not-run", "smoke-passed", "verified"] },
+    "createdAt": { "$ref": "#/$defs/timestamp" },
+    "plan": { "$ref": "#/$defs/planReference" },
+    "source": { "$ref": "#/$defs/source" },
+    "benchmark": { "type": "object" },
+    "runner": { "$ref": "#/$defs/runner" },
+    "hardware": { "$ref": "#/$defs/hardware" },
+    "models": { "type": "array" },
+    "provenance": { "type": "object" },
+    "verification": { "$ref": "#/$defs/verification" },
+    "cost": { "$ref": "#/$defs/cost" },
+    "evidenceBundleDigest": { "$ref": "#/$defs/digest" },
+    "scientificValidation": { "$ref": "#/$defs/scientificValidation" }
+  },
+  "oneOf": [
+    {
+      "title": "Plan receipt",
+      "properties": {
+        "profile": { "const": "plan" },
+        "claimEligible": { "const": false },
+        "status": { "const": "planned-not-run" }
+      },
+      "not": {
+        "anyOf": [
+          { "required": ["benchmark"] },
+          { "required": ["runner"] },
+          { "required": ["hardware"] },
+          { "required": ["models"] },
+          { "required": ["provenance"] },
+          { "required": ["verification"] },
+          { "required": ["cost"] },
+          { "required": ["evidenceBundleDigest"] },
+          { "required": ["scientificValidation"] }
+        ]
+      }
+    },
+    {
+      "title": "Smoke receipt",
+      "required": ["benchmark", "runner", "hardware", "models", "provenance", "verification", "cost", "evidenceBundleDigest"],
+      "properties": {
+        "profile": { "const": "smoke" },
+        "claimEligible": { "const": false },
+        "status": { "const": "smoke-passed" },
+        "benchmark": { "$ref": "#/$defs/smokeBenchmark" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/smokeModel" },
+            { "$ref": "#/$defs/smokeModel" }
+          ],
+          "items": false
+        },
+        "provenance": { "$ref": "#/$defs/smokeProvenance" }
+      },
+      "not": { "required": ["scientificValidation"] }
+    },
+    {
+      "title": "Full receipt",
+      "required": ["benchmark", "runner", "hardware", "models", "provenance", "verification", "cost", "evidenceBundleDigest", "scientificValidation"],
+      "properties": {
+        "profile": { "const": "full" },
+        "claimEligible": { "const": true },
+        "status": { "const": "verified" },
+        "benchmark": { "$ref": "#/$defs/fullBenchmark" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/fullModel" },
+            { "$ref": "#/$defs/fullModel" }
+          ],
+          "items": false
+        },
+        "provenance": { "$ref": "#/$defs/fullProvenance" },
+        "scientificValidation": { "$ref": "#/$defs/scientificValidation" }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "timestamp": { "type": "string", "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$" },
+    "recordId": { "type": "string", "pattern": "^random-TP-[0-9]{6}$" },
+    "planReference": {
+      "type": "object",
+      "required": ["schemaVersion", "digest"],
+      "properties": {
+        "schemaVersion": { "const": "tf.atomistic-reproduction/0.2" },
+        "digest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["repository", "repositoryId", "revision", "treeDigest"],
+      "properties": {
+        "repository": { "const": "tony070926-sudo/tailing-future" },
+        "repositoryId": { "const": 1349498456 },
+        "revision": { "$ref": "#/$defs/sha" },
+        "treeDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "smokeBenchmark": {
+      "type": "object",
+      "required": ["id", "datasetDigest", "idSetDigest", "recordManifestDigest", "structureBundleDigest", "structureManifestFileDigest", "structureManifestRoot", "frames", "atoms", "elements", "recordIds"],
+      "properties": {
+        "id": { "const": "mattersim-random-tp" },
+        "datasetDigest": { "$ref": "#/$defs/digest" },
+        "idSetDigest": { "$ref": "#/$defs/digest" },
+        "recordManifestDigest": { "$ref": "#/$defs/digest" },
+        "structureBundleDigest": { "$ref": "#/$defs/digest" },
+        "structureManifestFileDigest": { "$ref": "#/$defs/digest" },
+        "structureManifestRoot": { "$ref": "#/$defs/digest" },
+        "frames": { "type": "integer", "minimum": 1, "maximum": 692 },
+        "atoms": { "type": "integer", "minimum": 1, "maximum": 11087 },
+        "elements": { "type": "integer", "minimum": 1, "maximum": 89 },
+        "recordIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 692,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/recordId" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "fullBenchmark": {
+      "type": "object",
+      "required": ["id", "datasetDigest", "idSetDigest", "recordManifestDigest", "structureBundleDigest", "structureManifestFileDigest", "structureManifestRoot", "frames", "atoms", "elements", "recordIds"],
+      "properties": {
+        "id": { "const": "mattersim-random-tp" },
+        "datasetDigest": { "$ref": "#/$defs/digest" },
+        "idSetDigest": { "$ref": "#/$defs/digest" },
+        "recordManifestDigest": { "$ref": "#/$defs/digest" },
+        "structureBundleDigest": { "$ref": "#/$defs/digest" },
+        "structureManifestFileDigest": { "$ref": "#/$defs/digest" },
+        "structureManifestRoot": { "$ref": "#/$defs/digest" },
+        "frames": { "const": 693 },
+        "atoms": { "const": 11088 },
+        "elements": { "const": 89 },
+        "recordIds": {
+          "type": "array",
+          "minItems": 693,
+          "maxItems": 693,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/recordId" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "runner": {
+      "type": "object",
+      "required": ["digest", "recordCodecDigest", "containers", "dependencyLocks"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "recordCodecDigest": { "$ref": "#/$defs/digest" },
+        "containers": {
+          "type": "object",
+          "required": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"],
+          "properties": {
+            "mattersim-v1.0.0-5m": { "$ref": "#/$defs/digest" },
+            "mace-mpa-0-medium": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        },
+        "dependencyLocks": {
+          "type": "object",
+          "required": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"],
+          "properties": {
+            "mattersim-v1.0.0-5m": { "$ref": "#/$defs/digest" },
+            "mace-mpa-0-medium": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "hardware": {
+      "type": "object",
+      "required": ["id", "runnerClass", "os", "architecture", "kernel", "cpu", "memoryBytes", "accelerators", "containerRuntime"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+        "runnerClass": { "enum": ["github-hosted", "ephemeral-self-hosted", "local-isolated"] },
+        "os": { "type": "string", "minLength": 3, "maxLength": 128 },
+        "architecture": { "enum": ["x64", "arm64"] },
+        "kernel": { "type": "string", "minLength": 3, "maxLength": 128 },
+        "cpu": {
+          "type": "object",
+          "required": ["model", "logicalCores"],
+          "properties": {
+            "model": { "type": "string", "minLength": 3, "maxLength": 256 },
+            "logicalCores": { "type": "integer", "minimum": 1, "maximum": 4096 }
+          },
+          "additionalProperties": false
+        },
+        "memoryBytes": { "type": "integer", "minimum": 1048576 },
+        "accelerators": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "required": ["kind", "model", "count", "driver", "runtime"],
+            "properties": {
+              "kind": { "enum": ["gpu", "mps", "xpu"] },
+              "model": { "type": "string", "minLength": 2, "maxLength": 256 },
+              "count": { "type": "integer", "minimum": 1, "maximum": 16 },
+              "driver": { "type": "string", "minLength": 1, "maxLength": 128 },
+              "runtime": { "type": "string", "minLength": 1, "maxLength": 128 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "containerRuntime": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "enum": ["docker", "podman", "containerd"] },
+            "version": { "type": "string", "minLength": 1, "maxLength": 128 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "package": {
+      "type": "object",
+      "required": ["name", "version", "digest"],
+      "properties": {
+        "name": { "enum": ["mattersim", "mace-torch"] },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.]+)?$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "software": {
+      "type": "object",
+      "required": ["python", "torch", "ase", "e3nn"],
+      "properties": {
+        "python": { "type": "string", "pattern": "^3\\.12\\.[0-9]+$" },
+        "torch": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.]+)?$" },
+        "ase": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.]+)?$" },
+        "e3nn": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.]+)?$" }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["hardwareId", "threads", "batchSize", "dtype", "device", "seed", "deterministic"],
+      "properties": {
+        "hardwareId": { "type": "string", "minLength": 3, "maxLength": 128 },
+        "threads": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "batchSize": { "const": 1 },
+        "dtype": { "const": "float32" },
+        "device": { "enum": ["cpu", "cuda", "mps", "xpu"] },
+        "seed": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+        "deterministic": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "smokeMetrics": {
+      "type": "object",
+      "required": ["energyMaeEvPerAtom", "forceVectorMaeEvPerAngstrom", "stressFrobeniusMaeGpa"],
+      "properties": {
+        "energyMaeEvPerAtom": { "type": "number", "minimum": 0 },
+        "forceVectorMaeEvPerAngstrom": { "type": "number", "minimum": 0 },
+        "stressFrobeniusMaeGpa": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "metricWorst": {
+      "type": "object",
+      "required": ["id", "error"],
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "error": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "metricReport": {
+      "description": "A complete distribution report over the exact 693 per-structure errors. Mean uses the frozen ASCII-ID/Python-3.12/math.fsum protocol; p50/p90/p95/p99 use Hyndman-Fan type 7; worst is maximum error with the frozen ASCII-ID tie break.",
+      "type": "object",
+      "required": ["definition", "unit", "aggregation", "summation", "quantileMethod", "mean", "p50", "p90", "p95", "p99", "worst", "worstTieBreak", "perIdMetricEvidenceRoot", "perIdMetricEvidenceRootProtocol"],
+      "properties": {
+        "definition": {
+          "enum": [
+            "absolute-total-energy-error-divided-by-frame-atom-count",
+            "mean-per-atom-l2-vector-error-per-frame",
+            "full-3x3-frobenius-error-in-gpa-per-frame"
+          ]
+        },
+        "unit": { "enum": ["eV/atom", "eV/angstrom", "GPa"] },
+        "aggregation": { "const": "equal-weight-structure-mean-float64" },
+        "summation": { "const": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1" },
+        "quantileMethod": { "const": "Hyndman-Fan-7-linear" },
+        "mean": { "type": "number", "minimum": 0 },
+        "p50": { "type": "number", "minimum": 0 },
+        "p90": { "type": "number", "minimum": 0 },
+        "p95": { "type": "number", "minimum": 0 },
+        "p99": { "type": "number", "minimum": 0 },
+        "worst": { "$ref": "#/$defs/metricWorst" },
+        "worstTieBreak": { "const": "error-descending-then-ascii-id-ascending" },
+        "perIdMetricEvidenceRoot": { "$ref": "#/$defs/digest" },
+        "perIdMetricEvidenceRootProtocol": { "const": "sha256-merkle-canonical-json-array-model-id-metric-id-error-ascii-id-order-duplicate-id-forbidden/v1" }
+      },
+      "additionalProperties": false
+    },
+    "energyMetricReport": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        {
+          "properties": {
+            "definition": { "const": "absolute-total-energy-error-divided-by-frame-atom-count" },
+            "unit": { "const": "eV/atom" }
+          }
+        }
+      ]
+    },
+    "forceMetricReport": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        {
+          "properties": {
+            "definition": { "const": "mean-per-atom-l2-vector-error-per-frame" },
+            "unit": { "const": "eV/angstrom" }
+          }
+        }
+      ]
+    },
+    "stressMetricReport": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        {
+          "properties": {
+            "definition": { "const": "full-3x3-frobenius-error-in-gpa-per-frame" },
+            "unit": { "const": "GPa" }
+          }
+        }
+      ]
+    },
+    "fullMetrics": {
+      "type": "object",
+      "required": ["definitionId", "energy", "force", "stress"],
+      "properties": {
+        "definitionId": { "const": "mattersim-model-card-frobenius/v1" },
+        "energy": { "$ref": "#/$defs/energyMetricReport" },
+        "force": { "$ref": "#/$defs/forceMetricReport" },
+        "stress": { "$ref": "#/$defs/stressMetricReport" }
+      },
+      "additionalProperties": false
+    },
+    "protocolAcceptance": {
+      "type": "object",
+      "required": ["targets", "tolerances", "passed"],
+      "properties": {
+        "targets": {
+          "type": "object",
+          "required": ["energyMaeEvPerAtom", "forceVectorMaeEvPerAngstrom", "stressFrobeniusMaeGpa"],
+          "properties": {
+            "energyMaeEvPerAtom": { "const": 0.199 },
+            "forceVectorMaeEvPerAngstrom": { "const": 0.824 },
+            "stressFrobeniusMaeGpa": { "const": 1.999 }
+          },
+          "additionalProperties": false
+        },
+        "tolerances": {
+          "type": "object",
+          "required": ["relative", "energyAbsolute", "forceAbsolute", "stressAbsolute"],
+          "properties": {
+            "relative": { "const": 0.02 },
+            "energyAbsolute": { "const": 0.005 },
+            "forceAbsolute": { "const": 0.02 },
+            "stressAbsolute": { "const": 0.05 }
+          },
+          "additionalProperties": false
+        },
+        "passed": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "smokeRecords": {
+      "type": "object",
+      "required": ["expected", "produced", "atoms", "elements", "recordIds", "missingIds", "duplicateIds", "extraIds", "failedIds", "nonfiniteIds"],
+      "properties": {
+        "expected": { "type": "integer", "minimum": 1, "maximum": 692 },
+        "produced": { "type": "integer", "minimum": 1, "maximum": 692 },
+        "atoms": { "type": "integer", "minimum": 1, "maximum": 11087 },
+        "elements": { "type": "integer", "minimum": 1, "maximum": 89 },
+        "recordIds": { "type": "array", "minItems": 1, "maxItems": 692, "uniqueItems": true, "items": { "$ref": "#/$defs/recordId" } },
+        "missingIds": { "type": "array", "maxItems": 0 },
+        "duplicateIds": { "type": "array", "maxItems": 0 },
+        "extraIds": { "type": "array", "maxItems": 0 },
+        "failedIds": { "type": "array", "maxItems": 0 },
+        "nonfiniteIds": { "type": "array", "maxItems": 0 }
+      },
+      "additionalProperties": false
+    },
+    "fullRecords": {
+      "type": "object",
+      "required": ["expected", "produced", "atoms", "elements", "recordIds", "missingIds", "duplicateIds", "extraIds", "failedIds", "nonfiniteIds"],
+      "properties": {
+        "expected": { "const": 693 },
+        "produced": { "const": 693 },
+        "atoms": { "const": 11088 },
+        "elements": { "const": 89 },
+        "recordIds": { "type": "array", "minItems": 693, "maxItems": 693, "uniqueItems": true, "items": { "$ref": "#/$defs/recordId" } },
+        "missingIds": { "type": "array", "maxItems": 0 },
+        "duplicateIds": { "type": "array", "maxItems": 0 },
+        "extraIds": { "type": "array", "maxItems": 0 },
+        "failedIds": { "type": "array", "maxItems": 0 },
+        "nonfiniteIds": { "type": "array", "maxItems": 0 }
+      },
+      "additionalProperties": false
+    },
+    "smokeModel": {
+      "type": "object",
+      "required": ["comparatorId", "modelId", "role", "resultClass", "status", "package", "checkpointDigest", "datasetDigest", "runnerDigest", "containerDigest", "dependencyLockDigest", "predictionMerkleRoot", "resultBundleDigest", "records", "software", "execution", "metrics", "protocolAcceptance", "superiorityClaimed"],
+      "properties": {
+        "comparatorId": { "enum": ["mattersim-1.0.0-5m", "mace-mpa-0"] },
+        "modelId": { "enum": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"] },
+        "role": { "enum": ["active", "challenger"] },
+        "resultClass": { "const": "smoke-only" },
+        "status": { "const": "smoke-complete" },
+        "package": { "$ref": "#/$defs/package" },
+        "checkpointDigest": { "$ref": "#/$defs/digest" },
+        "datasetDigest": { "$ref": "#/$defs/digest" },
+        "runnerDigest": { "$ref": "#/$defs/digest" },
+        "containerDigest": { "$ref": "#/$defs/digest" },
+        "dependencyLockDigest": { "$ref": "#/$defs/digest" },
+        "predictionMerkleRoot": { "$ref": "#/$defs/digest" },
+        "resultBundleDigest": { "$ref": "#/$defs/digest" },
+        "records": { "$ref": "#/$defs/smokeRecords" },
+        "software": { "$ref": "#/$defs/software" },
+        "execution": { "$ref": "#/$defs/execution" },
+        "metrics": { "$ref": "#/$defs/smokeMetrics" },
+        "protocolAcceptance": { "anyOf": [{ "$ref": "#/$defs/protocolAcceptance" }, { "type": "null" }] },
+        "superiorityClaimed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "fullModel": {
+      "type": "object",
+      "required": ["comparatorId", "modelId", "role", "resultClass", "status", "package", "checkpointDigest", "datasetDigest", "runnerDigest", "containerDigest", "dependencyLockDigest", "predictionMerkleRoot", "resultBundleDigest", "records", "software", "execution", "metrics", "protocolAcceptance", "superiorityClaimed"],
+      "properties": {
+        "comparatorId": { "enum": ["mattersim-1.0.0-5m", "mace-mpa-0"] },
+        "modelId": { "enum": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"] },
+        "role": { "enum": ["active", "challenger"] },
+        "resultClass": { "enum": ["REPRODUCED_MODEL_CARD_PROTOCOL", "ENGINEERING_BASELINE_COMPLETE"] },
+        "status": { "const": "complete" },
+        "package": { "$ref": "#/$defs/package" },
+        "checkpointDigest": { "$ref": "#/$defs/digest" },
+        "datasetDigest": { "$ref": "#/$defs/digest" },
+        "runnerDigest": { "$ref": "#/$defs/digest" },
+        "containerDigest": { "$ref": "#/$defs/digest" },
+        "dependencyLockDigest": { "$ref": "#/$defs/digest" },
+        "predictionMerkleRoot": { "$ref": "#/$defs/digest" },
+        "resultBundleDigest": { "$ref": "#/$defs/digest" },
+        "records": { "$ref": "#/$defs/fullRecords" },
+        "software": { "$ref": "#/$defs/software" },
+        "execution": { "$ref": "#/$defs/execution" },
+        "metrics": { "$ref": "#/$defs/fullMetrics" },
+        "protocolAcceptance": { "anyOf": [{ "$ref": "#/$defs/protocolAcceptance" }, { "type": "null" }] },
+        "superiorityClaimed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "scientificStructureIds": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "prefixItems": [
+        { "const": "random-TP-000000" },
+        { "const": "random-TP-000005" },
+        { "const": "random-TP-000010" },
+        { "const": "random-TP-000095" },
+        { "const": "random-TP-000125" },
+        { "const": "random-TP-000135" },
+        { "const": "random-TP-000200" },
+        { "const": "random-TP-000220" },
+        { "const": "random-TP-000369" },
+        { "const": "random-TP-000555" }
+      ],
+      "items": false
+    },
+    "emptyCases": {
+      "type": "array",
+      "maxItems": 0,
+      "items": false
+    },
+    "invarianceValidation": {
+      "type": "object",
+      "required": ["status", "structureIds", "transformations", "cases", "protocol", "failedCases", "maximumErrors", "evidenceRoot"],
+      "properties": {
+        "status": { "const": "passed" },
+        "structureIds": { "$ref": "#/$defs/scientificStructureIds" },
+        "transformations": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            { "const": "translation" },
+            { "const": "permutation" },
+            { "const": "proper-rotation" },
+            { "const": "periodic-image" }
+          ],
+          "items": false
+        },
+        "cases": { "const": 40 },
+        "protocol": {
+          "type": "object",
+          "required": ["translationFractionalShift", "permutation", "properRotation", "periodicImageShift"],
+          "properties": {
+            "translationFractionalShift": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "prefixItems": [{ "const": 0.173 }, { "const": 0.271 }, { "const": 0.389 }],
+              "items": false
+            },
+            "permutation": { "const": "reverse-atom-order/v1" },
+            "properRotation": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "prefixItems": [
+                { "type": "array", "prefixItems": [{ "const": 0 }, { "const": -1 }, { "const": 0 }], "items": false, "minItems": 3, "maxItems": 3 },
+                { "type": "array", "prefixItems": [{ "const": 1 }, { "const": 0 }, { "const": 0 }], "items": false, "minItems": 3, "maxItems": 3 },
+                { "type": "array", "prefixItems": [{ "const": 0 }, { "const": 0 }, { "const": 1 }], "items": false, "minItems": 3, "maxItems": 3 }
+              ],
+              "items": false
+            },
+            "periodicImageShift": { "const": "zero-based-atom-i-r_i-prime=r_i+A0[i-mod-3]-cell-unchanged-no-wrap/v1" }
+          },
+          "additionalProperties": false
+        },
+        "failedCases": { "$ref": "#/$defs/emptyCases" },
+        "maximumErrors": {
+          "type": "object",
+          "required": ["energyEv", "forceVectorEvPerAngstrom", "stressFrobeniusEvPerAngstrom3"],
+          "properties": {
+            "energyEv": { "type": "number", "minimum": 0, "maximum": 0.0001 },
+            "forceVectorEvPerAngstrom": { "type": "number", "minimum": 0, "maximum": 0.0001 },
+            "stressFrobeniusEvPerAngstrom3": { "type": "number", "minimum": 0, "maximum": 0.00001 }
+          },
+          "additionalProperties": false
+        },
+        "evidenceRoot": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "forceFiniteDifferenceValidation": {
+      "type": "object",
+      "required": ["status", "elements", "cases", "selection", "axisConvention", "displacement", "stepsAngstrom", "centralDifference", "richardson", "absoluteToleranceEvPerAngstrom", "relativeTolerance", "scale", "rule", "allPass", "failedCases", "maximumNormalizedError", "evidenceRoot"],
+      "properties": {
+        "status": { "const": "passed" },
+        "elements": { "const": 89 },
+        "cases": { "const": 89 },
+        "selection": { "const": "for-each-element-in-frozen-set-lexicographically-first-id-containing-element-lowest-zero-based-atom-index-axis-Z-modulo-3/v1" },
+        "axisConvention": { "const": "zero-based-x0-y1-z2" },
+        "displacement": { "const": "cartesian-coordinate-plus-minus-h-fixed-cell-and-other-coordinates/v1" },
+        "stepsAngstrom": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [{ "const": 0.01 }, { "const": 0.005 }],
+          "items": false
+        },
+        "centralDifference": { "const": "F_h=-(E(q+h)-E(q-h))/(2h)" },
+        "richardson": { "const": "four-f-half-minus-f-full-over-three" },
+        "absoluteToleranceEvPerAngstrom": { "const": 0.02 },
+        "relativeTolerance": { "const": 0.01 },
+        "scale": { "const": "max(abs(analytic-force-component),abs(richardson-finite-difference))" },
+        "rule": { "const": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale" },
+        "allPass": { "const": "exactly-89-element-selections-each-pass-no-drop-no-reselection" },
+        "failedCases": { "$ref": "#/$defs/emptyCases" },
+        "maximumNormalizedError": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidenceRoot": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "stressFiniteDifferenceValidation": {
+      "type": "object",
+      "required": ["status", "structureIds", "voigtModes", "cases", "deformation", "coordinateConvention", "strainBasis", "referenceVolume", "strainSteps", "centralDifference", "richardson", "comparison", "absoluteToleranceEvPerAngstrom3", "relativeTolerance", "scale", "rule", "allPass", "automaticSignSelectionAllowed", "failedCases", "maximumNormalizedError", "evidenceRoot"],
+      "properties": {
+        "status": { "const": "passed" },
+        "structureIds": { "$ref": "#/$defs/scientificStructureIds" },
+        "voigtModes": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [{ "const": "xx" }, { "const": "yy" }, { "const": "zz" }, { "const": "yz" }, { "const": "xz" }, { "const": "xy" }],
+          "items": false
+        },
+        "cases": { "const": 60 },
+        "deformation": { "const": "A_plus_minus=A0@(I_plus_minus_hE_mode)" },
+        "coordinateConvention": { "const": "fixed-fractional-coordinates" },
+        "strainBasis": { "const": "diagonal-one-engineering-shear-symmetric-one-half" },
+        "referenceVolume": { "const": "V0=abs(det(A0))" },
+        "strainSteps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [{ "const": 0.002 }, { "const": 0.001 }],
+          "items": false
+        },
+        "centralDifference": { "const": "sigma_h=(E(+h)-E(-h))/(2hV0)" },
+        "richardson": { "const": "sigma=(4sigma_h_over_2-sigma_h)/3" },
+        "comparison": { "const": "same-sign-corresponding-ASE-stress-component-no-sign-selection" },
+        "absoluteToleranceEvPerAngstrom3": { "const": 0.005 },
+        "relativeTolerance": { "const": 0.02 },
+        "scale": { "const": "max(abs(analytic-ASE-component),abs(richardson-finite-difference))" },
+        "rule": { "const": "absolute-error-less-than-or-equal-to-absolute-plus-relative-times-scale" },
+        "allPass": { "const": "exactly-10-structures-times-6-modes-pass-no-drop" },
+        "automaticSignSelectionAllowed": { "const": false },
+        "failedCases": { "$ref": "#/$defs/emptyCases" },
+        "maximumNormalizedError": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidenceRoot": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "batchEquivalenceValidation": {
+      "description": "Canonical reproduction is batch size 1. This is an explicit non-claim, not evidence that accelerated batches are equivalent.",
+      "type": "object",
+      "required": ["canonicalBatchSize", "status", "acceleratedBatchEligible", "acceleratedExecutionClaimed"],
+      "properties": {
+        "canonicalBatchSize": { "const": 1 },
+        "status": { "const": "not-run-canonical-batch1-only" },
+        "acceleratedBatchEligible": { "const": false },
+        "acceleratedExecutionClaimed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "scientificModelValidation": {
+      "type": "object",
+      "required": ["comparatorId", "invariance", "forceFiniteDifference", "stressFiniteDifference", "batchEquivalence"],
+      "properties": {
+        "comparatorId": { "enum": ["mattersim-1.0.0-5m", "mace-mpa-0"] },
+        "invariance": { "$ref": "#/$defs/invarianceValidation" },
+        "forceFiniteDifference": { "$ref": "#/$defs/forceFiniteDifferenceValidation" },
+        "stressFiniteDifference": { "$ref": "#/$defs/stressFiniteDifferenceValidation" },
+        "batchEquivalence": { "$ref": "#/$defs/batchEquivalenceValidation" }
+      },
+      "additionalProperties": false
+    },
+    "scientificValidation": {
+      "description": "Promotion gate for atomistic invariance and force/stress finite differences. Molecular-dynamics readiness is intentionally outside this Random-TP model-card reproduction claim because its inputs and simulator protocol are not yet digest-pinned.",
+      "type": "object",
+      "required": ["status", "root", "models"],
+      "properties": {
+        "status": { "const": "passed" },
+        "root": { "$ref": "#/$defs/digest" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/scientificModelValidation" }, { "properties": { "comparatorId": { "const": "mattersim-1.0.0-5m" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/scientificModelValidation" }, { "properties": { "comparatorId": { "const": "mace-mpa-0" } } }] }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "workflowBase": {
+      "type": "object",
+      "required": ["path", "id", "runId", "runAttempt", "event", "ref", "sha"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\.github/workflows/[A-Za-z0-9._-]+\\.yml$" },
+        "id": { "type": "integer", "minimum": 1 },
+        "runId": { "type": "integer", "minimum": 1 },
+        "runAttempt": { "type": "integer", "minimum": 1 },
+        "event": { "enum": ["workflow_dispatch", "pull_request", "push", "merge_group"] },
+        "ref": { "type": "string", "pattern": "^refs/(?:heads|pull)/[A-Za-z0-9._/-]+$" },
+        "sha": { "$ref": "#/$defs/sha" }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["id", "name", "apiDigest", "subjectName", "subjectDigest", "expiresAt", "expired"],
+      "properties": {
+        "id": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "pattern": "^tailing-atomistic-(?:smoke|full)-[0-9a-f]{40}-[0-9]+-[0-9]+$" },
+        "apiDigest": { "$ref": "#/$defs/digest" },
+        "subjectName": { "type": "string", "pattern": "^tailing-atomistic-(?:smoke|full)-[0-9a-f]{40}\\.tar\\.zst$" },
+        "subjectDigest": { "$ref": "#/$defs/digest" },
+        "expiresAt": { "$ref": "#/$defs/timestamp" },
+        "expired": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "attestation": {
+      "type": "object",
+      "required": ["bundle", "bundleDigest", "rawBundleDigest", "subjectName", "subjectDigest", "verified", "verifiedClaims"],
+      "properties": {
+        "bundle": {
+          "type": "object",
+          "required": ["mediaType", "verificationMaterial", "dsseEnvelope"],
+          "properties": {
+            "mediaType": { "const": "application/vnd.dev.sigstore.bundle.v0.3+json" },
+            "verificationMaterial": { "type": "object", "minProperties": 1 },
+            "dsseEnvelope": { "type": "object", "minProperties": 1 }
+          },
+          "additionalProperties": true
+        },
+        "bundleDigest": { "$ref": "#/$defs/digest", "description": "SHA-256 of the canonical JSON representation embedded in this receipt." },
+        "rawBundleDigest": { "$ref": "#/$defs/digest", "description": "SHA-256 of the exact attestation bundle bytes retrieved and verified by the independent promotion guard." },
+        "subjectName": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "subjectDigest": { "$ref": "#/$defs/digest" },
+        "verified": { "const": true },
+        "verifiedClaims": {
+          "type": "object",
+          "required": ["issuer", "repository", "repositoryId", "workflowPath", "runId", "runAttempt", "sourceRevision", "event", "ref", "builderId", "buildType", "runnerEnvironment", "predicateType"],
+          "properties": {
+            "issuer": { "const": "https://token.actions.githubusercontent.com" },
+            "repository": { "const": "tony070926-sudo/tailing-future" },
+            "repositoryId": { "const": 1349498456 },
+            "workflowPath": { "type": "string", "pattern": "^\\.github/workflows/[A-Za-z0-9._-]+\\.yml$" },
+            "runId": { "type": "integer", "minimum": 1 },
+            "runAttempt": { "type": "integer", "minimum": 1 },
+            "sourceRevision": { "$ref": "#/$defs/sha" },
+            "event": { "enum": ["workflow_dispatch", "pull_request", "push", "merge_group"] },
+            "ref": { "type": "string", "pattern": "^refs/(?:heads|pull)/[A-Za-z0-9._/-]+$" },
+            "builderId": { "type": "string", "pattern": "^https://github\\.com/tony070926-sudo/tailing-future/\\.github/workflows/atomistic-(?:smoke|full)\\.yml@refs/(?:heads|pull)/[A-Za-z0-9._/-]+$" },
+            "buildType": { "const": "https://actions.github.io/buildtypes/workflow/v1" },
+            "runnerEnvironment": { "const": "github-hosted" },
+            "predicateType": { "const": "https://slsa.dev/provenance/v1" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "smokeProvenance": {
+      "type": "object",
+      "required": ["workflow", "artifact", "attestation"],
+      "properties": {
+        "workflow": {
+          "allOf": [
+            { "$ref": "#/$defs/workflowBase" },
+            { "properties": { "path": { "const": ".github/workflows/atomistic-smoke.yml" } } }
+          ]
+        },
+        "artifact": { "$ref": "#/$defs/artifact" },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      },
+      "additionalProperties": false
+    },
+    "fullProvenance": {
+      "type": "object",
+      "required": ["workflow", "artifact", "attestation"],
+      "properties": {
+        "workflow": {
+          "allOf": [
+            { "$ref": "#/$defs/workflowBase" },
+            {
+              "properties": {
+                "path": { "const": ".github/workflows/atomistic-full.yml" },
+                "event": { "const": "workflow_dispatch" },
+                "ref": { "const": "refs/heads/main" }
+              }
+            }
+          ]
+        },
+        "artifact": { "$ref": "#/$defs/artifact" },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["verdict", "verifiedAt", "independentVerifierDigest", "artifactObservation", "checks"],
+      "properties": {
+        "verdict": { "const": "pass" },
+        "verifiedAt": { "$ref": "#/$defs/timestamp" },
+        "independentVerifierDigest": { "$ref": "#/$defs/digest" },
+        "artifactObservation": {
+          "type": "object",
+          "required": ["id", "name", "apiDigest", "expiresAt", "expired"],
+          "properties": {
+            "id": { "type": "integer", "minimum": 1 },
+            "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+            "apiDigest": { "$ref": "#/$defs/digest" },
+            "expiresAt": { "$ref": "#/$defs/timestamp" },
+            "expired": { "const": false }
+          },
+          "additionalProperties": false
+        },
+        "checks": {
+          "type": "object",
+          "required": ["recordCompleteness", "finiteOutputs", "digestBindings", "merkleVerified", "metricsRecomputed", "provenanceVerified", "attestationVerified", "networkIsolationVerified"],
+          "properties": {
+            "recordCompleteness": { "const": true },
+            "finiteOutputs": { "const": true },
+            "digestBindings": { "const": true },
+            "merkleVerified": { "const": true },
+            "metricsRecomputed": { "const": true },
+            "provenanceVerified": { "const": true },
+            "attestationVerified": { "const": true },
+            "networkIsolationVerified": { "const": true }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "required": ["measured", "estimated", "actualBilledUsd"],
+      "properties": {
+        "measured": {
+          "type": "object",
+          "required": ["wallSeconds", "cpuSeconds", "gpuSeconds", "peakHostMemoryBytes", "peakAcceleratorMemoryBytes", "inputBytes", "outputBytes"],
+          "properties": {
+            "wallSeconds": { "type": "number", "exclusiveMinimum": 0 },
+            "cpuSeconds": { "type": "number", "minimum": 0 },
+            "gpuSeconds": { "type": "number", "minimum": 0 },
+            "peakHostMemoryBytes": { "type": "integer", "minimum": 0 },
+            "peakAcceleratorMemoryBytes": { "type": "integer", "minimum": 0 },
+            "inputBytes": { "type": "integer", "minimum": 1 },
+            "outputBytes": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "estimated": {
+          "type": "object",
+          "required": ["isEstimate", "currency", "amount", "method", "pricingSourceDigest", "priceSnapshotAt"],
+          "properties": {
+            "isEstimate": { "const": true },
+            "currency": { "const": "USD" },
+            "amount": { "type": "number", "minimum": 0 },
+            "method": { "type": "string", "minLength": 10, "maxLength": 512 },
+            "pricingSourceDigest": { "$ref": "#/$defs/digest" },
+            "priceSnapshotAt": { "$ref": "#/$defs/timestamp" }
+          },
+          "additionalProperties": false
+        },
+        "actualBilledUsd": { "type": "null" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

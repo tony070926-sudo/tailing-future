@@ -9,7 +9,7 @@
       "revision": "technical report, 2026-08-18", "evidenceClass": "claim", "claimOwner": "GenBio AI", "comparable": false,
       "sourceCommit": null, "sourceDigest": "sha256:4f25869b149a0064cc71381febf2599ca1e95c891be1d7d66c83a8797dbab508",
       "benchmarkCommit": null, "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Cross-domain architecture reference; closed alpha and not an independently reproduced materials baseline."
+      "reason": "Official preview and locked vendor report cover 31 metrics across five task families; this is still a closed-alpha architecture reference, not an independently reproduced materials baseline."
     },
     {
       "id": "equiformerv3-dens-oam", "name": "EquiformerV3+DeNS-OAM", "scope": "crystal stability and phonon benchmark artifacts",

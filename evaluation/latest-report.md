@@ -1,10 +1,10 @@
-# Tailing Sentinel — 0.3.0-r2-physics-and-atomistic-freeze
+# Tailing Sentinel — 0.3.1-r2-physics-r3-atomistic-protocol
 
 - Verdict: **CONDITIONAL**
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-28**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:a22ba1672afeda615e25a3f5f9ccac4ce231fd3172c0deab9251d535497a2e88` across 48 source files
+- Artifact: `sha256:7e7ba8f04c3cbae8887da5017437a9be4776c59a9e80f625fee6aa44bbc5e7ce` across 88 source files
 
 ## Hard gates
 
@@ -13,7 +13,7 @@
 ## Executable verification
 
 - Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
-- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog: PASS (manifest only); evaluator runtime: 84854.2 ms.
+- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog / comparator receipts: PASS (manifest only); evaluator runtime: 72021.1 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps

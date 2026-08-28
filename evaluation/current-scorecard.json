@@ -1,6 +1,6 @@
 {
   "schemaVersion": "tf.scorecard/0.2",
-  "candidateVersion": "0.3.0-r2-physics-and-atomistic-freeze",
+  "candidateVersion": "0.3.1-r2-physics-r3-atomistic-protocol",
   "baselineSnapshotDate": "2026-08-28",
   "hardGateFailures": [],
   "dimensions": [
@@ -94,7 +94,7 @@
       "id": "safety", "label": "Safety, license and governance", "displayLabel": "安全 / 许可 / 治理", "weight": 4, "score": 1, "promotionFloor": 1,
       "summary": "advisory-only + claim lint",
       "evidence": ["Visible toy-model boundary, claim lint, pinned package/model/data license catalogs, an explicit fail-closed UMA exclusion, a green-commit Cloudflare release guard, dependency audit and no control-output endpoint."],
-      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "scripts/evaluate.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml"],
+      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "evaluation/reviews/2026-08-29-r3-protocol-review.md", "scripts/evaluate.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml", ".github/workflows/sentinel-report.yml"],
       "nextAction": "Generate a CycloneDX SBOM and freeze the remaining dataset legal bytes and attribution obligations.",
       "acceptanceTest": "Dependency, package, model, dataset and SBOM policy gates pass; unresolved legal bytes abstain and no direct control endpoint exists."
     }

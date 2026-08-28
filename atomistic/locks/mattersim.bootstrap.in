@@ -1,0 +1,9 @@
+# BOOTSTRAP INPUT ONLY - NOT A LOCK AND NOT RELEASE EVIDENCE.
+# Resolve in a disposable Python 3.12.13 Linux/x86_64 environment, using the
+# verified local mattersim wheel. Review every transitive wheel before creating
+# mattersim.requirements.lock with hashes.
+mattersim==1.2.5
+torch==2.8.0+cpu
+torchvision==0.23.0+cpu
+torchaudio==2.8.0+cpu
+ase==3.28.0

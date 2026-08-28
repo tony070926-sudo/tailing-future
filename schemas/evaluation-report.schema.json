@@ -29,13 +29,13 @@
     },
     "upstreamGates": {
       "type": "object",
-      "required": ["install", "lint", "typecheck", "test", "atomistic", "build", "audit"],
+      "required": ["install", "lint", "typecheck", "test", "atomistic_manifest", "build", "audit"],
       "properties": {
         "install": { "$ref": "#/$defs/gateStatus" },
         "lint": { "$ref": "#/$defs/gateStatus" },
         "typecheck": { "$ref": "#/$defs/gateStatus" },
         "test": { "$ref": "#/$defs/gateStatus" },
-        "atomistic": { "$ref": "#/$defs/gateStatus" },
+        "atomistic_manifest": { "$ref": "#/$defs/gateStatus" },
         "build": { "$ref": "#/$defs/gateStatus" },
         "audit": { "$ref": "#/$defs/gateStatus" }
       },
@@ -48,14 +48,16 @@
         "physics": { "type": ["object", "null"] },
         "schemas": {
           "type": "object",
-          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics", "atomisticPlan", "datasetCatalog"],
+          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics", "atomisticPlan", "datasetCatalog", "workflowPolicy", "comparatorReceipts"],
           "properties": {
             "world": { "type": "boolean" },
             "action": { "type": "boolean" },
             "actionMutationCorpus": { "type": "boolean" },
             "runtimeActionSemantics": { "type": "boolean" },
             "atomisticPlan": { "type": "boolean" },
-            "datasetCatalog": { "type": "boolean" }
+            "datasetCatalog": { "type": "boolean" },
+            "workflowPolicy": { "type": "boolean" },
+            "comparatorReceipts": { "type": "boolean" }
           },
           "additionalProperties": false
         },

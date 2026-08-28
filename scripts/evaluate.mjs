@@ -9,6 +9,9 @@ import {
   runThermochemicalVerification,
   ThermochemicalWorld,
 } from '../lib/simulation/thermochemical-world.ts';
+import { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource } from './workflow-policy.mjs';
+import { validateComparatorEvidenceRegistry } from './comparator-evidence-policy.mjs';
+import { selectProjectSourceFiles } from './source-scope.mjs';
 
 const root = process.cwd();
 const readJson = async (relativePath) => JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
@@ -23,7 +26,7 @@ const evaluationSchema = await readJson('schemas/evaluation-report.schema.json')
 const hardGateFailures = [...scorecard.hardGateFailures];
 
 const upstreamGates = Object.fromEntries(
-  ['install', 'lint', 'typecheck', 'test', 'atomistic', 'build', 'audit'].map((name) => [name, process.env[`TAILING_${name.toUpperCase()}_STATUS`] ?? 'not-reported-local']),
+  ['install', 'lint', 'typecheck', 'test', 'atomistic_manifest', 'build', 'audit'].map((name) => [name, process.env[`TAILING_${name.toUpperCase()}_STATUS`] ?? 'not-reported-local']),
 );
 for (const [name, status] of Object.entries(upstreamGates)) {
   if (status !== 'not-reported-local' && status !== 'success') hardGateFailures.push(`Upstream ${name} gate ended with ${status}.`);
@@ -69,6 +72,8 @@ for (const comparator of registry.comparators) {
   if (comparator.evidenceClass !== 'reproduced' && comparator.comparable) hardGateFailures.push(`${comparator.id}: only locally reproduced evidence can enter numeric ranking.`);
   if (comparator.evidenceClass === 'reproduced' && (!comparator.runnerDigest || !comparator.datasetDigest)) hardGateFailures.push(`${comparator.id}: reproduced evidence lacks runner or dataset digest.`);
 }
+const comparatorReceiptFailures = await validateComparatorEvidenceRegistry(registry, { root });
+hardGateFailures.push(...comparatorReceiptFailures);
 
 const snapshotAgeDays = Math.floor((Date.now() - Date.parse(`${registry.snapshotDate}T00:00:00Z`)) / 86_400_000);
 if (!Number.isFinite(snapshotAgeDays) || snapshotAgeDays < 0) hardGateFailures.push('Comparator registry snapshot date is invalid or in the future.');
@@ -121,7 +126,7 @@ try {
   hardGateFailures.push(`Thermochemical verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
 }
 
-let schemaVerification = { world: false, action: false, actionMutationCorpus: false, runtimeActionSemantics: false, atomisticPlan: false, datasetCatalog: false };
+let schemaVerification = { world: false, action: false, actionMutationCorpus: false, runtimeActionSemantics: false, atomisticPlan: false, datasetCatalog: false, workflowPolicy: false, comparatorReceipts: false };
 try {
   const ajv = new Ajv2020({ allErrors: true, allowUnionTypes: true });
   const validateWorld = ajv.compile(worldSchema);
@@ -144,6 +149,18 @@ try {
   } catch (error) {
     runtimeActionSemantics = error instanceof Error && error.message.includes('step action does not match its state transition');
   }
+  const workflowFiles = (await collectDirectoryFiles(path.join(root, '.github', 'workflows'))).filter((file) => /\.ya?ml$/.test(file));
+  const dockerfiles = (await collectDirectoryFiles(path.join(root, 'atomistic', 'containers'))).filter((file) => /\.Dockerfile$/.test(file));
+  const workflowFailures = [];
+  for (const absolutePath of workflowFiles) {
+    const relativePath = path.relative(root, absolutePath);
+    workflowFailures.push(...inspectWorkflowSource(relativePath, await readFile(absolutePath, 'utf8')));
+  }
+  for (const absolutePath of dockerfiles) {
+    const relativePath = path.relative(root, absolutePath);
+    workflowFailures.push(...inspectDockerfileSource(relativePath, await readFile(absolutePath, 'utf8')));
+  }
+  workflowFailures.push(...inspectDockerignoreSource('.dockerignore', await readFile(path.join(root, '.dockerignore'), 'utf8')));
   schemaVerification = {
     world: validateWorld(serialized),
     action: validateAction(serialized.lastAction),
@@ -169,6 +186,8 @@ try {
     datasetCatalog: datasetCatalog.schemaVersion === 'tf.dataset-catalog/0.1'
       && datasetCatalog.datasets.length >= 4
       && datasetCatalog.datasets.every((dataset) => dataset.license && dataset.source?.startsWith('https://') && dataset.requiredProvenance?.length >= 4),
+    workflowPolicy: workflowFiles.length >= 2 && dockerfiles.length === 2 && workflowFailures.length === 0,
+    comparatorReceipts: comparatorReceiptFailures.length === 0,
   };
   if (!schemaVerification.world) hardGateFailures.push(`World-state schema validation failed: ${JSON.stringify(validateWorld.errors)}.`);
   if (!schemaVerification.action) hardGateFailures.push(`Action schema validation failed: ${JSON.stringify(validateAction.errors)}.`);
@@ -176,6 +195,9 @@ try {
   if (!schemaVerification.runtimeActionSemantics) hardGateFailures.push('Runtime action semantics accepted or misclassified a cross-kind mutation.');
   if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors)}.`);
   if (!schemaVerification.datasetCatalog) hardGateFailures.push('Dataset provenance and license catalog validation failed.');
+  if (!schemaVerification.workflowPolicy) hardGateFailures.push('Workflow and atomistic build policy coverage is incomplete.');
+  if (!schemaVerification.comparatorReceipts) hardGateFailures.push('Comparator receipt promotion policy rejected the registry.');
+  hardGateFailures.push(...workflowFailures);
 } catch (error) {
   hardGateFailures.push(`Schema verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
 }
@@ -295,7 +317,7 @@ const markdown = [
   physicsVerification
     ? `- Fourier L2: ${physicsVerification.heatModeRelativeL2Error.toExponential(3)}; minimum 2D order: ${physicsVerification.fourierMinimumObservedOrder.toFixed(3)}; ${physicsVerification.ensemble.seeds.length}×${physicsVerification.ensemble.horizonSteps} p95/max energy tail: ${physicsVerification.ensemble.energyResidualTail.p95.toExponential(3)} / ${physicsVerification.ensemble.energyResidualTail.maximum.toExponential(3)}.`
     : '- Physics verification unavailable.',
-  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction plan / dataset catalog: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog ? 'PASS (manifest only)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
+  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction plan / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (manifest only)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
   `- Industrial default exclusions: ${atomisticPlan.excludedDefaults.map((entry) => `${entry.id} (${entry.gating}; industrialDefaultAllowed=${entry.industrialDefaultAllowed})`).join(', ')}.`,
   '',
   '## Next iteration gaps',
@@ -350,11 +372,7 @@ function gitSourceFiles() {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
-  return output
-    .split('\0')
-    .filter(Boolean)
-    .filter((relativePath) => relativePath !== 'evaluation/latest-report.json' && relativePath !== 'evaluation/latest-report.md')
-    .sort();
+  return selectProjectSourceFiles(output.split('\0').filter(Boolean));
 }
 
 async function streamFileDigest(absolutePath) {

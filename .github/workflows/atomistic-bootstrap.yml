@@ -1,0 +1,668 @@
+# Bootstrap-only prediction workflow.
+#
+# This workflow deliberately does not compute metrics, create a reproduction
+# receipt, attest an artifact, or make a reproduced/superiority claim. Its
+# artifacts are untrusted inputs for a later independent verifier.
+name: Atomistic bootstrap predictions (non-promotional)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atomistic-bootstrap-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+env:
+  BASE_IMAGE: python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2
+  BASE_IMAGE_AMD64_DIGEST: sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af
+  DOCKERFILE_FRONTEND: docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+
+jobs:
+  bootstrap:
+    name: ${{ matrix.model }} isolated bootstrap smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        model: [mattersim, mace]
+    env:
+      MODEL: ${{ matrix.model }}
+      PUBLISH_DIR: ${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}
+    steps:
+      - name: Check out the dispatched revision without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Install the pinned JavaScript runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.16.0
+
+      - name: Refuse non-main, non-Linux, or non-x86_64 dispatches
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+
+      - name: Create fresh, model-isolated working directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_root="$(mktemp -d "$RUNNER_TEMP/tailing-atomistic-${MODEL}.XXXXXX")"
+          cache_root="$task_root/cache"
+          wheelhouse="$task_root/wheelhouse"
+          lock_dir="$task_root/locks"
+          manifest_dir="$task_root/manifests"
+          structure_dir="$task_root/structures"
+          inference_input_dir="$task_root/inference-inputs"
+          build_context="$task_root/build-context"
+          output_dir="$task_root/output"
+          install -d -m 0700 \
+            "$cache_root" "$wheelhouse" "$lock_dir" "$manifest_dir" \
+            "$structure_dir" "$inference_input_dir" "$build_context" \
+            "$output_dir" "$PUBLISH_DIR"
+          {
+            echo "ATOMISTIC_ROOT=$task_root"
+            echo "CACHE_ROOT=$cache_root"
+            echo "WHEELHOUSE=$wheelhouse"
+            echo "LOCK_DIR=$lock_dir"
+            echo "MANIFEST_DIR=$manifest_dir"
+            echo "STRUCTURE_DIR=$structure_dir"
+            echo "INFERENCE_INPUT_DIR=$inference_input_dir"
+            echo "BUILD_CONTEXT=$build_context"
+            echo "OUTPUT_DIR=$output_dir"
+          } >> "$GITHUB_ENV"
+
+      - name: Bind paths and runner constants from the frozen plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from 'node:fs';
+
+          const plan = JSON.parse(readFileSync('evaluation/atomistic/reproduction-plan.json', 'utf8'));
+          const expectedModelIds = {
+            mattersim: 'mattersim-v1.0.0-5m',
+            mace: 'mace-mpa-0-medium',
+          };
+          const expectedRunner = {
+            python: '3.12.13',
+            platform: 'linux',
+            architecture: 'x86_64',
+            baseImage: process.env.BASE_IMAGE,
+            baseImageAmd64Digest: process.env.BASE_IMAGE_AMD64_DIGEST,
+            dtype: 'float32',
+            canonicalDevice: 'cpu',
+            batchSize: 1,
+            threads: 1,
+            networkPolicy: 'fetch-online-run-offline',
+            isolation: 'verified-pickle-in-networkless-unprivileged-read-only-container',
+          };
+          if (plan.schemaVersion !== 'tf.atomistic-reproduction/0.2') {
+            throw new Error('Unexpected atomistic reproduction-plan schema.');
+          }
+          for (const [field, expected] of Object.entries(expectedRunner)) {
+            if (plan.protocol?.runner?.[field] !== expected) {
+              throw new Error(`Runner plan drifted at ${field}.`);
+            }
+          }
+          const modelId = expectedModelIds[process.env.MODEL];
+          const models = plan.models.filter((entry) => entry.id === modelId);
+          const benchmarks = plan.benchmarks.filter((entry) => entry.role === 'primary-like-for-like');
+          if (models.length !== 1 || benchmarks.length !== 1) {
+            throw new Error('Expected exactly one selected model and primary benchmark.');
+          }
+          const model = models[0];
+          const benchmark = benchmarks[0];
+          const values = {
+            MODEL_ID: model.id,
+            PACKAGE_CACHE_PATH: model.package.cachePath,
+            PACKAGE_FILENAME: model.package.filename,
+            CHECKPOINT_CACHE_PATH: model.cachePath,
+            CHECKPOINT_FILENAME: model.cachePath.split('/').at(-1),
+            DATASET_CACHE_PATH: benchmark.cachePath,
+            DATASET_FILENAME: benchmark.cachePath.split('/').at(-1),
+          };
+          for (const [name, value] of Object.entries(values)) {
+            if (typeof value !== 'string' || !/^[A-Za-z0-9._/+\-]+$/.test(value) || value.includes('..')) {
+              throw new Error(`Unsafe ${name} in reproduction plan.`);
+            }
+            appendFileSync(process.env.GITHUB_ENV, `${name}=${value}\n`);
+          }
+          NODE
+
+      - name: Verify and pull the pinned Linux amd64 base and Dockerfile frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker buildx version
+          docker buildx imagetools inspect --raw "$BASE_IMAGE" > "$ATOMISTIC_ROOT/base-image-index.json"
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+
+          const index = JSON.parse(readFileSync(`${process.env.ATOMISTIC_ROOT}/base-image-index.json`, 'utf8'));
+          if (!Array.isArray(index.manifests)) throw new Error('Pinned base reference did not resolve to an OCI index.');
+          const matches = index.manifests.filter((entry) =>
+            entry.platform?.os === 'linux' && entry.platform?.architecture === 'amd64');
+          if (matches.length !== 1 || matches[0].digest !== process.env.BASE_IMAGE_AMD64_DIGEST) {
+            throw new Error('Pinned base image Linux/amd64 manifest digest drifted.');
+          }
+          NODE
+          docker pull --platform=linux/amd64 "$BASE_IMAGE"
+          docker pull "$DOCKERFILE_FRONTEND"
+          docker run --rm --platform=linux/amd64 \
+            --network=none \
+            --read-only \
+            --user="$(id -u):$(id -g)" \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=64 \
+            --cpus=1 \
+            --memory=512m \
+            --memory-swap=512m \
+            --ulimit nofile=256:256 \
+            "$BASE_IMAGE" \
+            python -c 'import platform, sys; assert platform.machine() == "x86_64"; assert platform.system() == "Linux"; assert platform.python_version() == "3.12.13"; assert sys.implementation.name == "cpython"'
+
+      - name: Fetch and hash-check the selected assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/atomistic/fetch-assets.mjs \
+            --cache-root "$CACHE_ROOT" \
+            --model "$MODEL" \
+            > "$MANIFEST_DIR/fetched-assets.manifest.json"
+
+      - name: Preprocess structures without mounting any model checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          dataset_path="$CACHE_ROOT/$DATASET_CACHE_PATH"
+          test -f "$dataset_path"
+          docker run --rm --platform=linux/amd64 \
+            --network=none \
+            --read-only \
+            --user="$(id -u):$(id -g)" \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=64 \
+            --cpus=1 \
+            --memory=1g \
+            --memory-swap=1g \
+            --ulimit nofile=256:256 \
+            --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            --mount "type=bind,src=$dataset_path,dst=/input/$DATASET_FILENAME,readonly" \
+            --mount "type=bind,src=$STRUCTURE_DIR,dst=/output" \
+            "$BASE_IMAGE" \
+            python -B /repo/scripts/atomistic/prepare_structures.py \
+              --dataset "/input/$DATASET_FILENAME" \
+              --output /output \
+              --plan /repo/evaluation/atomistic/reproduction-plan.json
+          test -f "$STRUCTURE_DIR/structures.jsonl"
+          test -f "$STRUCTURE_DIR/structures.manifest.json"
+
+      - name: Download one fresh resolved wheelhouse in the online phase
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_path="$CACHE_ROOT/$PACKAGE_CACHE_PATH"
+          test -f "$package_path"
+          test -z "$(find "$WHEELHOUSE" -mindepth 1 -maxdepth 1 -print -quit)"
+          docker run --rm --platform=linux/amd64 \
+            --network=bridge \
+            --read-only \
+            --user="$(id -u):$(id -g)" \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=128 \
+            --cpus=2 \
+            --memory=3g \
+            --memory-swap=3g \
+            --ulimit nofile=1024:1024 \
+            --tmpfs /tmp:rw,exec,nosuid,nodev,size=1g,mode=1777 \
+            --env MODEL \
+            --env PACKAGE_FILENAME \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            --mount "type=bind,src=$package_path,dst=/input/$PACKAGE_FILENAME,readonly" \
+            --mount "type=bind,src=$WHEELHOUSE,dst=/wheelhouse" \
+            "$BASE_IMAGE" \
+            sh -euc '
+              export PIP_DISABLE_PIP_VERSION_CHECK=1
+              export PIP_NO_INPUT=1
+              export PIP_CACHE_DIR=/tmp/pip-cache
+              python -m pip download \
+                --no-deps \
+                --only-binary=:all: \
+                --dest /wheelhouse \
+                "/input/$PACKAGE_FILENAME"
+              python -m pip download \
+                --no-deps \
+                --only-binary=:all: \
+                --dest /wheelhouse \
+                --index-url https://download.pytorch.org/whl/cpu \
+                "torch==2.8.0+cpu"
+              if [ "$MODEL" = mattersim ]; then
+                python -m pip download \
+                  --no-deps \
+                  --only-binary=:all: \
+                  --dest /wheelhouse \
+                  --index-url https://download.pytorch.org/whl/cpu \
+                  "torchvision==0.23.0+cpu" \
+                  "torchaudio==2.8.0+cpu"
+              fi
+              python -m pip download \
+                --only-binary=:all: \
+                --prefer-binary \
+                --dest /wheelhouse \
+                --find-links /wheelhouse \
+                --index-url https://pypi.org/simple \
+                --requirement "/repo/atomistic/locks/$MODEL.bootstrap.in"
+            '
+          echo "cb9a8ba8137ab24e36bf1742cb79a1294bd374db570f09fc15a5e1318160db4e  $WHEELHOUSE/torch-2.8.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl" | sha256sum -c -
+          if [ "$MODEL" = mattersim ]; then
+            echo "ae459d4509d3b837b978dc6c66106601f916b6d2cda75c137e3f5f48324ce1da  $WHEELHOUSE/torchvision-0.23.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl" | sha256sum -c -
+            echo "9377faee65a290578280ac7f4884c3586253dac2ca28c60f458ff6efe86a6b05  $WHEELHOUSE/torchaudio-2.8.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl" | sha256sum -c -
+          fi
+          node --input-type=module <<'NODE' > "$MANIFEST_DIR/pytorch-download-sources.json"
+          const files = [
+            { filename: 'torch-2.8.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl', sha256: 'sha256:cb9a8ba8137ab24e36bf1742cb79a1294bd374db570f09fc15a5e1318160db4e' },
+          ];
+          if (process.env.MODEL === 'mattersim') files.push(
+            { filename: 'torchaudio-2.8.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl', sha256: 'sha256:9377faee65a290578280ac7f4884c3586253dac2ca28c60f458ff6efe86a6b05' },
+            { filename: 'torchvision-0.23.0+cpu-cp312-cp312-manylinux_2_28_x86_64.whl', sha256: 'sha256:ae459d4509d3b837b978dc6c66106601f916b6d2cda75c137e3f5f48324ce1da' },
+          );
+          const sources = {
+            schemaVersion: 'tf.pytorch-bootstrap-sources/0.1',
+            index: 'https://download.pytorch.org/whl/cpu',
+            files,
+          };
+          process.stdout.write(`${JSON.stringify(sources, null, 2)}\n`);
+          NODE
+          test -n "$(find "$WHEELHOUSE" -mindepth 1 -maxdepth 1 -name '*.whl' -print -quit)"
+          test -z "$(find "$WHEELHOUSE" -mindepth 1 -maxdepth 1 ! -name '*.whl' -print -quit)"
+
+      - name: Resolve an exact lock from the offline wheelhouse
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --platform=linux/amd64 \
+            --network=none \
+            --read-only \
+            --user="$(id -u):$(id -g)" \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=128 \
+            --cpus=2 \
+            --memory=3g \
+            --memory-swap=3g \
+            --ulimit nofile=1024:1024 \
+            --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            --mount "type=bind,src=$WHEELHOUSE,dst=/wheelhouse,readonly" \
+            --mount "type=bind,src=$LOCK_DIR,dst=/locks" \
+            "$BASE_IMAGE" \
+            python -B /repo/scripts/atomistic/resolve_lock.py \
+              --wheelhouse /wheelhouse \
+              --output-lock "/locks/$MODEL.requirements.lock" \
+              --output-manifest "/locks/$MODEL.wheelhouse.manifest.json" \
+              --plan /repo/evaluation/atomistic/reproduction-plan.json \
+              --model "$MODEL"
+
+      - name: Freeze and verify the exact resolved wheel set
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$WHEELHOUSE" = "$ATOMISTIC_ROOT/wheelhouse"
+          test "$(realpath "$WHEELHOUSE")" = "$WHEELHOUSE"
+          test -d "$WHEELHOUSE"
+          test ! -L "$WHEELHOUSE"
+          test "$(stat -c '%u' "$WHEELHOUSE")" = "$(id -u)"
+          find "$WHEELHOUSE" -mindepth 1 -maxdepth 1 -type f -exec chmod 0444 {} +
+          chmod 0555 "$WHEELHOUSE"
+          find "$LOCK_DIR" -mindepth 1 -maxdepth 1 -type f -exec chmod 0444 {} +
+          chmod 0555 "$LOCK_DIR"
+          node --input-type=module <<'NODE'
+          import { constants, createHash } from 'node:crypto';
+          import { constants as fsConstants } from 'node:fs';
+          import { lstat, open, readFile, readdir, realpath, stat } from 'node:fs/promises';
+          import path from 'node:path';
+
+          const digestFile = async (filename) => {
+            const before = await lstat(filename, { bigint: true });
+            if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n || (before.mode & 0o777n) !== 0o444n) {
+              throw new Error(`${path.basename(filename)} is not one immutable regular file.`);
+            }
+            const handle = await open(filename, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+            const hash = createHash('sha256');
+            try {
+              const buffer = Buffer.allocUnsafe(1024 * 1024);
+              for (;;) {
+                const { bytesRead } = await handle.read(buffer, 0, buffer.length, null);
+                if (bytesRead === 0) break;
+                hash.update(buffer.subarray(0, bytesRead));
+              }
+              const after = await handle.stat({ bigint: true });
+              if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size || before.mtimeNs !== after.mtimeNs) {
+                throw new Error(`${path.basename(filename)} changed during verification.`);
+              }
+            } finally {
+              await handle.close();
+            }
+            return { sizeBytes: Number(before.size), sha256: `sha256:${hash.digest('hex')}` };
+          };
+
+          const wheelhouse = process.env.WHEELHOUSE;
+          const lockDir = process.env.LOCK_DIR;
+          if (await realpath(wheelhouse) !== wheelhouse || await realpath(lockDir) !== lockDir) {
+            throw new Error('Wheelhouse or lock directory is not canonical.');
+          }
+          for (const directory of [wheelhouse, lockDir]) {
+            const metadata = await lstat(directory, { bigint: true });
+            if (!metadata.isDirectory() || metadata.isSymbolicLink() || (metadata.mode & 0o777n) !== 0o555n) {
+              throw new Error(`${directory} is not an immutable real directory.`);
+            }
+          }
+          const manifestPath = path.join(lockDir, `${process.env.MODEL}.wheelhouse.manifest.json`);
+          const lockPath = path.join(lockDir, `${process.env.MODEL}.requirements.lock`);
+          const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+          if (manifest.schemaVersion !== 'tf.atomistic-wheelhouse-manifest/0.1' || manifest.model !== process.env.MODEL) {
+            throw new Error('Resolver manifest identity drifted.');
+          }
+          const directoryEntries = await readdir(wheelhouse, { withFileTypes: true });
+          if (directoryEntries.some((entry) => !entry.isFile() || entry.isSymbolicLink())) {
+            throw new Error('Wheelhouse contains a non-regular entry.');
+          }
+          const filenames = directoryEntries.map((entry) => entry.name).sort();
+          const declared = Array.isArray(manifest.wheels) ? manifest.wheels : [];
+          const declaredNames = declared.map((wheel) => wheel.filename).sort();
+          if (manifest.wheelCount !== declared.length || filenames.length !== declared.length || JSON.stringify(filenames) !== JSON.stringify(declaredNames)) {
+            throw new Error('Wheelhouse count or exact filename set differs from the resolver manifest.');
+          }
+          const seen = new Set();
+          for (const wheel of declared) {
+            if (seen.has(wheel.filename) || path.basename(wheel.filename) !== wheel.filename || !wheel.filename.endsWith('.whl')) {
+              throw new Error('Resolver manifest contains a duplicate or unsafe wheel filename.');
+            }
+            seen.add(wheel.filename);
+            const actual = await digestFile(path.join(wheelhouse, wheel.filename));
+            if (actual.sizeBytes !== wheel.sizeBytes || actual.sha256 !== wheel.sha256) {
+              throw new Error(`${wheel.filename} differs from its resolver digest.`);
+            }
+          }
+          const lock = await digestFile(lockPath);
+          await digestFile(manifestPath);
+          if (lock.sha256 !== manifest.lockDigest) throw new Error('Generated lock differs from resolver manifest.');
+          const planBytes = await readFile('evaluation/atomistic/reproduction-plan.json');
+          const planDigest = `sha256:${createHash('sha256').update(planBytes).digest('hex')}`;
+          if (planDigest !== manifest.planDigest) throw new Error('Resolver manifest is bound to a different plan.');
+          NODE
+
+      - name: Prove a cold, hash-locked install with no network
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --platform=linux/amd64 \
+            --network=none \
+            --read-only \
+            --user="$(id -u):$(id -g)" \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=256 \
+            --cpus=2 \
+            --memory=4g \
+            --memory-swap=4g \
+            --ulimit nofile=1024:1024 \
+            --ulimit nproc=256:256 \
+            --tmpfs /tmp:rw,exec,nosuid,nodev,size=4g,mode=1777 \
+            --env MODEL \
+            --mount "type=bind,src=$WHEELHOUSE,dst=/wheelhouse,readonly" \
+            --mount "type=bind,src=$LOCK_DIR,dst=/locks,readonly" \
+            "$BASE_IMAGE" \
+            sh -euc '
+              export PIP_DISABLE_PIP_VERSION_CHECK=1
+              export PIP_NO_INDEX=1
+              export PIP_NO_INPUT=1
+              python -m venv /tmp/cold-venv
+              /tmp/cold-venv/bin/python -m pip install \
+                --no-index \
+                --require-hashes \
+                --only-binary=:all: \
+                --no-compile \
+                --find-links=/wheelhouse \
+                --requirement "/locks/$MODEL.requirements.lock"
+              /tmp/cold-venv/bin/python -m pip check
+            '
+
+      - name: Build the isolated runtime image with no build-step network
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_frozen_wheelhouse() {
+            node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { constants as fsConstants } from 'node:fs';
+          import { lstat, open, readFile, readdir, realpath } from 'node:fs/promises';
+          import path from 'node:path';
+
+          const digestFile = async (filename) => {
+            const before = await lstat(filename, { bigint: true });
+            if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n || (before.mode & 0o777n) !== 0o444n) {
+              throw new Error(`${path.basename(filename)} is not one immutable regular file.`);
+            }
+            const handle = await open(filename, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+            const hash = createHash('sha256');
+            try {
+              const buffer = Buffer.allocUnsafe(1024 * 1024);
+              for (;;) {
+                const { bytesRead } = await handle.read(buffer, 0, buffer.length, null);
+                if (bytesRead === 0) break;
+                hash.update(buffer.subarray(0, bytesRead));
+              }
+              const after = await handle.stat({ bigint: true });
+              if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size || before.mtimeNs !== after.mtimeNs) {
+                throw new Error(`${path.basename(filename)} changed during verification.`);
+              }
+            } finally {
+              await handle.close();
+            }
+            return { sizeBytes: Number(before.size), sha256: `sha256:${hash.digest('hex')}` };
+          };
+
+          const wheelhouse = process.env.WHEELHOUSE;
+          const lockDir = process.env.LOCK_DIR;
+          if (wheelhouse !== `${process.env.ATOMISTIC_ROOT}/wheelhouse` || await realpath(wheelhouse) !== wheelhouse) {
+            throw new Error('Build wheelhouse is not the fresh job-private local directory.');
+          }
+          for (const directory of [wheelhouse, lockDir]) {
+            const metadata = await lstat(directory, { bigint: true });
+            if (!metadata.isDirectory() || metadata.isSymbolicLink() || (metadata.mode & 0o777n) !== 0o555n) {
+              throw new Error(`${directory} is not frozen read-only.`);
+            }
+          }
+          const manifestPath = path.join(lockDir, `${process.env.MODEL}.wheelhouse.manifest.json`);
+          const lockPath = path.join(lockDir, `${process.env.MODEL}.requirements.lock`);
+          const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+          const entries = await readdir(wheelhouse, { withFileTypes: true });
+          if (entries.some((entry) => !entry.isFile() || entry.isSymbolicLink())) throw new Error('Wheelhouse entry type drifted.');
+          const names = entries.map((entry) => entry.name).sort();
+          const wheels = Array.isArray(manifest.wheels) ? manifest.wheels : [];
+          if (manifest.schemaVersion !== 'tf.atomistic-wheelhouse-manifest/0.1' || manifest.model !== process.env.MODEL ||
+              manifest.wheelCount !== wheels.length || names.length !== wheels.length ||
+              JSON.stringify(names) !== JSON.stringify(wheels.map((wheel) => wheel.filename).sort())) {
+            throw new Error('Wheelhouse manifest set drifted.');
+          }
+          for (const wheel of wheels) {
+            const actual = await digestFile(path.join(wheelhouse, wheel.filename));
+            if (actual.sizeBytes !== wheel.sizeBytes || actual.sha256 !== wheel.sha256) throw new Error(`${wheel.filename} drifted.`);
+          }
+          if ((await digestFile(lockPath)).sha256 !== manifest.lockDigest) throw new Error('Lock digest drifted.');
+          await digestFile(manifestPath);
+          NODE
+          }
+          verify_frozen_wheelhouse
+          install -d -m 0700 \
+            "$BUILD_CONTEXT/atomistic/containers" \
+            "$BUILD_CONTEXT/atomistic/locks" \
+            "$BUILD_CONTEXT/scripts/atomistic"
+          install -m 0444 \
+            "$GITHUB_WORKSPACE/atomistic/containers/$MODEL.Dockerfile" \
+            "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile"
+          install -m 0444 \
+            "$LOCK_DIR/$MODEL.requirements.lock" \
+            "$BUILD_CONTEXT/atomistic/locks/$MODEL.requirements.lock"
+          install -m 0444 \
+            "$GITHUB_WORKSPACE/scripts/atomistic/run_model.py" \
+            "$GITHUB_WORKSPACE/scripts/atomistic/runtime_contract.py" \
+            "$BUILD_CONTEXT/scripts/atomistic/"
+          install -m 0444 \
+            "$GITHUB_WORKSPACE/.dockerignore" \
+            "$BUILD_CONTEXT/.dockerignore"
+          test -z "$(find "$BUILD_CONTEXT" -type l -print -quit)"
+          expected_context_files="$(printf '%s\n' \
+            './.dockerignore' \
+            "./atomistic/containers/$MODEL.Dockerfile" \
+            "./atomistic/locks/$MODEL.requirements.lock" \
+            './scripts/atomistic/run_model.py' \
+            './scripts/atomistic/runtime_contract.py')"
+          actual_context_files="$(cd "$BUILD_CONTEXT" && find . -type f -print | LC_ALL=C sort)"
+          test "$actual_context_files" = "$expected_context_files"
+          image_tag="tailing-atomistic-$MODEL-bootstrap:$GITHUB_SHA"
+          DOCKER_BUILDKIT=1 docker buildx build \
+            --load \
+            --no-cache \
+            --pull=false \
+            --network=none \
+            --platform=linux/amd64 \
+            --provenance=false \
+            --sbom=false \
+            --build-context "wheelhouse=$WHEELHOUSE" \
+            --build-arg "BASE_IMAGE=$BASE_IMAGE" \
+            --label org.opencontainers.image.revision="$GITHUB_SHA" \
+            --label org.tailing-future.evidence-class=bootstrap-not-reproduced \
+            --file "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
+            --tag "$image_tag" \
+            "$BUILD_CONTEXT"
+          verify_frozen_wheelhouse
+          image_digest="$(docker image inspect --format '{{.Id}}' "$image_tag")"
+          test "${image_digest#sha256:}" != "$image_digest"
+          test "${#image_digest}" -eq 71
+          {
+            echo "IMAGE_TAG=$image_tag"
+            echo "CONTAINER_IMAGE_DIGEST=$image_digest"
+          } >> "$GITHUB_ENV"
+
+      - name: Run checkpoint deserialization and smoke predictions in the final sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_path="$CACHE_ROOT/$PACKAGE_CACHE_PATH"
+          checkpoint_path="$CACHE_ROOT/$CHECKPOINT_CACHE_PATH"
+          test -f "$package_path"
+          test -f "$checkpoint_path"
+          test -f "$STRUCTURE_DIR/structures.jsonl"
+          test -f "$STRUCTURE_DIR/structures.manifest.json"
+          install -m 0444 "$package_path" "$INFERENCE_INPUT_DIR/$PACKAGE_FILENAME"
+          install -m 0444 "$checkpoint_path" "$INFERENCE_INPUT_DIR/$CHECKPOINT_FILENAME"
+          install -m 0444 "$STRUCTURE_DIR/structures.jsonl" "$INFERENCE_INPUT_DIR/structures.jsonl"
+          install -m 0444 "$STRUCTURE_DIR/structures.manifest.json" "$INFERENCE_INPUT_DIR/structures.manifest.json"
+          install -m 0444 \
+            "$GITHUB_WORKSPACE/evaluation/atomistic/reproduction-plan.json" \
+            "$INFERENCE_INPUT_DIR/reproduction-plan.json"
+          chmod 0555 "$INFERENCE_INPUT_DIR"
+          sudo chown 65532:65532 "$OUTPUT_DIR"
+          set +e
+          timeout --foreground --signal=TERM --kill-after=30s 90m \
+          docker run --rm --platform=linux/amd64 \
+            --network=none \
+            --read-only \
+            --user=65532:65532 \
+            --cap-drop=ALL \
+            --security-opt=no-new-privileges=true \
+            --pids-limit=256 \
+            --cpus=2 \
+            --memory=6g \
+            --memory-swap=6g \
+            --ulimit nofile=1024:1024 \
+            --ulimit nproc=256:256 \
+            --ulimit core=0:0 \
+            --ulimit fsize=134217728:134217728 \
+            --tmpfs /tmp:rw,noexec,nosuid,nodev,size=1g,mode=1777 \
+            --env "GITHUB_SHA=$GITHUB_SHA" \
+            --env "TAILING_ATOMISTIC_CONTAINER_DIGEST=$CONTAINER_IMAGE_DIGEST" \
+            --mount "type=bind,src=$INFERENCE_INPUT_DIR/$PACKAGE_FILENAME,dst=/inputs/$PACKAGE_FILENAME,readonly" \
+            --mount "type=bind,src=$INFERENCE_INPUT_DIR/$CHECKPOINT_FILENAME,dst=/inputs/$CHECKPOINT_FILENAME,readonly" \
+            --mount "type=bind,src=$INFERENCE_INPUT_DIR/structures.jsonl,dst=/inputs/structures.jsonl,readonly" \
+            --mount "type=bind,src=$INFERENCE_INPUT_DIR/structures.manifest.json,dst=/inputs/structures.manifest.json,readonly" \
+            --mount "type=bind,src=$INFERENCE_INPUT_DIR/reproduction-plan.json,dst=/inputs/reproduction-plan.json,readonly" \
+            --mount "type=bind,src=$OUTPUT_DIR,dst=/output" \
+            "$IMAGE_TAG" \
+              --model "$MODEL" \
+              --mode smoke \
+              --package "/inputs/$PACKAGE_FILENAME" \
+              --checkpoint "/inputs/$CHECKPOINT_FILENAME" \
+              --structures /inputs/structures.jsonl \
+              --structure-manifest /inputs/structures.manifest.json \
+              --output /output \
+              --plan /inputs/reproduction-plan.json
+          runner_status=$?
+          set -e
+          sudo chown -R "$(id -u):$(id -g)" "$OUTPUT_DIR"
+          output_files="$(find "$OUTPUT_DIR" -type f | wc -l)"
+          output_bytes="$(du -sb "$OUTPUT_DIR" | cut -f1)"
+          test "$output_files" -le 20
+          test "$output_bytes" -le 268435456
+          exit "$runner_status"
+
+      - name: Stage only non-promotional bootstrap outputs
+        id: stage_outputs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${PUBLISH_DIR:-}"
+          install -d -m 0700 \
+            "$PUBLISH_DIR/locks" \
+            "$PUBLISH_DIR/manifests" \
+            "$PUBLISH_DIR/predictions" \
+            "$PUBLISH_DIR/diagnostics"
+          copy_regular_if_present() {
+            source_path="$1"
+            destination_path="$2"
+            if [ -e "$source_path" ]; then
+              test -f "$source_path"
+              test ! -L "$source_path"
+              install -m 0444 "$source_path" "$destination_path"
+            fi
+          }
+          copy_regular_if_present "$LOCK_DIR/$MODEL.requirements.lock" "$PUBLISH_DIR/locks/$MODEL.requirements.lock"
+          copy_regular_if_present "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" "$PUBLISH_DIR/manifests/$MODEL.wheelhouse.manifest.json"
+          copy_regular_if_present "$MANIFEST_DIR/fetched-assets.manifest.json" "$PUBLISH_DIR/manifests/fetched-assets.manifest.json"
+          copy_regular_if_present "$MANIFEST_DIR/pytorch-download-sources.json" "$PUBLISH_DIR/manifests/pytorch-download-sources.json"
+          copy_regular_if_present "$STRUCTURE_DIR/structures.manifest.json" "$PUBLISH_DIR/manifests/structures.manifest.json"
+          copy_regular_if_present "$OUTPUT_DIR/summary.json" "$PUBLISH_DIR/manifests/run-summary.json"
+          copy_regular_if_present "$OUTPUT_DIR/predictions.jsonl" "$PUBLISH_DIR/predictions/predictions.jsonl"
+          copy_regular_if_present "$OUTPUT_DIR/run-diagnostics.json" "$PUBLISH_DIR/diagnostics/run-diagnostics.json"
+          copy_regular_if_present "$OUTPUT_DIR/diagnostics.json" "$PUBLISH_DIR/diagnostics/failure-diagnostics.json"
+          test -n "$(find "$PUBLISH_DIR" -type f -print -quit)"
+          test -z "$(find "$PUBLISH_DIR" -type l -print -quit)"
+
+      - name: Upload the allowlisted bootstrap bundle
+        if: always() && steps.stage_outputs.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tailing-atomistic-bootstrap-${{ matrix.model }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tailing-atomistic-publish/${{ matrix.model }}
+          if-no-files-found: error
+          include-hidden-files: false
+          retention-days: 7
