@@ -7,3 +7,12 @@ torch==2.8.0+cpu
 torchvision==0.23.0+cpu
 torchaudio==2.8.0+cpu
 ase==3.28.0
+# The 2026 pymatgen split currently installs overlapping package/script paths
+# across pymatgen and pymatgen-core. Keep the reviewed pre-split release with a
+# stable all-wheel Python 3.12 closure, plus the last validation release that
+# depends on it, until the upstream split is collision-free.
+pymatgen==2025.4.17
+pymatgen-io-validation==0.1.2
+# Torch declares setuptools at runtime. Pin the exact reviewed wheel whose one
+# startup hook is verified by byte and removed before the next venv interpreter starts.
+setuptools==84.0.0

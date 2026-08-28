@@ -47,6 +47,19 @@ PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:dffc06ecc2faab2b6e0fe729ac1c16d
 PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84"
 PYTHON_HOSTLIST_MEMBER_DIGEST_DOMAIN = b"tf.python-hostlist-wheel-members/v1\0"
 PYTHON_HOSTLIST_INSTALL_PATH_DIGEST_DOMAIN = b"tf.python-hostlist-install-paths/v1\0"
+SETUPTOOLS_RUNTIME_WHEEL_POLICY = {
+    "filename": "setuptools-84.0.0-py3-none-any.whl",
+    "name": "setuptools",
+    "version": "84.0.0",
+    "sizeBytes": 818_216,
+    "sha256": "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670",
+    "startupHook": {
+        "archivePath": "distutils-precedence.pth",
+        "installPath": "site-packages/distutils-precedence.pth",
+        "sizeBytes": 151,
+        "sha256": "sha256:2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+    },
+}
 NORMALIZE_PATTERN = re.compile(r"[-_.]+")
 MAX_WHEEL_BYTES = 1_500_000_000
 MAX_EXPANDED_BYTES = 4_000_000_000
@@ -74,6 +87,9 @@ ROOT_REQUIREMENTS = {
         "torchvision==0.23.0+cpu",
         "torchaudio==2.8.0+cpu",
         "ase==3.28.0",
+        "pymatgen==2025.4.17",
+        "pymatgen-io-validation==0.1.2",
+        "setuptools==84.0.0",
     ),
     "mace": (
         "mace-torch==0.3.16",
@@ -81,6 +97,7 @@ ROOT_REQUIREMENTS = {
         "torch==2.8.0+cpu",
         "ase==3.28.0",
         "e3nn==0.4.4",
+        "setuptools==84.0.0",
     ),
 }
 
@@ -120,12 +137,14 @@ def main(argv: list[str] | None = None) -> int:
     distributions: dict[str, dict[str, object]] = {}
     installed_files: dict[str, str] = {}
     installed_directories: set[str] = set()
+    startup_hook_removals: list[dict[str, object]] = []
     for wheel_path in wheel_paths:
         wheel = inspect_wheel(wheel_path)
         normalized = normalize_name(wheel["name"])
         if normalized in distributions:
             raise ValueError(f"wheelhouse contains multiple files for {normalized}")
         register_install_paths(wheel, installed_files, installed_directories)
+        startup_hook_removals.extend(wheel["startupHookRemovals"])
         distributions[normalized] = wheel
     if sum(int(wheel["sizeBytes"]) for wheel in distributions.values()) > MAX_WHEELHOUSE_BYTES:
         raise ValueError("wheelhouse compressed bytes exceed policy")
@@ -161,6 +180,12 @@ def main(argv: list[str] | None = None) -> int:
         derived_wheel_provenance = None
 
     dependency_graph = validate_dependency_closure(args.model, distributions)
+    removed_install_paths = {str(entry["installPath"]) for entry in startup_hook_removals}
+    runtime_installed_files = {
+        destination: wheel_name
+        for destination, wheel_name in installed_files.items()
+        if destination not in removed_install_paths
+    }
 
     lock_lines = [
         "# Generated from one reviewed cp312/Linux x86_64 wheelhouse.",
@@ -196,6 +221,12 @@ def main(argv: list[str] | None = None) -> int:
         },
         "installedFileCount": len(installed_files),
         "installedPathDigest": canonical_digest(sorted(installed_files)),
+        "startupHookRemovals": sorted(
+            startup_hook_removals,
+            key=lambda entry: (str(entry["wheelFilename"]), str(entry["installPath"])),
+        ),
+        "runtimeInstalledFileCount": len(runtime_installed_files),
+        "runtimeInstalledPathDigest": canonical_digest(sorted(runtime_installed_files)),
         "wheels": [public_wheel(distributions[name]) for name in sorted(distributions)],
     }
     manifest_bytes = (json.dumps(manifest, ensure_ascii=True, indent=2, sort_keys=True) + "\n").encode("utf-8")
@@ -331,27 +362,33 @@ def inspect_wheel(path: Path) -> dict[str, object]:
             expanded_size = sum(info.file_size for info in members)
             if expanded_size > MAX_EXPANDED_BYTES:
                 raise ValueError(f"{path.name}: expanded wheel size exceeds policy")
-            metadata_members = [info for info in members if info.filename.endswith(".dist-info/METADATA")]
-            wheel_members = [info for info in members if info.filename.endswith(".dist-info/WHEEL")]
-            record_members = [info for info in members if info.filename.endswith(".dist-info/RECORD")]
-            if len(metadata_members) != 1 or metadata_members[0].file_size > 10_000_000:
-                raise ValueError(f"{path.name}: wheel must contain exactly one bounded METADATA file")
-            if len(wheel_members) != 1 or wheel_members[0].file_size > 1_000_000:
-                raise ValueError(f"{path.name}: wheel must contain exactly one bounded WHEEL file")
-            if len(record_members) != 1 or record_members[0].file_size > 50_000_000:
-                raise ValueError(f"{path.name}: wheel must contain exactly one bounded RECORD file")
-            dist_info = str(PurePosixPath(metadata_members[0].filename).parent)
-            if str(PurePosixPath(wheel_members[0].filename).parent) != dist_info or str(PurePosixPath(record_members[0].filename).parent) != dist_info:
-                raise ValueError(f"{path.name}: METADATA, WHEEL and RECORD use different dist-info directories")
-            entry_point_members = [info for info in members if info.filename.endswith(".dist-info/entry_points.txt")]
-            if len(entry_point_members) > 1 or (entry_point_members and (
-                entry_point_members[0].file_size > 1_000_000
-                or str(PurePosixPath(entry_point_members[0].filename).parent) != dist_info
-            )):
-                raise ValueError(f"{path.name}: wheel contains invalid entry_points.txt metadata")
-            message = BytesParser().parsebytes(archive.read(metadata_members[0]))
-            wheel_message = BytesParser().parsebytes(archive.read(wheel_members[0]))
-            validate_record(path.name, archive, members, record_members[0])
+            member_by_name = {info.filename: info for info in members}
+            top_level_dist_info = sorted({
+                parts[0]
+                for info in members
+                if (parts := PurePosixPath(info.filename).parts)
+                and parts[0].endswith(".dist-info")
+            })
+            if len(top_level_dist_info) != 1:
+                raise ValueError(f"{path.name}: wheel must contain exactly one top-level dist-info directory")
+            dist_info = top_level_dist_info[0]
+            metadata_member = member_by_name.get(f"{dist_info}/METADATA")
+            wheel_member = member_by_name.get(f"{dist_info}/WHEEL")
+            record_member = member_by_name.get(f"{dist_info}/RECORD")
+            if metadata_member is None or metadata_member.is_dir() or metadata_member.file_size > 10_000_000:
+                raise ValueError(f"{path.name}: wheel must contain one bounded top-level METADATA file")
+            if wheel_member is None or wheel_member.is_dir() or wheel_member.file_size > 1_000_000:
+                raise ValueError(f"{path.name}: wheel must contain one bounded top-level WHEEL file")
+            if record_member is None or record_member.is_dir() or record_member.file_size > 50_000_000:
+                raise ValueError(f"{path.name}: wheel must contain one bounded top-level RECORD file")
+            entry_point_member = member_by_name.get(f"{dist_info}/entry_points.txt")
+            if entry_point_member is not None and (
+                entry_point_member.is_dir() or entry_point_member.file_size > 1_000_000
+            ):
+                raise ValueError(f"{path.name}: wheel contains invalid top-level entry_points.txt metadata")
+            message = BytesParser().parsebytes(archive.read(metadata_member))
+            wheel_message = BytesParser().parsebytes(archive.read(wheel_member))
+            validate_record(path.name, archive, members, record_member)
             if path.name == "python_hostlist-2.3.0-py3-none-any.whl":
                 member_records = [
                     {
@@ -367,8 +404,20 @@ def inspect_wheel(path: Path) -> dict[str, object]:
                 )
             generated_script_paths = parse_entry_point_scripts(
                 path.name,
-                archive.read(entry_point_members[0]) if entry_point_members else None,
+                archive.read(entry_point_member) if entry_point_member is not None else None,
             )
+            startup_hook_candidates = []
+            for info in members:
+                if info.is_dir():
+                    continue
+                destination = install_destination(info.filename)
+                if is_startup_hook_destination(destination):
+                    startup_hook_candidates.append({
+                        "archivePath": info.filename,
+                        "installPath": destination,
+                        "sizeBytes": info.file_size,
+                        "sha256": sha256(archive.read(info)),
+                    })
         closed = os.fstat(handle.fileno())
         if (closed.st_dev, closed.st_ino, closed.st_size, closed.st_mtime_ns) != (opened.st_dev, opened.st_ino, opened.st_size, opened.st_mtime_ns):
             raise ValueError(f"{path.name}: wheel changed while it was being inspected")
@@ -384,11 +433,22 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         metadata_version = Version(version)
     except InvalidVersion as error:
         raise ValueError(f"{path.name}: wheel metadata contains an invalid Version") from error
+    if metadata_version.is_prerelease or metadata_version.is_devrelease:
+        raise ValueError(f"{path.name}: pre-release and development wheels are forbidden")
     if normalize_name(name) != normalize_name(str(filename_name)) or metadata_version != filename_version:
         raise ValueError(f"{path.name}: filename distribution/version differs from METADATA")
     dist_info_name, dist_info_version = parse_dist_info_directory(path.name, dist_info)
     if normalize_name(name) != normalize_name(dist_info_name) or metadata_version != dist_info_version:
         raise ValueError(f"{path.name}: dist-info distribution/version differs from METADATA")
+    wheel_digest = f"sha256:{digest.hexdigest()}"
+    startup_hook_removals = validate_startup_hook_policy(
+        path.name,
+        name,
+        version,
+        opened.st_size,
+        wheel_digest,
+        startup_hook_candidates,
+    )
     requires_python = message.get("Requires-Python")
     if requires_python:
         try:
@@ -428,6 +488,25 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         for info in members
         if not info.is_dir()
     ] + generated_script_paths)
+    installed_metadata_roots: set[str] = set()
+    for info in members:
+        if info.is_dir():
+            continue
+        destination_parts = PurePosixPath(install_destination(info.filename)).parts
+        if len(destination_parts) < 2 or destination_parts[0] != "site-packages":
+            continue
+        runtime_root = destination_parts[1]
+        lowered_root = runtime_root.lower()
+        if not (lowered_root.endswith(".dist-info") or lowered_root.endswith(".egg-info")):
+            continue
+        installed_metadata_roots.add(runtime_root)
+        archive_parts = PurePosixPath(info.filename).parts
+        if runtime_root != dist_info or archive_parts[0] != dist_info:
+            raise ValueError(
+                f"{path.name}: installed metadata must come only from its direct top-level dist-info directory"
+            )
+    if installed_metadata_roots != {dist_info}:
+        raise ValueError(f"{path.name}: wheel must install exactly its one direct top-level dist-info directory")
     derived_install_path_digest = (
         canonical_domain_digest(
             PYTHON_HOSTLIST_INSTALL_PATH_DIGEST_DOMAIN, install_paths
@@ -445,7 +524,7 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         "sizeBytes": opened.st_size,
         "expandedSizeBytes": expanded_size,
         "archiveMemberCount": len(members),
-        "sha256": f"sha256:{digest.hexdigest()}",
+        "sha256": wheel_digest,
         "requiresDist": requires_dist,
         "requirements": requirements,
         "providesExtras": provided_extras,
@@ -454,6 +533,7 @@ def inspect_wheel(path: Path) -> dict[str, object]:
         "_derivedMemberDigest": derived_member_digest,
         "_derivedInstalledPathDigest": derived_install_path_digest,
         "generatedScripts": generated_script_paths,
+        "startupHookRemovals": startup_hook_removals,
     }
 
 
@@ -463,7 +543,12 @@ def validate_archive_member(wheel_name: str, info: zipfile.ZipInfo, seen: set[st
             or filename in seen):
         raise ValueError(f"{wheel_name}: wheel contains a duplicate or unsafe archive path")
     path = PurePosixPath(filename)
-    if path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
+    canonical_filename = path.as_posix() + ("/" if info.is_dir() else "")
+    if (
+        path.is_absolute()
+        or filename != canonical_filename
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
         raise ValueError(f"{wheel_name}: wheel contains an unsafe archive path")
     seen.add(filename)
     mode = (info.external_attr >> 16) & 0xFFFF
@@ -583,13 +668,46 @@ def install_destination(member_name: str) -> str:
         destination_parts = (prefix, *parts[2:])
     else:
         destination_parts = ("site-packages", *parts)
-    destination = "/".join(destination_parts)
-    basename = destination_parts[-1].lower()
-    if destination.startswith("site-packages/") and (
-        basename.endswith(".pth") or basename in {"sitecustomize.py", "usercustomize.py"}
+    return "/".join(destination_parts)
+
+
+def is_startup_hook_destination(destination: str) -> bool:
+    parts = tuple(part.lower() for part in PurePosixPath(destination).parts)
+    if len(parts) < 2 or parts[0] != "site-packages":
+        return False
+    if parts[-1].endswith(".pth"):
+        return True
+    startup_modules = ("sitecustomize", "usercustomize")
+    return any(
+        component == module or component.startswith(f"{module}.")
+        for component in parts[1:]
+        for module in startup_modules
+    )
+
+
+def validate_startup_hook_policy(
+    wheel_filename: str,
+    name: str,
+    version: str,
+    size_bytes: int,
+    wheel_sha256: str,
+    candidates: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    if not candidates:
+        return []
+    policy = SETUPTOOLS_RUNTIME_WHEEL_POLICY
+    expected_hook = policy["startupHook"]
+    if (
+        wheel_filename != policy["filename"]
+        or normalize_name(name) != normalize_name(str(policy["name"]))
+        or version != policy["version"]
+        or size_bytes != policy["sizeBytes"]
+        or wheel_sha256 != policy["sha256"]
+        or candidates != [expected_hook]
     ):
-        raise ValueError(f"wheel startup-hook path is forbidden: {member_name}")
-    return destination
+        paths = sorted(str(candidate.get("archivePath")) for candidate in candidates)
+        raise ValueError(f"{wheel_filename}: wheel startup-hook path is forbidden: {paths}")
+    return [{"wheelFilename": wheel_filename, **expected_hook}]
 
 
 def register_install_paths(wheel: dict[str, object], files: dict[str, str],

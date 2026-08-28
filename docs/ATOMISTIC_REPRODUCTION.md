@@ -42,6 +42,26 @@ checkpoint inference in a non-root read-only container. Its artifacts are
 predictions and diagnostics only—not metrics, a receipt, an attestation or a
 reproduction claim.
 
+The resolver treats only one direct top-level `.dist-info` directory as wheel
+metadata, rejects case-variant or `.egg-info` roots and any `.data` relocation
+that adds to an installed metadata root, and keeps genuinely vendored nested
+metadata as ordinary RECORD-hashed payload.
+Pre-release and development wheel versions fail closed. The
+MatterSim bootstrap explicitly fixes `pymatgen==2025.4.17` and
+`pymatgen-io-validation==0.1.2`, avoiding the overlapping paths in the 2026
+`pymatgen`/`pymatgen-core` split without weakening collision detection. Torch's
+runtime setuptools dependency is fixed to the reviewed 84.0.0 wheel. Its sole
+`distutils-precedence.pth` is accepted only when both the complete wheel and
+hook bytes match their frozen digests, recorded as a planned removal, and
+deleted before the next venv interpreter starts. Every other `.pth` and every
+importable `sitecustomize` or `usercustomize` module/package form remains
+forbidden.
+
+A separately hash-bound verifier runs after freeze and again immediately before
+the image build. It parses the wheel ZIP members and entry points independently,
+rechecks path and file/directory collisions, and recomputes both the raw and
+post-removal install-path digests instead of trusting the resolver manifest.
+
 The image build context is a fresh temporary directory with exactly five
 regular files: `.dockerignore`, the selected Dockerfile, the generated
 hash-locked requirements file, `run_model.py` and `runtime_contract.py`.
@@ -81,3 +101,9 @@ TAILING_ATOMISTIC_CACHE=/absolute/cache node scripts/validate-atomistic-plan.mjs
 ## Promotion boundary
 
 MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy, 0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the manifest. MACE has no locked official Random-TP target: its first complete blind run may establish an engineering baseline, but cannot be used to claim superiority. Until checkpoint, dataset and runner digests are all present, both models remain `AUDITABLE`, never `REPRODUCED` or numerically comparable.
+
+Two protected-main bootstrap dispatches have run. The first stopped during
+wheelhouse construction; the second passed wheelhouse construction but stopped
+during offline exact-lock resolution. Neither reached cold install, image
+build, checkpoint deserialization or inference. Their bounded outcome
+artifacts therefore remain `bootstrap-not-reproduced`.

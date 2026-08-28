@@ -34,6 +34,33 @@ Only after that review may a production `*.requirements.lock` be added. The
 Dockerfiles deliberately reference the currently absent production locks so an
 unlocked image build fails instead of silently resolving newer dependencies.
 
+## Compatibility roots and startup-hook removal
+
+The current MatterSim metadata closure reaches both the new `pymatgen` meta
+wheel and `pymatgen-core`; their generated `scripts/pmg` paths overlap. The
+resolver continues to reject every overlapping install path. Instead, the
+bootstrap fixes `pymatgen==2025.4.17` and
+`pymatgen-io-validation==0.1.2`, a reviewed Python 3.12 all-wheel combination
+whose dependency constraints remain satisfied and which does not introduce
+`pymatgen-core`. These are bootstrap compatibility roots, not a claim that a
+newer upstream release is invalid for other environments. The resolver also
+rejects every pre-release or development wheel in the resulting closure.
+
+`torch==2.8.0+cpu` declares setuptools at runtime. Both environments therefore
+fix `setuptools==84.0.0`. The offline resolver accepts its executable
+`distutils-precedence.pth` only when the complete official wheel identity,
+size, SHA-256, hook path, size and SHA-256 all match the reviewed constants. It
+records the hook in both raw-wheel and planned-runtime inventories. The cold
+install and both image builds verify the installed file again, remove it before
+the next venv Python process, assert that no startup hook remains, and only then
+run `pip check`. All other `.pth` paths and all importable `sitecustomize` or
+`usercustomize` module/package forms fail closed.
+
+The freeze and build stages also run the independently hash-bound
+`verify_runtime_inventory.py`. It reconstructs install paths directly from the
+wheel ZIP members and entry points, rechecks collisions, verifies the declared
+removal bytes and ownership, and recomputes both raw and runtime inventories.
+
 ## Source-only bootstrap exception
 
 MACE 0.3.16 declares `python-hostlist` as a runtime dependency, while the

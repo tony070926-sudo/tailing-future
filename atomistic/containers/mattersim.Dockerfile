@@ -22,7 +22,19 @@ RUN --network=none model_wheel=/wheelhouse/mattersim-1.2.5-cp312-cp312-manylinux
       --only-binary=:all: \
       --no-compile \
       -r /build/requirements.lock && \
-    /opt/tailing-venv/bin/python -m pip check
+    startup_hook=/opt/tailing-venv/lib/python3.12/site-packages/distutils-precedence.pth && \
+    test -f "$startup_hook" && \
+    test ! -L "$startup_hook" && \
+    test "$(stat -c %s "$startup_hook")" = 151 && \
+    echo "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224  $startup_hook" | sha256sum -c - && \
+    rm -- "$startup_hook" && \
+    test ! -e "$startup_hook" && \
+    unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages \
+      \( -type f -o -type l -o -type d \) \
+      \( -iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*' -o -iname usercustomize -o -iname 'usercustomize.*' \) \
+      -print -quit)" && \
+    test -z "$unexpected_hooks" && \
+    /opt/tailing-venv/bin/python -I -m pip check
 
 FROM ${BASE_IMAGE} AS runtime
 RUN --network=none groupadd --gid 65532 tailing && \
@@ -30,6 +42,11 @@ RUN --network=none groupadd --gid 65532 tailing && \
     mkdir -p /opt/tailing/provenance /work && \
     chown 65532:65532 /work
 COPY --from=builder /opt/tailing-venv /opt/tailing-venv
+RUN --network=none unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages \
+      \( -type f -o -type l -o -type d \) \
+      \( -iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*' -o -iname usercustomize -o -iname 'usercustomize.*' \) \
+      -print -quit)" && \
+    test -z "$unexpected_hooks"
 COPY --from=wheelhouse --chmod=0444 /mattersim-1.2.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl /opt/tailing/provenance/
 COPY --chmod=0444 atomistic/locks/mattersim.requirements.lock /opt/tailing/requirements.lock
 COPY --chmod=0444 scripts/atomistic/run_model.py scripts/atomistic/runtime_contract.py /opt/tailing-venv/lib/python3.12/site-packages/

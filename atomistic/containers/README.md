@@ -26,6 +26,13 @@ requires a separate cp312/Linux x86_64 wheelhouse, a single SHA-256 per wheel,
 a cold `--no-index --require-hashes --only-binary=:all:` install, and `pip
 check`. The base image and Dockerfile frontend are digest-pinned.
 
+The exact setuptools 84.0.0 wheel contains one reviewed executable
+`distutils-precedence.pth`. The resolver binds its bytes and declares it as the
+only planned removal. Each Dockerfile rechecks the installed hook, deletes it
+before starting the next venv interpreter, rejects any remaining `.pth` or
+importable site/user customization module or package, and then runs isolated
+`pip check`. This is not a general startup-hook exception.
+
 ```sh
 docker buildx build \
   --platform=linux/amd64 \
