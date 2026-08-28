@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { hasExactKeys, hasExactStatuses, normalizeReport, runtimeKeys } from './release-report.mjs';
+import { hasExactKeys, hasExactStatuses, reportsReleaseEquivalent, runtimeKeys } from './release-report.mjs';
 
 const run = (command, args, options = {}) => execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...options }).trim();
 const fail = (message) => { throw new Error(`release blocked: ${message}`); };
@@ -55,7 +55,7 @@ if (!hasExactKeys(localReport.runtime, runtimeKeys)
   || localReport.runtime.node !== process.version
   || localReport.runtime.platform !== process.platform
   || localReport.runtime.architecture !== process.arch) fail('checked-in report runtime does not match the release host');
-if (JSON.stringify(normalizeReport(localReport)) !== JSON.stringify(normalizeReport(ciReport))) {
+if (!reportsReleaseEquivalent(localReport, ciReport)) {
   fail('checked-in report and successful CI artifact describe different source evidence');
 }
 

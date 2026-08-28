@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.0-r2-physics-and-atomistic-freeze",
-  "generatedAt": "2026-08-28T15:07:29.918Z",
+  "generatedAt": "2026-08-28T15:21:30.806Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-28",
-  "artifactDigest": "sha256:2215cd79a89c80b2268c5dde78a8666f4b707e2ffaf8e0dbb5c19bb68f063283",
+  "artifactDigest": "sha256:a22ba1672afeda615e25a3f5f9ccac4ce231fd3172c0deab9251d535497a2e88",
   "sourceFileCount": 48,
   "sourceManifest": {
     ".github/CODEOWNERS": "sha256:e9e0e355e645f451b0cc246bac05aeec52cfd881f167540a92cea06e32e43bf5",
@@ -20,7 +20,7 @@
     "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
     "docs/ARCHITECTURE.md": "sha256:011dddd5380698eced2a5f48a4866e1c97c52a8e80a6ea352279a18bc49759cc",
     "docs/ATOMISTIC_REPRODUCTION.md": "sha256:d043c25e405c49462666b6206f3e288a6e648975a8d3b16c71f208aa79b41d33",
-    "docs/EVALUATION_LOOP.md": "sha256:42012ce6ede03770fc47dae6bb5f11b12cd65d9288cba2b59c317895788cf5b8",
+    "docs/EVALUATION_LOOP.md": "sha256:1d24f23065d4b93812e3a0210cbe3930363873908ce3bd86426cdea795c48707",
     "docs/RESEARCH_BASELINE.md": "sha256:f27eb2fd70e424f463c4502d377976a0bd36e497407a45c1caf1299c6da99e62",
     "docs/ROADMAP.md": "sha256:1b174b250fb7b3de629fa7e4a5b4d8ab6aa0ddb23b0286b4f963244c02eb3d68",
     "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
@@ -48,9 +48,9 @@
     "schemas/evaluation-report.schema.json": "sha256:0335c69083625ab4b7cc31c133bc56c517fb1f172bca9718e139f7c7a8f39637",
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
     "scripts/evaluate.mjs": "sha256:7f88e49e08c6c251fdb5bf7dfdabb1f04433fc96aaf26f50d6f41b866ee60270",
-    "scripts/release-cloudflare.mjs": "sha256:24c2d2a8e460c59353f1b2d488919953f798a65000bfde58a67df629b3c08edf",
-    "scripts/release-report.mjs": "sha256:8ddf6b400e9dc86f9527d348d0a7a4bd2cbe9267c8cbb0a27d3f815ea56437e5",
-    "scripts/release-report.test.mjs": "sha256:f5ede980312652b5d41565ba51d9e9e7eab5205de94647198477408b3c536dc6",
+    "scripts/release-cloudflare.mjs": "sha256:3cee5eaf3b98176d47f2c23d4295e26434e84fe5fdbee551e0c54e4d759dd2db",
+    "scripts/release-report.mjs": "sha256:c81c1057e12983ff16428eb0aa1ce7f7b3868578769cc9dc58e8efe4b496662f",
+    "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
     "scripts/validate-atomistic-plan.mjs": "sha256:d1151ba52d4670256ea18209b7a67dfe31b574f35ee8b814891e33210f280aa9",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
@@ -146,7 +146,7 @@
       "atomisticPlan": true,
       "datasetCatalog": true
     },
-    "elapsedMs": 73282.04
+    "elapsedMs": 84854.24
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -165,8 +165,8 @@
     "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
     "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
     "scripts/evaluate.mjs": "sha256:7f88e49e08c6c251fdb5bf7dfdabb1f04433fc96aaf26f50d6f41b866ee60270",
-    "scripts/release-cloudflare.mjs": "sha256:24c2d2a8e460c59353f1b2d488919953f798a65000bfde58a67df629b3c08edf",
-    "scripts/release-report.test.mjs": "sha256:f5ede980312652b5d41565ba51d9e9e7eab5205de94647198477408b3c536dc6"
+    "scripts/release-cloudflare.mjs": "sha256:3cee5eaf3b98176d47f2c23d4295e26434e84fe5fdbee551e0c54e4d759dd2db",
+    "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af"
   },
   "weightedScore": 41,
   "hardGateFailures": [],
