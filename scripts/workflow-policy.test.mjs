@@ -3,10 +3,12 @@ import { readFileSync } from 'node:fs';
 import { dump as dumpYaml, load as parseYaml } from 'js-yaml';
 import { describe, expect, it } from 'vitest';
 import {
+  ATOMISTIC_DOCKERFILE_DIGESTS,
   ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
   ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
   ATOMISTIC_BOOTSTRAP_NODE_VERSION,
   ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
+  ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256,
   ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
@@ -22,6 +24,9 @@ import {
   PYTHON_HOSTLIST_VERIFIER_SHA256,
   SENTINEL_EVALUATION_WORKFLOW_PATH,
   SENTINEL_REPORT_WORKFLOW_PATH,
+  SETUPTOOLS_RUNTIME_WHEEL_FILENAME,
+  SETUPTOOLS_RUNTIME_WHEEL_SHA256,
+  SETUPTOOLS_STARTUP_HOOK_SHA256,
 } from './workflow-policy.mjs';
 
 const atomisticBootstrapSource = readFileSync(
@@ -51,6 +56,25 @@ const pythonHostlistVerifierSource = readFileSync(
 );
 const atomisticResolveLockSource = readFileSync(
   new URL('./atomistic/resolve_lock.py', import.meta.url),
+  'utf8',
+);
+const runtimeInventoryVerifierSource = readFileSync(
+  new URL('./atomistic/verify_runtime_inventory.py', import.meta.url),
+);
+const matterSimBootstrapInput = readFileSync(
+  new URL('../atomistic/locks/mattersim.bootstrap.in', import.meta.url),
+  'utf8',
+);
+const maceBootstrapInput = readFileSync(
+  new URL('../atomistic/locks/mace.bootstrap.in', import.meta.url),
+  'utf8',
+);
+const matterSimDockerfileSource = readFileSync(
+  new URL('../atomistic/containers/mattersim.Dockerfile', import.meta.url),
+  'utf8',
+);
+const maceDockerfileSource = readFileSync(
+  new URL('../atomistic/containers/mace.Dockerfile', import.meta.url),
   'utf8',
 );
 const bootstrapOutcomeSource = readFileSync(
@@ -217,6 +241,28 @@ describe('Dockerfile source policy', () => {
     const source = '# syntax=docker/dockerfile:1.7\nARG BASE_IMAGE=python:latest\nFROM python:latest AS runtime\nCOPY --from=evil:latest /x /x\nRUN --mount=type=secret pip check\nADD https://example.invalid/x /x\n';
     expect(inspectDockerfileSource('unsafe.Dockerfile', source)).toHaveLength(7);
   });
+
+  it('requires both atomistic images to remove the reviewed setuptools startup hook', () => {
+    for (const [relativePath, source] of [
+      ['atomistic/containers/mattersim.Dockerfile', matterSimDockerfileSource],
+      ['atomistic/containers/mace.Dockerfile', maceDockerfileSource],
+    ]) {
+      expect(inspectDockerfileSource(relativePath, source), relativePath).toEqual([]);
+      expect(
+        inspectDockerfileSource(relativePath, source.replace('rm -- "$startup_hook"', ':')),
+        `${relativePath} without removal`,
+      ).not.toEqual([]);
+      const reordered = source
+        .replace('    /opt/tailing-venv/bin/python -I -m pip check\n', '    true\n')
+        .replace(
+          '    rm -- "$startup_hook" && \\\n',
+          '    /opt/tailing-venv/bin/python -I -m pip check && \\\n    rm -- "$startup_hook" && \\\n',
+        );
+      expect(reordered).not.toBe(source);
+      expect(inspectDockerfileSource(relativePath, reordered), `${relativePath} reordered`).not.toEqual([]);
+      expect(ATOMISTIC_DOCKERFILE_DIGESTS[relativePath]).toMatch(/^sha256:[0-9a-f]{64}$/);
+    }
+  });
 });
 
 describe('Docker build-context policy', () => {
@@ -242,12 +288,42 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(createHash('sha256').update(pythonHostlistBuildScriptSource).digest('hex')).toBe(PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256);
     expect(createHash('sha256').update(pythonHostlistVerifierSource).digest('hex')).toBe(PYTHON_HOSTLIST_VERIFIER_SHA256);
     expect(createHash('sha256').update(bootstrapOutcomeSource).digest('hex')).toBe(ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256);
+    expect(createHash('sha256').update(runtimeInventoryVerifierSource).digest('hex')).toBe(ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256);
     expect(atomisticResolveLockSource).toContain(
       `PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_LOCK_SHA256}"`,
     );
     expect(atomisticResolveLockSource).toContain(
       `PYTHON_HOSTLIST_BUILD_SCRIPT_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256}"`,
     );
+    expect(atomisticResolveLockSource).toContain(`"filename": "${SETUPTOOLS_RUNTIME_WHEEL_FILENAME}"`);
+    expect(atomisticResolveLockSource).toContain(`"sha256": "sha256:${SETUPTOOLS_RUNTIME_WHEEL_SHA256}"`);
+    expect(atomisticResolveLockSource).toContain(`"sha256": "sha256:${SETUPTOOLS_STARTUP_HOOK_SHA256}"`);
+    expect(maceBootstrapInput).toMatch(/^setuptools==84\.0\.0$/m);
+    expect(matterSimBootstrapInput).toMatch(/^setuptools==84\.0\.0$/m);
+    expect(matterSimBootstrapInput).toMatch(/^pymatgen==2025\.4\.17$/m);
+    expect(matterSimBootstrapInput).toMatch(/^pymatgen-io-validation==0\.1\.2$/m);
+  });
+
+  it('keeps cold-install hook globs literal inside the nested single-quoted shell', () => {
+    const workflow = parseYaml(atomisticBootstrapSource);
+    const coldInstall = namedStep(workflow, 'Prove a cold, hash-locked install with no network').run;
+    expect(coldInstall).toContain("sh -euc '");
+    expect(coldInstall).toContain('-iname \\*.pth');
+    expect(coldInstall).toContain('-iname sitecustomize.\\*');
+    expect(coldInstall).toContain('unexpected_hooks="$(find');
+    expect(coldInstall).not.toContain("-iname '*.pth'");
+  });
+
+  it('runs the independent inventory verifier without local or site import shadowing', () => {
+    const workflow = parseYaml(atomisticBootstrapSource);
+    for (const stepName of [
+      'Freeze and verify the exact resolved wheel set',
+      'Build the isolated runtime image with no build-step network',
+    ]) {
+      const run = namedStep(workflow, stepName).run;
+      expect(run, stepName).toContain('python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py');
+      expect(run, stepName).not.toMatch(/python3\s+-B\s+scripts\/atomistic\/verify_runtime_inventory\.py/);
+    }
   });
 
   it('rejects trigger, main guard, runtime, architecture and model-isolation drift', () => {

@@ -553,6 +553,19 @@ jobs:
           if (manifest.schemaVersion !== 'tf.atomistic-wheelhouse-manifest/0.1' || manifest.model !== process.env.MODEL) {
             throw new Error('Resolver manifest identity drifted.');
           }
+          const expectedStartupHookRemovals = [{
+            archivePath: 'distutils-precedence.pth',
+            installPath: 'site-packages/distutils-precedence.pth',
+            sha256: 'sha256:2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224',
+            sizeBytes: 151,
+            wheelFilename: 'setuptools-84.0.0-py3-none-any.whl',
+          }];
+          if (JSON.stringify(manifest.startupHookRemovals) !== JSON.stringify(expectedStartupHookRemovals)
+              || manifest.runtimeInstalledFileCount !== manifest.installedFileCount - 1
+              || !/^sha256:[0-9a-f]{64}$/.test(manifest.runtimeInstalledPathDigest)
+              || manifest.runtimeInstalledPathDigest === manifest.installedPathDigest) {
+            throw new Error('Resolver startup-hook removal plan drifted.');
+          }
           const directoryEntries = await readdir(wheelhouse, { withFileTypes: true });
           if (directoryEntries.some((entry) => !entry.isFile() || entry.isSymbolicLink())) {
             throw new Error('Wheelhouse contains a non-regular entry.');
@@ -562,6 +575,18 @@ jobs:
           const declaredNames = declared.map((wheel) => wheel.filename).sort();
           if (manifest.wheelCount !== declared.length || filenames.length !== declared.length || JSON.stringify(filenames) !== JSON.stringify(declaredNames)) {
             throw new Error('Wheelhouse count or exact filename set differs from the resolver manifest.');
+          }
+          const declaredStartupHookRemovals = declared.flatMap((wheel) => wheel.startupHookRemovals ?? []);
+          if (JSON.stringify(declaredStartupHookRemovals) !== JSON.stringify(expectedStartupHookRemovals)) {
+            throw new Error('Per-wheel startup-hook removal plan drifted.');
+          }
+          if (process.env.MODEL === 'mattersim') {
+            const versions = Object.fromEntries(declared.map((wheel) => [wheel.normalizedName, wheel.version]));
+            if (versions.pymatgen !== '2025.4.17'
+                || versions['pymatgen-io-validation'] !== '0.1.2'
+                || Object.hasOwn(versions, 'pymatgen-core')) {
+              throw new Error('MatterSim pymatgen compatibility closure drifted.');
+            }
           }
           const seen = new Set();
           for (const wheel of declared) {
@@ -581,6 +606,10 @@ jobs:
           const planDigest = `sha256:${createHash('sha256').update(planBytes).digest('hex')}`;
           if (planDigest !== manifest.planDigest) throw new Error('Resolver manifest is bound to a different plan.');
           NODE
+          echo "ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
+          python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
+            --wheelhouse "$WHEELHOUSE" \
+            --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
 
       - name: Prove a cold, hash-locked install with no network
         id: cold_install
@@ -616,7 +645,19 @@ jobs:
                 --no-compile \
                 --find-links=/wheelhouse \
                 --requirement "/locks/$MODEL.requirements.lock"
-              /tmp/cold-venv/bin/python -m pip check
+              startup_hook=/tmp/cold-venv/lib/python3.12/site-packages/distutils-precedence.pth
+              test -f "$startup_hook"
+              test ! -L "$startup_hook"
+              test "$(stat -c %s "$startup_hook")" = 151
+              echo "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224  $startup_hook" | sha256sum -c -
+              rm -- "$startup_hook"
+              test ! -e "$startup_hook"
+              unexpected_hooks="$(find /tmp/cold-venv/lib/python3.12/site-packages \
+                \( -type f -o -type l -o -type d \) \
+                \( -iname \*.pth -o -iname sitecustomize -o -iname sitecustomize.\* \
+                  -o -iname usercustomize -o -iname usercustomize.\* \) -print -quit)"
+              test -z "$unexpected_hooks"
+              /tmp/cold-venv/bin/python -I -m pip check
             '
 
       - name: Build the isolated runtime image with no build-step network
@@ -678,6 +719,28 @@ jobs:
               JSON.stringify(names) !== JSON.stringify(wheels.map((wheel) => wheel.filename).sort())) {
             throw new Error('Wheelhouse manifest set drifted.');
           }
+          const expectedStartupHookRemovals = [{
+            archivePath: 'distutils-precedence.pth',
+            installPath: 'site-packages/distutils-precedence.pth',
+            sha256: 'sha256:2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224',
+            sizeBytes: 151,
+            wheelFilename: 'setuptools-84.0.0-py3-none-any.whl',
+          }];
+          if (JSON.stringify(manifest.startupHookRemovals) !== JSON.stringify(expectedStartupHookRemovals)
+              || manifest.runtimeInstalledFileCount !== manifest.installedFileCount - 1
+              || !/^sha256:[0-9a-f]{64}$/.test(manifest.runtimeInstalledPathDigest)
+              || manifest.runtimeInstalledPathDigest === manifest.installedPathDigest
+              || JSON.stringify(wheels.flatMap((wheel) => wheel.startupHookRemovals ?? [])) !== JSON.stringify(expectedStartupHookRemovals)) {
+            throw new Error('Wheelhouse startup-hook removal plan drifted.');
+          }
+          if (process.env.MODEL === 'mattersim') {
+            const versions = Object.fromEntries(wheels.map((wheel) => [wheel.normalizedName, wheel.version]));
+            if (versions.pymatgen !== '2025.4.17'
+                || versions['pymatgen-io-validation'] !== '0.1.2'
+                || Object.hasOwn(versions, 'pymatgen-core')) {
+              throw new Error('MatterSim pymatgen compatibility closure drifted.');
+            }
+          }
           for (const wheel of wheels) {
             const actual = await digestFile(path.join(wheelhouse, wheel.filename));
             if (actual.sizeBytes !== wheel.sizeBytes || actual.sha256 !== wheel.sha256) throw new Error(`${wheel.filename} drifted.`);
@@ -687,6 +750,10 @@ jobs:
           NODE
           }
           verify_frozen_wheelhouse
+          echo "ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5  scripts/atomistic/verify_runtime_inventory.py" | sha256sum -c -
+          python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
+            --wheelhouse "$WHEELHOUSE" \
+            --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
           install -d -m 0700 \
             "$BUILD_CONTEXT/atomistic/containers" \
             "$BUILD_CONTEXT/atomistic/locks" \

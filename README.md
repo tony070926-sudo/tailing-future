@@ -13,7 +13,7 @@ The current **R2 / CONDITIONAL** candidate is intentionally narrow:
 - an eight-seed × 5,000-step PR tail gate with p50/p95/p99/max reporting and explicit compute budgets;
 - a live particle/heat/species view whose pixels, values, state ID and ledger come from one observation;
 - a versioned SOTA registry and Sentinel evaluator that runs physics and schema checks rather than trusting evidence labels;
-- a machine-validated R3 reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. No foundation checkpoint has been run yet, so the status remains **planned-not-reproduced**.
+- a machine-validated R3 reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. No foundation-checkpoint inference has run yet, so the status remains **planned-not-reproduced**.
 
 This is an educational and numerical-verification prototype. It does not model a specific material, reaction, plant or safe operating window, and it must not be used for engineering decisions.
 

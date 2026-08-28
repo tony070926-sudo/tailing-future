@@ -6,3 +6,6 @@ python-hostlist==2.3.0
 torch==2.8.0+cpu
 ase==3.28.0
 e3nn==0.4.4
+# Torch declares setuptools at runtime. Pin the exact reviewed wheel whose one
+# startup hook is verified by byte and removed before the next venv interpreter starts.
+setuptools==84.0.0

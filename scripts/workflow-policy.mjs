@@ -16,6 +16,14 @@ export const PYTHON_HOSTLIST_BUILD_LOCK_SHA256 = 'dffc06ecc2faab2b6e0fe729ac1c16
 export const PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256 = 'f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84';
 export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5';
 export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23';
+export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'ce5e56531c866a01459c2e570b602e86b6f8b743b0aac46bee05941ffc2821b5';
+export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
+export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
+export const SETUPTOOLS_STARTUP_HOOK_SHA256 = '2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224';
+export const ATOMISTIC_DOCKERFILE_DIGESTS = Object.freeze({
+  'atomistic/containers/mace.Dockerfile': 'sha256:1a949b17e0b05f150e5d255d8fc76693c23a092be0b29dbb636daccd1af86de7',
+  'atomistic/containers/mattersim.Dockerfile': 'sha256:0f17868091d5ad5bfdd54044940a989b3a25f2c48f899c113c4e527a0b9627eb',
+});
 
 const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262';
 const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020';
@@ -40,9 +48,9 @@ export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
   'Download one fresh resolved wheelhouse in the online phase': 'sha256:2ab1e2c82267cd46fd9ba80cf07ef329fec072bfab81167280afbe872ea2d3c8',
   'Resolve an exact lock from the offline wheelhouse': 'sha256:63d062b924b2ba0af093dfb4161f990e5de1ff677ea8a58096470e398f768964',
-  'Freeze and verify the exact resolved wheel set': 'sha256:fedc4ce77b499d238655d94a43bd9fbba411d4749bfba63de6ffda9b3919c2f1',
-  'Prove a cold, hash-locked install with no network': 'sha256:a4102dfa6b877412ecd04d8fa4cf2cb5da351a70b05540c2f8c0359452ef4d62',
-  'Build the isolated runtime image with no build-step network': 'sha256:d93c91c17c65e9d3861b597f85f7d3653250d7e500f9bfd4f3c339695e8c3138',
+  'Freeze and verify the exact resolved wheel set': 'sha256:0dd8705a35f66ea48dfc2622c895ce6bc4a40a5932f7ed1a4bf96e9c60a788d9',
+  'Prove a cold, hash-locked install with no network': 'sha256:647680c90eb2711926f1326d6468d4a94d9806f07ee96fb83b0814bc4f2c74a3',
+  'Build the isolated runtime image with no build-step network': 'sha256:225be7b8060aa9bf3b8c21c9eb684c907a50034eb38edde0677f3aa635b727d5',
   'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:60fbef598f6d9e12bd01bfc334ee050de67b11d919f0bbf4ac01608a605ab3c3',
   'Stage only non-promotional bootstrap outputs': 'sha256:92fbe0ae394079db3fb00b32f1e473f2dce611c397bda5b4abab7fc3449341bf',
 });
@@ -392,7 +400,35 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     failures.push(`${prefix} the source-only python-hostlist dependency must be hash-pinned and built twice in networkless builders without workspace or runtime-wheelhouse access.`);
   }
   const coldInstall = runSteps.get('Prove a cold, hash-locked install with no network')?.run ?? '';
-  if (!hasAll(coldInstall, ['--network=none', 'PIP_NO_INDEX=1', '--no-index', '--require-hashes', '--only-binary=:all:'])) failures.push(`${prefix} cold install must remain hash-locked and offline.`);
+  if (!hasAll(coldInstall, [
+    '--network=none',
+    'PIP_NO_INDEX=1',
+    '--no-index',
+    '--require-hashes',
+    '--only-binary=:all:',
+    'startup_hook=/tmp/cold-venv/lib/python3.12/site-packages/distutils-precedence.pth',
+    SETUPTOOLS_STARTUP_HOOK_SHA256,
+    'rm -- "$startup_hook"',
+    'test ! -e "$startup_hook"',
+    'unexpected_hooks="$(find /tmp/cold-venv/lib/python3.12/site-packages',
+    '\\( -type f -o -type l -o -type d \\)',
+    '-iname \\*.pth',
+    '-iname sitecustomize -o -iname sitecustomize.\\*',
+    '-iname usercustomize -o -iname usercustomize.\\*',
+    'test -z "$unexpected_hooks"',
+    '/tmp/cold-venv/bin/python -I -m pip check',
+  ])) failures.push(`${prefix} cold install must remain hash-locked, offline and remove the one byte-pinned setuptools startup hook before Python restarts.`);
+  const inventoryVerifierFragments = [
+    ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256,
+    'scripts/atomistic/verify_runtime_inventory.py',
+    'python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py',
+    '--wheelhouse "$WHEELHOUSE"',
+    '--manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"',
+  ];
+  const freeze = runSteps.get('Freeze and verify the exact resolved wheel set')?.run ?? '';
+  if (!hasAll(freeze, inventoryVerifierFragments)) {
+    failures.push(`${prefix} frozen wheelhouse verification must independently recompute raw and post-removal install inventories.`);
+  }
   const resolve = runSteps.get('Resolve an exact lock from the offline wheelhouse')?.run ?? '';
   if (!hasAll(resolve, [
     '--network=none',
@@ -411,7 +447,20 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     'echo "PUBLISH_DIR=$publish_dir"',
   ])) failures.push(`${prefix} publish root must be derived from the trusted runner temp inside the first shell step.`);
   const build = runSteps.get('Build the isolated runtime image with no build-step network')?.run ?? '';
-  if (!hasAll(build, ['docker buildx build', '--network=none', '--platform=linux/amd64', '--build-context "wheelhouse=$WHEELHOUSE"', 'bootstrap-not-reproduced'])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline and bound to the private wheelhouse.`);
+  if (!hasAll(build, [
+    'docker buildx build',
+    '--network=none',
+    '--platform=linux/amd64',
+    '--build-context "wheelhouse=$WHEELHOUSE"',
+    'bootstrap-not-reproduced',
+    SETUPTOOLS_RUNTIME_WHEEL_FILENAME,
+    SETUPTOOLS_STARTUP_HOOK_SHA256,
+    'runtimeInstalledFileCount !== manifest.installedFileCount - 1',
+    "versions.pymatgen !== '2025.4.17'",
+    "versions['pymatgen-io-validation'] !== '0.1.2'",
+    "Object.hasOwn(versions, 'pymatgen-core')",
+    ...inventoryVerifierFragments,
+  ])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline, bound to the private wheelhouse and to the exact startup-hook removal plan.`);
   const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';
   if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
   const staging = runSteps.get('Stage only non-promotional bootstrap outputs')?.run ?? '';
@@ -448,6 +497,10 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
 
 export function inspectDockerfileSource(relativePath, source) {
   const failures = [];
+  const expectedSourceDigest = ATOMISTIC_DOCKERFILE_DIGESTS[relativePath];
+  if (expectedSourceDigest && `sha256:${createHash('sha256').update(source).digest('hex')}` !== expectedSourceDigest) {
+    failures.push(`${relativePath}: complete reviewed Dockerfile bytes drifted.`);
+  }
   const expectedDirective = `# syntax=${PINNED_DOCKERFILE_FRONTEND}`;
   if (source.split(/\r?\n/, 1)[0] !== expectedDirective) failures.push(`${relativePath}: Dockerfile frontend must equal ${PINNED_DOCKERFILE_FRONTEND}.`);
   const args = [...source.matchAll(/^\s*ARG\s+([^\s=]+)(?:=(\S+))?\s*$/gmi)];
@@ -469,6 +522,19 @@ export function inspectDockerfileSource(relativePath, source) {
     if (!/^\s+--network=none(?:\s|$)/.test(match[1])) failures.push(`${relativePath}: every RUN instruction must declare --network=none.`);
     if (/--mount=type=(?:secret|ssh)\b/i.test(match[1])) failures.push(`${relativePath}: RUN secret and SSH mounts are forbidden.`);
   }
+  if (/^atomistic\/containers\/(?:mace|mattersim)\.Dockerfile$/.test(relativePath) && !hasAll(source, [
+    'startup_hook=/opt/tailing-venv/lib/python3.12/site-packages/distutils-precedence.pth',
+    SETUPTOOLS_STARTUP_HOOK_SHA256,
+    'rm -- "$startup_hook"',
+    'test ! -e "$startup_hook"',
+    'unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages',
+    '\\( -type f -o -type l -o -type d \\)',
+    "-iname '*.pth' -o -iname sitecustomize -o -iname 'sitecustomize.*'",
+    "-o -iname usercustomize -o -iname 'usercustomize.*'",
+    'test -z "$unexpected_hooks"',
+    '/opt/tailing-venv/bin/python -I -m pip check',
+    'RUN --network=none unexpected_hooks="$(find /opt/tailing-venv/lib/python3.12/site-packages',
+  ])) failures.push(`${relativePath}: runtime must verify and remove the exact setuptools startup hook before the next venv interpreter starts.`);
   if (/^\s*ADD\s+https?:\/\//gmi.test(source)) failures.push(`${relativePath}: remote ADD is forbidden.`);
   return failures;
 }

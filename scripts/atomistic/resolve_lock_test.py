@@ -19,8 +19,13 @@ main = resolve_lock.main
 
 
 class ResolveLockTests(unittest.TestCase):
-    def test_mace_source_only_dependency_is_a_frozen_root(self) -> None:
+    def test_bootstrap_compatibility_constraints_are_frozen_roots(self) -> None:
         self.assertIn("python-hostlist==2.3.0", resolve_lock.ROOT_REQUIREMENTS["mace"])
+        self.assertIn("setuptools==84.0.0", resolve_lock.ROOT_REQUIREMENTS["mace"])
+        self.assertIn("setuptools==84.0.0", resolve_lock.ROOT_REQUIREMENTS["mattersim"])
+        self.assertIn("pymatgen==2025.4.17", resolve_lock.ROOT_REQUIREMENTS["mattersim"])
+        self.assertIn("pymatgen-io-validation==0.1.2", resolve_lock.ROOT_REQUIREMENTS["mattersim"])
+        self.assertNotIn("pymatgen-core", "\n".join(resolve_lock.ROOT_REQUIREMENTS["mattersim"]))
 
     def test_derived_wheel_provenance_binds_source_builder_and_wheelhouse_bytes(self) -> None:
         manifest, distributions = make_derived_provenance()
@@ -89,12 +94,15 @@ class ResolveLockTests(unittest.TestCase):
             self.assertIn("dependency==2.0", lock)
             self.assertIn("linux-only==3.0", lock)
             self.assertNotIn("windows-only", lock)
-            self.assertEqual(lock.count("--hash=sha256:"), 7)
+            self.assertEqual(lock.count("--hash=sha256:"), 10)
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(manifest["wheelCount"], 7)
+            self.assertEqual(manifest["wheelCount"], 10)
             self.assertEqual(manifest["lockDigest"], digest(lock_path.read_bytes()))
             self.assertRegex(manifest["dependencyGraphDigest"], r"^sha256:[0-9a-f]{64}$")
             self.assertRegex(manifest["installedPathDigest"], r"^sha256:[0-9a-f]{64}$")
+            self.assertEqual(manifest["startupHookRemovals"], [])
+            self.assertEqual(manifest["runtimeInstalledFileCount"], manifest["installedFileCount"])
+            self.assertEqual(manifest["runtimeInstalledPathDigest"], manifest["installedPathDigest"])
             self.assertEqual(manifest["planDigest"], digest(plan_path.read_bytes()))
             self.assertEqual(
                 manifest["resolverDigest"],
@@ -133,6 +141,14 @@ class ResolveLockTests(unittest.TestCase):
             wheelhouse, package_path = make_complete_wheelhouse(root, torch_version="2.9.0+cpu")
             with self.assertRaisesRegex(ValueError, r"does not satisfy ==2.8.0\+cpu"):
                 run_main(root, wheelhouse, write_plan(root, package_path))
+
+    def test_rejects_pre_release_or_development_wheels(self) -> None:
+        for version in ("1.0rc1", "1.0.dev1"):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / f"probe-{version}-py3-none-any.whl"
+                make_wheel(wheel, "probe", version)
+                with self.assertRaisesRegex(ValueError, "pre-release and development wheels are forbidden"):
+                    resolve_lock.inspect_wheel(wheel)
 
     def test_rejects_duplicate_distribution(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -174,6 +190,198 @@ class ResolveLockTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "RECORD member hash does not match archive bytes"):
                 run_main(root, wheelhouse, write_plan(root, package_path))
+
+    def test_rejects_noncanonical_archive_member_spelling(self) -> None:
+        for unsafe_path in (
+            "probe-1.0.dist-info//entry_points.txt",
+            "probe-1.0.dist-info/./entry_points.txt",
+            "probe//module.py",
+        ):
+            with self.subTest(path=unsafe_path), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                make_wheel(wheel, "probe", "1.0", extra_files={unsafe_path: b"forged"})
+                with self.assertRaisesRegex(ValueError, "unsafe archive path"):
+                    resolve_lock.inspect_wheel(wheel)
+
+    def test_rejects_the_current_pymatgen_split_script_collision(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            meta = root / "pymatgen-2026.5.4-py3-none-any.whl"
+            core = root / "pymatgen_core-2026.8.13-py3-none-any.whl"
+            make_wheel(meta, "pymatgen", "2026.5.4", entry_points={"pmg": "pymatgen.cli.pmg:main"})
+            make_wheel(core, "pymatgen-core", "2026.8.13", entry_points={"pmg": "pymatgen.cli.pmg:main"})
+            files: dict[str, str] = {}
+            directories: set[str] = set()
+            resolve_lock.register_install_paths(resolve_lock.inspect_wheel(meta), files, directories)
+            with self.assertRaisesRegex(ValueError, r"install-path collision at scripts/pmg"):
+                resolve_lock.register_install_paths(resolve_lock.inspect_wheel(core), files, directories)
+
+    def test_uses_only_top_level_dist_info_metadata(self) -> None:
+        nested_root = "mattersim/_vendor/inner-1.0.dist-info"
+        nested = {
+            f"{nested_root}/METADATA": b"Metadata-Version: 2.4\nName: inner\nVersion: 1.0\n",
+            f"{nested_root}/WHEEL": b"Wheel-Version: 1.0\nTag: py3-none-any\n",
+            f"{nested_root}/RECORD": b"",
+            f"{nested_root}/entry_points.txt": b"[console_scripts]\nforged = inner.cli:main\n",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            wheel = Path(temporary).resolve() / "mattersim-1.2.5-py3-none-any.whl"
+            make_wheel(wheel, "mattersim", "1.2.5", extra_files=nested)
+            inspected = resolve_lock.inspect_wheel(wheel)
+            self.assertEqual(inspected["name"], "mattersim")
+            self.assertEqual(inspected["generatedScripts"], [])
+
+        with tempfile.TemporaryDirectory() as temporary:
+            wheel = Path(temporary).resolve() / "mattersim-1.2.5-py3-none-any.whl"
+            make_wheel(
+                wheel,
+                "mattersim",
+                "1.2.5",
+                extra_files={"other-1.0.dist-info/METADATA": b"forged"},
+            )
+            with self.assertRaisesRegex(ValueError, "exactly one top-level dist-info"):
+                resolve_lock.inspect_wheel(wheel)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            wheel = Path(temporary).resolve() / "mattersim-1.2.5-py3-none-any.whl"
+            nested_metadata = f"{nested_root}/METADATA"
+            make_wheel(
+                wheel,
+                "mattersim",
+                "1.2.5",
+                extra_files=nested,
+                record_hash_overrides={nested_metadata: "sha256=" + "A" * 43},
+            )
+            with self.assertRaisesRegex(ValueError, "RECORD member hash does not match archive bytes"):
+                resolve_lock.inspect_wheel(wheel)
+
+        metadata_injections = {
+            "relocated second dist-info": {
+                "probe-1.0.data/purelib/forged-9.9.dist-info/METADATA": b"forged",
+            },
+            "uppercase direct dist-info": {
+                "FORGED-9.9.DIST-INFO/METADATA": b"forged",
+            },
+            "relocated egg-info": {
+                "probe-1.0.data/purelib/forged-9.9.egg-info/PKG-INFO": b"forged",
+            },
+            "relocated same-root augmentation": {
+                "probe-1.0.data/purelib/probe-1.0.dist-info/entry_points.txt": b"forged",
+            },
+        }
+        for label, extra_files in metadata_injections.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                make_wheel(wheel, "probe", "1.0", extra_files=extra_files)
+                with self.assertRaisesRegex(ValueError, "installed metadata must come only"):
+                    resolve_lock.inspect_wheel(wheel)
+
+    def test_allows_only_the_exact_setuptools_hook_for_planned_removal(self) -> None:
+        hook = (
+            b"import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; "
+            b"enabled and __import__('_distutils_hack').add_shim(); \n"
+        )
+        self.assertEqual(digest(hook), resolve_lock.SETUPTOOLS_RUNTIME_WHEEL_POLICY["startupHook"]["sha256"])
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            wheel = root / "setuptools-84.0.0-py3-none-any.whl"
+            make_wheel(
+                wheel,
+                "setuptools",
+                "84.0.0",
+                extra_files={"distutils-precedence.pth": hook},
+            )
+            synthetic_policy = json.loads(json.dumps(resolve_lock.SETUPTOOLS_RUNTIME_WHEEL_POLICY))
+            synthetic_policy["sizeBytes"] = wheel.stat().st_size
+            synthetic_policy["sha256"] = digest(wheel.read_bytes())
+            with patch.object(resolve_lock, "SETUPTOOLS_RUNTIME_WHEEL_POLICY", synthetic_policy):
+                inspected = resolve_lock.inspect_wheel(wheel)
+            self.assertEqual(inspected["startupHookRemovals"], [{
+                "wheelFilename": wheel.name,
+                **synthetic_policy["startupHook"],
+            }])
+
+            forged = root / "setuptools-84.0.0-1-py3-none-any.whl"
+            make_wheel(
+                forged,
+                "setuptools",
+                "84.0.0",
+                extra_files={"distutils-precedence.pth": b"import bad\n"},
+            )
+            forged_policy = json.loads(json.dumps(synthetic_policy))
+            forged_policy.update({
+                "filename": forged.name,
+                "sizeBytes": forged.stat().st_size,
+                "sha256": digest(forged.read_bytes()),
+            })
+            with patch.object(resolve_lock, "SETUPTOOLS_RUNTIME_WHEEL_POLICY", forged_policy):
+                with self.assertRaisesRegex(ValueError, "startup-hook path is forbidden"):
+                    resolve_lock.inspect_wheel(forged)
+
+    def test_rejects_importable_site_and_user_customization_forms(self) -> None:
+        for unsafe_path in (
+            "sitecustomize/__init__.py",
+            "sitecustomize.pyc",
+            "sitecustomize.cpython-312-x86_64-linux-gnu.so",
+            "vendor/usercustomize/__init__.py",
+            "USERCUSTOMIZE.PY",
+        ):
+            with self.subTest(path=unsafe_path), tempfile.TemporaryDirectory() as temporary:
+                wheel = Path(temporary).resolve() / "probe-1.0-py3-none-any.whl"
+                make_wheel(wheel, "probe", "1.0", extra_files={unsafe_path: b"unsafe"})
+                with self.assertRaisesRegex(ValueError, "startup-hook path is forbidden"):
+                    resolve_lock.inspect_wheel(wheel)
+
+    def test_main_binds_the_exact_runtime_inventory_after_hook_removal(self) -> None:
+        hook = (
+            b"import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; "
+            b"enabled and __import__('_distutils_hack').add_shim(); \n"
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            wheelhouse, package_path = make_complete_wheelhouse(root)
+            setuptools_wheel = wheelhouse / "setuptools-84.0.0-py3-none-any.whl"
+            make_wheel(
+                setuptools_wheel,
+                "setuptools",
+                "84.0.0",
+                extra_files={"distutils-precedence.pth": hook},
+            )
+            policy = json.loads(json.dumps(resolve_lock.SETUPTOOLS_RUNTIME_WHEEL_POLICY))
+            policy["sizeBytes"] = setuptools_wheel.stat().st_size
+            policy["sha256"] = digest(setuptools_wheel.read_bytes())
+            plan_path = write_plan(root, package_path)
+            with patch.object(resolve_lock, "SETUPTOOLS_RUNTIME_WHEEL_POLICY", policy):
+                inspected = [
+                    resolve_lock.inspect_wheel(path)
+                    for path in sorted(wheelhouse.iterdir(), key=lambda candidate: candidate.name)
+                ]
+                self.assertEqual(run_main(root, wheelhouse, plan_path), 0)
+
+            raw_paths = sorted(
+                destination
+                for wheel in inspected
+                for destination in wheel["installPaths"]
+            )
+            hook_path = str(policy["startupHook"]["installPath"])
+            runtime_paths = [destination for destination in raw_paths if destination != hook_path]
+            manifest = json.loads((root / "manifest").read_text(encoding="utf-8"))
+            expected_removal = [{
+                "wheelFilename": setuptools_wheel.name,
+                **policy["startupHook"],
+            }]
+            self.assertEqual(manifest["startupHookRemovals"], expected_removal)
+            self.assertEqual(manifest["installedFileCount"], len(raw_paths))
+            self.assertEqual(manifest["installedPathDigest"], resolve_lock.canonical_digest(raw_paths))
+            self.assertEqual(manifest["runtimeInstalledFileCount"], len(runtime_paths))
+            self.assertEqual(
+                manifest["runtimeInstalledPathDigest"],
+                resolve_lock.canonical_digest(runtime_paths),
+            )
+            setuptools_entry = next(
+                wheel for wheel in manifest["wheels"] if wheel["normalizedName"] == "setuptools"
+            )
+            self.assertEqual(setuptools_entry["startupHookRemovals"], expected_removal)
 
     def test_extra_markers_match_pip_union_semantics(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -435,6 +643,9 @@ def make_complete_wheelhouse(
         ("torchvision", "0.23.0+cpu"),
         ("torchaudio", "2.8.0+cpu"),
         ("ase", "3.28.0"),
+        ("pymatgen", "2025.4.17"),
+        ("pymatgen-io-validation", "0.1.2"),
+        ("setuptools", "84.0.0"),
     ]
     for name, version in roots:
         filename = f"{name.replace('-', '_')}-{version}-py3-none-any.whl"

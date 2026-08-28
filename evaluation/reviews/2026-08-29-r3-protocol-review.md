@@ -71,14 +71,14 @@ atomistic-to-mesoscale-to-process learned transition model.
 - The reporter has passed its first live `workflow_run` exercise, but its
   Node 20 action runtime was forced to Node 24 by GitHub and should be watched
   for future action-runtime changes.
-- Linux/amd64 asset fetch and preprocessing have run on GitHub. Dependency
-  closure, cold install, BuildKit behavior and real checkpoint runtime
-  compatibility remain unproven because the first bootstrap stopped in the
-  wheelhouse stage.
+- Linux/amd64 asset fetch, preprocessing and online wheelhouse construction
+  have run on GitHub. Exact-lock completion, cold install, BuildKit behavior
+  and real checkpoint runtime compatibility remain unproven because the second
+  bootstrap stopped in offline resolution.
 
 ## Next-loop inputs
 
-1. Merge the wheelhouse remediation through protected CI, then rerun both
+1. Merge the resolver-compatibility remediation through protected CI, then rerun both
    ten-frame, non-promotional bootstrap matrix jobs. Acceptance: exact
    model/package/data digests, isolated cold install, ten finite E/F/stress
    records and bounded diagnostics for each model, plus a truthful outcome
@@ -146,7 +146,7 @@ No checkpoint was loaded, no prediction was produced, and no scientific metric
 was evaluated. The evidence status therefore remains
 `bootstrap-not-reproduced` / `planned-not-reproduced`.
 
-## Current remediation candidate
+## First wheelhouse remediation
 
 The next candidate keeps the 3 GiB memory and 1 GiB `/tmp` limits unchanged,
 but disables pip's cache for each download so response bytes are not retained
@@ -176,3 +176,61 @@ an independently reviewed output/member digest (or adopt an upstream wheel or
 MACE dependency correction), strengthen source-to-wheel payload binding, and
 complete GPL-2.0-or-later redistribution review. Until then this mechanism is
 non-promotional bootstrap infrastructure only.
+
+## Second real atomistic bootstrap feedback
+
+The wheelhouse remediation merged as protected-main commit
+`e43908272c2cf56d0fdcadcae4413e8fd68c5174`. The second ten-frame dispatch,
+[`33214569382`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33214569382),
+proved that both online wheelhouse paths now complete. For both matrix jobs,
+`guard`, `directories`, `bind`, `base`, `assets`, `structures` and
+`wheelhouse` succeeded; `resolve` failed; `freeze`, `cold-install`, `build` and
+`inference` were skipped.
+
+- MACE job
+  [`98995214629`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33214569382/job/98995214629)
+  rejected `setuptools-84.0.0` because suffix matching counted its nested
+  vendored `.dist-info` payload as outer wheel metadata.
+- MatterSim job
+  [`98995214826`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33214569382/job/98995214826)
+  rejected the genuine `scripts/pmg` install-path collision between
+  `pymatgen-2026.5.4` and `pymatgen-core-2026.8.13`.
+
+The bounded MACE artifact `9702868333` has archive digest
+`sha256:a2aff137e9e284106ef5af7ee9e62ffd86890bdffc7fbf287e3d428ab49fbda9`;
+the MatterSim artifact `9702867113` has archive digest
+`sha256:ce77574effea4f34d116591d4f93bbc476e7d4413dde77fa1bef20df7d3e069e`.
+Their outcome manifests bind run, attempt and commit, report
+`failureStage: resolve`, `inferenceSucceeded: false`,
+`predictionsPresent: false` and `evidenceClass: bootstrap-not-reproduced`, and
+contain no lock, checkpoint, prediction or metric. Independent ZIP inspection
+found only the declared read-only JSON members, with no path, link, duplicate,
+encryption or size-policy violation.
+
+## Current resolver-compatibility candidate
+
+The next candidate recognizes exactly one top-level `.dist-info` root while
+keeping nested vendored metadata under the outer RECORD's hash coverage. It
+does not weaken install-path collision handling. MatterSim instead fixes the
+reviewed stable all-wheel pair `pymatgen==2025.4.17` and
+`pymatgen-io-validation==0.1.2`. A full target-platform pip dry-run selected
+157 distributions with no `pymatgen-core` and no pre/dev release. Separately,
+an 88-wheel material-dependency subgraph passed the repository's wheel,
+dependency and install-path validators with no collision; this subgraph audit
+does not replace the full bootstrap resolver. A static wheel scan also found
+all 21 unique `pymatgen.*` modules imported by the union of MatterSim and
+`pymatgen-io-validation`; MatterSim itself accounts for three unique targets.
+This does not prove ABI or runtime behavior.
+
+Torch's runtime dependency is fixed to the exact official
+`setuptools==84.0.0` wheel. The resolver binds the complete wheel and its sole
+`distutils-precedence.pth` by size and SHA-256, declares exactly one planned
+removal, and rejects every other startup hook. Cold install and both image
+builds reverify and delete that file before the next venv interpreter starts,
+then assert no startup hook remains before isolated `pip check`. A separate
+hash-bound verifier reconstructs every install path directly from wheel ZIP
+members and entry points after freeze and again before build, rechecks
+collisions/removal ownership, and independently recomputes raw and post-removal
+path digests. These checks are candidate evidence only; a third protected-main
+dispatch is still required to prove exact-lock generation, cold install, image
+build and checkpoint smoke inference.
