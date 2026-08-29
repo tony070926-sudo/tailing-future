@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { copyFile, link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { link, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,10 +9,10 @@ import {
   EXPECTED_DOCKERIGNORE_LINES,
   EXPECTED_RUNTIME_LOCK_RAW_DIGEST,
   EXPECTED_RUNTIME_SOURCE_FILES,
+  EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS,
   RUNTIME_LOCK_CONTROL_PATHS,
   RUNTIME_LOCK_PATH,
   RUNTIME_LOCK_SCHEMA_PATH,
-  SCIENTIFIC_PLAN_PATH,
   inspectRuntimeLockBytes,
   isAllowedRuntimeBuildContextPath,
   parseJsonRejectingDuplicateMembers,
@@ -48,7 +48,7 @@ describe('atomistic runtime discovery lock', () => {
       cwd: root,
       encoding: 'utf8',
     });
-    expect(output).toMatch(/VALID · discovery-not-frozen · 0\/2 protected-main replicas/);
+    expect(output).toMatch(/VALID · discovery-not-frozen · 0\/2 accepted protected-main replicas/);
     expect(output).toMatch(/NOT REPRODUCED/);
   });
 
@@ -56,10 +56,21 @@ describe('atomistic runtime discovery lock', () => {
     const changes = [
       (candidate) => { candidate.schemaVersion = 'tf.atomistic-runtime-lock/9.9'; },
       (candidate) => { candidate.scientificPlan.rawDigest = digest('a'); },
-      (candidate) => { candidate.runtimeSource.revision = 'b'.repeat(40); },
-      (candidate) => { candidate.runtimeSource.commitTimestamp += 1; },
+      (candidate) => { candidate.runtimeSource.runtimeSourceRevision = 'b'.repeat(40); },
+      (candidate) => { candidate.runtimeSource.sourceDateEpoch += 1; },
+      (candidate) => { candidate.runtimeSource.sourceManifestProtocol = 'self-reported/v0'; },
+      (candidate) => { candidate.runtimeSource.sourceManifestDigest = digest('b'); },
       (candidate) => { candidate.runtimeSource.files[0].sizeBytes += 1; },
       (candidate) => { candidate.runtimeSource.files[4].sha256 = digest('c'); },
+      (candidate) => { candidate.runtimeSource.materializationProtocol = 'copy-anything/v0'; },
+      (candidate) => { candidate.runtimeSource.materializationDigest = digest('9'); },
+      (candidate) => { candidate.runtimeSource.materializations[0].name = 'wrapper.py'; },
+      (candidate) => { candidate.runtimeSource.materializations[0].sourcePath = 'scripts/atomistic/run_model.py'; },
+      (candidate) => { candidate.runtimeSource.materializations[0].buildPath = 'scripts/atomistic/v2/run_model.py'; },
+      (candidate) => { candidate.runtimeSource.materializations[0].standardContainerPath = '/tmp/run_model.py'; },
+      (candidate) => { candidate.runtimeSource.materializations[0].mode = '100755'; },
+      (candidate) => { candidate.runtimeSource.materializations[0].sizeBytes += 1; },
+      (candidate) => { candidate.runtimeSource.materializations[0].sha256 = digest('8'); },
       (candidate) => { candidate.plannedBuildContract.schemaVersion = 'tf.atomistic-runtime-inputs/9.9'; },
       (candidate) => { candidate.plannedBuildContract.platform = 'linux/arm64'; },
       (candidate) => { candidate.plannedBuildContract.baseImage.platformManifestDigest = digest('d'); },
@@ -78,6 +89,16 @@ describe('atomistic runtime discovery lock', () => {
       (candidate) => { candidate.claims.reproduced = true; },
     ];
     for (const [index, change] of changes.entries()) expect(mutate(change), `mutation ${index}`).not.toEqual([]);
+  });
+
+  it('recursively rejects every malformed promotion, comparison, or reproduction claim', () => {
+    for (const key of ['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']) {
+      for (const value of [true, null, 0, 'false']) {
+        const candidate = structuredClone(lock);
+        candidate.runtimeSource.materializations[0].nested = { [key]: value };
+        expect(validateRuntimeLockSemantics(candidate).join('\n'), `${key}=${String(value)}`).toMatch(/requires exact false/);
+      }
+    }
   });
 
   it('rejects a locally asserted frozen state even when every self-reported identity looks complete', async () => {
@@ -105,67 +126,91 @@ describe('atomistic runtime discovery lock', () => {
   });
 
   it('keeps every runtime-lock control file outside the deny-all Docker context allowlist', () => {
-    for (const source of EXPECTED_RUNTIME_SOURCE_FILES) expect(isAllowedRuntimeBuildContextPath(source.path, EXPECTED_DOCKERIGNORE_LINES), source.path).toBe(true);
+    for (const source of EXPECTED_RUNTIME_SOURCE_FILES.slice(0, 3)) expect(isAllowedRuntimeBuildContextPath(source.path, EXPECTED_DOCKERIGNORE_LINES), source.path).toBe(true);
+    for (const materialization of EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS) {
+      expect(isAllowedRuntimeBuildContextPath(materialization.sourcePath, EXPECTED_DOCKERIGNORE_LINES), materialization.sourcePath).toBe(false);
+      expect(isAllowedRuntimeBuildContextPath(materialization.buildPath, EXPECTED_DOCKERIGNORE_LINES), materialization.buildPath).toBe(true);
+    }
     for (const controlPath of RUNTIME_LOCK_CONTROL_PATHS) expect(isAllowedRuntimeBuildContextPath(controlPath, EXPECTED_DOCKERIGNORE_LINES), controlPath).toBe(false);
   });
 
-  it('binds the declared R5 revision, timestamp, modes, paths, and blobs to a real ancestor Git commit', async () => {
+  it('binds the declared P revision, timestamp, modes, paths, blobs, and mappings to a real ancestor Git commit', async () => {
     expect(await validateRuntimeSourceCommit(lock, { root })).toEqual([]);
     const wrongTimestamp = structuredClone(lock);
-    wrongTimestamp.runtimeSource.commitTimestamp += 1;
-    expect((await validateRuntimeSourceCommit(wrongTimestamp, { root })).join('\n')).toMatch(/commitTimestamp/);
+    wrongTimestamp.runtimeSource.sourceDateEpoch += 1;
+    expect((await validateRuntimeSourceCommit(wrongTimestamp, { root })).join('\n')).toMatch(/sourceDateEpoch/);
+    const wrongFile = structuredClone(lock);
+    wrongFile.runtimeSource.files[3].mode = '100755';
+    expect((await validateRuntimeSourceCommit(wrongFile, { root })).join('\n')).toMatch(/declaredFiles/);
+    const wrongMapping = structuredClone(lock);
+    wrongMapping.runtimeSource.materializations[0].buildPath = 'scripts/atomistic/v2/run_model.py';
+    expect((await validateRuntimeSourceCommit(wrongMapping, { root })).join('\n')).toMatch(/declaredMaterializations/);
     const missingCommit = structuredClone(lock);
-    missingCommit.runtimeSource.revision = 'f'.repeat(40);
+    missingCommit.runtimeSource.runtimeSourceRevision = 'f'.repeat(40);
     expect((await validateRuntimeSourceCommit(missingCommit, { root })).join('\n')).toMatch(/unable to verify/);
   });
 
-  it('changing runtime-lock alone cannot change recomputed runner or build-context source identities', async () => {
-    const temporaryRoot = await makeSourceRoot();
+  it('rejects the exact P object when it is not an ancestor of the executing checkout', async () => {
+    const { temporaryRoot, repository } = await makeGitRoot();
     try {
-      const before = await recomputeRuntimeSourceIdentity(temporaryRoot);
-      const changed = structuredClone(lock);
-      changed.state = 'forged';
-      await writeFile(path.join(temporaryRoot, RUNTIME_LOCK_PATH), `${JSON.stringify(changed, null, 2)}\n`);
-      const after = await recomputeRuntimeSourceIdentity(temporaryRoot);
-      expect(after.runnerDigest).toBe(before.runnerDigest);
-      expect(after.buildContextSourceDigest).toBe(before.buildContextSourceDigest);
-      expect(after.fileDigests).toEqual(before.fileDigests);
+      const environment = {
+        ...process.env,
+        GIT_AUTHOR_NAME: 'Tailing Future Test',
+        GIT_AUTHOR_EMAIL: 'test@tailing.future',
+        GIT_COMMITTER_NAME: 'Tailing Future Test',
+        GIT_COMMITTER_EMAIL: 'test@tailing.future',
+      };
+      execFileSync('git', ['switch', '--orphan', 'disconnected-runtime-lock-test'], { cwd: repository, env: environment, stdio: 'ignore' });
+      execFileSync('git', ['commit', '--allow-empty', '-m', 'disconnected test head'], { cwd: repository, env: environment, stdio: 'ignore' });
+      expect((await validateRuntimeSourceCommit(lock, { root: repository })).join('\n')).toMatch(/unable to verify the P commit object, ancestry/);
     } finally {
       await rm(temporaryRoot, { recursive: true, force: true });
     }
   });
 
-  it('rejects circular runtime-lock paths and file digests in runner or Docker-context bytes', async () => {
-    for (const marker of [RUNTIME_LOCK_PATH, EXPECTED_RUNTIME_LOCK_RAW_DIGEST]) {
-      const temporaryRoot = await makeSourceRoot();
+  it('recomputes all five source blobs and both runner mappings from P rather than the working tree', async () => {
+    const { temporaryRoot, repository } = await makeGitRoot();
+    try {
+      const before = await recomputeRuntimeSourceIdentity(repository);
+      const runnerPath = path.join(repository, 'scripts/atomistic/v2/run_model.py');
+      await writeFile(runnerPath, 'forged working-tree runner\n');
+      const after = await recomputeRuntimeSourceIdentity(repository);
+      expect(after.runnerDigest).toBe(before.runnerDigest);
+      expect(after.runnerDigest).toBe('sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4');
+      expect(after.sourceManifestDigest).toBe(lock.runtimeSource.sourceManifestDigest);
+      expect(after.materializationDigest).toBe(lock.runtimeSource.materializationDigest);
+      expect(after.files).toEqual(lock.runtimeSource.files);
+      expect(after.materializations).toEqual(lock.runtimeSource.materializations);
+      expect(after.fileDigests).toEqual(before.fileDigests);
+      expect(await validateRuntimeLockRepository(lock, lockBytes, { root: repository })).toEqual([]);
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('ignores symlinked and multiply linked working-tree runner decoys and verifies P blobs', async () => {
+    for (const kind of ['symlink', 'hardlink']) {
+      const { temporaryRoot, repository } = await makeGitRoot();
       try {
-        const runnerPath = path.join(temporaryRoot, 'scripts/atomistic/run_model.py');
-        const runner = await readFile(runnerPath, 'utf8');
-        await writeFile(runnerPath, `${runner}\n# ${marker}\n`);
-        const failures = await validateRuntimeLockRepository(lock, lockBytes, { root: temporaryRoot });
-        expect(failures.join('\n')).toMatch(/circular runtime-lock reference/);
+        const runnerPath = path.join(repository, 'scripts/atomistic/v2/run_model.py');
+        const targetPath = `${runnerPath}.decoy`;
+        await writeFile(targetPath, 'working-tree decoy\n');
+        await rm(runnerPath);
+        if (kind === 'symlink') await symlink(targetPath, runnerPath);
+        else await link(targetPath, runnerPath);
+        expect(await validateRuntimeLockRepository(lock, lockBytes, { root: repository }), kind).toEqual([]);
+        expect(await validateRuntimeSourceCommit(lock, { root: repository }), kind).toEqual([]);
       } finally {
         await rm(temporaryRoot, { recursive: true, force: true });
       }
     }
   });
 
-  it('rejects symlinked or multiply linked runtime-source files', async () => {
-    for (const kind of ['symlink', 'hardlink']) {
-      const temporaryRoot = await makeSourceRoot();
-      try {
-        const runnerPath = path.join(temporaryRoot, 'scripts/atomistic/run_model.py');
-        const targetPath = `${runnerPath}.target`;
-        await copyFile(runnerPath, targetPath);
-        await rm(runnerPath);
-        if (kind === 'symlink') await symlink(targetPath, runnerPath);
-        else await link(targetPath, runnerPath);
-        const failures = await validateRuntimeLockRepository(lock, lockBytes, { root: temporaryRoot });
-        expect(failures.join('\n'), kind).toMatch(/unable to read the bounded source set/);
-      } finally {
-        await rm(temporaryRoot, { recursive: true, force: true });
-      }
-    }
+  it('rejects runtime-lock bytes that name their own control path', async () => {
+    const candidate = structuredClone(lock);
+    candidate.untrusted = RUNTIME_LOCK_PATH;
+    const candidateBytes = Buffer.from(`${JSON.stringify(candidate)}\n`);
+    expect((await validateRuntimeLockRepository(candidate, candidateBytes, { root })).join('\n')).toMatch(/contain their own control-file path/);
   });
 
   it('rejects duplicate members, including escape-equivalent keys, before last-wins JSON parsing', () => {
@@ -191,12 +236,19 @@ describe('atomistic runtime discovery lock', () => {
   });
 });
 
-async function makeSourceRoot() {
-  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'tf-runtime-lock-'));
-  const paths = [...EXPECTED_RUNTIME_SOURCE_FILES.map((entry) => entry.path), SCIENTIFIC_PLAN_PATH, RUNTIME_LOCK_PATH];
-  for (const relativePath of paths) {
-    await mkdir(path.dirname(path.join(temporaryRoot, relativePath)), { recursive: true });
-    await copyFile(path.join(root, relativePath), path.join(temporaryRoot, relativePath));
-  }
-  return temporaryRoot;
+async function makeGitRoot() {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'tf-runtime-lock-git-'));
+  const repository = path.join(temporaryRoot, 'repository');
+  execFileSync('git', ['clone', '--quiet', '--no-hardlinks', root, repository], {
+    env: {
+      PATH: process.env.PATH,
+      GIT_CONFIG_NOSYSTEM: '1',
+      GIT_CONFIG_SYSTEM: '/dev/null',
+      GIT_CONFIG_GLOBAL: '/dev/null',
+      GIT_NO_REPLACE_OBJECTS: '1',
+      GIT_OPTIONAL_LOCKS: '0',
+      LC_ALL: 'C',
+    },
+  });
+  return { temporaryRoot, repository };
 }

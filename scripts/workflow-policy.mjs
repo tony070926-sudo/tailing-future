@@ -4,8 +4,13 @@ import { load as parseYaml } from 'js-yaml';
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
-export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = 'b20ad79d1360b4482373f837421c73214d6fcf47aafe0bfa6ed6eea99bb6f17f';
+export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = '65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
+export const ATOMISTIC_BOOTSTRAP_SELECTED_RUNNER_DIGEST = 'sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4';
+export const ATOMISTIC_RUNTIME_SOURCE_REVISION = 'f861b3e30572f1db366554a2e330d5d6c78bdb56';
+export const ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH = 1787977543;
+export const ATOMISTIC_SOURCE_MANIFEST_DIGEST = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
+export const ATOMISTIC_MATERIALIZATION_DIGEST = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
@@ -20,9 +25,10 @@ export const PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256 = 'f004a9c004d4a91f985c0bc87b76
 export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5';
 export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684';
 export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c';
-export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb';
-export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = '17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15';
-export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
+export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'd5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937';
+export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = '83b33e718297f1a90939e029ddfe407ab6e754b35ac2e5f6a27baf8de0143b18';
+export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e';
+export const ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
 export const ATOMISTIC_SCIENTIFIC_PLAN_SHA256 = 'd3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
 export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
@@ -37,29 +43,113 @@ const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6
 const UPLOAD_ARTIFACT_ACTION = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02';
 const GITHUB_SCRIPT_ACTION = 'actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b';
 
+export const ATOMISTIC_SELECTED_SOURCE_FILES = Object.freeze([
+  Object.freeze({
+    path: '.dockerignore',
+    gitBlobOid: '7dd2587d66b2803b491e281044f90e4f654ab861',
+    mode: '100644',
+    sizeBytes: 338,
+    sha256: 'sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3',
+  }),
+  Object.freeze({
+    path: 'atomistic/containers/mace.Dockerfile',
+    gitBlobOid: '0edc70ad532de4470efff5c170a20f17a94c4847',
+    mode: '100644',
+    sizeBytes: 3338,
+    sha256: 'sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f',
+  }),
+  Object.freeze({
+    path: 'atomistic/containers/mattersim.Dockerfile',
+    gitBlobOid: 'be08afa1d04a4078a559bf2d0eca1bd66eaebb0c',
+    mode: '100644',
+    sizeBytes: 3533,
+    sha256: 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455',
+  }),
+  Object.freeze({
+    path: 'scripts/atomistic/v2/run_model.py',
+    gitBlobOid: '6da2a799a8fcba7ada0c3c3922de03f8fa72807a',
+    mode: '100644',
+    sizeBytes: 35311,
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+  }),
+  Object.freeze({
+    path: 'scripts/atomistic/v2/runtime_contract.py',
+    gitBlobOid: '38a2d2e263d7f25893ec5a79353300ba6ad7eb42',
+    mode: '100644',
+    sizeBytes: 53577,
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+  }),
+]);
+
+export const ATOMISTIC_RUNTIME_MATERIALIZATIONS = Object.freeze([
+  Object.freeze({
+    name: 'run_model.py',
+    sourcePath: 'scripts/atomistic/v2/run_model.py',
+    buildPath: 'scripts/atomistic/run_model.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+    sizeBytes: 35311,
+    mode: '100644',
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+  }),
+  Object.freeze({
+    name: 'runtime_contract.py',
+    sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+    buildPath: 'scripts/atomistic/runtime_contract.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+    sizeBytes: 53577,
+    mode: '100644',
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+  }),
+]);
+
 export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
   'Validate the source run, pull request, and report artifact': 'sha256:8a17fc74830ecdf60a1405e28c47bded14f1221eabc060b96f612fcf7bb30153',
   'Download, bound, and publish the report as inert pull-request data': 'sha256:8f4a717e751b99b5abb603fa72cdcac8d01e4d1e193c3c36da7fb062af455c0a',
 });
 
 const ATOMISTIC_BOOTSTRAP_QUARANTINE_POLICY = Object.freeze({
-  schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.1',
+  schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.2',
   state: 'active',
-  runnerDigest: ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
-  runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
-  runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
-  runtimeLock: Object.freeze({
-    path: 'evaluation/atomistic/runtime-lock.json',
-    rawDigest: `sha256:${ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256}`,
+  enforcementMode: 'deny-quarantined-require-exact-selected/v1',
+  quarantinedRunner: Object.freeze({
+    runnerDigest: ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+    runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
+    runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
+    runtimeLock: Object.freeze({
+      revision: ATOMISTIC_RUNTIME_SOURCE_REVISION,
+      path: 'evaluation/atomistic/runtime-lock.json',
+      rawDigest: `sha256:${ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256}`,
+    }),
+    scientificPlan: Object.freeze({
+      revision: ATOMISTIC_RUNTIME_SOURCE_REVISION,
+      path: 'evaluation/atomistic/reproduction-plan.json',
+      rawDigest: `sha256:${ATOMISTIC_SCIENTIFIC_PLAN_SHA256}`,
+    }),
+    reasonCode: 'contradictory-bootstrap-promotion-claim',
+    reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
+    acceptedReplicaCount: 0,
+    nonRetroactiveRunIds: Object.freeze([33231316217, 33231323492]),
   }),
-  scientificPlan: Object.freeze({
-    path: 'evaluation/atomistic/reproduction-plan.json',
-    rawDigest: `sha256:${ATOMISTIC_SCIENTIFIC_PLAN_SHA256}`,
+  selectedRunner: Object.freeze({
+    implementation: 'tf.atomistic-runner/v2',
+    runnerDigest: ATOMISTIC_BOOTSTRAP_SELECTED_RUNNER_DIGEST,
+    runnerDigestProtocol: 'sha256-canonical-json-sorted-name-standard-container-path-size-sha256/v1',
+    runtimeSourceRevision: ATOMISTIC_RUNTIME_SOURCE_REVISION,
+    sourceDateEpoch: ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH,
+    sourceManifestProtocol: 'sha256-canonical-json-ordered-path-mode-size-sha256/v1',
+    sourceManifestDigest: ATOMISTIC_SOURCE_MANIFEST_DIGEST,
+    sourceFiles: ATOMISTIC_SELECTED_SOURCE_FILES,
+    materializationMethod: 'immutable-git-source-to-isolated-build-context-to-standard-container/v1',
+    materializationProtocol: 'sha256-canonical-json-ordered-runtime-materializations/v1',
+    materializationDigest: ATOMISTIC_MATERIALIZATION_DIGEST,
+    materializations: ATOMISTIC_RUNTIME_MATERIALIZATIONS,
   }),
-  reasonCode: 'contradictory-bootstrap-promotion-claim',
-  reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
-  acceptedReplicaCount: 0,
-  nonRetroactiveRunIds: Object.freeze([33231316217, 33231323492]),
+  claims: Object.freeze({
+    evidenceClass: 'bootstrap-not-reproduced',
+    promotionEligible: false,
+    comparable: false,
+    reproduced: false,
+  }),
 });
 
 // The shell programs are part of the supply-chain policy surface. Binding the
@@ -67,18 +157,18 @@ const ATOMISTIC_BOOTSTRAP_QUARANTINE_POLICY = Object.freeze({
 // networked install/build or broader upload fail until policy and tests are
 // reviewed in the same change.
 export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
-  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:e31033fa1f202aef678cd8a231f3631ed2c01109a94243786d367b8abfa60df1',
-  'Create fresh, model-isolated working directories': 'sha256:6d5ca8c98e1a9fea8634ca7dccc9d8fda9b1a50f8c86e64b3c264a47b4e3655b',
-  'Bind paths and runner constants from the frozen plan': 'sha256:88f341ff777844cda99d3653a5e74f6d528445f5447b77ab69103d3f5b7930a7',
+  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:b0b073809f7ff4489ba86cc089db4dbb5176605d6fe93b7cadde6887187d7fa2',
+  'Create fresh, model-isolated working directories': 'sha256:e675db9b5587d29f8f4409710e6f2f33cfa9e8ec0566e030ed6fb9fdbc3e1a5e',
+  'Bind paths and runner constants from the frozen plan': 'sha256:7982583ba2c8d768bc48f0d9452d98ff57847931413196e1eb2934e78265c333',
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
   'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
   'Download one fresh resolved wheelhouse in the online phase': 'sha256:c2d2f61203b3fc136bc181d27a6dbe83a416b27b78020ebd1a03fbe94cca6ccb',
-  'Resolve an exact lock from the offline wheelhouse': 'sha256:627ac623a63d25e029b6508dd737b0972c1d59651bb73edd4049d8f0e69f6292',
-  'Freeze and verify the exact resolved wheel set': 'sha256:0784f81d971d2cf1f6989ad3de173de4998d3e9de740ba452a498ff81e4164ac',
+  'Resolve an exact lock from the offline wheelhouse': 'sha256:e6a5bc4bd027ebbd8334a2e18cf1a4b3423c7fdd5acdf3c878e3c3cda80eb296',
+  'Freeze and verify the exact resolved wheel set': 'sha256:0b67e4d2273b5d642449486f0629db9b1f714c1f159356eaa0e57e06224dae7c',
   'Prove a cold, hash-locked install with no network': 'sha256:be109a394b3a765414bcf932c12c89edf72435def72704e240cb8a183d113543',
-  'Build the isolated runtime image with no build-step network': 'sha256:72e0cacf3b9ae0cc814483009387eb074ec807a63ba6639c21cd4adf0e300c6d',
-  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:c6e33b9011e31baf81bece08fe74631a30ebb37d2c6c69f537fb055f80ffa5b0',
+  'Build the isolated runtime image with no build-step network': 'sha256:183b00d019e7008ebceea6c4a2559cd4e2dc2f860ce282af077a7c2b8bf4a01b',
+  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:0666e9a43a19387ede8bdeca300b20d9297bc98a99ef8888a91d6d1dfa222c07',
   'Stage only non-promotional bootstrap outputs': 'sha256:1981a130b179eaa43f869306c14ee07c71a2d641c7d0b7e10f319213ed877256',
 });
 
@@ -420,25 +510,54 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
     `sha256:${ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256}`,
     ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+    ATOMISTIC_BOOTSTRAP_SELECTED_RUNNER_DIGEST,
+    ATOMISTIC_RUNTIME_SOURCE_REVISION,
     `sha256:${ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256}`,
+    `sha256:${ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256}`,
     `sha256:${ATOMISTIC_SCIENTIFIC_PLAN_SHA256}`,
-    'readBoundedRegularFile(quarantinePath, 4096)',
+    ATOMISTIC_SOURCE_MANIFEST_DIGEST,
+    ATOMISTIC_MATERIALIZATION_DIGEST,
+    'readBoundedRegularFile(quarantinePath, 16 * 1024)',
+    "GIT_CONFIG_NOSYSTEM: '1'",
+    "GIT_CONFIG_SYSTEM: '/dev/null'",
+    "GIT_CONFIG_GLOBAL: '/dev/null'",
+    "GIT_NO_REPLACE_OBJECTS: '1'",
+    "GIT_OPTIONAL_LOCKS: '0'",
+    "function gitBlobOid(bytes)",
+    'gitBlobOid(bytes) !== match[3]',
+    'const historicLock = readCommitBlob(',
+    'const historicPlan = readCommitBlob(',
+    "currentRuntimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.2'",
+    'currentRuntimeLock.identities?.runnerDigest !== null',
+    'currentRuntimeLock.replication?.observations?.length !== quarantine.quarantinedRunner.acceptedReplicaCount',
+    "currentRuntimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'",
+    'currentRuntimeLock.claims?.promotionEligible !== false',
+    'currentRuntimeLock.claims?.comparable !== false',
+    'currentRuntimeLock.claims?.reproduced !== false',
+    "runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.1'",
     'runtimeLock.identities?.runnerDigest !== null',
-    'runtimeLock.replication?.observations?.length !== quarantine.acceptedReplicaCount',
+    'runtimeLock.replication?.observations?.length !== quarantine.quarantinedRunner.acceptedReplicaCount',
     "runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'",
     'runtimeLock.claims?.promotionEligible !== false',
     'runtimeLock.claims?.comparable !== false',
     'runtimeLock.claims?.reproduced !== false',
     'const lockedRunnerDigest = sha256(Buffer.from(canonicalJson(runnerFiles)',
-    'if (lockedRunnerDigest !== quarantine.runnerDigest)',
+    'if (lockedRunnerDigest !== quarantine.quarantinedRunner.runnerDigest)',
     'Bootstrap quarantine runner identity differs from the reviewed runtime lock',
+    'if (candidateLegacyDigest === quarantine.quarantinedRunner.runnerDigest)',
     'BOOTSTRAP_QUARANTINE_ACTIVE',
     'contradictory-bootstrap-promotion-claim',
     'acceptedReplicaCount=0',
     '33231316217',
     '33231323492',
     'cannot be retroactively accepted',
-  ])) failures.push(`${prefix} guard must fail closed on the exact reviewed R5 runner quarantine after bounded lock and plan validation.`);
+    'candidateSourceManifestDigest === quarantine.selectedRunner.sourceManifestDigest',
+    'candidateMaterializationDigest === quarantine.selectedRunner.materializationDigest',
+    'if (!candidateMappingIsExact || candidateRunnerDigest !== quarantine.selectedRunner.runnerDigest)',
+    'BOOTSTRAP_RUNNER_NOT_SELECTED',
+    ...ATOMISTIC_SELECTED_SOURCE_FILES.flatMap((source) => Object.values(source).map(String)),
+    ...ATOMISTIC_RUNTIME_MATERIALIZATIONS.flatMap((mapping) => Object.values(mapping).map(String)),
+  ])) failures.push(`${prefix} guard must deny legacy R5, admit only the exact P v2 projection, and fail closed on unknown candidates after bounded historical-object verification.`);
 
   const upload = steps.find((step) => step?.name === expectedStepNames.at(-1));
   if (!sameJson(upload, {
@@ -574,6 +693,8 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     '"${derived_arguments[@]}"',
     ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
     'scripts/atomistic/runtime-input-contract.mjs write-new',
+    '--runner-source-root "$RUNTIME_SOURCE_ROOT"',
+    '--runner-build-root "$BUILD_CONTEXT"',
     '--runtime-source-revision "$RUNTIME_SOURCE_REVISION"',
     '--source-date-epoch "$SOURCE_DATE_EPOCH"',
     '--output "$runtime_input_manifest"',
@@ -582,22 +703,53 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   const bind = runSteps.get('Bind paths and runner constants from the frozen plan')?.run ?? '';
   if (!hasAll(bind, [
     ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256,
+    ATOMISTIC_RUNTIME_SOURCE_REVISION,
+    String(ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH),
+    ATOMISTIC_SOURCE_MANIFEST_DIGEST,
+    ATOMISTIC_MATERIALIZATION_DIGEST,
     "runtimeLock.state !== 'discovery-not-frozen'",
-    'runtimeLock.runtimeSource.files',
+    "runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.2'",
+    'runtimeLock.runtimeSource?.runtimeSourceRevision !== expectedRuntimeSourceRevision',
+    'canonicalJson(runtimeLock.runtimeSource?.files)',
+    'canonicalJson(runtimeLock.runtimeSource?.materializations)',
+    'runtimeLock.claims?.promotionEligible !== false',
+    'runtimeLock.claims?.comparable !== false',
+    'runtimeLock.claims?.reproduced !== false',
     "execFileSync('git', ['cat-file', '-e'",
     "execFileSync('git', ['merge-base', '--is-ancestor'",
-    "['diff', '--quiet', runtimeLock.runtimeSource.revision",
-    'RUNTIME_SOURCE_REVISION: runtimeLock.runtimeSource.revision',
-    'SOURCE_DATE_EPOCH: String(runtimeLock.runtimeSource.commitTimestamp)',
-  ])) failures.push(`${prefix} runtime discovery binding must verify the exact lock, R5 Git object ancestry, timestamp and bounded source bytes.`);
+    "GIT_CONFIG_NOSYSTEM: '1'",
+    "GIT_CONFIG_SYSTEM: '/dev/null'",
+    "GIT_CONFIG_GLOBAL: '/dev/null'",
+    "GIT_NO_REPLACE_OBJECTS: '1'",
+    'gitBlobOid(bytes) !== source.gitBlobOid',
+    'const runtimeSourceRoot = realpathSync(process.env.RUNTIME_SOURCE_ROOT)',
+    'const buildContext = realpathSync(process.env.BUILD_CONTEXT)',
+    "throw new Error('Runtime source and build roots must be disjoint.')",
+    'writeExclusiveRegular(runtimeSourceRoot, source.path, bytes, source.sha256)',
+    'writeExclusiveRegular(buildContext, buildPath, sourceBytes.get(source.path), source.sha256)',
+    'readBoundedRegularFile(target, bytes.length, 0o444)',
+    "'.dockerignore'",
+    '`atomistic/containers/${process.env.MODEL}.Dockerfile`',
+    'sourceBytes.size !== 5 || selectedBuildSources.size !== 4 || buildPaths.size !== 4',
+    'RUNTIME_SOURCE_REVISION: expectedRuntimeSourceRevision',
+    'SOURCE_DATE_EPOCH: String(expectedSourceDateEpoch)',
+    ...ATOMISTIC_SELECTED_SOURCE_FILES.flatMap((source) => Object.values(source).map(String)),
+    ...ATOMISTIC_RUNTIME_MATERIALIZATIONS.flatMap((mapping) => Object.values(mapping).map(String)),
+  ])
+      || bind.includes('$GITHUB_WORKSPACE/scripts/atomistic/run_model.py')
+      || bind.includes('$GITHUB_WORKSPACE/scripts/atomistic/runtime_contract.py')) {
+    failures.push(`${prefix} runtime binding must verify and materialize the exact five P blobs into disjoint read-only roots without reading or overwriting tracked R5 paths.`);
+  }
   const directories = runSteps.get('Create fresh, model-isolated working directories')?.run ?? '';
   if (!hasAll(directories, [
     'test -n "${RUNNER_TEMP:-}"',
     'test ! -L "$RUNNER_TEMP"',
     'publish_dir="$RUNNER_TEMP/tailing-atomistic-publish/$MODEL"',
-    '"$output_dir" "$publish_dir"',
+    'runtime_source_root="$task_root/runtime-source"',
+    '"$structure_dir" "$inference_input_dir" "$runtime_source_root" "$build_context"',
+    'echo "RUNTIME_SOURCE_ROOT=$runtime_source_root"',
     'echo "PUBLISH_DIR=$publish_dir"',
-  ])) failures.push(`${prefix} publish root must be derived from the trusted runner temp inside the first shell step.`);
+  ])) failures.push(`${prefix} publish and isolated runtime-source roots must be derived from the trusted runner temp inside the first shell step.`);
   const build = runSteps.get('Build the isolated runtime image with no build-step network')?.run ?? '';
   if (!hasAll(build, [
     'docker buildx build',
@@ -613,6 +765,8 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
     'scripts/atomistic/runtime-input-contract.mjs verify-exact',
     'runtime-inputs.build-context.verify.json',
+    '--runner-source-root "$RUNTIME_SOURCE_ROOT"',
+    '--runner-build-root "$BUILD_CONTEXT"',
     ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256,
     'scripts/atomistic/write-container-observation.mjs write-new',
     'scripts/atomistic/write-container-observation.mjs verify-exact',
@@ -625,10 +779,37 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     "versions.pymatgen !== '2025.4.17'",
     "versions['pymatgen-io-validation'] !== '0.1.2'",
     "Object.hasOwn(versions, 'pymatgen-core')",
+    'test -f "$BUILD_CONTEXT/.dockerignore"',
+    'test -f "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile"',
+    'test "$(stat -c \'%a\' "$materialized")" = 444',
+    "'./.dockerignore'",
+    '"./atomistic/containers/$MODEL.Dockerfile"',
+    '"./atomistic/locks/$MODEL.requirements.lock"',
+    "'./scripts/atomistic/run_model.py'",
+    "'./scripts/atomistic/runtime_contract.py'",
+    'test "$actual_context_files" = "$expected_context_files"',
     ...inventoryVerifierFragments,
   ])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline, bound to the private wheelhouse and to the exact startup-hook removal plan.`);
   const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';
-  if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--pids-limit=256', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
+  const inferenceEnvironmentFlags = inference.match(/--env\s+"[^"]+"/g) ?? [];
+  if (!hasAll(inference, [
+    'docker run --rm --platform=linux/amd64',
+    '--network=none',
+    '--read-only',
+    '--user=65532:65532',
+    '--cap-drop=ALL',
+    '--security-opt=no-new-privileges=true',
+    '--pids-limit=256',
+    '--mode smoke',
+    '--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA"',
+    '--env "TAILING_ATOMISTIC_RUNTIME_SOURCE_REVISION=$RUNTIME_SOURCE_REVISION"',
+    '--env "TAILING_ATOMISTIC_DOCKER_LOCAL_CONFIG_IMAGE_ID=$DOCKER_LOCAL_CONFIG_IMAGE_ID"',
+  ])
+      || inferenceEnvironmentFlags.length !== 3
+      || inference.includes('TAILING_ATOMISTIC_CONTAINER_DIGEST')
+      || inference.includes('--env "GITHUB_SHA=')) {
+    failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox with only the three reviewed provenance variables.`);
+  }
   const staging = runSteps.get('Stage only non-promotional bootstrap outputs')?.run ?? '';
   if (!hasAll(staging, [
     'scripts/atomistic/write_bootstrap_outcome.py',

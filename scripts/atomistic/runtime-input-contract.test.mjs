@@ -1,16 +1,24 @@
-import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { chmod, link, mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   PINNED_DOCKERFILE_FRONTEND,
+  PINNED_RUNTIME_SOURCE_DATE_EPOCH,
+  PINNED_RUNTIME_SOURCE_REVISION,
+  RUNNER_IDENTITY_IMPLEMENTATION,
+  RUNNER_MATERIALIZATION,
+  RUNNER_MATERIALIZATION_PROTOCOL,
+  RUNNER_STAGED_FILE_MODE,
+  RUNTIME_INPUT_CLAIMS,
+  assertNoPositivePromotionClaims,
   buildRuntimeInputManifest,
   canonicalJson,
   canonicalJsonBytes,
   expectedDependencyLockBytes,
+  readRunnerMaterialization,
   runnerIdentity,
   sha256,
 } from './runtime-input-contract.mjs';
@@ -28,7 +36,15 @@ const DIGESTS = Object.freeze({
   derivedManifest: `sha256:${'a'.repeat(64)}`,
   derivedSource: `sha256:${'b'.repeat(64)}`,
 });
-const SOURCE_REVISION = '9a67f4509588d242838c736a580b6ec5badc18f9';
+const SOURCE_REVISION = PINNED_RUNTIME_SOURCE_REVISION;
+const SOURCE_DATE_EPOCH = PINNED_RUNTIME_SOURCE_DATE_EPOCH;
+const RUN_MODEL_BYTES = await readFile(new URL('./v2/run_model.py', import.meta.url));
+const RUNTIME_CONTRACT_BYTES = await readFile(new URL('./v2/runtime_contract.py', import.meta.url));
+const EXPECTED_RUNNER_DIGEST = 'sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4';
+const EXPECTED_RUNNER_FILES = RUNNER_MATERIALIZATION.map(({
+  name, standardContainerPath, sizeBytes, sha256: digest,
+}) => ({ name, standardContainerPath, sizeBytes, sha256: digest }));
+const EXPECTED_MATERIALIZATION_DIGEST = sha256(Buffer.from(canonicalJson(RUNNER_MATERIALIZATION), 'utf8'));
 
 function wheel(model) {
   const hostlist = model === 'mace';
@@ -122,10 +138,10 @@ function makeFixture(model = 'mattersim') {
     ].join('\n')),
     dockerignoreBytes: dockerignore(model),
     dependencyLockBytes: resolved.lock,
-    runModelBytes: Buffer.from('"""fixture runner"""\n'),
-    runtimeContractBytes: Buffer.from('"""fixture contract"""\n'),
+    runModelBytes: Buffer.from(RUN_MODEL_BYTES),
+    runtimeContractBytes: Buffer.from(RUNTIME_CONTRACT_BYTES),
     runtimeSourceRevision: SOURCE_REVISION,
-    sourceDateEpoch: '1756467619',
+    sourceDateEpoch: String(SOURCE_DATE_EPOCH),
   };
 }
 
@@ -144,6 +160,28 @@ function refreshLock(fixture, manifest) {
   return replaceWheelhouse(fixture, manifest);
 }
 
+async function writeRunnerTrees(parent) {
+  const sourceRoot = path.join(parent, 'source-root');
+  const buildRoot = path.join(parent, 'build-root');
+  await Promise.all([
+    mkdir(path.join(sourceRoot, 'scripts/atomistic/v2'), { recursive: true }),
+    mkdir(path.join(buildRoot, 'scripts/atomistic'), { recursive: true }),
+  ]);
+  await Promise.all([
+    writeFile(path.join(sourceRoot, 'scripts/atomistic/v2/run_model.py'), RUN_MODEL_BYTES),
+    writeFile(path.join(sourceRoot, 'scripts/atomistic/v2/runtime_contract.py'), RUNTIME_CONTRACT_BYTES),
+    writeFile(path.join(buildRoot, 'scripts/atomistic/run_model.py'), RUN_MODEL_BYTES),
+    writeFile(path.join(buildRoot, 'scripts/atomistic/runtime_contract.py'), RUNTIME_CONTRACT_BYTES),
+  ]);
+  await Promise.all([
+    chmod(path.join(sourceRoot, 'scripts/atomistic/v2/run_model.py'), 0o444),
+    chmod(path.join(sourceRoot, 'scripts/atomistic/v2/runtime_contract.py'), 0o444),
+    chmod(path.join(buildRoot, 'scripts/atomistic/run_model.py'), 0o444),
+    chmod(path.join(buildRoot, 'scripts/atomistic/runtime_contract.py'), 0o444),
+  ]);
+  return { sourceRoot, buildRoot };
+}
+
 describe('canonical atomistic runtime-input contract', () => {
   it('is deterministic across repeated construction and wheelhouse object-key order', () => {
     const fixture = makeFixture();
@@ -155,9 +193,15 @@ describe('canonical atomistic runtime-input contract', () => {
     expect(first.bytes.subarray(0, -1).includes(0x0a)).toBe(false);
     expect(first.manifest).not.toHaveProperty('fileDigest');
     expect(first.manifest).toMatchObject({
-      schemaVersion: 'tf.atomistic-runtime-inputs/0.1',
+      schemaVersion: 'tf.atomistic-runtime-inputs/0.2',
       platform: 'linux/amd64',
-      runtimeSource: { revision: SOURCE_REVISION, sourceDateEpoch: 1756467619 },
+      runtimeSource: {
+        runtimeSourceRevision: SOURCE_REVISION,
+        sourceDateEpoch: SOURCE_DATE_EPOCH,
+        materializationProtocol: RUNNER_MATERIALIZATION_PROTOCOL,
+        materializationDigest: EXPECTED_MATERIALIZATION_DIGEST,
+        materializations: RUNNER_MATERIALIZATION,
+      },
       baseImage: {
         indexDigest: DIGESTS.baseIndex,
         platformManifestDigest: DIGESTS.baseAmd64,
@@ -170,6 +214,12 @@ describe('canonical atomistic runtime-input contract', () => {
         build: { cache: 'disabled', network: 'none', provenance: 'disabled', sbom: 'disabled' },
         runtime: { network: 'none', rootFilesystem: 'read-only' },
       },
+      claims: RUNTIME_INPUT_CLAIMS,
+    });
+    expect(first.manifest.buildInputs.runner).toEqual({
+      implementation: RUNNER_IDENTITY_IMPLEMENTATION,
+      files: EXPECTED_RUNNER_FILES,
+      digest: EXPECTED_RUNNER_DIGEST,
     });
 
     const manifest = decodeWheelhouse(fixture);
@@ -192,7 +242,7 @@ describe('canonical atomistic runtime-input contract', () => {
     expect(changed.manifest.buildInputs.wheelhouse).not.toHaveProperty('resolverRuntime');
   });
 
-  it('changes identity for every independent build-relevant input class', () => {
+  it('changes identity for every independently variable build-relevant input class', () => {
     const baseline = buildRuntimeInputManifest(makeFixture()).fileDigest;
     const cases = [];
 
@@ -207,22 +257,6 @@ describe('canonical atomistic runtime-input contract', () => {
     const ignore = makeFixture();
     ignore.dockerignoreBytes = Buffer.concat([ignore.dockerignoreBytes, Buffer.from('!extra-reviewed-input/\n')]);
     cases.push(['dockerignore bytes', ignore]);
-
-    const runModel = makeFixture();
-    runModel.runModelBytes = Buffer.concat([runModel.runModelBytes, Buffer.from('# runner change\n')]);
-    cases.push(['run_model.py bytes', runModel]);
-
-    const runtimeContract = makeFixture();
-    runtimeContract.runtimeContractBytes = Buffer.concat([runtimeContract.runtimeContractBytes, Buffer.from('# contract change\n')]);
-    cases.push(['runtime_contract.py bytes', runtimeContract]);
-
-    const revision = makeFixture();
-    revision.runtimeSourceRevision = 'e'.repeat(40);
-    cases.push(['runtime source revision', revision]);
-
-    const epoch = makeFixture();
-    epoch.sourceDateEpoch = '1756467620';
-    cases.push(['source date epoch', epoch]);
 
     for (const [label, mutate] of [
       ['base image index digest', (manifest) => { manifest.baseImage = `python:3.12.13-slim-bookworm@sha256:${'e'.repeat(64)}`; }],
@@ -326,41 +360,55 @@ describe('canonical atomistic runtime-input contract', () => {
     expect(() => buildRuntimeInputManifest(replaceWheelhouse(missingDerived, missingDerivedManifest))).toThrow(/derivedWheelProvenance/);
 
     expect(() => buildRuntimeInputManifest({ ...makeFixture(), runtimeSourceRevision: 'abc123' })).toThrow(/40-hex/);
-    expect(() => buildRuntimeInputManifest({ ...makeFixture(), sourceDateEpoch: '01756467619' })).toThrow(/canonical/);
+    expect(() => buildRuntimeInputManifest({ ...makeFixture(), runtimeSourceRevision: 'e'.repeat(40) })).toThrow(/immutable P revision/);
+    expect(() => buildRuntimeInputManifest({ ...makeFixture(), sourceDateEpoch: `0${SOURCE_DATE_EPOCH}` })).toThrow(/canonical/);
+    expect(() => buildRuntimeInputManifest({ ...makeFixture(), sourceDateEpoch: String(SOURCE_DATE_EPOCH + 1) })).toThrow(/immutable P commit timestamp/);
+
+    const changedRunModel = makeFixture();
+    changedRunModel.runModelBytes = Buffer.concat([changedRunModel.runModelBytes, Buffer.from('# drift\n')]);
+    expect(() => buildRuntimeInputManifest(changedRunModel)).toThrow(/immutable P runtime-source identity/);
+    const changedRuntimeContract = makeFixture();
+    changedRuntimeContract.runtimeContractBytes = Buffer.concat([changedRuntimeContract.runtimeContractBytes, Buffer.from('# drift\n')]);
+    expect(() => buildRuntimeInputManifest(changedRuntimeContract)).toThrow(/immutable P runtime-source identity/);
   });
 
-  it('matches Python sha256_json(files) semantics for checked-in runner sources', async () => {
-    const runModelBytes = await readFile(new URL('./run_model.py', import.meta.url));
-    const runtimeContractBytes = await readFile(new URL('./runtime_contract.py', import.meta.url));
-    const identity = runnerIdentity(runModelBytes, runtimeContractBytes);
-    const manualFiles = [
-      { name: 'run_model.py', sha256: `sha256:${createHash('sha256').update(runModelBytes).digest('hex')}` },
-      { name: 'runtime_contract.py', sha256: `sha256:${createHash('sha256').update(runtimeContractBytes).digest('hex')}` },
-    ].sort((left, right) => left.name.localeCompare(right.name));
-    const manualRunner = `sha256:${createHash('sha256').update(canonicalJson(manualFiles), 'utf8').digest('hex')}`;
-    expect(identity.files).toEqual(manualFiles);
-    expect(identity.digest).toBe(manualRunner);
+  it('matches the immutable v2 self identity and hashes only its ordered container projection', () => {
+    const identity = runnerIdentity(RUN_MODEL_BYTES, RUNTIME_CONTRACT_BYTES);
+    expect(identity.digest).toBe(sha256(Buffer.from(canonicalJson(identity.files), 'utf8')));
+    expect(identity.files.every((file) => !Object.hasOwn(file, 'sourcePath') && !Object.hasOwn(file, 'buildPath'))).toBe(true);
     expect(identity).toEqual({
-      files: [
-        { name: 'run_model.py', sha256: 'sha256:82704e552e7d5f0a2cdbb0603676429931997653568db70ab016533690c2efd8' },
-        { name: 'runtime_contract.py', sha256: 'sha256:d1d94c6ee1b256a16c485e1760ea13ebddf24ef0e34ccde7d3682b9c9ceecc61' },
-      ],
-      digest: 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c',
+      implementation: 'tf.atomistic-runner/v2',
+      files: EXPECTED_RUNNER_FILES,
+      digest: EXPECTED_RUNNER_DIGEST,
     });
+  });
+
+  it('recursively requires every final-manifest promotion claim to be exactly false', () => {
+    const manifest = buildRuntimeInputManifest(makeFixture()).manifest;
+    expect(() => assertNoPositivePromotionClaims(manifest)).not.toThrow();
+    for (const key of ['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']) {
+      for (const value of [true, null, 0, 'false']) {
+        const candidate = structuredClone(manifest);
+        candidate.buildInputs.dockerfile.nestedClaim = [{ [key]: value }];
+        expect(
+          () => assertNoPositivePromotionClaims(candidate),
+          `${key}=${String(value)}`,
+        ).toThrow(/must be exactly false/);
+      }
+    }
   });
 
   it('writes a new exact file, refuses overwrite, and verifies exact canonical bytes', async () => {
     const temporary = await realpath(await mkdtemp(path.join(os.tmpdir(), 'tailing-runtime-input-')));
     try {
       const fixture = makeFixture();
+      const runnerRoots = await writeRunnerTrees(temporary);
       const paths = {
         plan: path.join(temporary, 'reproduction-plan.json'),
         wheelhouseManifest: path.join(temporary, 'mattersim.wheelhouse.manifest.json'),
         dockerfile: path.join(temporary, 'mattersim.Dockerfile'),
         dockerignore: path.join(temporary, '.dockerignore'),
         dependencyLock: path.join(temporary, 'mattersim.requirements.lock'),
-        runModel: path.join(temporary, 'run_model.py'),
-        runtimeContract: path.join(temporary, 'runtime_contract.py'),
         output: path.join(temporary, 'mattersim.runtime-inputs.json'),
       };
       await mkdir(temporary, { recursive: true });
@@ -370,8 +418,6 @@ describe('canonical atomistic runtime-input contract', () => {
         writeFile(paths.dockerfile, fixture.dockerfileBytes),
         writeFile(paths.dockerignore, fixture.dockerignoreBytes),
         writeFile(paths.dependencyLock, fixture.dependencyLockBytes),
-        writeFile(paths.runModel, fixture.runModelBytes),
-        writeFile(paths.runtimeContract, fixture.runtimeContractBytes),
       ]);
       const cliPath = fileURLToPath(new URL('./runtime-input-contract.mjs', import.meta.url));
       const args = [
@@ -381,10 +427,10 @@ describe('canonical atomistic runtime-input contract', () => {
         '--dockerfile', paths.dockerfile,
         '--dockerignore', paths.dockerignore,
         '--dependency-lock', paths.dependencyLock,
-        '--run-model', paths.runModel,
-        '--runtime-contract', paths.runtimeContract,
+        '--runner-source-root', runnerRoots.sourceRoot,
+        '--runner-build-root', runnerRoots.buildRoot,
         '--runtime-source-revision', SOURCE_REVISION,
-        '--source-date-epoch', '1756467619',
+        '--source-date-epoch', String(SOURCE_DATE_EPOCH),
         '--output', paths.output,
       ];
       const written = spawnSync(process.execPath, [cliPath, 'write-new', ...args], { encoding: 'utf8' });
@@ -393,7 +439,7 @@ describe('canonical atomistic runtime-input contract', () => {
       const summary = JSON.parse(written.stdout);
       const outputBytes = await readFile(paths.output);
       expect(summary.fileDigest).toBe(sha256(outputBytes));
-      expect(summary.runnerDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+      expect(summary.runnerDigest).toBe(EXPECTED_RUNNER_DIGEST);
 
       const overwrite = spawnSync(process.execPath, [cliPath, 'write-new', ...args], { encoding: 'utf8' });
       expect(overwrite.status).not.toBe(0);
@@ -406,6 +452,62 @@ describe('canonical atomistic runtime-input contract', () => {
       const drifted = spawnSync(process.execPath, [cliPath, 'verify-exact', ...args], { encoding: 'utf8' });
       expect(drifted.status).not.toBe(0);
       expect(drifted.stderr).toMatch(/differs from the exact canonical contract/);
+    } finally {
+      await rm(temporary, { recursive: true, force: true });
+    }
+  });
+
+  it('fail-closes runner materialization drift, aliases, and legacy tracked-R5 CLI inputs', async () => {
+    const temporary = await realpath(await mkdtemp(path.join(os.tmpdir(), 'tailing-runner-materialization-')));
+    try {
+      const exact = await writeRunnerTrees(path.join(temporary, 'exact'));
+      const read = await readRunnerMaterialization(exact.sourceRoot, exact.buildRoot);
+      expect(read.runModelBytes).toEqual(RUN_MODEL_BYTES);
+      expect(read.runtimeContractBytes).toEqual(RUNTIME_CONTRACT_BYTES);
+
+      const sourceDrift = await writeRunnerTrees(path.join(temporary, 'source-drift'));
+      const sourceDriftPath = path.join(sourceDrift.sourceRoot, 'scripts/atomistic/v2/run_model.py');
+      await chmod(sourceDriftPath, 0o644);
+      await writeFile(sourceDriftPath, Buffer.concat([RUN_MODEL_BYTES, Buffer.from('# drift\n')]));
+      await chmod(sourceDriftPath, 0o444);
+      await expect(readRunnerMaterialization(sourceDrift.sourceRoot, sourceDrift.buildRoot)).rejects.toThrow(/runtime source.*immutable P/);
+
+      const buildDrift = await writeRunnerTrees(path.join(temporary, 'build-drift'));
+      const buildDriftPath = path.join(buildDrift.buildRoot, 'scripts/atomistic/runtime_contract.py');
+      await chmod(buildDriftPath, 0o644);
+      await writeFile(buildDriftPath, Buffer.concat([RUNTIME_CONTRACT_BYTES, Buffer.from('# drift\n')]));
+      await chmod(buildDriftPath, 0o444);
+      await expect(readRunnerMaterialization(buildDrift.sourceRoot, buildDrift.buildRoot)).rejects.toThrow(/materialized runner.*immutable P/);
+
+      await expect(readRunnerMaterialization(exact.sourceRoot, exact.sourceRoot)).rejects.toThrow(/disjoint/);
+      await expect(readRunnerMaterialization(path.dirname(exact.sourceRoot), exact.sourceRoot)).rejects.toThrow(/disjoint/);
+
+      const symlinked = await writeRunnerTrees(path.join(temporary, 'symlinked'));
+      const symlinkTarget = path.join(symlinked.buildRoot, 'scripts/atomistic/run_model.real.py');
+      const symlinkPath = path.join(symlinked.buildRoot, 'scripts/atomistic/run_model.py');
+      await rm(symlinkPath);
+      await writeFile(symlinkTarget, RUN_MODEL_BYTES);
+      await symlink(symlinkTarget, symlinkPath);
+      await expect(readRunnerMaterialization(symlinked.sourceRoot, symlinked.buildRoot)).rejects.toThrow(/canonical|symlink/);
+
+      const hardlinked = await writeRunnerTrees(path.join(temporary, 'hardlinked'));
+      const extraLink = path.join(hardlinked.buildRoot, 'scripts/atomistic/run_model.link.py');
+      await link(path.join(hardlinked.buildRoot, 'scripts/atomistic/run_model.py'), extraLink);
+      await expect(readRunnerMaterialization(hardlinked.sourceRoot, hardlinked.buildRoot)).rejects.toThrow(/single-link/);
+
+      expect(RUNNER_STAGED_FILE_MODE).toBe('100444');
+      const writableMode = await writeRunnerTrees(path.join(temporary, 'writable-mode'));
+      await chmod(path.join(writableMode.buildRoot, 'scripts/atomistic/run_model.py'), 0o644);
+      await expect(readRunnerMaterialization(writableMode.sourceRoot, writableMode.buildRoot)).rejects.toThrow(/runtime mode must be exactly 100444/);
+
+      const groupUnreadableMode = await writeRunnerTrees(path.join(temporary, 'group-unreadable-mode'));
+      await chmod(path.join(groupUnreadableMode.sourceRoot, 'scripts/atomistic/v2/runtime_contract.py'), 0o440);
+      await expect(readRunnerMaterialization(groupUnreadableMode.sourceRoot, groupUnreadableMode.buildRoot)).rejects.toThrow(/runtime mode must be exactly 100444/);
+
+      const cliPath = fileURLToPath(new URL('./runtime-input-contract.mjs', import.meta.url));
+      const legacy = spawnSync(process.execPath, [cliPath, 'write-new', '--run-model', path.join(temporary, 'run_model.py')], { encoding: 'utf8' });
+      expect(legacy.status).not.toBe(0);
+      expect(legacy.stderr).toMatch(/unknown.*--run-model/);
     } finally {
       await rm(temporary, { recursive: true, force: true });
     }

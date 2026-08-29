@@ -7,7 +7,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const CONTAINER_OBSERVATION_SCHEMA_VERSION = 'tf.atomistic-container-observation/0.2';
-export const RUNTIME_INPUT_SCHEMA_VERSION = 'tf.atomistic-runtime-inputs/0.1';
+export const RUNTIME_INPUT_SCHEMA_VERSION = 'tf.atomistic-runtime-inputs/0.2';
 export const RUNTIME_PLATFORM = 'linux/amd64';
 export const EVIDENCE_CLASS = 'bootstrap-not-reproduced';
 export const RUN_SPECIFIC_SEMANTICS = 'run-specific-diagnostics-not-promotion-trust-roots/v1';
@@ -123,6 +123,7 @@ const ROOTFS_KEYS = Object.freeze(['Layers', 'Type']);
 const RUNTIME_INPUT_KEYS = Object.freeze([
   'baseImage',
   'buildInputs',
+  'claims',
   'dockerfileFrontend',
   'model',
   'modelId',
@@ -132,7 +133,56 @@ const RUNTIME_INPUT_KEYS = Object.freeze([
   'schemaVersion',
   'scientificPlan',
 ]);
-const RUNTIME_SOURCE_KEYS = Object.freeze(['revision', 'sourceDateEpoch']);
+const RUNTIME_SOURCE_KEYS = Object.freeze([
+  'materializationDigest',
+  'materializationProtocol',
+  'materializations',
+  'runtimeSourceRevision',
+  'sourceDateEpoch',
+]);
+const PINNED_RUNTIME_SOURCE_REVISION = 'f861b3e30572f1db366554a2e330d5d6c78bdb56';
+const PINNED_RUNTIME_SOURCE_DATE_EPOCH = 1_787_977_543;
+const RUNNER_MATERIALIZATION_PROTOCOL = 'sha256-canonical-json-ordered-runtime-materializations/v1';
+const RUNNER_MATERIALIZATIONS = Object.freeze([
+  Object.freeze({
+    name: 'run_model.py',
+    sourcePath: 'scripts/atomistic/v2/run_model.py',
+    buildPath: 'scripts/atomistic/run_model.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+    sizeBytes: 35_311,
+    mode: '100644',
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+  }),
+  Object.freeze({
+    name: 'runtime_contract.py',
+    sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+    buildPath: 'scripts/atomistic/runtime_contract.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+    sizeBytes: 53_577,
+    mode: '100644',
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+  }),
+]);
+const RUNNER_FILES = Object.freeze(RUNNER_MATERIALIZATIONS.map(({
+  name, standardContainerPath, sizeBytes, sha256: digest,
+}) => Object.freeze({ name, standardContainerPath, sizeBytes, sha256: digest })));
+const RUNNER_IDENTITY = Object.freeze({
+  implementation: 'tf.atomistic-runner/v2',
+  files: RUNNER_FILES,
+  digest: 'sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4',
+});
+const RUNTIME_INPUT_CLAIMS = Object.freeze({
+  evidenceClass: 'discovery-only-not-reproduced',
+  promotionEligible: false,
+  comparable: false,
+  reproduced: false,
+});
+const NON_PROMOTIONAL_BOOLEAN_KEYS = new Set([
+  'promotionEligible',
+  'promotionTrustRoot',
+  'comparable',
+  'reproduced',
+]);
 const MAX_INPUT_BYTES = Object.freeze({
   runtimeInputManifest: 100_000_000,
   buildxMetadata: 5_000_000,
@@ -400,15 +450,47 @@ export async function runCli(argv = process.argv.slice(2)) {
 
 function validateRuntimeInputManifest(manifest, rawBytes, model, revision, epoch) {
   requireExactKeys(manifest, RUNTIME_INPUT_KEYS, 'runtime-input manifest');
+  assertNoPositivePromotionClaims(manifest, 'runtime-input manifest');
   if (manifest.schemaVersion !== RUNTIME_INPUT_SCHEMA_VERSION) throw new TypeError('runtime-input manifest schemaVersion is unsupported');
   if (manifest.model !== model || manifest.modelId !== MODEL_IDS[model]) throw new TypeError('runtime-input manifest model identity differs from the selected model');
   if (manifest.platform !== RUNTIME_PLATFORM) throw new TypeError(`runtime-input manifest platform must be ${RUNTIME_PLATFORM}`);
   requireExactKeys(manifest.runtimeSource, RUNTIME_SOURCE_KEYS, 'runtime-input manifest runtimeSource');
-  if (manifest.runtimeSource.revision !== revision) throw new TypeError('runtime-input manifest revision differs from the protected runtime source revision');
-  if (manifest.runtimeSource.sourceDateEpoch !== epoch) throw new TypeError('runtime-input manifest sourceDateEpoch differs from the selected epoch');
+  if (manifest.runtimeSource.runtimeSourceRevision !== revision
+      || manifest.runtimeSource.runtimeSourceRevision !== PINNED_RUNTIME_SOURCE_REVISION) {
+    throw new TypeError('runtime-input manifest revision differs from immutable P and the protected runtime source revision');
+  }
+  if (manifest.runtimeSource.sourceDateEpoch !== epoch
+      || manifest.runtimeSource.sourceDateEpoch !== PINNED_RUNTIME_SOURCE_DATE_EPOCH) {
+    throw new TypeError('runtime-input manifest sourceDateEpoch differs from immutable P and the selected epoch');
+  }
+  if (manifest.runtimeSource.materializationProtocol !== RUNNER_MATERIALIZATION_PROTOCOL) {
+    throw new TypeError('runtime-input manifest materializationProtocol is unsupported');
+  }
+  const actualMaterializations = manifest.runtimeSource.materializations;
+  if (canonicalJson(actualMaterializations) !== canonicalJson(RUNNER_MATERIALIZATIONS)) {
+    throw new TypeError('runtime-input manifest materializations differ from the exact immutable P source-to-build mapping');
+  }
+  const actualMaterializationDigest = sha256(Buffer.from(canonicalJson(actualMaterializations), 'utf8'));
+  if (manifest.runtimeSource.materializationDigest !== actualMaterializationDigest) {
+    throw new TypeError('runtime-input manifest materializationDigest differs from its ordered materializations');
+  }
   requireJsonTree(manifest.scientificPlan, 'runtime-input manifest scientificPlan');
   requireJsonTree(manifest.baseImage, 'runtime-input manifest baseImage');
   requireJsonTree(manifest.buildInputs, 'runtime-input manifest buildInputs');
+  requireExactKeys(manifest.buildInputs.runner, ['digest', 'files', 'implementation'], 'runtime-input manifest buildInputs.runner');
+  if (manifest.buildInputs.runner.implementation !== RUNNER_IDENTITY.implementation) {
+    throw new TypeError('runtime-input manifest runner implementation is unsupported');
+  }
+  if (canonicalJson(manifest.buildInputs.runner.files) !== canonicalJson(RUNNER_FILES)) {
+    throw new TypeError('runtime-input manifest runner files differ from the exact v2 container projection');
+  }
+  const actualRunnerDigest = sha256(Buffer.from(canonicalJson(manifest.buildInputs.runner.files), 'utf8'));
+  if (manifest.buildInputs.runner.digest !== actualRunnerDigest || actualRunnerDigest !== RUNNER_IDENTITY.digest) {
+    throw new TypeError('runtime-input manifest runner digest differs from the ordered v2 container projection');
+  }
+  if (canonicalJson(manifest.claims) !== canonicalJson(RUNTIME_INPUT_CLAIMS)) {
+    throw new TypeError('runtime-input manifest claims must remain discovery-only and non-promotional');
+  }
   requireAllDigestClaims(manifest, 'runtime-input manifest');
   requireExactKeys(manifest.dockerfileFrontend, ['manifestDigest', 'reference'], 'runtime-input manifest dockerfileFrontend');
   requireBoundedString(manifest.dockerfileFrontend.reference, 'runtime-input manifest dockerfileFrontend.reference');
@@ -430,6 +512,25 @@ function validateRuntimeInputManifest(manifest, rawBytes, model, revision, epoch
   if (canonicalJson(manifest.policy) !== canonicalJson(expectedPolicy)) throw new TypeError('runtime-input manifest policy differs from the reviewed offline build/runtime policy');
   const canonical = canonicalJsonBytes(manifest);
   if (!Buffer.from(rawBytes).equals(canonical)) throw new TypeError('runtime-input manifest must use exact canonical JSON plus one LF');
+}
+
+function assertNoPositivePromotionClaims(value, label, depth = 0, seen = new WeakSet()) {
+  if (depth > 64) throw new TypeError(`${label} exceeds the supported promotion-claim nesting depth`);
+  if (value === null || typeof value !== 'object') return;
+  if (seen.has(value)) throw new TypeError(`${label} contains a cyclic promotion-claim surface`);
+  seen.add(value);
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => assertNoPositivePromotionClaims(entry, `${label}[${index}]`, depth + 1, seen));
+  } else {
+    for (const [key, entry] of Object.entries(value)) {
+      const childLabel = `${label}.${key}`;
+      if (NON_PROMOTIONAL_BOOLEAN_KEYS.has(key) && entry !== false) {
+        throw new TypeError(`${childLabel} must be exactly false in non-promotional runtime inputs`);
+      }
+      assertNoPositivePromotionClaims(entry, childLabel, depth + 1, seen);
+    }
+  }
+  seen.delete(value);
 }
 
 function validateBuildxMetadata(metadata, epoch, model, workflowRevision) {

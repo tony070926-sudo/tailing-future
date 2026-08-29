@@ -6,10 +6,50 @@ import { lstat, open, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const RUNTIME_INPUT_SCHEMA_VERSION = 'tf.atomistic-runtime-inputs/0.1';
+export const RUNTIME_INPUT_SCHEMA_VERSION = 'tf.atomistic-runtime-inputs/0.2';
 export const RUNTIME_PLATFORM = 'linux/amd64';
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const PINNED_DOCKERFILE_FRONTEND_DIGEST = 'sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
+export const PINNED_RUNTIME_SOURCE_REVISION = 'f861b3e30572f1db366554a2e330d5d6c78bdb56';
+export const PINNED_RUNTIME_SOURCE_DATE_EPOCH = 1_787_977_543;
+export const RUNNER_IDENTITY_IMPLEMENTATION = 'tf.atomistic-runner/v2';
+export const RUNNER_MATERIALIZATION_PROTOCOL = 'sha256-canonical-json-ordered-runtime-materializations/v1';
+export const RUNNER_STAGED_FILE_MODE = '100444';
+
+export const RUNNER_MATERIALIZATION = deepFreeze([
+  {
+    name: 'run_model.py',
+    sourcePath: 'scripts/atomistic/v2/run_model.py',
+    buildPath: 'scripts/atomistic/run_model.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+    sizeBytes: 35_311,
+    mode: '100644',
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+  },
+  {
+    name: 'runtime_contract.py',
+    sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+    buildPath: 'scripts/atomistic/runtime_contract.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+    sizeBytes: 53_577,
+    mode: '100644',
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+  },
+]);
+
+export const RUNTIME_INPUT_CLAIMS = deepFreeze({
+  evidenceClass: 'discovery-only-not-reproduced',
+  promotionEligible: false,
+  comparable: false,
+  reproduced: false,
+});
+
+const NON_PROMOTIONAL_BOOLEAN_KEYS = new Set([
+  'promotionEligible',
+  'promotionTrustRoot',
+  'comparable',
+  'reproduced',
+]);
 
 const MODEL_IDS = Object.freeze({
   mattersim: 'mattersim-v1.0.0-5m',
@@ -125,6 +165,31 @@ export function sha256(value) {
   return `sha256:${createHash('sha256').update(value).digest('hex')}`;
 }
 
+/** Recursively enforce the non-promotional boundary on a final JSON value. */
+export function assertNoPositivePromotionClaims(
+  value,
+  label = 'runtime-input manifest',
+  depth = 0,
+  seen = new WeakSet(),
+) {
+  if (depth > 64) throw new TypeError(`${label} exceeds the supported promotion-claim nesting depth`);
+  if (value === null || typeof value !== 'object') return;
+  if (seen.has(value)) throw new TypeError(`${label} contains a cyclic promotion-claim surface`);
+  seen.add(value);
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => assertNoPositivePromotionClaims(entry, `${label}[${index}]`, depth + 1, seen));
+  } else {
+    for (const [key, entry] of Object.entries(value)) {
+      const childLabel = `${label}.${key}`;
+      if (NON_PROMOTIONAL_BOOLEAN_KEYS.has(key) && entry !== false) {
+        throw new TypeError(`${childLabel} must be exactly false in non-promotional runtime inputs`);
+      }
+      assertNoPositivePromotionClaims(entry, childLabel, depth + 1, seen);
+    }
+  }
+  seen.delete(value);
+}
+
 /** Parse strict UTF-8 JSON while rejecting duplicate decoded object keys. */
 export function parseJsonRejectDuplicateKeys(bytes, label = 'JSON input') {
   if (!Buffer.isBuffer(bytes) && !(bytes instanceof Uint8Array)) throw new TypeError(`${label} must be bytes`);
@@ -237,15 +302,33 @@ export function parseJsonRejectDuplicateKeys(bytes, label = 'JSON input') {
 }
 
 export function runnerIdentity(runModelBytes, runtimeContractBytes) {
-  requireNonemptyBytes(runModelBytes, 'run_model.py');
-  requireNonemptyBytes(runtimeContractBytes, 'runtime_contract.py');
-  requireTextFile(runModelBytes, 'run_model.py');
-  requireTextFile(runtimeContractBytes, 'runtime_contract.py');
-  const files = [
-    { name: 'run_model.py', sha256: sha256(runModelBytes) },
-    { name: 'runtime_contract.py', sha256: sha256(runtimeContractBytes) },
-  ].sort((left, right) => compareAscii(left.name, right.name));
-  return { files, digest: sha256(Buffer.from(canonicalJson(files), 'utf8')) };
+  const bytesByName = new Map([
+    ['run_model.py', runModelBytes],
+    ['runtime_contract.py', runtimeContractBytes],
+  ]);
+  const files = RUNNER_MATERIALIZATION.map((mapping) => {
+    const bytes = bytesByName.get(mapping.name);
+    requireNonemptyBytes(bytes, mapping.name);
+    requireTextFile(bytes, mapping.name);
+    const actual = { sizeBytes: bytes.length, sha256: sha256(bytes) };
+    if (actual.sizeBytes !== mapping.sizeBytes || actual.sha256 !== mapping.sha256) {
+      throw new TypeError(`${mapping.name} differs from the immutable P runtime-source identity`);
+    }
+    return {
+      name: mapping.name,
+      standardContainerPath: mapping.standardContainerPath,
+      sizeBytes: actual.sizeBytes,
+      sha256: actual.sha256,
+    };
+  });
+  if (!isSorted(files, (left, right) => compareAscii(left.name, right.name))) {
+    throw new TypeError('v2 runner files must be ordered by ASCII name');
+  }
+  return {
+    implementation: RUNNER_IDENTITY_IMPLEMENTATION,
+    files,
+    digest: sha256(Buffer.from(canonicalJson(files), 'utf8')),
+  };
 }
 
 /**
@@ -297,8 +380,11 @@ export function buildRuntimeInputManifest({
       sizeBytes: scientificPlanBytes.length,
     },
     runtimeSource: {
-      revision,
+      runtimeSourceRevision: revision,
       sourceDateEpoch: epoch,
+      materializationProtocol: RUNNER_MATERIALIZATION_PROTOCOL,
+      materializationDigest: sha256(Buffer.from(canonicalJson(RUNNER_MATERIALIZATION), 'utf8')),
+      materializations: RUNNER_MATERIALIZATION.map((mapping) => ({ ...mapping })),
     },
     platform: RUNTIME_PLATFORM,
     baseImage: {
@@ -317,8 +403,10 @@ export function buildRuntimeInputManifest({
       wheelhouse: wheelhouseProjection,
       runner,
     },
+    claims: { ...RUNTIME_INPUT_CLAIMS },
     policy: REVIEWED_RUNTIME_POLICY,
   };
+  assertNoPositivePromotionClaims(manifest);
   const bytes = canonicalJsonBytes(manifest);
   return {
     manifest,
@@ -418,21 +506,18 @@ export async function runCli(argv = process.argv.slice(2)) {
     dockerfile: `${options.model}.Dockerfile`,
     dockerignore: '.dockerignore',
     dependencyLock: `${options.model}.requirements.lock`,
-    runModel: 'run_model.py',
-    runtimeContract: 'runtime_contract.py',
     output: `${options.model}.runtime-inputs.json`,
   };
   for (const [key, expected] of Object.entries(expectedBasenames)) {
     if (path.basename(options[key]) !== expected) throw new TypeError(`--${camelToKebab(key)} must name ${expected}`);
   }
-  const [scientificPlanBytes, wheelhouseManifestBytes, dockerfileBytes, dockerignoreBytes, dependencyLockBytes, runModelBytes, runtimeContractBytes] = await Promise.all([
+  const [scientificPlanBytes, wheelhouseManifestBytes, dockerfileBytes, dockerignoreBytes, dependencyLockBytes, runner] = await Promise.all([
     readSafeRegularFile(options.plan, 'scientific plan', MAX_INPUT_BYTES.plan),
     readSafeRegularFile(options.wheelhouseManifest, 'wheelhouse manifest', MAX_INPUT_BYTES.wheelhouseManifest),
     readSafeRegularFile(options.dockerfile, 'Dockerfile', MAX_INPUT_BYTES.dockerfile),
     readSafeRegularFile(options.dockerignore, '.dockerignore', MAX_INPUT_BYTES.dockerignore),
     readSafeRegularFile(options.dependencyLock, 'dependency lock', MAX_INPUT_BYTES.dependencyLock),
-    readSafeRegularFile(options.runModel, 'run_model.py', MAX_INPUT_BYTES.runnerSource),
-    readSafeRegularFile(options.runtimeContract, 'runtime_contract.py', MAX_INPUT_BYTES.runnerSource),
+    readRunnerMaterialization(options.runnerSourceRoot, options.runnerBuildRoot),
   ]);
   const result = buildRuntimeInputManifest({
     model: options.model,
@@ -441,8 +526,8 @@ export async function runCli(argv = process.argv.slice(2)) {
     dockerfileBytes,
     dockerignoreBytes,
     dependencyLockBytes,
-    runModelBytes,
-    runtimeContractBytes,
+    runModelBytes: runner.runModelBytes,
+    runtimeContractBytes: runner.runtimeContractBytes,
     runtimeSourceRevision: options.runtimeSourceRevision,
     sourceDateEpoch: options.sourceDateEpoch,
   });
@@ -460,6 +545,40 @@ export async function runCli(argv = process.argv.slice(2)) {
     runnerDigest: result.runnerDigest,
   }));
   return result;
+}
+
+/**
+ * Read the immutable P source files and their separately materialized build-context
+ * copies. Fixed mappings are deliberately not supplied by CLI callers, and the
+ * two roots must be disjoint so tracked R5 paths can never stand in for staged
+ * v2 build inputs.
+ */
+export async function readRunnerMaterialization(sourceRoot, buildRoot) {
+  const source = await requireCanonicalDirectory(sourceRoot, 'runner source root');
+  const build = await requireCanonicalDirectory(buildRoot, 'runner build root');
+  if (pathsOverlap(source, build)) {
+    throw new TypeError('runner source root and runner build root must be disjoint directories');
+  }
+  const verified = await Promise.all(RUNNER_MATERIALIZATION.map(async (mapping) => {
+    const [sourceBytes, buildBytes] = await Promise.all([
+      readSafeRegularFile(path.join(source, ...mapping.sourcePath.split('/')), `runtime source ${mapping.sourcePath}`, MAX_INPUT_BYTES.runnerSource, RUNNER_STAGED_FILE_MODE),
+      readSafeRegularFile(path.join(build, ...mapping.buildPath.split('/')), `materialized runner ${mapping.buildPath}`, MAX_INPUT_BYTES.runnerSource, RUNNER_STAGED_FILE_MODE),
+    ]);
+    for (const [kind, bytes] of [['runtime source', sourceBytes], ['materialized runner', buildBytes]]) {
+      if (bytes.length !== mapping.sizeBytes || sha256(bytes) !== mapping.sha256) {
+        throw new TypeError(`${kind} ${mapping.name} differs from the immutable P runtime-source mapping`);
+      }
+    }
+    if (!sourceBytes.equals(buildBytes)) {
+      throw new TypeError(`materialized runner ${mapping.name} differs byte-for-byte from its immutable P source`);
+    }
+    return [mapping.name, buildBytes];
+  }));
+  const bytesByName = new Map(verified);
+  return {
+    runModelBytes: bytesByName.get('run_model.py'),
+    runtimeContractBytes: bytesByName.get('runtime_contract.py'),
+  };
 }
 
 function validateWheels(value) {
@@ -623,6 +742,7 @@ function requireModel(model) {
 
 function requireRevision(value) {
   if (typeof value !== 'string' || !REVISION_PATTERN.test(value)) throw new TypeError('runtimeSourceRevision must be a full lowercase 40-hex Git revision');
+  if (value !== PINNED_RUNTIME_SOURCE_REVISION) throw new TypeError(`runtimeSourceRevision must equal immutable P revision ${PINNED_RUNTIME_SOURCE_REVISION}`);
   return value;
 }
 
@@ -631,6 +751,7 @@ function requireSourceDateEpoch(value) {
   if (typeof raw !== 'string' || !/^(?:0|[1-9][0-9]{0,11})$/.test(raw)) throw new TypeError('sourceDateEpoch must be one canonical non-negative integer');
   const parsed = Number(raw);
   if (!Number.isSafeInteger(parsed) || parsed > 253_402_300_799) throw new TypeError('sourceDateEpoch is outside the supported Unix timestamp range');
+  if (parsed !== PINNED_RUNTIME_SOURCE_DATE_EPOCH) throw new TypeError(`sourceDateEpoch must equal immutable P commit timestamp ${PINNED_RUNTIME_SOURCE_DATE_EPOCH}`);
   return parsed;
 }
 
@@ -755,7 +876,7 @@ function deepFreeze(value) {
   return value;
 }
 
-async function readSafeRegularFile(filename, label, maxBytes) {
+async function readSafeRegularFile(filename, label, maxBytes, requiredRuntimeMode = null) {
   const absolute = path.resolve(filename);
   const canonical = await realpath(absolute);
   if (canonical !== absolute) throw new TypeError(`${label} path must be canonical and must not traverse a symlink`);
@@ -763,18 +884,78 @@ async function readSafeRegularFile(filename, label, maxBytes) {
   if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n || before.size < 1n || before.size > BigInt(maxBytes)) {
     throw new TypeError(`${label} must be one bounded, single-link regular file`);
   }
+  if (requiredRuntimeMode !== null && regularFileMode(before) !== requiredRuntimeMode) {
+    throw new TypeError(`${label} runtime mode must be exactly ${requiredRuntimeMode}`);
+  }
   const flags = fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0);
   const handle = await open(absolute, flags);
   try {
-    const bytes = await handle.readFile();
+    const bytes = await readAtMost(handle, maxBytes, label);
     const after = await handle.stat({ bigint: true });
-    if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size || before.mtimeNs !== after.mtimeNs) {
+    let afterCanonical;
+    let afterPath;
+    try {
+      afterCanonical = await realpath(absolute);
+      afterPath = await lstat(absolute, { bigint: true });
+    } catch (error) {
+      throw new Error(`${label} path changed during verification`, { cause: error });
+    }
+    if (afterCanonical !== absolute || !afterPath.isFile() || afterPath.isSymbolicLink() || afterPath.nlink !== 1n
+        || before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+        || before.mode !== after.mode || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
+        || afterPath.dev !== after.dev || afterPath.ino !== after.ino || afterPath.size !== after.size
+        || afterPath.mode !== after.mode || afterPath.mtimeNs !== after.mtimeNs || afterPath.ctimeNs !== after.ctimeNs
+        || BigInt(bytes.length) !== after.size) {
       throw new Error(`${label} changed during verification`);
     }
     return bytes;
   } finally {
     await handle.close();
   }
+}
+
+async function readAtMost(handle, maxBytes, label) {
+  const chunks = [];
+  let total = 0;
+  while (total <= maxBytes) {
+    const remaining = Math.min(64 * 1024, maxBytes + 1 - total);
+    if (remaining <= 0) break;
+    const buffer = Buffer.allocUnsafe(remaining);
+    const { bytesRead } = await handle.read(buffer, 0, remaining, null);
+    if (bytesRead === 0) break;
+    chunks.push(buffer.subarray(0, bytesRead));
+    total += bytesRead;
+  }
+  if (total > maxBytes) throw new TypeError(`${label} exceeds its byte limit`);
+  return Buffer.concat(chunks, total);
+}
+
+function regularFileMode(metadata) {
+  return `100${Number(metadata.mode & 0o777n).toString(8).padStart(3, '0')}`;
+}
+
+async function requireCanonicalDirectory(value, label) {
+  if (typeof value !== 'string' || value.length === 0 || !path.isAbsolute(value) || path.normalize(value) !== value || value.includes('\0')) {
+    throw new TypeError(`${label} must be one absolute lexically canonical directory path`);
+  }
+  let canonical;
+  try {
+    canonical = await realpath(value);
+  } catch (error) {
+    throw new TypeError(`${label} must resolve to one existing directory`, { cause: error });
+  }
+  if (canonical !== value) throw new TypeError(`${label} must be canonical and must not traverse a symlink`);
+  const metadata = await lstat(value);
+  if (!metadata.isDirectory() || metadata.isSymbolicLink()) throw new TypeError(`${label} must be one real directory`);
+  return canonical;
+}
+
+function pathsOverlap(left, right) {
+  const leftToRight = path.relative(left, right);
+  const rightToLeft = path.relative(right, left);
+  return leftToRight === ''
+    || (leftToRight !== '..' && !leftToRight.startsWith(`..${path.sep}`) && !path.isAbsolute(leftToRight))
+    || (rightToLeft !== '..' && !rightToLeft.startsWith(`..${path.sep}`) && !path.isAbsolute(rightToLeft));
 }
 
 async function writeNewFile(filename, bytes) {
@@ -802,8 +983,8 @@ function parseCli(argv) {
     ['--dockerfile', 'dockerfile'],
     ['--dockerignore', 'dockerignore'],
     ['--dependency-lock', 'dependencyLock'],
-    ['--run-model', 'runModel'],
-    ['--runtime-contract', 'runtimeContract'],
+    ['--runner-source-root', 'runnerSourceRoot'],
+    ['--runner-build-root', 'runnerBuildRoot'],
     ['--runtime-source-revision', 'runtimeSourceRevision'],
     ['--source-date-epoch', 'sourceDateEpoch'],
     ['--output', 'output'],

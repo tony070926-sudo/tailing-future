@@ -1,7 +1,5 @@
-import { constants as fsConstants } from 'node:fs';
 import { execFile as execFileCallback } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { lstat, open, realpath } from 'node:fs/promises';
 import { isDeepStrictEqual } from 'node:util';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -9,8 +7,8 @@ import { promisify } from 'node:util';
 export const RUNTIME_LOCK_PATH = 'evaluation/atomistic/runtime-lock.json';
 export const RUNTIME_LOCK_SCHEMA_PATH = 'schemas/atomistic-runtime-lock.schema.json';
 export const SCIENTIFIC_PLAN_PATH = 'evaluation/atomistic/reproduction-plan.json';
-export const EXPECTED_RUNTIME_LOCK_RAW_DIGEST = 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
-export const EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST = 'sha256:56b5c9370b9117555989300d547bd428d6e565acc64ff2d31f02a9e62eef6e5e';
+export const EXPECTED_RUNTIME_LOCK_RAW_DIGEST = 'sha256:5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e';
+export const EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST = 'sha256:acf4710b2b219c9b59893e78cf7a25ff8f9f5cd3da31149ce556840d42d8e900';
 export const EXPECTED_SCIENTIFIC_PLAN_RAW_DIGEST = 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
 
 export const RUNTIME_LOCK_CONTROL_PATHS = Object.freeze([
@@ -41,16 +39,37 @@ export const EXPECTED_RUNTIME_SOURCE_FILES = Object.freeze([
     sha256: 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455',
   }),
   Object.freeze({
-    path: 'scripts/atomistic/run_model.py',
-    sizeBytes: 31874,
+    path: 'scripts/atomistic/v2/run_model.py',
+    sizeBytes: 35311,
     mode: '100644',
-    sha256: 'sha256:82704e552e7d5f0a2cdbb0603676429931997653568db70ab016533690c2efd8',
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
   }),
   Object.freeze({
-    path: 'scripts/atomistic/runtime_contract.py',
-    sizeBytes: 47702,
+    path: 'scripts/atomistic/v2/runtime_contract.py',
+    sizeBytes: 53577,
     mode: '100644',
-    sha256: 'sha256:d1d94c6ee1b256a16c485e1760ea13ebddf24ef0e34ccde7d3682b9c9ceecc61',
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+  }),
+]);
+
+export const EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS = Object.freeze([
+  Object.freeze({
+    name: 'run_model.py',
+    sourcePath: 'scripts/atomistic/v2/run_model.py',
+    buildPath: 'scripts/atomistic/run_model.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+    sizeBytes: 35311,
+    mode: '100644',
+    sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+  }),
+  Object.freeze({
+    name: 'runtime_contract.py',
+    sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+    buildPath: 'scripts/atomistic/runtime_contract.py',
+    standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+    sizeBytes: 53577,
+    mode: '100644',
+    sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
   }),
 ]);
 
@@ -71,15 +90,18 @@ export const EXPECTED_DOCKERIGNORE_LINES = Object.freeze([
 ]);
 
 const EXPECTED_RUNTIME_SOURCE = Object.freeze({
-  revision: '9a67f4509588d242838c736a580b6ec5badc18f9',
-  commitTimestamp: 1787966917,
-  sourceManifestDigest: 'sha256:b6d9fcd82a4f1ea0b8ba2f75659551432edcaf2388c6225549c0b064878ac112',
+  runtimeSourceRevision: 'f861b3e30572f1db366554a2e330d5d6c78bdb56',
+  sourceDateEpoch: 1787977543,
   sourceManifestProtocol: 'sha256-canonical-json-ordered-path-mode-size-sha256/v1',
+  sourceManifestDigest: 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1',
   files: EXPECTED_RUNTIME_SOURCE_FILES,
+  materializationProtocol: 'sha256-canonical-json-ordered-runtime-materializations/v1',
+  materializationDigest: 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721',
+  materializations: EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS,
 });
 
 const EXPECTED_BUILD_CONTRACT = Object.freeze({
-  schemaVersion: 'tf.atomistic-runtime-inputs/0.1',
+  schemaVersion: 'tf.atomistic-runtime-inputs/0.2',
   platform: 'linux/amd64',
   baseImage: Object.freeze({
     reference: 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2',
@@ -93,12 +115,13 @@ const EXPECTED_BUILD_CONTRACT = Object.freeze({
   networkPolicy: 'fetch-online-build-and-run-offline',
   provenanceEnabled: false,
   sbomEnabled: false,
-  runtimeInputManifestProtocol: 'sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.1/v1',
+  runtimeInputManifestProtocol: 'sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.2/v1',
 });
 
 const DISCOVERY_EVIDENCE_CLASS = 'discovery-only-not-reproduced';
 const OCI_IDENTITY_SEMANTICS = 'run-specific-diagnostics-not-promotion-trust-roots/v1';
 const INDEPENDENCE_PROTOCOL = 'distinct-github-run-id-and-attempt-protected-main-identical-promotion-roots/v1';
+const NON_PROMOTIONAL_BOOLEAN_KEYS = new Set(['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']);
 const MAX_POLICY_FILE_BYTES = 1024 * 1024;
 const execFile = promisify(execFileCallback);
 
@@ -150,7 +173,7 @@ export function validateRuntimeLockSemantics(lock) {
   const failures = [];
   if (!lock || typeof lock !== 'object' || Array.isArray(lock)) return ['runtime-lock.semantic: root must be an object'];
 
-  compare(failures, 'schemaVersion', lock.schemaVersion, 'tf.atomistic-runtime-lock/0.1');
+  compare(failures, 'schemaVersion', lock.schemaVersion, 'tf.atomistic-runtime-lock/0.2');
   compare(failures, 'scientificPlan', lock.scientificPlan, {
     path: SCIENTIFIC_PLAN_PATH,
     rawDigest: EXPECTED_SCIENTIFIC_PLAN_RAW_DIGEST,
@@ -162,6 +185,7 @@ export function validateRuntimeLockSemantics(lock) {
   compare(failures, 'identities.ociImages.identitySemantics', lock.identities?.ociImages?.identitySemantics, OCI_IDENTITY_SEMANTICS);
   compare(failures, 'identities.ociImages.promotionTrustRoot', lock.identities?.ociImages?.promotionTrustRoot, false);
   for (const claim of ['promotionEligible', 'comparable', 'reproduced']) compare(failures, `claims.${claim}`, lock.claims?.[claim], false);
+  rejectPositivePromotionClaims(lock, failures);
 
   for (const model of ['mattersim', 'mace']) {
     for (const field of ['manifestDigest', 'configDigest']) {
@@ -172,7 +196,7 @@ export function validateRuntimeLockSemantics(lock) {
   }
 
   if (lock.state === 'discovery-not-frozen') validateDiscoveryState(lock, failures);
-  else failures.push('state: R6a accepts discovery-not-frozen only; freezing requires a separately controlled verifier receipt');
+  else failures.push('state: this discovery policy accepts discovery-not-frozen only; freezing requires a separately controlled verifier receipt');
 
   if (lock.state === 'discovery-not-frozen') {
     let actualSemanticDigest = null;
@@ -185,23 +209,35 @@ export function validateRuntimeLockSemantics(lock) {
   return failures;
 }
 
-export async function recomputeRuntimeSourceIdentity(root = process.cwd()) {
-  const snapshot = await readRuntimeSourceSnapshot(root);
-  const files = snapshot.map(({ path: relativePath, sizeBytes, mode, sha256: digest }) => ({
-    path: relativePath,
+export async function recomputeRuntimeSourceIdentity(
+  root = process.cwd(),
+  runtimeSourceRevision = EXPECTED_RUNTIME_SOURCE.runtimeSourceRevision,
+) {
+  const snapshot = await readRuntimeSourceCommitSnapshot(root, runtimeSourceRevision);
+  const files = sourceFileProjection(snapshot);
+  const materializations = materializationProjection(snapshot);
+  const runnerFiles = materializations.map(({ name, standardContainerPath, sizeBytes, sha256: digest }) => ({
+    name,
+    standardContainerPath,
     sizeBytes,
-    mode,
     sha256: digest,
-  }));
-  const runnerFiles = snapshot
-    .filter((entry) => entry.path === 'scripts/atomistic/run_model.py' || entry.path === 'scripts/atomistic/runtime_contract.py')
-    .map((entry) => ({ name: path.posix.basename(entry.path), sha256: entry.sha256 }))
-    .sort((left, right) => left.name.localeCompare(right.name));
+  })).sort((left, right) => compareAscii(left.name, right.name));
+  const runnerDigest = sha256(Buffer.from(canonicalJson(runnerFiles), 'utf8'));
+  const sourceManifestDigest = sha256(Buffer.from(canonicalJson(files), 'utf8'));
+  const materializationDigest = sha256(Buffer.from(canonicalJson(materializations), 'utf8'));
   return {
     files,
+    materializations,
     fileDigests: Object.fromEntries(files.map((entry) => [entry.path, entry.sha256])),
-    runnerDigest: sha256(Buffer.from(canonicalJson(runnerFiles), 'utf8')),
-    buildContextSourceDigest: sha256(Buffer.from(canonicalJson(files), 'utf8')),
+    sourceManifestDigest,
+    materializationDigest,
+    runner: {
+      implementation: 'tf.atomistic-runner/v2',
+      files: runnerFiles,
+      digest: runnerDigest,
+    },
+    runnerDigest,
+    buildContextSourceDigest: sourceManifestDigest,
   };
 }
 
@@ -209,30 +245,35 @@ export async function validateRuntimeLockRepository(lock, lockBytes, { root = pr
   const failures = [];
   let snapshot;
   try {
-    snapshot = await readRuntimeSourceSnapshot(root);
+    snapshot = await readRuntimeSourceCommitSnapshot(root, lock?.runtimeSource?.runtimeSourceRevision);
   } catch (error) {
-    return [`runtime-source: unable to read the bounded source set (${error instanceof Error ? error.message : String(error)})`];
+    return [`runtime-source.git: unable to read the bounded P source blobs (${error instanceof Error ? error.message : String(error)})`];
   }
-  const actualFiles = snapshot.map(({ path: relativePath, sizeBytes, mode, sha256: digest }) => ({
-    path: relativePath,
-    sizeBytes,
-    mode,
-    sha256: digest,
-  }));
+  const actualFiles = sourceFileProjection(snapshot);
+  const actualMaterializations = materializationProjection(snapshot);
   compare(failures, 'runtime-source.files', actualFiles, EXPECTED_RUNTIME_SOURCE_FILES);
-  compare(failures, 'runtime-source.declaration', lock?.runtimeSource?.files, actualFiles);
+  compare(failures, 'runtime-source.declaredFiles', lock?.runtimeSource?.files, actualFiles);
   const actualSourceManifestDigest = sha256(Buffer.from(canonicalJson(actualFiles), 'utf8'));
   compare(failures, 'runtime-source.sourceManifestDigest', actualSourceManifestDigest, EXPECTED_RUNTIME_SOURCE.sourceManifestDigest);
   compare(failures, 'runtime-source.declaredSourceManifestDigest', lock?.runtimeSource?.sourceManifestDigest, actualSourceManifestDigest);
+  compare(failures, 'runtime-source.materializations', actualMaterializations, EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS);
+  compare(failures, 'runtime-source.declaredMaterializations', lock?.runtimeSource?.materializations, actualMaterializations);
+  const actualMaterializationDigest = sha256(Buffer.from(canonicalJson(actualMaterializations), 'utf8'));
+  compare(failures, 'runtime-source.materializationDigest', actualMaterializationDigest, EXPECTED_RUNTIME_SOURCE.materializationDigest);
+  compare(failures, 'runtime-source.declaredMaterializationDigest', lock?.runtimeSource?.materializationDigest, actualMaterializationDigest);
 
-  let planBytes;
+  let planEntry;
   try {
-    planBytes = await readBoundedRegularFile(root, SCIENTIFIC_PLAN_PATH);
+    planEntry = await readCommitBlob(
+      root,
+      lock?.runtimeSource?.runtimeSourceRevision,
+      SCIENTIFIC_PLAN_PATH,
+    );
   } catch (error) {
-    failures.push(`scientific-plan: unable to read (${error instanceof Error ? error.message : String(error)})`);
+    failures.push(`scientific-plan.git: unable to read the P blob (${error instanceof Error ? error.message : String(error)})`);
   }
-  if (planBytes) {
-    const actualPlanDigest = sha256(planBytes);
+  if (planEntry) {
+    const actualPlanDigest = planEntry.sha256;
     compare(failures, 'scientific-plan.rawDigest', actualPlanDigest, EXPECTED_SCIENTIFIC_PLAN_RAW_DIGEST);
     compare(failures, 'scientific-plan.declaredRawDigest', lock?.scientificPlan?.rawDigest, actualPlanDigest);
   }
@@ -240,8 +281,22 @@ export async function validateRuntimeLockRepository(lock, lockBytes, { root = pr
   const dockerignore = snapshot.find((entry) => entry.path === '.dockerignore')?.bytes.toString('utf8') ?? '';
   const dockerignoreLines = dockerignore.endsWith('\n') ? dockerignore.slice(0, -1).split('\n') : [];
   compare(failures, '.dockerignore.allowlist', dockerignoreLines, EXPECTED_DOCKERIGNORE_LINES);
-  for (const source of EXPECTED_RUNTIME_SOURCE_FILES) {
-    if (!isAllowedRuntimeBuildContextPath(source.path, dockerignoreLines)) failures.push(`${source.path}: declared runtime source is outside the bounded build-context allowlist`);
+  for (const source of EXPECTED_RUNTIME_SOURCE_FILES.slice(0, 3)) {
+    if (!isAllowedRuntimeBuildContextPath(source.path, dockerignoreLines)) failures.push(`${source.path}: declared build source is outside the bounded build-context allowlist`);
+  }
+  for (const materialization of actualMaterializations) {
+    if (isAllowedRuntimeBuildContextPath(materialization.sourcePath, dockerignoreLines)) failures.push(`${materialization.sourcePath}: versioned source must remain inert outside the Docker build context`);
+    if (!isAllowedRuntimeBuildContextPath(materialization.buildPath, dockerignoreLines)) failures.push(`${materialization.buildPath}: materialized runner is outside the Docker build-context allowlist`);
+    if (path.posix.basename(materialization.sourcePath) !== materialization.name
+        || path.posix.basename(materialization.buildPath) !== materialization.name
+        || path.posix.basename(materialization.standardContainerPath) !== materialization.name) {
+      failures.push(`${materialization.name}: source, build, and standard-container basenames must agree`);
+    }
+  }
+  const expectedCopy = `COPY --chmod=0444 ${actualMaterializations.map((entry) => entry.buildPath).join(' ')} /opt/tailing-venv/lib/python3.12/site-packages/`;
+  for (const dockerfilePath of ['atomistic/containers/mattersim.Dockerfile', 'atomistic/containers/mace.Dockerfile']) {
+    const dockerfile = snapshot.find((entry) => entry.path === dockerfilePath)?.bytes.toString('utf8') ?? '';
+    if (dockerfile.split(expectedCopy).length !== 2) failures.push(`${dockerfilePath}: P Dockerfile does not materialize the exact runner pair once`);
   }
   for (const controlPath of RUNTIME_LOCK_CONTROL_PATHS) {
     if (isAllowedRuntimeBuildContextPath(controlPath, dockerignoreLines)) failures.push(`${controlPath}: runtime-lock control file entered the Docker build-context allowlist`);
@@ -263,41 +318,38 @@ export async function validateRuntimeLockRepository(lock, lockBytes, { root = pr
 
 export async function validateRuntimeSourceCommit(lock, { root = process.cwd() } = {}) {
   const failures = [];
-  const revision = lock?.runtimeSource?.revision;
+  const revision = lock?.runtimeSource?.runtimeSourceRevision;
   if (!/^[0-9a-f]{40}$/.test(revision ?? '')) return ['runtime-source.git: full revision is required'];
-  const gitOptions = {
-    cwd: root,
-    encoding: null,
-    maxBuffer: 5 * 1024 * 1024,
-    env: {
-      PATH: process.env.PATH,
-      GIT_CONFIG_NOSYSTEM: '1',
-      GIT_NO_REPLACE_OBJECTS: '1',
-      GIT_OPTIONAL_LOCKS: '0',
-      LC_ALL: 'C',
-    },
-  };
+  const options = gitOptions(root);
   try {
-    await execFile('git', ['cat-file', '-e', `${revision}^{commit}`], gitOptions);
-    await execFile('git', ['merge-base', '--is-ancestor', revision, 'HEAD'], gitOptions);
-    const { stdout: timestampBytes } = await execFile('git', ['show', '-s', '--format=%ct', revision], gitOptions);
+    compare(failures, 'runtime-source.git.runtimeSourceRevision', revision, EXPECTED_RUNTIME_SOURCE.runtimeSourceRevision);
+    const { stdout: typeBytes } = await execFile('git', ['cat-file', '-t', revision], options);
+    compare(failures, 'runtime-source.git.objectType', typeBytes.toString('ascii').trim(), 'commit');
+    await execFile('git', ['merge-base', '--is-ancestor', revision, 'HEAD'], options);
+    const { stdout: timestampBytes } = await execFile('git', ['show', '-s', '--format=%ct', revision], options);
     const timestamp = Number(timestampBytes.toString('ascii').trim());
-    compare(failures, 'runtime-source.git.commitTimestamp', timestamp, lock.runtimeSource.commitTimestamp);
-    for (const source of EXPECTED_RUNTIME_SOURCE_FILES) {
-      const { stdout: treeBytes } = await execFile('git', ['ls-tree', '-z', revision, '--', source.path], gitOptions);
-      const expectedTreePrefix = `${source.mode} blob `;
-      const treeText = treeBytes.toString('utf8');
-      if (!treeText.startsWith(expectedTreePrefix) || !treeText.endsWith(`\t${source.path}\0`)) {
-        failures.push(`${source.path}: R5 commit tree mode or path differs from the runtime lock`);
-        continue;
-      }
-      const { stdout: blobBytes } = await execFile('git', ['cat-file', 'blob', `${revision}:${source.path}`], gitOptions);
-      if (blobBytes.length !== source.sizeBytes || sha256(blobBytes) !== source.sha256) {
-        failures.push(`${source.path}: R5 commit blob differs from the runtime lock`);
-      }
-    }
+    compare(failures, 'runtime-source.git.sourceDateEpoch', timestamp, lock.runtimeSource.sourceDateEpoch);
+    const snapshot = await readRuntimeSourceCommitSnapshot(root, revision);
+    const actualFiles = sourceFileProjection(snapshot);
+    compare(failures, 'runtime-source.git.files', actualFiles, EXPECTED_RUNTIME_SOURCE_FILES);
+    compare(failures, 'runtime-source.git.declaredFiles', lock.runtimeSource.files, actualFiles);
+    const actualMaterializations = materializationProjection(snapshot);
+    compare(failures, 'runtime-source.git.materializations', actualMaterializations, EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS);
+    compare(failures, 'runtime-source.git.declaredMaterializations', lock.runtimeSource.materializations, actualMaterializations);
+    compare(
+      failures,
+      'runtime-source.git.sourceManifestDigest',
+      sha256(Buffer.from(canonicalJson(actualFiles), 'utf8')),
+      lock.runtimeSource.sourceManifestDigest,
+    );
+    compare(
+      failures,
+      'runtime-source.git.materializationDigest',
+      sha256(Buffer.from(canonicalJson(actualMaterializations), 'utf8')),
+      lock.runtimeSource.materializationDigest,
+    );
   } catch (error) {
-    failures.push(`runtime-source.git: unable to verify the R5 commit object and ancestry (${error instanceof Error ? error.message : String(error)})`);
+    failures.push(`runtime-source.git: unable to verify the P commit object, ancestry, tree, and blobs (${error instanceof Error ? error.message : String(error)})`);
   }
   return failures;
 }
@@ -322,6 +374,27 @@ export function isAllowedRuntimeBuildContextPath(relativePath, dockerignoreLines
   return explicitLeaves.has(normalized);
 }
 
+function rejectPositivePromotionClaims(value, failures, location = '$', seen = new WeakSet()) {
+  if (!value || typeof value !== 'object') return;
+  if (seen.has(value)) {
+    failures.push(`${location}: cyclic value is not valid runtime-lock JSON`);
+    return;
+  }
+  seen.add(value);
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => rejectPositivePromotionClaims(entry, failures, `${location}[${index}]`, seen));
+  } else {
+    for (const [key, entry] of Object.entries(value)) {
+      const childLocation = `${location}.${key}`;
+      if (NON_PROMOTIONAL_BOOLEAN_KEYS.has(key) && entry !== false) {
+        failures.push(`${childLocation}: non-promotional runtime lock requires exact false`);
+      }
+      rejectPositivePromotionClaims(entry, failures, childLocation, seen);
+    }
+  }
+  seen.delete(value);
+}
+
 function validateDiscoveryState(lock, failures) {
   compare(failures, 'claims.evidenceClass', lock.claims?.evidenceClass, DISCOVERY_EVIDENCE_CLASS);
   for (const [label, value] of promotionRootEntries(lock.identities)) {
@@ -341,42 +414,87 @@ function promotionRootEntries(identities) {
   ];
 }
 
-async function readRuntimeSourceSnapshot(root) {
+function sourceFileProjection(snapshot) {
+  return snapshot.map(({ path: relativePath, sizeBytes, mode, sha256: digest }) => ({
+    path: relativePath,
+    sizeBytes,
+    mode,
+    sha256: digest,
+  }));
+}
+
+function materializationProjection(snapshot) {
+  return EXPECTED_RUNTIME_SOURCE_MATERIALIZATIONS.map((expected) => {
+    const source = snapshot.find((entry) => entry.path === expected.sourcePath);
+    if (!source) throw new Error(`P source blob is absent: ${expected.sourcePath}`);
+    return {
+      name: expected.name,
+      sourcePath: expected.sourcePath,
+      buildPath: expected.buildPath,
+      standardContainerPath: expected.standardContainerPath,
+      sizeBytes: source.sizeBytes,
+      mode: source.mode,
+      sha256: source.sha256,
+    };
+  });
+}
+
+async function readRuntimeSourceCommitSnapshot(root, revision) {
+  if (!/^[0-9a-f]{40}$/.test(revision ?? '')) throw new Error('full runtimeSourceRevision is required');
   const snapshot = [];
   for (const expected of EXPECTED_RUNTIME_SOURCE_FILES) {
-    const { bytes, mode } = await readBoundedRegularFileWithMetadata(root, expected.path);
-    snapshot.push({ path: expected.path, sizeBytes: bytes.length, mode, sha256: sha256(bytes), bytes });
+    snapshot.push(await readCommitBlob(root, revision, expected.path));
   }
   return snapshot;
 }
 
-async function readBoundedRegularFile(root, relativePath) {
-  return (await readBoundedRegularFileWithMetadata(root, relativePath)).bytes;
+async function readCommitBlob(root, revision, relativePath) {
+  const options = gitOptions(root);
+  const { stdout: treeBytes } = await execFile('git', ['ls-tree', '-z', revision, '--', relativePath], options);
+  const treeText = new TextDecoder('utf-8', { fatal: true }).decode(treeBytes);
+  if (!treeText.endsWith('\0') || treeText.indexOf('\0') !== treeText.length - 1) {
+    throw new Error(`P tree does not contain exactly one source path: ${relativePath}`);
+  }
+  const separator = treeText.indexOf('\t');
+  if (separator <= 0 || treeText.slice(separator + 1, -1) !== relativePath) {
+    throw new Error(`P tree source path differs: ${relativePath}`);
+  }
+  const metadata = treeText.slice(0, separator).match(/^([0-7]{6}) (blob) ([0-9a-f]{40})$/);
+  if (!metadata) throw new Error(`P tree source is not one regular blob: ${relativePath}`);
+  const [, mode, , objectId] = metadata;
+  const { stdout: blobBytes } = await execFile('git', ['cat-file', 'blob', objectId], options);
+  if (blobBytes.length < 1 || blobBytes.length > MAX_POLICY_FILE_BYTES) {
+    throw new Error(`P blob is outside the bounded size: ${relativePath}`);
+  }
+  const actualObjectId = createHash('sha1')
+    .update(Buffer.from(`blob ${blobBytes.length}\0`, 'utf8'))
+    .update(blobBytes)
+    .digest('hex');
+  if (actualObjectId !== objectId) throw new Error(`P blob object ID mismatch: ${relativePath}`);
+  return {
+    path: relativePath,
+    sizeBytes: blobBytes.length,
+    mode,
+    sha256: sha256(blobBytes),
+    bytes: blobBytes,
+  };
 }
 
-async function readBoundedRegularFileWithMetadata(root, relativePath) {
-  const resolvedRoot = path.resolve(root);
-  const canonicalRoot = await realpath(resolvedRoot);
-  const absolutePath = path.resolve(canonicalRoot, relativePath);
-  if (absolutePath !== canonicalRoot && !absolutePath.startsWith(`${canonicalRoot}${path.sep}`)) throw new Error(`path escapes root: ${relativePath}`);
-  if (await realpath(absolutePath) !== absolutePath) throw new Error(`path must not traverse a symlink: ${relativePath}`);
-  const before = await lstat(absolutePath, { bigint: true });
-  if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n || before.size < 1n || before.size > BigInt(MAX_POLICY_FILE_BYTES)) {
-    throw new Error(`not one bounded, single-link regular file: ${relativePath}`);
-  }
-  let handle;
-  try {
-    handle = await open(absolutePath, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
-    const bytes = await handle.readFile();
-    const after = await handle.stat({ bigint: true });
-    if (before.dev !== after.dev || before.ino !== after.ino || before.nlink !== after.nlink
-        || before.size !== after.size || before.mode !== after.mode
-        || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
-        || BigInt(bytes.length) !== before.size) throw new Error(`file changed while read: ${relativePath}`);
-    return { bytes, mode: (Number(before.mode) & 0o177777).toString(8) };
-  } finally {
-    await handle?.close();
-  }
+function gitOptions(root) {
+  return {
+    cwd: root,
+    encoding: null,
+    maxBuffer: 5 * 1024 * 1024,
+    env: {
+      PATH: process.env.PATH,
+      GIT_CONFIG_NOSYSTEM: '1',
+      GIT_CONFIG_SYSTEM: '/dev/null',
+      GIT_CONFIG_GLOBAL: '/dev/null',
+      GIT_NO_REPLACE_OBJECTS: '1',
+      GIT_OPTIONAL_LOCKS: '0',
+      LC_ALL: 'C',
+    },
+  };
 }
 
 function runtimeLockCircularReferenceNeedles(lockBytes, lock) {
@@ -390,7 +508,7 @@ function runtimeLockCircularReferenceNeedles(lockBytes, lock) {
     .filter(Boolean)
     .flatMap((digest) => [digest, digest.slice('sha256:'.length)]);
   return [...new Set([
-    'tf.atomistic-runtime-lock/0.1',
+    'tf.atomistic-runtime-lock/0.2',
     'runtime-lock.json',
     gitBlobDigest,
     ...RUNTIME_LOCK_CONTROL_PATHS,
@@ -407,6 +525,11 @@ function describeNeedle(needle) {
 
 function compare(failures, label, actual, expected) {
   if (!isDeepStrictEqual(actual, expected)) failures.push(`${label}: exact runtime-lock contract mismatch`);
+}
+
+function compareAscii(left, right) {
+  if (left === right) return 0;
+  return left < right ? -1 : 1;
 }
 
 function toBuffer(bytes) {

@@ -31,7 +31,7 @@ try {
   }
 
   if (!failures.length) {
-    console.log(`Atomistic runtime lock: VALID · ${result.lock.state} · ${result.lock.replication.observations.length}/2 protected-main replicas · DISCOVERY ONLY — NOT REPRODUCED`);
+    console.log(`Atomistic runtime lock: VALID · ${result.lock.state} · ${result.lock.replication.observations.length}/2 accepted protected-main replicas · DISCOVERY ONLY — NOT REPRODUCED`);
   }
 } catch (error) {
   failures.push(`runtime-lock: validation could not start (${error instanceof Error ? error.message : String(error)})`);
