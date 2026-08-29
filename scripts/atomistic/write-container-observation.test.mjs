@@ -12,6 +12,7 @@ import {
   buildContainerObservation,
   canonicalJsonBytes,
   parseJsonRejectDuplicateKeys,
+  readAtMost,
   sha256,
 } from './write-container-observation.mjs';
 import {
@@ -86,6 +87,7 @@ function makeMetadata() {
       size: 506,
     },
     'containerimage.digest': MANIFEST_DIGEST,
+    'image.name': `docker.io/library/tailing-atomistic-mattersim-bootstrap:${WORKFLOW_REVISION}`,
   };
 }
 
@@ -128,6 +130,10 @@ function makeInspect(model = 'mattersim') {
     RootFS: { Type: 'layers', Layers: [...DIFF_IDS] },
     Metadata: { LastTagTime: '2025-08-29T11:41:00Z' },
     Descriptor: {
+      annotations: {
+        'config.digest': CONFIG_DIGEST,
+        'org.opencontainers.image.created': CREATED,
+      },
       digest: MANIFEST_DIGEST,
       mediaType: 'application/vnd.oci.image.manifest.v1+json',
       size: 506,
@@ -136,13 +142,15 @@ function makeInspect(model = 'mattersim') {
 }
 
 function makeFixture(model = 'mattersim') {
+  const metadata = makeMetadata();
+  metadata['image.name'] = `docker.io/library/tailing-atomistic-${model}-bootstrap:${WORKFLOW_REVISION}`;
   return {
     model,
     runtimeSourceRevision: SOURCE_REVISION,
     workflowRevision: WORKFLOW_REVISION,
     sourceDateEpoch: String(SOURCE_DATE_EPOCH),
     runtimeInput: makeRuntimeInput(model),
-    metadata: makeMetadata(),
+    metadata,
     inspect: makeInspect(model),
     buildxVersionBytes: Buffer.from(BUILDX_VERSION),
     dockerServerVersionBytes: Buffer.from(DOCKER_SERVER_VERSION),
@@ -283,11 +291,13 @@ describe('canonical atomistic container observation', () => {
       runSpecificObservations: {
         semantics: RUN_SPECIFIC_SEMANTICS,
         configImageId: { digest: CONFIG_DIGEST, semantics: RUN_SPECIFIC_SEMANTICS },
-        manifestDigest: { digest: MANIFEST_DIGEST, semantics: RUN_SPECIFIC_SEMANTICS },
+        exporterDigest: { digest: MANIFEST_DIGEST, kind: 'single-image-manifest', semantics: RUN_SPECIFIC_SEMANTICS },
+        metadataProfile: 'single-image-manifest',
         manifestDescriptor: { mediaType: 'application/vnd.oci.image.manifest.v1+json', sizeBytes: 506 },
         created: CREATED,
         rootfsDiffIds: [...DIFF_IDS],
         buildReference: 'default/default/0fjb6ubs52xx3vygf6fgdl611',
+        imageName: `docker.io/library/tailing-atomistic-mattersim-bootstrap:${WORKFLOW_REVISION}`,
         buildxVersion: BUILDX_VERSION.trimEnd(),
         dockerServerVersion: DOCKER_SERVER_VERSION.trimEnd(),
         registryPushClaim: false,
@@ -305,7 +315,25 @@ describe('canonical atomistic container observation', () => {
         reproduced: false,
       },
     });
-    expect(first.fileDigest).toBe('sha256:86ea500ca7a8a2d8a8636893c9193c2ddfb42c05d73fdec56f20966cdbeec2e9');
+    expect(first.fileDigest).toBe('sha256:a3978e2b9d47a6c89532513672fb1a5870fb490884649bf557be7c58563b896b');
+  });
+
+  it('accepts the exact descriptor-free docker --load metadata profile observed on GitHub-hosted runners', () => {
+    const fixture = makeFixture('mace');
+    delete fixture.metadata['buildx.build.provenance'];
+    delete fixture.metadata['buildx.build.warnings'];
+    delete fixture.metadata['containerimage.descriptor'];
+    fixture.metadata['containerimage.digest'] = CONFIG_DIGEST;
+    delete fixture.inspect[0].Descriptor;
+
+    const result = build(fixture);
+    expect(result.observation.runSpecificObservations).toMatchObject({
+      configImageId: { digest: CONFIG_DIGEST },
+      exporterDigest: { digest: CONFIG_DIGEST, kind: 'docker-image-config-alias' },
+      metadataProfile: 'docker-local-load',
+      manifestDescriptor: null,
+      imageName: `docker.io/library/tailing-atomistic-mace-bootstrap:${WORKFLOW_REVISION}`,
+    });
   });
 
   it('supports both reviewed model identities', () => {
@@ -333,12 +361,14 @@ describe('canonical atomistic container observation', () => {
       ['workflow revision and local tag', mutateFixture((fixture) => {
         fixture.workflowRevision = 'b'.repeat(40);
         fixture.inspect[0].RepoTags = [`tailing-atomistic-mattersim-bootstrap:${fixture.workflowRevision}`];
+        fixture.metadata['image.name'] = `docker.io/library/tailing-atomistic-mattersim-bootstrap:${fixture.workflowRevision}`;
       })],
       ['config/image ID', mutateFixture((fixture) => {
         const digest = `sha256:${'b'.repeat(64)}`;
         fixture.metadata['containerimage.config.digest'] = digest;
         fixture.metadata['containerimage.descriptor'].annotations['config.digest'] = digest;
         fixture.inspect[0].Id = digest;
+        fixture.inspect[0].Descriptor.annotations['config.digest'] = digest;
       })],
       ['manifest digest', mutateFixture((fixture) => {
         const digest = `sha256:${'c'.repeat(64)}`;
@@ -362,6 +392,7 @@ describe('canonical atomistic container observation', () => {
       ['Created representation', mutateFixture((fixture) => {
         fixture.metadata['containerimage.descriptor'].annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:19.000000000Z';
         fixture.inspect[0].Created = '2025-08-29T11:40:19.000000000Z';
+        fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:19.000000000Z';
       })],
     ];
     for (const [label, fixture] of cases) {
@@ -380,6 +411,9 @@ describe('canonical atomistic container observation', () => {
       ['manifest descriptor', /descriptor digest/, mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].digest = `sha256:${'e'.repeat(64)}`; })],
       ['image Id', /inspect Id differs/, mutateFixture((fixture) => { fixture.inspect[0].Id = `sha256:${'e'.repeat(64)}`; })],
       ['inspect descriptor', /descriptor digest differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.digest = `sha256:${'e'.repeat(64)}`; })],
+      ['inspect descriptor config annotation', /config annotation differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.annotations['config.digest'] = `sha256:${'e'.repeat(64)}`; })],
+      ['inspect descriptor created annotation', /created annotation differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:20Z'; })],
+      ['image name', /Buildx image name/, mutateFixture((fixture) => { fixture.metadata['image.name'] = 'docker.io/library/unreviewed:latest'; })],
       ['runtime-input nested digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.digest = 'sha256:abcd'; })],
       ['uppercase digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.metadata['containerimage.config.digest'] = `sha256:${'A'.repeat(64)}`; })],
       ['short digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.inspect[0].RootFS.Layers[0] = 'sha256:abcd'; })],
@@ -421,6 +455,25 @@ describe('canonical atomistic container observation', () => {
       [/registry-push claim/, mutateFixture((fixture) => { fixture.inspect[0].RepoDigests = [`example.invalid/tailing@${MANIFEST_DIGEST}`]; })],
       [/provenance/, mutateFixture((fixture) => { fixture.metadata['buildx.build.provenance'] = { pushed: true }; })],
       [/warnings/, mutateFixture((fixture) => { fixture.metadata['buildx.build.warnings'] = { warning: 'not empty' }; })],
+      [/unexpected claim surface/, mutateFixture((fixture) => { delete fixture.metadata['image.name']; })],
+      [/unexpected claim surface/, mutateFixture((fixture) => {
+        delete fixture.metadata['containerimage.descriptor'];
+        fixture.inspect[0].Descriptor = null;
+      })],
+      [/unexpected claim surface/, mutateFixture((fixture) => { delete fixture.metadata['buildx.build.warnings']; })],
+      [/manifest-profile image inspect Descriptor/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor = null; })],
+      [/manifest-profile image inspect Descriptor/, mutateFixture((fixture) => { delete fixture.inspect[0].Descriptor; })],
+      [/local-load image inspect.*Descriptor/, mutateFixture((fixture) => {
+        delete fixture.metadata['buildx.build.provenance'];
+        delete fixture.metadata['buildx.build.warnings'];
+        delete fixture.metadata['containerimage.descriptor'];
+        fixture.metadata['containerimage.digest'] = CONFIG_DIGEST;
+      })],
+      [/unexpected claim surface/, mutateFixture((fixture) => {
+        delete fixture.metadata['containerimage.descriptor'];
+        fixture.metadata['containerimage.digest'] = CONFIG_DIGEST;
+        fixture.inspect[0].Descriptor = null;
+      })],
     ];
     for (const [message, fixture] of cases) expect(() => build(fixture)).toThrow(message);
   });
@@ -438,6 +491,22 @@ describe('canonical atomistic container observation', () => {
     const server = makeFixture();
     server.dockerServerVersionBytes = Buffer.from('Docker Engine 28.3.3\n');
     expect(() => build(server)).toThrow(/Docker server version/);
+  });
+
+  it('caps descriptor reads before allocating beyond the configured byte limit', async () => {
+    const makeHandle = (payload) => {
+      let cursor = 0;
+      return {
+        read: async (buffer, offset, length) => {
+          const bytesRead = Math.min(length, payload.length - cursor);
+          if (bytesRead > 0) payload.copy(buffer, offset, cursor, cursor + bytesRead);
+          cursor += bytesRead;
+          return { bytesRead };
+        },
+      };
+    };
+    await expect(readAtMost(makeHandle(Buffer.from('abcdef')), 5, 'fixture')).rejects.toThrow(/byte limit/);
+    await expect(readAtMost(makeHandle(Buffer.from('abcde')), 5, 'fixture')).resolves.toEqual(Buffer.from('abcde'));
   });
 });
 
@@ -548,6 +617,19 @@ describe('container observation CLI filesystem boundary', () => {
       result = spawnSync(process.execPath, [cliPath, 'write-new', ...cliArguments({ ...paths, buildxVersion: lexicalAlias })], { encoding: 'utf8' });
       expect(result.status).not.toBe(0);
       expect(result.stderr).toMatch(/path aliases/);
+
+      const realDirectory = path.join(temporary, 'real-directory');
+      const linkedDirectory = path.join(temporary, 'linked-directory');
+      await mkdir(realDirectory);
+      const nested = await writeCliFixture(realDirectory, 'mace');
+      await symlink(realDirectory, linkedDirectory, 'dir');
+      const throughAncestorLink = Object.fromEntries(Object.entries(nested.paths).map(([key, value]) => [
+        key,
+        value.replace(realDirectory, linkedDirectory),
+      ]));
+      result = spawnSync(process.execPath, [cliPath, 'write-new', ...cliArguments(throughAncestorLink, 'mace')], { encoding: 'utf8' });
+      expect(result.status).not.toBe(0);
+      expect(result.stderr).toMatch(/symlink|canonical/);
     } finally {
       await rm(temporary, { recursive: true, force: true });
     }

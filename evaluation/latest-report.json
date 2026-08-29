@@ -1,38 +1,38 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
-  "candidateVersion": "0.3.1-r6a-runtime-lock-discovery",
-  "generatedAt": "2026-08-29T02:39:57.732Z",
+  "candidateVersion": "0.3.1-r6b-docker-load-observation",
+  "generatedAt": "2026-08-29T03:15:14.843Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-29",
-  "artifactDigest": "sha256:c40892ea691045ef38de84d08e9b7ba97223177b7fa0cc18cfd877fec1834eea",
-  "sourceFileCount": 111,
+  "artifactDigest": "sha256:fa409bead74015969b63c85db2768b0e47c2d2877b60d6b188146956cdfa5689",
+  "sourceFileCount": 112,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:dea07d39bacc0c3f54186abe34e05fcb268e9a419543f466d7ab9a4932059566",
     ".github/ISSUE_TEMPLATE/gap.yml": "sha256:1bb098efada033d9dc069a8083115488861cc8d4ac24f130d3f7e31b3835c8b1",
     ".github/pull_request_template.md": "sha256:ccc7bac029108b664d18031021c9c367bdd9251c71a54c893d534c32b50906a2",
-    ".github/workflows/atomistic-bootstrap.yml": "sha256:2310a55b3006257bbeaaa2964f67c54556f23238b1f0271d005de85fdc33e7cf",
+    ".github/workflows/atomistic-bootstrap.yml": "sha256:8f3e5fc9ec880b266dfd79b0ee9ae26c5abcbf2a6746a857299219915b623ab4",
     ".github/workflows/comparator-refresh.yml": "sha256:abf1f3672af5515241eaa76818fef9be182efb062c9d7c7ea7f8772cbf4dd986",
     ".github/workflows/evaluate.yml": "sha256:a73ab8b54a76b3ad5b594e70b47ccb4d068dedbd73929cf4401a05fccc46477c",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d",
     ".gitignore": "sha256:db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28",
     ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
-    "README.md": "sha256:067cf8879acdbfb697aa0fb57dcfee79fbafc702fe919af5ba8e17319318946b",
+    "README.md": "sha256:f98b66f3d9278282369c8193b492bfc44f49030dc7864da5c0bfc7239d5c2908",
     "app/globals.css": "sha256:0be2c001c75b93143652d02a6518af50e28c6a871ee1406c6205be07a70fd241",
     "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
     "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
     "atomistic/containers/README.md": "sha256:fd21f13debde87f13e382c4111c241e629702db9681b20411ea3b5310cfdde24",
     "atomistic/containers/mace.Dockerfile": "sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f",
     "atomistic/containers/mattersim.Dockerfile": "sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455",
-    "atomistic/locks/README.md": "sha256:f8ae2d683df3e29d2270b8d67cedc624342c16217e31ffa218dd21c1af457c65",
+    "atomistic/locks/README.md": "sha256:53ac5aed6b8a98e16b585b48e2edf6a537f0aeac4c1da08594af7819bbfb9404",
     "atomistic/locks/mace.bootstrap.in": "sha256:8cf1b3fbed74c0f9f6f0ff070f4189c0280f87a39762cf611cd69c7166adc2cb",
     "atomistic/locks/mattersim.bootstrap.in": "sha256:4ac7c003925368ca75c125b768720ff622b873513b765bf98fcc703a6c6654a6",
     "atomistic/locks/python-hostlist-build.requirements.lock": "sha256:dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120",
-    "docs/ARCHITECTURE.md": "sha256:a3e2237a1a8805af9ae67b04fdc6fd7896ff37c1a28c7bff3ec79435f2a2a47a",
-    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:a1410a7285491008495bd1c61c179f2f5199d018d33fa5a6b2dad3282c46f121",
-    "docs/EVALUATION_LOOP.md": "sha256:a9b034e4026616556baa3d6aab8197b1169a407a4bef05fd3aecbc1b95923d7b",
+    "docs/ARCHITECTURE.md": "sha256:b6edd14dc7076c074f76137c5a85875598c340d9ebcd04abf4d96ef855dc9e70",
+    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:803f0ce6319cb3978e436afde66b3df9b4911574c0c829fc06c073983704fb09",
+    "docs/EVALUATION_LOOP.md": "sha256:2123fca62b9c341f84729649234100706bed0d99b6fc0d618c9c40a0920e1b87",
     "docs/RESEARCH_BASELINE.md": "sha256:4d0400725a4073085c3ee31e0f5c452037e891b80e1d0a7ce6932fbd9bd29d3f",
-    "docs/ROADMAP.md": "sha256:6da15427b7c906f6a3e2e50042fddd728bdce2395197e61c2f9b15fb247a53e1",
+    "docs/ROADMAP.md": "sha256:5010ad8d5deb49d19fc8f3158711154e8e0eee7ee22a92a3fc23bbead195b289",
     "docs/SAFETY.md": "sha256:36e6f5fb4a8a29c6675dba7dc96ddbd9a49af9474d6681a1758bfe6d85ab7929",
     "eslint.config.mjs": "sha256:5c697206f302dadc0c8b7b2f7a707257dab15129a2149872b0f84ea1ac17d263",
     "evaluation/agent-contracts/builder.md": "sha256:09a208eaebfa78ed5a9e2b86869bc66acb526a548777e06871360166d695eb9b",
@@ -43,12 +43,13 @@
     "evaluation/atomistic/reproduction-plan.json": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2",
     "evaluation/atomistic/runtime-lock.json": "sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe",
     "evaluation/baselines/registry.json": "sha256:333398395d46627ec772b55d01511c740aae2d439994fd1f6c4e74405453f11a",
-    "evaluation/current-scorecard.json": "sha256:7dc42811f899fe83afff41d086c93f7d8b7ff4266365dd2c7a0c861b414da901",
+    "evaluation/current-scorecard.json": "sha256:dcac0db2d91a261aef16d2dd50089ec7ec9ee2e9ef29dc43f8235678c08480cb",
     "evaluation/data/datasets.json": "sha256:fbf43a262cb7389af0f3ae842fd75d9e42b7574cf0c3d8a308e195cf6ebb3b66",
     "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
     "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:46f96227a04a7e4ae117154c4e5515f6534f663c0ecbffb1b416747f70a91370",
     "evaluation/reviews/2026-08-29-r4-bootstrap-review.md": "sha256:67b47d0f3beeadfdbd67e454c30680aaced88d8103c63a2c0a38d6cb9db2cab1",
     "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md": "sha256:d46773fcacc990bf536fff709b199ed8b245a29042c7b4ac19370f17084f449f",
+    "evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md": "sha256:4f40e9aa482ab2a5c2559a6cc6a0e0c05d2c1659ea3ffb58baec0cf7ae96fc29",
     "lib/simulation/digest.ts": "sha256:e7a00c74a6011697323c771edfbb93739774dd4d0cda4cde0438c63f6f221a76",
     "lib/simulation/lennard-jones.test.ts": "sha256:0fe9d5028718e5cfaf6dedf229328799efa58b74ddbd335302961519e02306ed",
     "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
@@ -88,8 +89,8 @@
     "scripts/atomistic/verify_derived_wheel_test.py": "sha256:c1b2570377eb39b7c783177a9a8a6803c81c47e0bc2b1767eb3bed57df174661",
     "scripts/atomistic/verify_runtime_inventory.py": "sha256:bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c",
     "scripts/atomistic/verify_runtime_inventory_test.py": "sha256:50b88961dc4b6d5ba95276e80b06b4015630d30b53bb97444eb4ea646e848d8e",
-    "scripts/atomistic/write-container-observation.mjs": "sha256:b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc",
-    "scripts/atomistic/write-container-observation.test.mjs": "sha256:fafdcb923454f672efa4a0cca008d19a0da0670d99777c0ac165a49f32246415",
+    "scripts/atomistic/write-container-observation.mjs": "sha256:17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15",
+    "scripts/atomistic/write-container-observation.test.mjs": "sha256:0a8e946654a9e82d80b8df96a45bc42773a8a9fd6244c9df5ab78cdd648702be",
     "scripts/atomistic/write_bootstrap_outcome.py": "sha256:1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684",
     "scripts/atomistic/write_bootstrap_outcome_test.py": "sha256:e7ea0cc7f5916cf0cce6bc9458d8726ff9bd76c41777df5a8074e4a25fcf896c",
     "scripts/comparator-evidence-policy.mjs": "sha256:bc223f767078b29a63de2265fc98a0488bcfce0e1517e0239916b9675c89c598",
@@ -113,7 +114,7 @@
     "scripts/source-snapshot.test.mjs": "sha256:63fc68a999e1365be93bf12bbb1b5b690ec08c2b7ae2e8f58c5517590dc1465d",
     "scripts/validate-atomistic-plan.mjs": "sha256:f213ba182fc53be096e3132ade318204ba1a1b6df9a97864162aabcd4e03070d",
     "scripts/validate-atomistic-runtime-lock.mjs": "sha256:bc213100526a84ab376d6d91d41e7377db1145f9bc5f41e9ef71817900ff85cf",
-    "scripts/workflow-policy.mjs": "sha256:9bb0af7ff710068081fc40b657ec8c202fe9b631638a2f761de197f4e6614bcb",
+    "scripts/workflow-policy.mjs": "sha256:ba81dff45be4427f32ed7a2dacfed39543fcb77fbbd733817146b5999fbea837",
     "scripts/workflow-policy.test.mjs": "sha256:24ea4cc27b1056fb390d9d5139607f786f117b0f70feb75e9ee1d8e5d3758e9e",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
@@ -211,7 +212,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 73340.18
+    "elapsedMs": 70664.73
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -227,11 +228,12 @@
     "scripts/validate-atomistic-plan.mjs": "sha256:f213ba182fc53be096e3132ade318204ba1a1b6df9a97864162aabcd4e03070d",
     "scripts/validate-atomistic-runtime-lock.mjs": "sha256:bc213100526a84ab376d6d91d41e7377db1145f9bc5f41e9ef71817900ff85cf",
     "scripts/atomistic/runtime-input-contract.mjs": "sha256:ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb",
-    "scripts/atomistic/write-container-observation.mjs": "sha256:b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc",
-    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:a1410a7285491008495bd1c61c179f2f5199d018d33fa5a6b2dad3282c46f121",
+    "scripts/atomistic/write-container-observation.mjs": "sha256:17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15",
+    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:803f0ce6319cb3978e436afde66b3df9b4911574c0c829fc06c073983704fb09",
     "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md": "sha256:d46773fcacc990bf536fff709b199ed8b245a29042c7b4ac19370f17084f449f",
+    "evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md": "sha256:4f40e9aa482ab2a5c2559a6cc6a0e0c05d2c1659ea3ffb58baec0cf7ae96fc29",
     "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
-    ".github/workflows/atomistic-bootstrap.yml": "sha256:2310a55b3006257bbeaaa2964f67c54556f23238b1f0271d005de85fdc33e7cf",
+    ".github/workflows/atomistic-bootstrap.yml": "sha256:8f3e5fc9ec880b266dfd79b0ee9ae26c5abcbf2a6746a857299219915b623ab4",
     "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
     ".github/workflows/evaluate.yml": "sha256:a73ab8b54a76b3ad5b594e70b47ccb4d068dedbd73929cf4401a05fccc46477c",
     "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
@@ -278,7 +280,7 @@
       "promotionFloor": 0,
       "summary": "固定资产已在受保护 Linux 验证；未完成全基准",
       "evidence": [
-        "Protected-main run 33226521340 hash-checked the locked Random-TP and both checkpoints, parsed all 693 frames / 11,088 atoms / 89 elements, and produced bounded ten-record MatterSim and MACE smoke artifacts; both remain label-free and non-promotional."
+        "Protected-main run 33226521340 produced bounded, label-free ten-record MatterSim and MACE smoke artifacts. Later discovery runs 33229898921 and 33229901480 preserved identical runtime inputs but failed closed after image export because Docker local-load metadata had no independent manifest descriptor; they count as zero successful replicas."
       ],
       "evidenceArtifacts": [
         "evaluation/atomistic/reproduction-plan.json",
@@ -291,9 +293,10 @@
         "scripts/atomistic/runtime-input-contract.mjs",
         "scripts/atomistic/write-container-observation.mjs",
         "docs/ATOMISTIC_REPRODUCTION.md",
-        "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md"
+        "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md",
+        "evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md"
       ],
-      "nextAction": "Replicate the separate runtime-input discovery twice on protected main, then authenticate both runs and artifacts with a separately controlled verifier before any 693-record prediction run.",
+      "nextAction": "Merge the descriptor-free Docker local-load observation fix, execute two entirely new protected-main replicas, then authenticate successful runs and artifacts with a separately controlled verifier before any 693-record prediction run.",
       "acceptanceTest": "Two fresh protected-main replicas produce byte-identical canonical runtime-input manifests for both models while the scientific plan remains at its preregistered digest; a controlled receipt binds workflow path, head SHA, artifact IDs and archive digests."
     },
     {
@@ -305,16 +308,17 @@
       "promotionFloor": 1,
       "summary": "LJ 回归 + 双模型 10 帧隔离 smoke",
       "evidence": [
-        "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 also passed both isolated offline dependency builds and ten-record checkpoint smoke inference with no reference labels in either prediction artifact."
+        "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 passed both isolated ten-record smoke paths. R6a discovery then failed before inference in both replicas, so it adds no scientific result."
       ],
       "evidenceArtifacts": [
         "lib/simulation/lennard-jones.ts",
         "lib/simulation/lennard-jones.test.ts",
         ".github/workflows/atomistic-bootstrap.yml",
         "docs/ATOMISTIC_REPRODUCTION.md",
-        "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md"
+        "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md",
+        "evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md"
       ],
-      "nextAction": "Issue a controlled verification receipt for the independently replicated runtime inputs, freeze a later lock version, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
+      "nextAction": "Complete two new successful runtime-input replicas and a controlled verification receipt before freezing any runtime identity or executing both models on all 693 Random-TP records.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {
@@ -674,8 +678,8 @@
     {
       "severity": "P1",
       "dimension": "atomistic",
-      "evidence": "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 also passed both isolated offline dependency builds and ten-record checkpoint smoke inference with no reference labels in either prediction artifact.",
-      "recommendedChange": "Issue a controlled verification receipt for the independently replicated runtime inputs, freeze a later lock version, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
+      "evidence": "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 passed both isolated ten-record smoke paths. R6a discovery then failed before inference in both replicas, so it adds no scientific result.",
+      "recommendedChange": "Complete two new successful runtime-input replicas and a controlled verification receipt before freezing any runtime identity or executing both models on all 693 Random-TP records.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {

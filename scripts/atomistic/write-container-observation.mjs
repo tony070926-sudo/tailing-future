@@ -6,7 +6,7 @@ import { lstat, open, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const CONTAINER_OBSERVATION_SCHEMA_VERSION = 'tf.atomistic-container-observation/0.1';
+export const CONTAINER_OBSERVATION_SCHEMA_VERSION = 'tf.atomistic-container-observation/0.2';
 export const RUNTIME_INPUT_SCHEMA_VERSION = 'tf.atomistic-runtime-inputs/0.1';
 export const RUNTIME_PLATFORM = 'linux/amd64';
 export const EVIDENCE_CLASS = 'bootstrap-not-reproduced';
@@ -19,13 +19,20 @@ const MODEL_IDS = Object.freeze({
 });
 const DIGEST_PATTERN = /^sha256:[0-9a-f]{64}$/;
 const REVISION_PATTERN = /^[0-9a-f]{40}$/;
-const BUILD_METADATA_KEYS = Object.freeze([
+const LOCAL_LOAD_METADATA_KEYS = Object.freeze([
+  'buildx.build.ref',
+  'containerimage.config.digest',
+  'containerimage.digest',
+  'image.name',
+]);
+const MANIFEST_METADATA_KEYS = Object.freeze([
   'buildx.build.provenance',
   'buildx.build.ref',
   'buildx.build.warnings',
   'containerimage.config.digest',
   'containerimage.descriptor',
   'containerimage.digest',
+  'image.name',
 ]);
 const DESCRIPTOR_KEYS = Object.freeze(['annotations', 'digest', 'mediaType', 'size']);
 const DESCRIPTOR_ANNOTATION_KEYS = Object.freeze(['config.digest', 'org.opencontainers.image.created']);
@@ -297,7 +304,7 @@ export function buildContainerObservation({
   const runtimeInput = parseJsonRejectDuplicateKeys(runtimeInputManifestBytes, 'runtime-input manifest');
   validateRuntimeInputManifest(runtimeInput, runtimeInputManifestBytes, model, runtimeRevision, epoch);
   const metadata = parseJsonRejectDuplicateKeys(buildxMetadataBytes, 'Buildx metadata');
-  const metadataClaims = validateBuildxMetadata(metadata, epoch);
+  const metadataClaims = validateBuildxMetadata(metadata, epoch, model, executionRevision);
   const inspectArray = parseJsonRejectDuplicateKeys(imageInspectBytes, 'Docker image inspect');
   const inspectClaims = validateImageInspect(inspectArray, metadataClaims, model, executionRevision, runtimeRevision, epoch);
   const buildxVersion = requireVersionText(buildxVersionBytes, 'Buildx version', { mustMentionBuildx: true });
@@ -320,17 +327,17 @@ export function buildContainerObservation({
         digest: metadataClaims.configDigest,
         semantics: RUN_SPECIFIC_SEMANTICS,
       },
-      manifestDigest: {
-        digest: metadataClaims.manifestDigest,
+      exporterDigest: {
+        digest: metadataClaims.exporterDigest,
+        kind: metadataClaims.exporterDigestKind,
         semantics: RUN_SPECIFIC_SEMANTICS,
       },
-      manifestDescriptor: {
-        mediaType: metadataClaims.mediaType,
-        sizeBytes: metadataClaims.sizeBytes,
-      },
+      metadataProfile: metadataClaims.metadataProfile,
+      manifestDescriptor: metadataClaims.manifestDescriptor,
       created: inspectClaims.created,
       rootfsDiffIds: inspectClaims.diffIds,
       buildReference: metadataClaims.buildReference,
+      imageName: metadataClaims.imageName,
       buildxVersion,
       dockerServerVersion,
       registryPushClaim: false,
@@ -425,21 +432,45 @@ function validateRuntimeInputManifest(manifest, rawBytes, model, revision, epoch
   if (!Buffer.from(rawBytes).equals(canonical)) throw new TypeError('runtime-input manifest must use exact canonical JSON plus one LF');
 }
 
-function validateBuildxMetadata(metadata, epoch) {
-  requireExactKeys(metadata, BUILD_METADATA_KEYS, 'Buildx metadata', { optional: ['buildx.build.provenance', 'buildx.build.warnings'] });
-  if (Object.hasOwn(metadata, 'buildx.build.provenance') && !isEmptyObject(metadata['buildx.build.provenance'])) {
-    throw new TypeError('Buildx metadata provenance must be absent or an empty object for this observation boundary');
-  }
-  if (Object.hasOwn(metadata, 'buildx.build.warnings') && !isEmptyObject(metadata['buildx.build.warnings'])) {
-    throw new TypeError('Buildx metadata warnings must be absent or an empty object');
-  }
+function validateBuildxMetadata(metadata, epoch, model, workflowRevision) {
+  if (!isPlainObject(metadata)) throw new TypeError('Buildx metadata must be one JSON object');
+  const metadataKeys = Object.keys(metadata).sort();
+  const localLoadProfile = sameStringSet(metadataKeys, LOCAL_LOAD_METADATA_KEYS);
+  const manifestProfile = sameStringSet(metadataKeys, MANIFEST_METADATA_KEYS);
+  if (!localLoadProfile && !manifestProfile) throw new TypeError('Buildx metadata has an unexpected claim surface');
   const buildReference = requireBoundedString(metadata['buildx.build.ref'], 'Buildx build reference');
   const configDigest = requireDigest(metadata['containerimage.config.digest'], 'Buildx config digest');
-  const manifestDigest = requireDigest(metadata['containerimage.digest'], 'Buildx manifest digest');
+  const exporterDigest = requireDigest(metadata['containerimage.digest'], 'Buildx exporter digest');
+  const expectedImageName = `docker.io/library/tailing-atomistic-${model}-bootstrap:${workflowRevision}`;
+  const imageName = requireBoundedString(metadata['image.name'], 'Buildx image name');
+  if (imageName !== expectedImageName) throw new TypeError(`Buildx image name must be exactly ${expectedImageName}`);
+
+  if (localLoadProfile) {
+    if (exporterDigest !== configDigest) {
+      throw new TypeError('Descriptor-free Docker exporter digest must equal the config image ID');
+    }
+    return {
+      buildReference,
+      configDigest,
+      exporterDigest,
+      exporterDigestKind: 'docker-image-config-alias',
+      imageName,
+      metadataProfile: 'docker-local-load',
+      manifestDescriptor: null,
+      created: null,
+    };
+  }
+
+  if (!isEmptyObject(metadata['buildx.build.provenance'])) {
+    throw new TypeError('Buildx metadata provenance must be an empty object for the manifest profile');
+  }
+  if (!isEmptyObject(metadata['buildx.build.warnings'])) {
+    throw new TypeError('Buildx metadata warnings must be an empty object for the manifest profile');
+  }
   requireExactKeys(metadata['containerimage.descriptor'], DESCRIPTOR_KEYS, 'Buildx manifest descriptor');
   const descriptor = metadata['containerimage.descriptor'];
-  if (requireDigest(descriptor.digest, 'Buildx descriptor digest') !== manifestDigest) {
-    throw new TypeError('Buildx manifest digest differs from its descriptor digest');
+  if (requireDigest(descriptor.digest, 'Buildx descriptor digest') !== exporterDigest) {
+    throw new TypeError('Buildx exporter digest differs from its descriptor digest');
   }
   if (!MANIFEST_MEDIA_TYPES.has(descriptor.mediaType)) throw new TypeError('Buildx descriptor mediaType is not an allowlisted single-image manifest type');
   const sizeBytes = requireSafeInteger(descriptor.size, 'Buildx descriptor size', { positive: true });
@@ -451,9 +482,11 @@ function validateBuildxMetadata(metadata, epoch) {
   return {
     buildReference,
     configDigest,
-    manifestDigest,
-    mediaType: descriptor.mediaType,
-    sizeBytes,
+    exporterDigest,
+    exporterDigestKind: 'single-image-manifest',
+    imageName,
+    metadataProfile: 'single-image-manifest',
+    manifestDescriptor: { mediaType: descriptor.mediaType, sizeBytes },
     created: descriptor.annotations['org.opencontainers.image.created'],
   };
 }
@@ -468,7 +501,7 @@ function validateImageInspect(value, metadata, model, workflowRevision, runtimeR
     throw new TypeError('Docker image inspect Id differs from Buildx containerimage.config.digest');
   }
   const created = requireEpochTimestamp(inspect.Created, epoch, 'Docker image inspect Created');
-  requireEpochTimestamp(metadata.created, epoch, 'Buildx descriptor created annotation');
+  if (metadata.created !== null) requireEpochTimestamp(metadata.created, epoch, 'Buildx descriptor created annotation');
   validateRegistryFields(inspect, model, workflowRevision);
   validateOptionalInspectClaims(inspect, metadata);
   validateConfig(inspect.Config, runtimeRevision);
@@ -504,15 +537,27 @@ function validateOptionalInspectClaims(inspect, metadata) {
     requireExactKeys(inspect.Metadata, ['LastTagTime'], 'Docker image inspect Metadata');
     requireNullableBoundedString(inspect.Metadata.LastTagTime, 'Docker image inspect Metadata.LastTagTime');
   }
-  if (Object.hasOwn(inspect, 'Descriptor')) {
-    requireExactKeys(inspect.Descriptor, ['annotations', 'digest', 'mediaType', 'size'], 'Docker image inspect Descriptor', { optional: ['annotations'] });
-    if (requireDigest(inspect.Descriptor.digest, 'Docker image inspect Descriptor.digest') !== metadata.manifestDigest) {
-      throw new TypeError('Docker image inspect descriptor digest differs from Buildx manifest digest');
+  if (metadata.metadataProfile === 'docker-local-load') {
+    if (Object.hasOwn(inspect, 'Descriptor')) throw new TypeError('Docker local-load image inspect must not contain Descriptor');
+  } else {
+    if (metadata.metadataProfile !== 'single-image-manifest' || !Object.hasOwn(inspect, 'Descriptor') || inspect.Descriptor === null) {
+      throw new TypeError('Docker manifest-profile image inspect Descriptor must be one object');
     }
-    if (inspect.Descriptor.mediaType !== metadata.mediaType || inspect.Descriptor.size !== metadata.sizeBytes) {
+    requireExactKeys(inspect.Descriptor, ['annotations', 'digest', 'mediaType', 'size'], 'Docker image inspect Descriptor');
+    if (requireDigest(inspect.Descriptor.digest, 'Docker image inspect Descriptor.digest') !== metadata.exporterDigest) {
+      throw new TypeError('Docker image inspect descriptor digest differs from Buildx exporter digest');
+    }
+    if (inspect.Descriptor.mediaType !== metadata.manifestDescriptor.mediaType
+        || inspect.Descriptor.size !== metadata.manifestDescriptor.sizeBytes) {
       throw new TypeError('Docker image inspect descriptor differs from the Buildx manifest descriptor');
     }
-    if (Object.hasOwn(inspect.Descriptor, 'annotations')) requireJsonTree(inspect.Descriptor.annotations, 'Docker image inspect Descriptor.annotations');
+    requireExactKeys(inspect.Descriptor.annotations, DESCRIPTOR_ANNOTATION_KEYS, 'Docker image inspect Descriptor.annotations');
+    if (requireDigest(inspect.Descriptor.annotations['config.digest'], 'Docker image inspect Descriptor config annotation') !== metadata.configDigest) {
+      throw new TypeError('Docker image inspect descriptor config annotation differs from Buildx config digest');
+    }
+    if (inspect.Descriptor.annotations['org.opencontainers.image.created'] !== metadata.created) {
+      throw new TypeError('Docker image inspect descriptor created annotation differs from Buildx metadata');
+    }
   }
 }
 
@@ -711,6 +756,12 @@ function isPlainObject(value) {
   return prototype === Object.prototype || prototype === null;
 }
 
+function sameStringSet(actual, expected) {
+  const sortedExpected = [...expected].sort();
+  return actual.length === expected.length
+    && actual.every((value, index) => value === sortedExpected[index]);
+}
+
 function requireLexicallyCanonicalPath(filename, label) {
   if (typeof filename !== 'string' || filename.length === 0 || filename.includes('\0')) throw new TypeError(`${label} path must be a nonempty string`);
   if (path.normalize(filename) !== filename || filename.split(path.sep).some((part) => part === '.' || part === '..')) {
@@ -735,15 +786,44 @@ async function readSafeRegularFile(filename, label, maxBytes) {
   const flags = fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0);
   const handle = await open(absolute, flags);
   try {
-    const bytes = await handle.readFile();
+    const bytes = await readAtMost(handle, maxBytes, label);
     const after = await handle.stat({ bigint: true });
-    if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs) {
+    let afterCanonical;
+    let afterPath;
+    try {
+      afterCanonical = await realpath(absolute);
+      afterPath = await lstat(absolute, { bigint: true });
+    } catch (error) {
+      throw new Error(`${label} path changed during verification`, { cause: error });
+    }
+    if (afterCanonical !== absolute || !afterPath.isFile() || afterPath.isSymbolicLink() || afterPath.nlink !== 1n
+        || before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+        || before.mode !== after.mode || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
+        || afterPath.dev !== after.dev || afterPath.ino !== after.ino || afterPath.size !== after.size
+        || afterPath.mode !== after.mode || afterPath.mtimeNs !== after.mtimeNs || afterPath.ctimeNs !== after.ctimeNs
+        || BigInt(bytes.length) !== after.size) {
       throw new Error(`${label} changed during verification`);
     }
     return { absolute, bytes, dev: after.dev, ino: after.ino };
   } finally {
     await handle.close();
   }
+}
+
+export async function readAtMost(handle, maxBytes, label) {
+  const chunks = [];
+  let total = 0;
+  while (total <= maxBytes) {
+    const remaining = Math.min(64 * 1024, maxBytes + 1 - total);
+    if (remaining <= 0) break;
+    const buffer = Buffer.allocUnsafe(remaining);
+    const { bytesRead } = await handle.read(buffer, 0, remaining, null);
+    if (bytesRead === 0) break;
+    chunks.push(buffer.subarray(0, bytesRead));
+    total += bytesRead;
+  }
+  if (total > maxBytes) throw new TypeError(`${label} exceeds its byte limit during verification`);
+  return Buffer.concat(chunks, total);
 }
 
 function requireDistinctFiles(entries) {
@@ -761,11 +841,24 @@ async function writeNewFile(filename, bytes) {
   const absolute = requireLexicallyCanonicalPath(filename, 'output');
   const parent = path.dirname(absolute);
   if (await realpath(parent) !== parent) throw new TypeError('output parent path must be canonical and must not traverse a symlink');
+  const parentBefore = await lstat(parent, { bigint: true });
+  if (!parentBefore.isDirectory() || parentBefore.isSymbolicLink()) throw new TypeError('output parent must be one real directory');
   const flags = fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | (fsConstants.O_NOFOLLOW ?? 0);
   const handle = await open(absolute, flags, 0o644);
   try {
     await handle.writeFile(bytes);
     await handle.sync();
+    const outputStat = await handle.stat({ bigint: true });
+    const parentAfter = await lstat(parent, { bigint: true });
+    const outputPath = await lstat(absolute, { bigint: true });
+    if (await realpath(parent) !== parent || await realpath(absolute) !== absolute
+        || parentBefore.dev !== parentAfter.dev || parentBefore.ino !== parentAfter.ino
+        || !outputPath.isFile() || outputPath.isSymbolicLink() || outputPath.nlink !== 1n
+        || outputPath.dev !== outputStat.dev || outputPath.ino !== outputStat.ino
+        || outputPath.size !== outputStat.size || outputPath.mode !== outputStat.mode
+        || BigInt(bytes.length) !== outputStat.size) {
+      throw new Error('output path changed during publication');
+    }
   } finally {
     await handle.close();
   }
