@@ -54,6 +54,141 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           test "$(uname -s)" = "Linux"
           test "$(uname -m)" = "x86_64"
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import {
+            closeSync,
+            constants as fsConstants,
+            fstatSync,
+            openSync,
+            readSync,
+          } from 'node:fs';
+
+          const quarantinePath = 'evaluation/atomistic/bootstrap-quarantine.json';
+          const expectedQuarantineRawDigest = 'sha256:b20ad79d1360b4482373f837421c73214d6fcf47aafe0bfa6ed6eea99bb6f17f';
+          const expectedQuarantine = {
+            schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.1',
+            state: 'active',
+            runnerDigest: 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c',
+            runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
+            runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
+            runtimeLock: {
+              path: 'evaluation/atomistic/runtime-lock.json',
+              rawDigest: 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe',
+            },
+            scientificPlan: {
+              path: 'evaluation/atomistic/reproduction-plan.json',
+              rawDigest: 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2',
+            },
+            reasonCode: 'contradictory-bootstrap-promotion-claim',
+            reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
+            acceptedReplicaCount: 0,
+            nonRetroactiveRunIds: [33231316217, 33231323492],
+          };
+
+          function sha256(bytes) {
+            return `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+          }
+
+          function canonicalJson(value) {
+            if (value === null) return 'null';
+            if (Array.isArray(value)) return `[${value.map((entry) => canonicalJson(entry)).join(',')}]`;
+            if (typeof value === 'object') {
+              return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(',')}}`;
+            }
+            return JSON.stringify(value);
+          }
+
+          function readBoundedRegularFile(path, maximumBytes) {
+            const descriptor = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+            try {
+              const before = fstatSync(descriptor, { bigint: true });
+              if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n
+                  || before.size < 1n || before.size > BigInt(maximumBytes)) {
+                throw new Error(`${path} is not one bounded regular file.`);
+              }
+              const bytes = Buffer.alloc(Number(before.size));
+              let offset = 0;
+              while (offset < bytes.length) {
+                const count = readSync(descriptor, bytes, offset, bytes.length - offset, null);
+                if (count === 0) throw new Error(`${path} changed while it was read.`);
+                offset += count;
+              }
+              if (readSync(descriptor, Buffer.alloc(1), 0, 1, null) !== 0) {
+                throw new Error(`${path} exceeded its byte bound while it was read.`);
+              }
+              const after = fstatSync(descriptor, { bigint: true });
+              if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+                  || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs) {
+                throw new Error(`${path} changed while it was read.`);
+              }
+              return bytes;
+            } finally {
+              closeSync(descriptor);
+            }
+          }
+
+          const quarantineBytes = readBoundedRegularFile(quarantinePath, 4096);
+          if (sha256(quarantineBytes) !== expectedQuarantineRawDigest) {
+            throw new Error('Bootstrap quarantine bytes differ from the reviewed policy.');
+          }
+          const quarantine = JSON.parse(quarantineBytes);
+          if (JSON.stringify(quarantine) !== JSON.stringify(expectedQuarantine)) {
+            throw new Error('Bootstrap quarantine schema or values differ from the reviewed policy.');
+          }
+
+          const runtimeLockBytes = readBoundedRegularFile(quarantine.runtimeLock.path, 64 * 1024);
+          const planBytes = readBoundedRegularFile(quarantine.scientificPlan.path, 64 * 1024);
+          if (sha256(runtimeLockBytes) !== quarantine.runtimeLock.rawDigest
+              || sha256(planBytes) !== quarantine.scientificPlan.rawDigest) {
+            throw new Error('Bootstrap quarantine is not bound to the reviewed runtime lock and scientific plan.');
+          }
+          const runtimeLock = JSON.parse(runtimeLockBytes);
+          const plan = JSON.parse(planBytes);
+          if (runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.1'
+              || runtimeLock.state !== 'discovery-not-frozen'
+              || runtimeLock.scientificPlan?.path !== quarantine.scientificPlan.path
+              || runtimeLock.scientificPlan?.rawDigest !== quarantine.scientificPlan.rawDigest
+              || runtimeLock.runtimeSource?.revision !== quarantine.runtimeSourceRevision
+              || runtimeLock.identities?.runnerDigest !== null
+              || runtimeLock.replication?.observations?.length !== quarantine.acceptedReplicaCount
+              || runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'
+              || runtimeLock.claims?.promotionEligible !== false
+              || runtimeLock.claims?.comparable !== false
+              || runtimeLock.claims?.reproduced !== false
+              || plan.schemaVersion !== 'tf.atomistic-reproduction/0.2'
+              || plan.status !== 'planned-not-reproduced') {
+            throw new Error('Bootstrap quarantine, runtime lock, and scientific plan do not share the reviewed claim boundary.');
+          }
+
+          const runnerPaths = [
+            ['scripts/atomistic/run_model.py', 'run_model.py'],
+            ['scripts/atomistic/runtime_contract.py', 'runtime_contract.py'],
+          ];
+          if (!Array.isArray(runtimeLock.runtimeSource.files)) {
+            throw new Error('Runtime lock has no source-file identities.');
+          }
+          const runnerFiles = runnerPaths.map(([path, name]) => {
+            const matches = runtimeLock.runtimeSource.files.filter((entry) => entry?.path === path);
+            if (matches.length !== 1 || matches[0].mode !== '100644'
+                || !Number.isSafeInteger(matches[0].sizeBytes) || matches[0].sizeBytes < 1
+                || !/^sha256:[0-9a-f]{64}$/.test(matches[0].sha256)) {
+              throw new Error(`Runtime lock has no unique regular identity for ${path}.`);
+            }
+            const bytes = readBoundedRegularFile(path, 5 * 1024 * 1024);
+            if (bytes.length !== matches[0].sizeBytes || sha256(bytes) !== matches[0].sha256) {
+              throw new Error(`Runtime source differs from the quarantined lock identity: ${path}`);
+            }
+            return { name, sha256: matches[0].sha256 };
+          }).sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0));
+          const lockedRunnerDigest = sha256(Buffer.from(canonicalJson(runnerFiles), 'utf8'));
+          if (lockedRunnerDigest !== quarantine.runnerDigest) {
+            throw new Error('Bootstrap quarantine runner identity differs from the reviewed runtime lock.');
+          }
+          throw new Error(
+            `BOOTSTRAP_QUARANTINE_ACTIVE (${quarantine.reasonCode}): ${quarantine.reason} runner=${lockedRunnerDigest}; acceptedReplicaCount=0; runs ${quarantine.nonRetroactiveRunIds.join(',')} cannot be retroactively accepted.`,
+          );
+          NODE
 
       - name: Create fresh, model-isolated working directories
         id: directories
