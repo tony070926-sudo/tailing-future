@@ -30,8 +30,9 @@ reported as reproduced until the following sequence passes for each model:
    reviewed wheelhouse, then run the exact frozen 10-ID smoke test under
    `--network=none`.
 7. Review the predictions, environment manifest, network proof, lock digest,
-   canonical runtime-input manifest, run-specific OCI config/manifest
-   observations and diagnostics behavior before committing the lock.
+   canonical runtime-input manifest, run-specific config/exporter observations
+   and diagnostics behavior before committing the lock. A Docker local-load
+   config-ID alias must never be relabeled as an OCI manifest digest.
 
 Only after that review may a production `*.requirements.lock` be added. The
 Dockerfiles deliberately reference the currently absent production locks so an
@@ -121,3 +122,11 @@ independently recomputed. The outcome cannot promote evidence: its only evidence
 class is `bootstrap-not-reproduced`. If checkout, the action runtime, or the
 outcome writer itself cannot run safely, upload is skipped instead of
 fabricating an artifact.
+
+Protected-main discovery runs `33229898921` and `33229901480` exercised this
+failure path. Both stable runtime-input manifests and dependency locks agreed,
+but all four jobs failed after image export because the original observer
+required `containerimage.descriptor` while Docker `--load` emitted
+`image.name` and a config-ID-alias exporter digest. They remain **0 / 2**
+successful replicas. The detailed negative-evidence review is
+`evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md`.

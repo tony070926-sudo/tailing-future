@@ -87,7 +87,7 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
 - pinned MatterSim / MACE / Random-TP scientific manifests plus a separate,
   non-self-referential runtime-lock protocol. Both isolated ten-frame smoke
   paths now emit finite E/F/stress without labels, but remain
-  `planned-not-reproduced` until two runtime-input replicas, a controlled
+  `planned-not-reproduced` until two fresh successful runtime-input replicas, a controlled
   GitHub run/artifact receipt and the complete 693-record independent verifier
   pass;
 - a browser frame assembled from one immutable observation snapshot.

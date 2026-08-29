@@ -909,7 +909,7 @@ jobs:
           docker image inspect "$image_tag" > "$BUILD_CONTEXT/$MODEL.image-inspect.json"
           docker buildx version > "$BUILD_CONTEXT/buildx-version.txt"
           docker version --format '{{.Server.Version}}' > "$BUILD_CONTEXT/docker-server-version.txt"
-          echo "b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc  scripts/atomistic/write-container-observation.mjs" | sha256sum -c -
+          echo "17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15  scripts/atomistic/write-container-observation.mjs" | sha256sum -c -
           node scripts/atomistic/write-container-observation.mjs write-new \
             --model "$MODEL" \
             --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \

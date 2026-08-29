@@ -4,7 +4,10 @@ Status: **planned-not-reproduced** for the full dual-model benchmark on
 2026-08-29. Protected-main run `33226521340` completed non-promotional,
 ten-record smoke inference for both MatterSim and MACE. This document freezes
 the next executable experiment and its evidence contract, not a 693-record
-reproduction result.
+reproduction result. R6a discovery runs `33229898921` and `33229901480`
+subsequently failed closed after image export because the observer expected an
+OCI manifest descriptor that Docker local-load metadata did not emit. They are
+negative protocol evidence and count as **0 / 2** successful replicas.
 
 ## Why these two models
 
@@ -103,14 +106,19 @@ image `.Id` remains run-specific evidence unless independent OCI builds prove
 the same manifest digest.
 
 The canary passes the R5 commit timestamp through BuildKit's special
-`SOURCE_DATE_EPOCH` build argument and verifies the resulting config/descriptor
-timestamps against Buildx metadata and `docker image inspect`. This normalizes
-OCI config and history timestamps, but it is not a blanket reproducible-image
+`SOURCE_DATE_EPOCH` build argument and verifies the resulting image/config
+timestamp against `docker image inspect`; when Buildx emits a true manifest
+descriptor, its created annotation is checked too. This normalizes OCI config
+and history timestamps, but it is not a blanket reproducible-image
 claim: [BuildKit documents](https://github.com/moby/buildkit/blob/master/docs/build-repro.md#source_date_epoch)
 that rewriting timestamps inside exported image layers requires a compatible
 image exporter option, and image assembly behavior also depends on the named
-BuildKit compatibility path. R6a therefore records manifest/config digests as
-run-specific diagnostics, never promotion roots. Its container observation
+BuildKit compatibility path. Discovery therefore treats Buildx exporter/config
+digests as run-specific diagnostics, never promotion roots. The corrected observation
+schema distinguishes a true `single-image-manifest` descriptor from the
+descriptor-free Docker `--load` profile, where `containerimage.digest` is only
+a `docker-image-config-alias` and `manifestDescriptor` remains null. It also
+binds the exact normalized local image name. Its container observation
 also separates the current workflow revision (used by the local image tag)
 from the fixed R5 runtime-source revision (used by the OCI source label and
 stable runtime-input contract). The bounded bundle publishes the raw Buildx

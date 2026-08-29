@@ -66,6 +66,15 @@ proves an identical manifest digest. Sentinel rejects any digest dependency
 cycle that feeds a plan or runtime-lock output back into the runner bytes it
 claims to identify.
 
+R6a protected-main runs `33229898921` and `33229901480` are retained as
+negative loop evidence: both produced identical stable runtime inputs but all
+four jobs failed after image export because the producer expected a manifest
+descriptor from Docker's descriptor-free local-load metadata. Stable digest
+agreement never overrides a failed run/job conclusion. The next producer
+revision records that exporter value as a run-specific
+`docker-image-config-alias`, requires two entirely new successful replicas,
+and leaves the successful-replica count at **0 / 2** until then.
+
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 
 ## Promotion rules

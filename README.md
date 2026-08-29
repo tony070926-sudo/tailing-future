@@ -13,7 +13,7 @@ The current **R2 / CONDITIONAL** candidate is intentionally narrow:
 - an eight-seed × 5,000-step PR tail gate with p50/p95/p99/max reporting and explicit compute budgets;
 - a live particle/heat/species view whose pixels, values, state ID and ledger come from one observation;
 - a versioned SOTA registry and Sentinel evaluator that runs physics and schema checks rather than trusting evidence labels;
-- a machine-validated atomistic reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. Protected main now completes ten-record checkpoint smoke inference for both models; neither run contains reference labels or accuracy metrics, and the full dual-model benchmark remains **planned-not-reproduced**. Runtime identities are being moved into a separately replicated, non-self-referential lock before the 693-record run.
+- a machine-validated atomistic reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. Protected main completes ten-record checkpoint smoke inference for both models; neither run contains reference labels or accuracy metrics, and the full dual-model benchmark remains **planned-not-reproduced**. Two later runtime-discovery runs failed closed on a Docker exporter-observation mismatch and count as 0/2 successful replicas; the corrected contract keeps config IDs run-scoped before fresh replication and the 693-record run.
 
 This is an educational and numerical-verification prototype. It does not model a specific material, reaction, plant or safe operating window, and it must not be used for engineering decisions.
 

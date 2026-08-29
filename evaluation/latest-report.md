@@ -1,10 +1,10 @@
-# Tailing Sentinel — 0.3.1-r6a-runtime-lock-discovery
+# Tailing Sentinel — 0.3.1-r6b-docker-load-observation
 
 - Verdict: **CONDITIONAL**
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-29**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:c40892ea691045ef38de84d08e9b7ba97223177b7fa0cc18cfd877fec1834eea` across 111 source files
+- Artifact: `sha256:fa409bead74015969b63c85db2768b0e47c2d2877b60d6b188146956cdfa5689` across 112 source files
 
 ## Hard gates
 
@@ -13,13 +13,13 @@
 ## Executable verification
 
 - Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
-- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog / comparator receipts: PASS (manifest only); evaluator runtime: 73340.2 ms.
+- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog / comparator receipts: PASS (manifest only); evaluator runtime: 70664.7 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps
 
-1. **P1 · atomistic** — Issue a controlled verification receipt for the independently replicated runtime inputs, freeze a later lock version, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.
-   - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 also passed both isolated offline dependency builds and ten-record checkpoint smoke inference with no reference labels in either prediction artifact.
+1. **P1 · atomistic** — Complete two new successful runtime-input replicas and a controlled verification receipt before freezing any runtime identity or executing both models on all 693 Random-TP records.
+   - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 passed both isolated ten-record smoke paths. R6a discovery then failed before inference in both replicas, so it adds no scientific result.
    - Acceptance: Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests.
 2. **P1 · mesoscale** — Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.
    - Evidence: No executable evidence in the current candidate.

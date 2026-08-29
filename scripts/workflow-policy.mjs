@@ -18,7 +18,7 @@ export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a4
 export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684';
 export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c';
 export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb';
-export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = 'b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc';
+export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = '17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15';
 export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
 export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
@@ -53,7 +53,7 @@ export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Resolve an exact lock from the offline wheelhouse': 'sha256:627ac623a63d25e029b6508dd737b0972c1d59651bb73edd4049d8f0e69f6292',
   'Freeze and verify the exact resolved wheel set': 'sha256:0784f81d971d2cf1f6989ad3de173de4998d3e9de740ba452a498ff81e4164ac',
   'Prove a cold, hash-locked install with no network': 'sha256:be109a394b3a765414bcf932c12c89edf72435def72704e240cb8a183d113543',
-  'Build the isolated runtime image with no build-step network': 'sha256:00e8aea0955e737095e4538d1a4c694cc866a48b1f5598fedf6c9c558d8202b6',
+  'Build the isolated runtime image with no build-step network': 'sha256:72e0cacf3b9ae0cc814483009387eb074ec807a63ba6639c21cd4adf0e300c6d',
   'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:c6e33b9011e31baf81bece08fe74631a30ebb37d2c6c69f537fb055f80ffa5b0',
   'Stage only non-promotional bootstrap outputs': 'sha256:1981a130b179eaa43f869306c14ee07c71a2d641c7d0b7e10f319213ed877256',
 });
