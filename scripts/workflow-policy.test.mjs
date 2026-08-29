@@ -408,6 +408,24 @@ describe('atomistic bootstrap supply-chain policy', () => {
           '--mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly"',
         );
       }],
+      ['host-UID-scoped nproc limit in source builder', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(
+          '--ulimit nofile=256:256',
+          '--ulimit nofile=256:256 \\\n                --ulimit nproc=64:64',
+        );
+      }],
+      ['equals-form host-UID-scoped nproc limit in source builder', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace(
+          '--ulimit nofile=256:256',
+          '--ulimit nofile=256:256 \\\n                --ulimit=nproc=64:64',
+        );
+      }],
+      ['missing container-scoped source-builder PID limit', (workflow) => {
+        const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+        step.run = step.run.replace('--pids-limit=64', '--pids-limit=-1');
+      }],
       ['derived provenance omitted from offline resolver', (workflow) => {
         const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
         step.run = step.run.replace(
@@ -423,6 +441,17 @@ describe('atomistic bootstrap supply-chain policy', () => {
         const step = namedStep(workflow, 'Prove a cold, hash-locked install with no network');
         step.run = step.run.replace('--network=none', '--network=bridge');
       }],
+      ['host-UID-scoped nproc limit in cold install', (workflow) => {
+        const step = namedStep(workflow, 'Prove a cold, hash-locked install with no network');
+        step.run = step.run.replace(
+          '--ulimit nofile=1024:1024',
+          '--ulimit nofile=1024:1024 \\\n            --ulimit nproc=256:256',
+        );
+      }],
+      ['missing container-scoped cold-install PID limit', (workflow) => {
+        const step = namedStep(workflow, 'Prove a cold, hash-locked install with no network');
+        step.run = step.run.replace('--pids-limit=256', '--pids-limit=-1');
+      }],
       ['networked image build', (workflow) => {
         const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
         step.run = step.run.replace('--network=none', '--network=default');
@@ -430,6 +459,17 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ['networked checkpoint run', (workflow) => {
         const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
         step.run = step.run.replace('--network=none', '--network=bridge');
+      }],
+      ['fixed-UID nproc limit in checkpoint run', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace(
+          '--ulimit nofile=1024:1024',
+          '--ulimit nofile=1024:1024 \\\n            --ulimit nproc=256:256',
+        );
+      }],
+      ['missing container-scoped checkpoint PID limit', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--pids-limit=256', '--pids-limit=-1');
       }],
       ['non-amd64 checkpoint run', (workflow) => {
         const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
@@ -439,6 +479,63 @@ describe('atomistic bootstrap supply-chain policy', () => {
     for (const [label, mutate] of cases) {
       expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
     }
+  });
+
+  it('diagnoses UID-scoped nproc and missing container PID boundaries semantically', () => {
+    const nprocFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+      step.run = step.run.replace(
+        '--ulimit nofile=256:256',
+        '--ulimit nofile=256:256 \\\n                --ulimit=nproc=64:64',
+      );
+    }).join('\n');
+    expect(nprocFailures).toMatch(/RLIMIT_NPROC/);
+
+    const coldPidFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Prove a cold, hash-locked install with no network');
+      step.run = step.run.replace('--pids-limit=256', '--pids-limit=-1');
+    }).join('\n');
+    expect(coldPidFailures).toMatch(/cold install must remain hash-locked/);
+
+    const sourcePidFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+      step.run = step.run.replace('--pids-limit=64', '--pids-limit=-1');
+    }).join('\n');
+    expect(sourcePidFailures).toMatch(/source-only python-hostlist dependency/);
+
+    const inferencePidFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+      step.run = step.run.replace('--pids-limit=256', '--pids-limit=-1');
+    }).join('\n');
+    expect(inferencePidFailures).toMatch(/checkpoint inference must remain/);
+  });
+
+  it('rejects computed or quote-concatenated ulimit values beyond the exact allowlist', () => {
+    const computedFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+      step.run = `host_limit=nproc=64:64\n${step.run.replace(
+        '--ulimit nofile=256:256',
+        ['--ulimit nofile=256:256 \\', '                --ulimit "$host_limit"'].join('\n'),
+      )}`;
+    }).join('\n');
+    expect(computedFailures).toMatch(/exact reviewed .* multiset/);
+
+    const concatenatedFailures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+      step.run = step.run.replace(
+        '--ulimit nofile=256:256',
+        ['--ulimit nofile=256:256 \\', '                --ulimit npr"oc=64:64"'].join('\n'),
+      );
+    }).join('\n');
+    expect(concatenatedFailures).toMatch(/exact reviewed .* multiset/);
+  });
+
+  it('rejects substitution with another allowlisted ulimit value', () => {
+    const failures = inspectMutatedBootstrap((workflow) => {
+      const step = namedStep(workflow, 'Download one fresh resolved wheelhouse in the online phase');
+      step.run = step.run.replace('--ulimit nofile=64:64', '--ulimit nofile=1024:1024');
+    }).join('\n');
+    expect(failures).toMatch(/exact reviewed .* multiset/);
   });
 
   it('rejects broader artifacts, full runs, metrics, receipts and attestations', () => {

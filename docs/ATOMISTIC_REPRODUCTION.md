@@ -1,6 +1,10 @@
-# R3 atomistic foundation-model reproduction protocol
+# Atomistic foundation-model reproduction protocol
 
-Status: **planned-not-reproduced** on 2026-08-29. This document freezes the next executable experiment and its evidence contract; it is not evidence that either checkpoint has run locally or in GitHub Actions.
+Status: **planned-not-reproduced** for the full dual-model benchmark on
+2026-08-29. Protected-main run `33221777626` completed one non-promotional,
+ten-record MatterSim smoke; MACE has no prediction artifact. This document
+freezes the next executable experiment and its evidence contract, not a
+693-record reproduction result.
 
 ## Why these two models
 
@@ -113,11 +117,12 @@ TAILING_ATOMISTIC_CACHE=/absolute/cache node scripts/validate-atomistic-plan.mjs
 
 MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy, 0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the manifest. MACE has no locked official Random-TP target: its first complete blind run may establish an engineering baseline, but cannot be used to claim superiority. Until checkpoint, dataset and runner digests are all present, both models remain `AUDITABLE`, never `REPRODUCED` or numerically comparable.
 
-Three protected-main bootstrap dispatches have run. The first stopped during
+Four protected-main bootstrap dispatches have run. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
-but stopped during offline exact-lock resolution. None reached cold install, image
-build, checkpoint deserialization or inference. Their bounded outcome
-artifacts therefore remain `bootstrap-not-reproduced`.
+but stopped during offline exact-lock resolution. The fourth crossed those
+boundaries for MatterSim and produced a successful ten-record smoke artifact.
+Every bundle deliberately remains `bootstrap-not-reproduced`: smoke predictions
+are neither the 693-record preregistered benchmark nor an accuracy result.
 
 The third dispatch,
 [`33219047585`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585),
@@ -133,13 +138,38 @@ the MACE artifact `9704485367` has digest
 Independent inspection found no artifact safety or run-binding violation; both
 truthfully report `failureStage: resolve` and no predictions.
 
-The current remediation applies the direct-child startup boundary and was
-preflighted against complete cp312/Linux target wheelhouses: 157 MatterSim
-wheels (675,408,593 bytes) and 44 MACE wheels (294,237,409 bytes). It also
-binds the exact safe `.data/data` `share` payloads and reserves venv Python,
-pip and activation paths. The final resolver and independent inventory verifier
-completed all 157 MatterSim wheels (35,697 raw install files); the 44-wheel MACE
-diagnostic completed after substituting only the local hostlist ZIP hash, while
-checked-in policy binds the reviewed Linux dual-build digest
-`498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c`.
-A fourth protected Linux dispatch is still required.
+The fourth dispatch,
+[`33221777626`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33221777626),
+ran at protected-main commit
+`9f2335070c1bd2cf441e4b549a16aca86e88eada`. MatterSim attempt-one job
+[`99017141491`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33221777626/job/99017141491)
+passed the 157-wheel resolver, independent 35,697-file raw / 35,696-file
+runtime inventory, offline cold install, image build and checkpoint inference.
+Artifact `9705471645` is 63,101 bytes with archive digest
+`sha256:7ae686cdaea87097c07a9fe1bdd8fe0277cf86b000f9afc71d907aa17095d005`.
+Its ten predictions have digest
+`sha256:14e89cfcb8d0d42b545b18b41a66b4a0899b080de014f913a91bd108d9e419cb`
+and contain no reference labels. Independent inspection found ten unique
+successful IDs, finite energies, sixteen force rows and a full 3x3 stress for
+each selected structure.
+
+MACE did not reach dependency resolution. Attempt-one job
+[`99017141610`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33221777626/job/99017141610)
+failed while starting the first `python-hostlist` source-build container.
+The same-commit failed-job rerun, attempt-two job
+[`99017596056`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33221777626/job/99017596056),
+built the first wheel at the expected Linux digest
+`498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c`
+and then failed to execute `/usr/bin/sh` in the second clean builder with
+`resource temporarily unavailable`. Its final artifact `9705485885` is 2,369
+bytes with archive digest
+`sha256:912f52f47027e8f4a7494700a119789662532343fe04d789ccda7dae6d827717`;
+it truthfully records `failureStage: wheelhouse` and no predictions.
+
+[Docker documents](https://docs.docker.com/reference/cli/docker/container/run/#for-nproc-usage)
+that `RLIMIT_NPROC` counts processes for a user rather than a container and can
+produce this exact failure. The current remediation removes all workflow
+`nproc` limits and retains the container-scoped `pids-limit` plus the existing
+CPU, memory, file, network, privilege and read-only boundaries. A new protected
+Linux dispatch must pass MACE's two clean byte-identical builds and the complete
+44-wheel chain before MACE smoke evidence exists.
