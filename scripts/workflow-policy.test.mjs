@@ -6,9 +6,12 @@ import {
   ATOMISTIC_DOCKERFILE_DIGESTS,
   ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
   ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
+  ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256,
   ATOMISTIC_BOOTSTRAP_NODE_VERSION,
   ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
   ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256,
+  ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
+  ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256,
   ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
@@ -60,6 +63,12 @@ const atomisticResolveLockSource = readFileSync(
 );
 const runtimeInventoryVerifierSource = readFileSync(
   new URL('./atomistic/verify_runtime_inventory.py', import.meta.url),
+);
+const runtimeInputContractSource = readFileSync(
+  new URL('./atomistic/runtime-input-contract.mjs', import.meta.url),
+);
+const containerObservationWriterSource = readFileSync(
+  new URL('./atomistic/write-container-observation.mjs', import.meta.url),
 );
 const matterSimBootstrapInput = readFileSync(
   new URL('../atomistic/locks/mattersim.bootstrap.in', import.meta.url),
@@ -121,6 +130,8 @@ describe('workflow source policy', () => {
     expect(Object.keys(sentinelEvaluationWorkflow.jobs)).toEqual(['evaluate']);
     expect(sentinelEvaluationWorkflow.jobs.evaluate.permissions).toEqual({ contents: 'read' });
     expect(sentinelEvaluationWorkflow.jobs.evaluate['runs-on']).toBe('ubuntu-24.04');
+    const evaluationCheckout = sentinelEvaluationWorkflow.jobs.evaluate.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
+    expect(evaluationCheckout?.with).toEqual({ 'persist-credentials': false, 'fetch-depth': 0 });
     expect(sentinelReportWorkflow.on).toEqual({
       workflow_run: {
         workflows: ['Tailing Sentinel'],
@@ -162,6 +173,22 @@ describe('workflow source policy', () => {
         };
       }],
       ['target-context trigger', (workflow) => { workflow.on = { pull_request_target: null }; }],
+      ['shallow ancestor checkout', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.uses?.startsWith('actions/checkout@')).with['fetch-depth'] = 1;
+      }],
+      ['atomistic runtime-lock gate removed', (workflow) => {
+        const steps = workflow.jobs.evaluate.steps;
+        steps.splice(steps.findIndex((step) => step.id === 'atomistic_manifest'), 1);
+      }],
+      ['atomistic validator bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'atomistic_manifest').run = 'true';
+      }],
+      ['Sentinel atomistic status forged', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'sentinel').env.TAILING_ATOMISTIC_MANIFEST_STATUS = '${{ steps.install.outcome }}';
+      }],
+      ['final atomistic status forged', (workflow) => {
+        workflow.jobs.evaluate.steps.at(-1).env.ATOMISTIC_MANIFEST_STATUS = '${{ steps.install.outcome }}';
+      }],
     ];
     for (const [label, mutate] of cases) {
       const workflow = parseYaml(sentinelEvaluationSource);
@@ -294,6 +321,12 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(createHash('sha256').update(pythonHostlistVerifierSource).digest('hex')).toBe(PYTHON_HOSTLIST_VERIFIER_SHA256);
     expect(createHash('sha256').update(bootstrapOutcomeSource).digest('hex')).toBe(ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256);
     expect(createHash('sha256').update(runtimeInventoryVerifierSource).digest('hex')).toBe(ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256);
+    expect(createHash('sha256').update(runtimeInputContractSource).digest('hex')).toBe(ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256);
+    expect(createHash('sha256').update(containerObservationWriterSource).digest('hex')).toBe(ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256);
+    expect(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256).toMatch(/^[0-9a-f]{64}$/);
+    const workflow = parseYaml(atomisticBootstrapSource);
+    const checkout = workflow.jobs.bootstrap.steps.find((step) => step.name === 'Check out the dispatched revision without credentials');
+    expect(checkout?.with).toEqual({ 'persist-credentials': false, 'fetch-depth': 0 });
     expect(atomisticResolveLockSource).toContain(
       `PYTHON_HOSTLIST_BUILD_TOOL_LOCK_DIGEST = "sha256:${PYTHON_HOSTLIST_BUILD_LOCK_SHA256}"`,
     );
@@ -343,6 +376,9 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ['mutable Node runtime', (workflow) => {
         namedStep(workflow, 'Install the pinned JavaScript runtime').with['node-version'] = '24';
       }],
+      ['shallow checkout hides the pinned R5 Git object', (workflow) => {
+        namedStep(workflow, 'Check out the dispatched revision without credentials').with['fetch-depth'] = 1;
+      }],
       ['base image drift', (workflow) => { workflow.env.BASE_IMAGE = `python:3.12.13@sha256:${'1'.repeat(64)}`; }],
       ['base platform digest drift', (workflow) => { workflow.env.BASE_IMAGE_AMD64_DIGEST = `sha256:${'2'.repeat(64)}`; }],
       ['frontend drift', (workflow) => { workflow.env.DOCKERFILE_FRONTEND = `docker/dockerfile:1.7@sha256:${'3'.repeat(64)}`; }],
@@ -367,6 +403,64 @@ describe('atomistic bootstrap supply-chain policy', () => {
     for (const [label, mutate] of cases) {
       expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
     }
+  });
+
+  it('rejects runtime-lock, runtime-input, reproducible-build, observation, and staged-evidence drift', () => {
+    const cases = [
+      ['runtime lock digest', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run = step.run.replace(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256, '0'.repeat(64));
+      }],
+      ['R5 Git ancestry check', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run = step.run.replace("execFileSync('git', ['merge-base', '--is-ancestor'", "execFileSync('git', ['rev-parse'");
+      }],
+      ['runtime-input creation', (workflow) => {
+        const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
+        step.run = step.run.replace('scripts/atomistic/runtime-input-contract.mjs write-new', 'scripts/atomistic/runtime-input-contract.mjs verify-exact');
+      }],
+      ['runtime-input freeze verification', (workflow) => {
+        const step = namedStep(workflow, 'Freeze and verify the exact resolved wheel set');
+        step.run = step.run.replace('scripts/atomistic/runtime-input-contract.mjs verify-exact', 'true');
+      }],
+      ['source date epoch', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--build-arg "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"', '--build-arg "SOURCE_DATE_EPOCH=0"');
+      }],
+      ['runtime source label', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('$RUNTIME_SOURCE_REVISION', '$GITHUB_SHA');
+      }],
+      ['workflow tag mislabeled as runtime source', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('image_tag="tailing-atomistic-$MODEL-bootstrap:$GITHUB_SHA"', 'image_tag="tailing-atomistic-$MODEL-bootstrap:$RUNTIME_SOURCE_REVISION"');
+      }],
+      ['observer workflow revision mislabeled as runtime source', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--workflow-revision "$GITHUB_SHA"', '--workflow-revision "$RUNTIME_SOURCE_REVISION"');
+      }],
+      ['Buildx metadata capture', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--metadata-file "$BUILD_CONTEXT/$MODEL.buildx-metadata.json"', '');
+      }],
+      ['container observation writer', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('scripts/atomistic/write-container-observation.mjs write-new', 'true');
+      }],
+      ['staged runtime-input identity', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run = step.run.replace('copy_regular_if_present "$LOCK_DIR/$MODEL.runtime-inputs.json" "$PUBLISH_DIR/manifests/$MODEL.runtime-inputs.json"', 'true');
+      }],
+      ['staged container observation', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run = step.run.replace('copy_regular_if_present "$BUILD_CONTEXT/$MODEL.container-observation.json" "$PUBLISH_DIR/manifests/$MODEL.container-observation.json"', 'true');
+      }],
+      ['staged raw Buildx diagnostics', (workflow) => {
+        const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+        step.run = step.run.replace('copy_regular_if_present "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-metadata.json"', 'true');
+      }],
+    ];
+    for (const [label, mutate] of cases) expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
   });
 
   it('rejects alternate package sources and any networked resolve, cold-install, build or checkpoint run', () => {

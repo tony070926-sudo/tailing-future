@@ -84,7 +84,12 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
 - explicit mechanical, field, chemical, external-heat, interface and reaction closure ledgers with normalized maximum-operator and cumulative gates;
 - `tf.world/0.3` / `tf.action/0.3`, parent chains, unique siblings, deterministic checkpoint continuation and atomic action rollback;
 - three-mode two-dimensional Fourier convergence and an 8×5,000-step PR ensemble tail;
-- pinned MatterSim / MACE / Random-TP manifests that remain `planned-not-reproduced` until isolated runners generate complete E/F/stress artifacts;
+- pinned MatterSim / MACE / Random-TP scientific manifests plus a separate,
+  non-self-referential runtime-lock protocol. Both isolated ten-frame smoke
+  paths now emit finite E/F/stress without labels, but remain
+  `planned-not-reproduced` until two runtime-input replicas, a controlled
+  GitHub run/artifact receipt and the complete 693-record independent verifier
+  pass;
 - a browser frame assembled from one immutable observation snapshot.
 
 The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.

@@ -1,6 +1,6 @@
 # Safety and use boundary
 
-Tailing Future R2 is a low-consequence, reduced-unit thermochemical verification lab. Its heat field is an independent numerical carrier and A/B are passive internal labels. One protected ten-record MatterSim checkpoint smoke has run without reference labels; MACE has no predictions, and neither model has a full reproduced benchmark. It is not a real material, chemical-reaction model, certification tool, process package, HAZOP/LOPA system or operating procedure.
+Tailing Future R2 is a low-consequence, reduced-unit thermochemical verification lab. Its heat field is an independent numerical carrier and A/B are passive internal labels. Protected ten-record MatterSim and MACE checkpoint smoke runs have completed without reference labels; neither model has a full reproduced benchmark or a validated industrial applicability domain. It is not a real material, chemical-reaction model, certification tool, process package, HAZOP/LOPA system or operating procedure.
 
 Hard product boundaries:
 

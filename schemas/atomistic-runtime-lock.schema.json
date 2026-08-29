@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-runtime-lock/0.1",
+  "title": "Tailing Future atomistic runtime discovery lock",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "state",
+    "scientificPlan",
+    "runtimeSource",
+    "plannedBuildContract",
+    "identities",
+    "replication",
+    "claims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-runtime-lock/0.1" },
+    "state": { "const": "discovery-not-frozen" },
+    "scientificPlan": {
+      "type": "object",
+      "required": ["path", "rawDigest"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/reproduction-plan.json" },
+        "rawDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "runtimeSource": {
+      "type": "object",
+      "required": ["revision", "commitTimestamp", "sourceManifestDigest", "sourceManifestProtocol", "files"],
+      "properties": {
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "commitTimestamp": { "type": "integer", "minimum": 1 },
+        "sourceManifestDigest": { "$ref": "#/$defs/digest" },
+        "sourceManifestProtocol": { "const": "sha256-canonical-json-ordered-path-mode-size-sha256/v1" },
+        "files": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/sourceFile" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "plannedBuildContract": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "platform",
+        "baseImage",
+        "dockerfileFrontend",
+        "networkPolicy",
+        "provenanceEnabled",
+        "sbomEnabled",
+        "runtimeInputManifestProtocol"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "tf.atomistic-runtime-inputs/0.1" },
+        "platform": { "const": "linux/amd64" },
+        "baseImage": {
+          "type": "object",
+          "required": ["reference", "indexDigest", "platformManifestDigest"],
+          "properties": {
+            "reference": { "type": "string", "pattern": "@sha256:[0-9a-f]{64}$" },
+            "indexDigest": { "$ref": "#/$defs/digest" },
+            "platformManifestDigest": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        },
+        "dockerfileFrontend": {
+          "type": "object",
+          "required": ["reference", "manifestDigest"],
+          "properties": {
+            "reference": { "type": "string", "pattern": "@sha256:[0-9a-f]{64}$" },
+            "manifestDigest": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        },
+        "networkPolicy": { "const": "fetch-online-build-and-run-offline" },
+        "provenanceEnabled": { "const": false },
+        "sbomEnabled": { "const": false },
+        "runtimeInputManifestProtocol": { "const": "sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.1/v1" }
+      },
+      "additionalProperties": false
+    },
+    "identities": { "$ref": "#/$defs/discoveryIdentities" },
+    "replication": {
+      "type": "object",
+      "required": ["requiredIndependentProtectedMainReplicas", "independenceProtocol", "observations"],
+      "properties": {
+        "requiredIndependentProtectedMainReplicas": { "const": 2 },
+        "independenceProtocol": { "const": "distinct-github-run-id-and-attempt-protected-main-identical-promotion-roots/v1" },
+        "observations": {
+          "type": "array",
+          "maxItems": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "object",
+      "required": ["evidenceClass", "promotionEligible", "comparable", "reproduced"],
+      "properties": {
+        "evidenceClass": { "const": "discovery-only-not-reproduced" },
+        "promotionEligible": { "const": false },
+        "comparable": { "const": false },
+        "reproduced": { "const": false }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "nullableDigest": {
+      "anyOf": [
+        { "$ref": "#/$defs/digest" },
+        { "type": "null" }
+      ]
+    },
+    "sourceFile": {
+      "type": "object",
+      "required": ["path", "sizeBytes", "mode", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^(?:\\.dockerignore|atomistic/containers/(?:mattersim|mace)\\.Dockerfile|scripts/atomistic/(?:run_model|runtime_contract)\\.py)$" },
+        "sizeBytes": { "type": "integer", "minimum": 1 },
+        "mode": { "const": "100644" },
+        "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "twoModelNullableDigests": {
+      "type": "object",
+      "required": ["mattersim", "mace"],
+      "properties": {
+        "mattersim": { "$ref": "#/$defs/nullableDigest" },
+        "mace": { "$ref": "#/$defs/nullableDigest" }
+      },
+      "additionalProperties": false
+    },
+    "nullableOciIdentity": {
+      "type": "object",
+      "required": ["manifestDigest", "configDigest"],
+      "properties": {
+        "manifestDigest": { "$ref": "#/$defs/nullableDigest" },
+        "configDigest": { "$ref": "#/$defs/nullableDigest" }
+      },
+      "additionalProperties": false
+    },
+    "runtimeIdentities": {
+      "type": "object",
+      "required": ["runnerDigest", "dependencyLockDigests", "runtimeInputManifestDigests", "ociImages"],
+      "properties": {
+        "runnerDigest": { "$ref": "#/$defs/nullableDigest" },
+        "dependencyLockDigests": { "$ref": "#/$defs/twoModelNullableDigests" },
+        "runtimeInputManifestDigests": { "$ref": "#/$defs/twoModelNullableDigests" },
+        "ociImages": {
+          "type": "object",
+          "required": ["identitySemantics", "promotionTrustRoot", "mattersim", "mace"],
+          "properties": {
+            "identitySemantics": { "const": "run-specific-diagnostics-not-promotion-trust-roots/v1" },
+            "promotionTrustRoot": { "const": false },
+            "mattersim": { "$ref": "#/$defs/nullableOciIdentity" },
+            "mace": { "$ref": "#/$defs/nullableOciIdentity" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "discoveryIdentities": {
+      "allOf": [
+        { "$ref": "#/$defs/runtimeIdentities" },
+        {
+          "type": "object",
+          "properties": {
+            "runnerDigest": { "type": "null" },
+            "dependencyLockDigests": {
+              "type": "object",
+              "properties": { "mattersim": { "type": "null" }, "mace": { "type": "null" } }
+            },
+            "runtimeInputManifestDigests": {
+              "type": "object",
+              "properties": { "mattersim": { "type": "null" }, "mace": { "type": "null" } }
+            },
+            "ociImages": {
+              "type": "object",
+              "properties": {
+                "mattersim": { "type": "object", "properties": { "manifestDigest": { "type": "null" }, "configDigest": { "type": "null" } } },
+                "mace": { "type": "object", "properties": { "manifestDigest": { "type": "null" }, "configDigest": { "type": "null" } } }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

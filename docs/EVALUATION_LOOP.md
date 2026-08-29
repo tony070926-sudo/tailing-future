@@ -52,6 +52,20 @@ root fails closed.
 
 The comparator registry pins source, claim owner, revision, evidence class, benchmark commit, checkpoint/data/runner digests and snapshot date. A stale registry blocks promotion. `CLAIM` never enters a numerical ranking; `AUDITABLE` only says public artifacts can be inspected; only local like-for-like `REPRODUCED` runs may become numerical baselines.
 
+Scientific preregistration and execution discovery use separate trust roots.
+The atomistic plan stays byte-frozen before execution; post-plan runner, lock
+and runtime-input identities live in a separate runtime lock that is excluded
+from the model image. A discovery lock is never promotion evidence, and the R6a
+schema accepts discovery state only. A later lock can become frozen only after
+at least two independent protected-main replicas agree on the canonical
+runtime-input manifests and a separately controlled verifier authenticates the
+workflow path, repository revision, run conclusion, artifact IDs and archive
+digests through GitHub rather than trusting self-reported JSON. Run-specific Docker config/image IDs
+remain observations unless a separately controlled reproducible OCI export
+proves an identical manifest digest. Sentinel rejects any digest dependency
+cycle that feeds a plan or runtime-lock output back into the runner bytes it
+claims to identify.
+
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 
 ## Promotion rules

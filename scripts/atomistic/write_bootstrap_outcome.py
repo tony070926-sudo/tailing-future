@@ -157,6 +157,12 @@ def _file_stage_allowlist(model: str) -> dict[str, str | None]:
         **STATIC_FILE_STAGES,
         f"locks/{model}.requirements.lock": "resolve",
         f"manifests/{model}.wheelhouse.manifest.json": "resolve",
+        f"manifests/{model}.runtime-inputs.json": "resolve",
+        f"manifests/{model}.container-observation.json": "build",
+        f"diagnostics/{model}.buildx-metadata.json": "build",
+        f"diagnostics/{model}.image-inspect.json": "build",
+        f"diagnostics/{model}.buildx-version.txt": "build",
+        f"diagnostics/{model}.docker-server-version.txt": "build",
         OUTPUT_RELATIVE_PATH: None,
     }
     if model == "mace":
@@ -226,11 +232,25 @@ def _validate_file_outcomes(
         required = {
             f"locks/{model}.requirements.lock",
             f"manifests/{model}.wheelhouse.manifest.json",
+            f"manifests/{model}.runtime-inputs.json",
         }
         if not required.issubset(present):
             missing = sorted(required - present)
             raise ValueError(
                 f"successful resolve stage is missing allowlisted files: {missing}"
+            )
+    if by_stage["build"] == "success":
+        required = {
+            f"manifests/{model}.container-observation.json",
+            f"diagnostics/{model}.buildx-metadata.json",
+            f"diagnostics/{model}.image-inspect.json",
+            f"diagnostics/{model}.buildx-version.txt",
+            f"diagnostics/{model}.docker-server-version.txt",
+        }
+        if not required.issubset(present):
+            missing = sorted(required - present)
+            raise ValueError(
+                f"successful build stage is missing its container observation or raw diagnostics: {missing}"
             )
 
     file_stages = _file_stage_allowlist(model)

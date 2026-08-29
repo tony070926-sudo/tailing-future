@@ -15,8 +15,11 @@ export const PYTHON_HOSTLIST_SDIST_SHA256 = 'e1a0b18e525a5fca573cb9862799f11b3f2
 export const PYTHON_HOSTLIST_BUILD_LOCK_SHA256 = 'dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120';
 export const PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256 = 'f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84';
 export const PYTHON_HOSTLIST_VERIFIER_SHA256 = 'eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5';
-export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23';
+export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684';
 export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c';
+export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb';
+export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = 'b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc';
+export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
 export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
 export const SETUPTOOLS_STARTUP_HOOK_SHA256 = '2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224';
@@ -42,17 +45,17 @@ export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
 export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:c880865bd6194ccdb40e5bed9294cd5d13111bfa64d7dc2e469ad7baadbaa002',
   'Create fresh, model-isolated working directories': 'sha256:6d5ca8c98e1a9fea8634ca7dccc9d8fda9b1a50f8c86e64b3c264a47b4e3655b',
-  'Bind paths and runner constants from the frozen plan': 'sha256:9d8dca364a9ccfb380fc1e21f623d49a201ce992c37cbf4caa966cb348fc3b46',
+  'Bind paths and runner constants from the frozen plan': 'sha256:88f341ff777844cda99d3653a5e74f6d528445f5447b77ab69103d3f5b7930a7',
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
   'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
   'Download one fresh resolved wheelhouse in the online phase': 'sha256:c2d2f61203b3fc136bc181d27a6dbe83a416b27b78020ebd1a03fbe94cca6ccb',
-  'Resolve an exact lock from the offline wheelhouse': 'sha256:63d062b924b2ba0af093dfb4161f990e5de1ff677ea8a58096470e398f768964',
-  'Freeze and verify the exact resolved wheel set': 'sha256:6fbf6725ea4fa98a87eea890d98ca654a83d743365796d68fece13a57afb6c5d',
+  'Resolve an exact lock from the offline wheelhouse': 'sha256:627ac623a63d25e029b6508dd737b0972c1d59651bb73edd4049d8f0e69f6292',
+  'Freeze and verify the exact resolved wheel set': 'sha256:0784f81d971d2cf1f6989ad3de173de4998d3e9de740ba452a498ff81e4164ac',
   'Prove a cold, hash-locked install with no network': 'sha256:be109a394b3a765414bcf932c12c89edf72435def72704e240cb8a183d113543',
-  'Build the isolated runtime image with no build-step network': 'sha256:ac982ce0b42d6ff4038973dd2ee49f5512bd120f7d034c3608fabc70bc1ba93b',
+  'Build the isolated runtime image with no build-step network': 'sha256:00e8aea0955e737095e4538d1a4c694cc866a48b1f5598fedf6c9c558d8202b6',
   'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:c6e33b9011e31baf81bece08fe74631a30ebb37d2c6c69f537fb055f80ffa5b0',
-  'Stage only non-promotional bootstrap outputs': 'sha256:92fbe0ae394079db3fb00b32f1e473f2dce611c397bda5b4abab7fc3449341bf',
+  'Stage only non-promotional bootstrap outputs': 'sha256:1981a130b179eaa43f869306c14ee07c71a2d641c7d0b7e10f319213ed877256',
 });
 
 const ATOMISTIC_BOOTSTRAP_STEP_IDS = Object.freeze({
@@ -163,6 +166,31 @@ export function inspectSentinelEvaluationWorkflow(workflow) {
   if (job['runs-on'] !== 'ubuntu-24.04') failures.push(`${prefix} evaluate job must use ubuntu-24.04.`);
 
   const steps = Array.isArray(job.steps) ? job.steps : [];
+  const checkouts = steps.filter((step) => step?.uses === CHECKOUT_ACTION);
+  if (checkouts.length !== 1 || !sameJson(checkouts[0], {
+    uses: CHECKOUT_ACTION,
+    with: { 'persist-credentials': false, 'fetch-depth': 0 },
+  })) failures.push(`${prefix} evaluation checkout must fetch immutable ancestor objects without credentials.`);
+  const atomisticGates = steps.filter((step) => step?.id === 'atomistic_manifest');
+  if (atomisticGates.length !== 1 || !sameJson(atomisticGates[0], {
+    id: 'atomistic_manifest',
+    if: 'always()',
+    'continue-on-error': true,
+    run: 'npm run atomistic:validate',
+  })) failures.push(`${prefix} atomistic plan plus runtime-lock validation gate drifted.`);
+  const sentinel = steps.find((step) => step?.id === 'sentinel');
+  if (sentinel?.env?.TAILING_ATOMISTIC_MANIFEST_STATUS !== '${{ steps.atomistic_manifest.outcome }}'
+      || sentinel?.run !== 'npm run evaluate') {
+    failures.push(`${prefix} Sentinel must receive the exact atomistic validation outcome.`);
+  }
+  const finalGate = steps.at(-1);
+  if (finalGate?.if !== 'always()'
+      || finalGate?.env?.ATOMISTIC_MANIFEST_STATUS !== '${{ steps.atomistic_manifest.outcome }}'
+      || typeof finalGate?.run !== 'string'
+      || !finalGate.run.includes("'ATOMISTIC_MANIFEST'")
+      || !finalGate.run.includes("process.env[name + '_STATUS'] !== 'success'")) {
+    failures.push(`${prefix} final evaluation gate must fail when atomistic validation fails.`);
+  }
   const reportUploads = steps.filter((step) => step?.uses === UPLOAD_ARTIFACT_ACTION
     && step?.with?.name === 'tailing-sentinel-pr-report-${{ github.run_id }}-${{ github.run_attempt }}');
   if (reportUploads.length !== 1 || !sameJson(reportUploads[0], {
@@ -313,7 +341,7 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   if (!sameJson(checkout, {
     name: 'Check out the dispatched revision without credentials',
     uses: CHECKOUT_ACTION,
-    with: { 'persist-credentials': false },
+    with: { 'persist-credentials': false, 'fetch-depth': 0 },
   })) failures.push(`${prefix} checkout action or credential policy drifted.`);
   const setupNode = steps.find((step) => step?.name === expectedStepNames[1]);
   if (!sameJson(setupNode, {
@@ -454,7 +482,15 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     '--manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"',
   ];
   const freeze = runSteps.get('Freeze and verify the exact resolved wheel set')?.run ?? '';
-  if (!hasAll(freeze, inventoryVerifierFragments)) {
+  if (!hasAll(freeze, [
+    ...inventoryVerifierFragments,
+    ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
+    'scripts/atomistic/runtime-input-contract.mjs verify-exact',
+    '--output "$LOCK_DIR/$MODEL.runtime-inputs.json"',
+    '"$ATOMISTIC_ROOT/$MODEL.runtime-inputs.result.json"',
+    '"$ATOMISTIC_ROOT/$MODEL.runtime-inputs.verify.json"',
+    'RUNTIME_INPUT_MANIFEST_DIGEST',
+  ])) {
     failures.push(`${prefix} frozen wheelhouse verification must independently recompute raw and post-removal install inventories.`);
   }
   const resolve = runSteps.get('Resolve an exact lock from the offline wheelhouse')?.run ?? '';
@@ -465,7 +501,24 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     'derived_arguments=(--derived-wheel-manifest /manifests/python-hostlist.derived-wheel.manifest.json)',
     '"${derived_mount[@]}"',
     '"${derived_arguments[@]}"',
+    ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
+    'scripts/atomistic/runtime-input-contract.mjs write-new',
+    '--runtime-source-revision "$RUNTIME_SOURCE_REVISION"',
+    '--source-date-epoch "$SOURCE_DATE_EPOCH"',
+    '--output "$runtime_input_manifest"',
+    'RUNTIME_INPUT_MANIFEST_DIGEST=',
   ])) failures.push(`${prefix} MACE resolution must bind the verified derived-wheel provenance inside the offline resolver.`);
+  const bind = runSteps.get('Bind paths and runner constants from the frozen plan')?.run ?? '';
+  if (!hasAll(bind, [
+    ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256,
+    "runtimeLock.state !== 'discovery-not-frozen'",
+    'runtimeLock.runtimeSource.files',
+    "execFileSync('git', ['cat-file', '-e'",
+    "execFileSync('git', ['merge-base', '--is-ancestor'",
+    "['diff', '--quiet', runtimeLock.runtimeSource.revision",
+    'RUNTIME_SOURCE_REVISION: runtimeLock.runtimeSource.revision',
+    'SOURCE_DATE_EPOCH: String(runtimeLock.runtimeSource.commitTimestamp)',
+  ])) failures.push(`${prefix} runtime discovery binding must verify the exact lock, R5 Git object ancestry, timestamp and bounded source bytes.`);
   const directories = runSteps.get('Create fresh, model-isolated working directories')?.run ?? '';
   if (!hasAll(directories, [
     'test -n "${RUNNER_TEMP:-}"',
@@ -477,10 +530,24 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
   const build = runSteps.get('Build the isolated runtime image with no build-step network')?.run ?? '';
   if (!hasAll(build, [
     'docker buildx build',
+    'BUILDX_METADATA_PROVENANCE=disabled',
     '--network=none',
     '--platform=linux/amd64',
     '--build-context "wheelhouse=$WHEELHOUSE"',
+    'image_tag="tailing-atomistic-$MODEL-bootstrap:$GITHUB_SHA"',
+    '--build-arg "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"',
+    '--label org.opencontainers.image.revision="$RUNTIME_SOURCE_REVISION"',
+    '--metadata-file "$BUILD_CONTEXT/$MODEL.buildx-metadata.json"',
     'bootstrap-not-reproduced',
+    ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
+    'scripts/atomistic/runtime-input-contract.mjs verify-exact',
+    'runtime-inputs.build-context.verify.json',
+    ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256,
+    'scripts/atomistic/write-container-observation.mjs write-new',
+    'scripts/atomistic/write-container-observation.mjs verify-exact',
+    '--workflow-revision "$GITHUB_SHA"',
+    '--runtime-input-manifest "$LOCK_DIR/$MODEL.runtime-inputs.json"',
+    '--output "$BUILD_CONTEXT/$MODEL.container-observation.json"',
     SETUPTOOLS_RUNTIME_WHEEL_FILENAME,
     SETUPTOOLS_STARTUP_HOOK_SHA256,
     'runtimeInstalledFileCount !== manifest.installedFileCount - 1',
@@ -514,6 +581,12 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     '--stage "inference=$STAGE_INFERENCE"',
     'wheelhouse.get("derivedWheelProvenance", {}).get("manifestDigest")',
     'staged derived-wheel provenance differs from the resolver binding',
+    '"$LOCK_DIR/$MODEL.runtime-inputs.json" "$PUBLISH_DIR/manifests/$MODEL.runtime-inputs.json"',
+    '"$BUILD_CONTEXT/$MODEL.container-observation.json" "$PUBLISH_DIR/manifests/$MODEL.container-observation.json"',
+    '"$BUILD_CONTEXT/$MODEL.buildx-metadata.json" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-metadata.json"',
+    '"$BUILD_CONTEXT/$MODEL.image-inspect.json" "$PUBLISH_DIR/diagnostics/$MODEL.image-inspect.json"',
+    '"$BUILD_CONTEXT/buildx-version.txt" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-version.txt"',
+    '"$BUILD_CONTEXT/docker-server-version.txt" "$PUBLISH_DIR/diagnostics/$MODEL.docker-server-version.txt"',
   ])) failures.push(`${prefix} staging must publish one run-bound, ordered non-promotional outcome manifest.`);
   if (/(^|[^a-z])(metrics?|receipts?|attest(?:ation)?)([^a-z]|$)/i.test(executable)
       || /evidence-class=(?!bootstrap-not-reproduced)/.test(executable)
