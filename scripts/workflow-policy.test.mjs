@@ -9,12 +9,20 @@ import {
   ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
   ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256,
   ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+  ATOMISTIC_BOOTSTRAP_SELECTED_RUNNER_DIGEST,
   ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256,
+  ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256,
+  ATOMISTIC_MATERIALIZATION_DIGEST,
   ATOMISTIC_BOOTSTRAP_NODE_VERSION,
   ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
   ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256,
   ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256,
   ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256,
+  ATOMISTIC_RUNTIME_MATERIALIZATIONS,
+  ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH,
+  ATOMISTIC_RUNTIME_SOURCE_REVISION,
+  ATOMISTIC_SELECTED_SOURCE_FILES,
+  ATOMISTIC_SOURCE_MANIFEST_DIGEST,
   ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
@@ -42,6 +50,9 @@ const atomisticBootstrapSource = readFileSync(
 );
 const atomisticBootstrapQuarantineSource = readFileSync(
   new URL('../evaluation/atomistic/bootstrap-quarantine.json', import.meta.url),
+);
+const atomisticRuntimeLockSource = readFileSync(
+  new URL('../evaluation/atomistic/runtime-lock.json', import.meta.url),
 );
 const checkedInDockerignoreSource = readFileSync(
   new URL('../.dockerignore', import.meta.url),
@@ -325,9 +336,26 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(createHash('sha256').update(atomisticBootstrapQuarantineSource).digest('hex'))
       .toBe(ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256);
     const quarantine = JSON.parse(atomisticBootstrapQuarantineSource);
-    expect(quarantine.runnerDigest).toBe(ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST);
-    expect(quarantine.acceptedReplicaCount).toBe(0);
-    expect(quarantine.nonRetroactiveRunIds).toEqual([33231316217, 33231323492]);
+    expect(quarantine.schemaVersion).toBe('tf.atomistic-bootstrap-quarantine/0.2');
+    expect(quarantine.enforcementMode).toBe('deny-quarantined-require-exact-selected/v1');
+    expect(quarantine.quarantinedRunner.runnerDigest).toBe(ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST);
+    expect(quarantine.quarantinedRunner.runtimeLock.rawDigest)
+      .toBe(`sha256:${ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256}`);
+    expect(quarantine.quarantinedRunner.acceptedReplicaCount).toBe(0);
+    expect(quarantine.quarantinedRunner.nonRetroactiveRunIds).toEqual([33231316217, 33231323492]);
+    expect(quarantine.selectedRunner.runnerDigest).toBe(ATOMISTIC_BOOTSTRAP_SELECTED_RUNNER_DIGEST);
+    expect(quarantine.selectedRunner.runtimeSourceRevision).toBe(ATOMISTIC_RUNTIME_SOURCE_REVISION);
+    expect(quarantine.selectedRunner.sourceDateEpoch).toBe(ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH);
+    expect(quarantine.selectedRunner.sourceManifestDigest).toBe(ATOMISTIC_SOURCE_MANIFEST_DIGEST);
+    expect(quarantine.selectedRunner.sourceFiles).toEqual(ATOMISTIC_SELECTED_SOURCE_FILES);
+    expect(quarantine.selectedRunner.materializationDigest).toBe(ATOMISTIC_MATERIALIZATION_DIGEST);
+    expect(quarantine.selectedRunner.materializations).toEqual(ATOMISTIC_RUNTIME_MATERIALIZATIONS);
+    expect(quarantine.claims).toEqual({
+      evidenceClass: 'bootstrap-not-reproduced',
+      promotionEligible: false,
+      comparable: false,
+      reproduced: false,
+    });
     expect(ATOMISTIC_BOOTSTRAP_NODE_VERSION).toBe('24.16.0');
     expect(ATOMISTIC_BOOTSTRAP_BASE_IMAGE).toMatch(/^python:3\.12\.13-slim-bookworm@sha256:[0-9a-f]{64}$/);
     expect(ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST).toMatch(/^sha256:[0-9a-f]{64}$/);
@@ -340,7 +368,12 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(createHash('sha256').update(runtimeInventoryVerifierSource).digest('hex')).toBe(ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256);
     expect(createHash('sha256').update(runtimeInputContractSource).digest('hex')).toBe(ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256);
     expect(createHash('sha256').update(containerObservationWriterSource).digest('hex')).toBe(ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256);
-    expect(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256).toMatch(/^[0-9a-f]{64}$/);
+    expect(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256)
+      .toBe('5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e');
+    expect(createHash('sha256').update(atomisticRuntimeLockSource).digest('hex'))
+      .toBe(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256);
+    expect(ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256)
+      .toBe('79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe');
     const workflow = parseYaml(atomisticBootstrapSource);
     const checkout = workflow.jobs.bootstrap.steps.find((step) => step.name === 'Check out the dispatched revision without credentials');
     expect(checkout?.with).toEqual({ 'persist-credentials': false, 'fetch-depth': 0 });
@@ -359,7 +392,7 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(matterSimBootstrapInput).toMatch(/^pymatgen-io-validation==0\.1\.2$/m);
   });
 
-  it('rejects quarantine deletion, runner bypass, or retrospective acceptance', () => {
+  it('rejects quarantine deletion, legacy/unknown runner bypass, or retrospective acceptance', () => {
     const workflowCases = [
       ['deleted quarantine guard', (workflow) => {
         const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
@@ -375,6 +408,43 @@ describe('atomistic bootstrap supply-chain policy', () => {
           /throw new Error\(\n\s+`BOOTSTRAP_QUARANTINE_ACTIVE/,
           (match) => match.replace('throw new Error', 'console.error'),
         );
+      }],
+      ['legacy candidate comparison bypassed', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace(
+          'if (candidateLegacyDigest === quarantine.quarantinedRunner.runnerDigest)',
+          'if (false && candidateLegacyDigest === quarantine.quarantinedRunner.runnerDigest)',
+        );
+      }],
+      ['unknown candidate accepted', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace(
+          'if (!candidateMappingIsExact || candidateRunnerDigest !== quarantine.selectedRunner.runnerDigest)',
+          'if (false && (!candidateMappingIsExact || candidateRunnerDigest !== quarantine.selectedRunner.runnerDigest))',
+        );
+      }],
+      ['selected digest comparison bypassed', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace(
+          'candidateRunnerDigest !== quarantine.selectedRunner.runnerDigest',
+          'false',
+        );
+      }],
+      ['historical object read bypassed', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace('const historicLock = readCommitBlob(', 'const historicLock = readBoundedRegularFile(');
+      }],
+      ['Git blob OID recomputation bypassed', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace('gitBlobOid(bytes) !== match[3]', 'false');
+      }],
+      ['Git global configuration re-enabled', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace("GIT_CONFIG_GLOBAL: '/dev/null'", "GIT_CONFIG_GLOBAL: process.env.HOME");
+      }],
+      ['quarantine size bound expanded', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace('readBoundedRegularFile(quarantinePath, 16 * 1024)', 'readBoundedRegularFile(quarantinePath, 64 * 1024)');
       }],
     ];
     for (const [label, mutate] of workflowCases) {
@@ -395,6 +465,25 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
       retroactivelyAccepted,
     )).not.toEqual([]);
+    const changedRunIds = atomisticBootstrapQuarantineSource.toString('utf8')
+      .replace('33231323492', '33231323493');
+    expect(inspectAtomisticBootstrapQuarantineSource(
+      ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+      changedRunIds,
+    )).not.toEqual([]);
+  });
+
+  it('rejects non-boolean false promotional claims at any nested quarantine depth', () => {
+    for (const field of ['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']) {
+      for (const value of [true, null, 0, 'false']) {
+        const quarantine = JSON.parse(atomisticBootstrapQuarantineSource);
+        quarantine.selectedRunner.audit = { nested: { [field]: value } };
+        expect(inspectAtomisticBootstrapQuarantineSource(
+          ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+          `${JSON.stringify(quarantine, null, 2)}\n`,
+        ), `${field}=${JSON.stringify(value)}`).not.toEqual([]);
+      }
+    }
   });
 
   it('keeps failed guard dispatches on the always-run outcome publication path', () => {
@@ -476,9 +565,13 @@ describe('atomistic bootstrap supply-chain policy', () => {
         const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
         step.run = step.run.replace(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256, '0'.repeat(64));
       }],
-      ['R5 Git ancestry check', (workflow) => {
+      ['P Git ancestry check', (workflow) => {
         const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
         step.run = step.run.replace("execFileSync('git', ['merge-base', '--is-ancestor'", "execFileSync('git', ['rev-parse'");
+      }],
+      ['historical runtime lock substituted for current lock', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run = step.run.replace(ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256, ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256);
       }],
       ['runtime-input creation', (workflow) => {
         const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
@@ -523,6 +616,157 @@ describe('atomistic bootstrap supply-chain policy', () => {
       ['staged raw Buildx diagnostics', (workflow) => {
         const step = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
         step.run = step.run.replace('copy_regular_if_present "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-metadata.json"', 'true');
+      }],
+    ];
+    for (const [label, mutate] of cases) expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+  });
+
+  it('rejects drift in every selected P source path, blob OID, Git mode, size, or SHA-256', () => {
+    for (const source of ATOMISTIC_SELECTED_SOURCE_FILES) {
+      const mutations = [
+        ['path', source.path, `${source.path}.unreviewed`],
+        ['git blob OID', source.gitBlobOid, `${source.gitBlobOid.slice(0, -1)}${source.gitBlobOid.endsWith('0') ? '1' : '0'}`],
+        ['size', `sizeBytes: ${source.sizeBytes}`, `sizeBytes: ${source.sizeBytes + 1}`],
+        ['SHA-256', source.sha256, `sha256:${'f'.repeat(64)}`],
+      ];
+      for (const [field, before, after] of mutations) {
+        expect(inspectMutatedBootstrap((workflow) => {
+          const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+          step.run = step.run.replace(before, after);
+        }), `${source.path} ${field}`).not.toEqual([]);
+      }
+      expect(inspectMutatedBootstrap((workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        const modePattern = new RegExp(`gitBlobOid: '${source.gitBlobOid}',(?:\\s|.)*?mode: '100644'`);
+        step.run = step.run.replace(modePattern, (match) => match.replace("mode: '100644'", "mode: '100755'"));
+      }), `${source.path} Git mode`).not.toEqual([]);
+    }
+    for (const [label, before, after] of [
+      ['P revision', ATOMISTIC_RUNTIME_SOURCE_REVISION, '0'.repeat(40)],
+      ['source manifest', ATOMISTIC_SOURCE_MANIFEST_DIGEST, `sha256:${'0'.repeat(64)}`],
+      ['materialization digest', ATOMISTIC_MATERIALIZATION_DIGEST, `sha256:${'1'.repeat(64)}`],
+    ]) {
+      expect(inspectMutatedBootstrap((workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run = step.run.replace(before, after);
+      }), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects drift in both source-to-build-to-container materializations', () => {
+    for (const mapping of ATOMISTIC_RUNTIME_MATERIALIZATIONS) {
+      for (const [field, before, after] of [
+        ['name', `name: '${mapping.name}'`, `name: 'unreviewed-${mapping.name}'`],
+        ['sourcePath', `sourcePath: '${mapping.sourcePath}'`, `sourcePath: '${mapping.sourcePath}.unreviewed'`],
+        ['buildPath', `buildPath: '${mapping.buildPath}'`, `buildPath: '${mapping.buildPath}.unreviewed'`],
+        ['standardContainerPath', `standardContainerPath: '${mapping.standardContainerPath}'`, `standardContainerPath: '${mapping.standardContainerPath}.unreviewed'`],
+        ['sizeBytes', `sizeBytes: ${mapping.sizeBytes}`, `sizeBytes: ${mapping.sizeBytes + 1}`],
+        ['sha256', mapping.sha256, `sha256:${'e'.repeat(64)}`],
+      ]) {
+        expect(inspectMutatedBootstrap((workflow) => {
+          const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+          step.run = step.run.replace(before, after);
+        }), `${mapping.name} ${field}`).not.toEqual([]);
+      }
+    }
+  });
+
+  it('rejects tracked-R5 access, mutable staging, and non-exact build contexts', () => {
+    const cases = [
+      ['runtime source root aliases build context', (workflow) => {
+        const step = namedStep(workflow, 'Create fresh, model-isolated working directories');
+        step.run = step.run.replace('runtime_source_root="$task_root/runtime-source"', 'runtime_source_root="$task_root/build-context"');
+      }],
+      ['tracked R5 runner read', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run += '\ncp "$GITHUB_WORKSPACE/scripts/atomistic/run_model.py" "$BUILD_CONTEXT/scripts/atomistic/run_model.py"\n';
+      }],
+      ['tracked R5 runner overwrite', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run += '\ncp "$RUNTIME_SOURCE_ROOT/scripts/atomistic/v2/run_model.py" "$GITHUB_WORKSPACE/scripts/atomistic/run_model.py"\n';
+      }],
+      ['staged files made writable', (workflow) => {
+        const step = namedStep(workflow, 'Bind paths and runner constants from the frozen plan');
+        step.run = step.run.replace('chmodSync(target, 0o444)', 'chmodSync(target, 0o644)');
+      }],
+      ['staged mode check weakened', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('test "$(stat -c \'%a\' "$materialized")" = 444', 'test "$(stat -c \'%a\' "$materialized")" = 644');
+      }],
+      ['other model Dockerfile admitted', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace(
+          'actual_context_files="$(cd "$BUILD_CONTEXT" && find . -type f -print | LC_ALL=C sort)"',
+          'actual_context_files="$expected_context_files"',
+        );
+      }],
+      ['extra context file admitted', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace(
+          'test "$actual_context_files" = "$expected_context_files"',
+          'test -n "$actual_context_files"',
+        );
+      }],
+      ['runner source root replaced by workspace', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--runner-source-root "$RUNTIME_SOURCE_ROOT"', '--runner-source-root "$GITHUB_WORKSPACE"');
+      }],
+      ['runner build root replaced by workspace', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace('--runner-build-root "$BUILD_CONTEXT"', '--runner-build-root "$GITHUB_WORKSPACE"');
+      }],
+    ];
+    for (const [label, mutate] of cases) expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+  });
+
+  it('rejects runtime-input/observer tool drift and inference provenance env drift', () => {
+    const cases = [
+      ['runtime-input tool digest', (workflow) => {
+        const step = namedStep(workflow, 'Resolve an exact lock from the offline wheelhouse');
+        step.run = step.run.replace(ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256, '0'.repeat(64));
+      }],
+      ['observer tool digest', (workflow) => {
+        const step = namedStep(workflow, 'Build the isolated runtime image with no build-step network');
+        step.run = step.run.replace(ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256, '0'.repeat(64));
+      }],
+      ['workflow revision env deleted', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA"', '');
+      }],
+      ['runtime source revision env deleted', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--env "TAILING_ATOMISTIC_RUNTIME_SOURCE_REVISION=$RUNTIME_SOURCE_REVISION"', '');
+      }],
+      ['Docker local config image ID env deleted', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace('--env "TAILING_ATOMISTIC_DOCKER_LOCAL_CONFIG_IMAGE_ID=$DOCKER_LOCAL_CONFIG_IMAGE_ID"', '');
+      }],
+      ['workflow/runtime revisions swapped', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run
+          .replace('TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA', 'TAILING_ATOMISTIC_WORKFLOW_REVISION=$RUNTIME_SOURCE_REVISION')
+          .replace('TAILING_ATOMISTIC_RUNTIME_SOURCE_REVISION=$RUNTIME_SOURCE_REVISION', 'TAILING_ATOMISTIC_RUNTIME_SOURCE_REVISION=$GITHUB_SHA');
+      }],
+      ['legacy GITHUB_SHA env restored', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace(
+          '--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA"',
+          '--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA" \\\n            --env "GITHUB_SHA=$GITHUB_SHA"',
+        );
+      }],
+      ['legacy container digest env restored', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace(
+          '--env "TAILING_ATOMISTIC_DOCKER_LOCAL_CONFIG_IMAGE_ID=$DOCKER_LOCAL_CONFIG_IMAGE_ID"',
+          '--env "TAILING_ATOMISTIC_DOCKER_LOCAL_CONFIG_IMAGE_ID=$DOCKER_LOCAL_CONFIG_IMAGE_ID" \\\n            --env "TAILING_ATOMISTIC_CONTAINER_DIGEST=$DOCKER_LOCAL_CONFIG_IMAGE_ID"',
+        );
+      }],
+      ['unreviewed extra env', (workflow) => {
+        const step = namedStep(workflow, 'Run checkpoint deserialization and smoke predictions in the final sandbox');
+        step.run = step.run.replace(
+          '--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA"',
+          '--env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA" \\\n            --env "EXTRA=1"',
+        );
       }],
     ];
     for (const [label, mutate] of cases) expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);

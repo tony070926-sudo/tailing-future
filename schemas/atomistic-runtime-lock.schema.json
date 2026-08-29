@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-runtime-lock/0.1",
+  "$id": "https://tailing.future/schemas/atomistic-runtime-lock/0.2",
   "title": "Tailing Future atomistic runtime discovery lock",
   "type": "object",
   "required": [
@@ -14,7 +14,7 @@
     "claims"
   ],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-runtime-lock/0.1" },
+    "schemaVersion": { "const": "tf.atomistic-runtime-lock/0.2" },
     "state": { "const": "discovery-not-frozen" },
     "scientificPlan": {
       "type": "object",
@@ -27,18 +27,30 @@
     },
     "runtimeSource": {
       "type": "object",
-      "required": ["revision", "commitTimestamp", "sourceManifestDigest", "sourceManifestProtocol", "files"],
+      "required": ["runtimeSourceRevision", "sourceDateEpoch", "sourceManifestProtocol", "sourceManifestDigest", "files", "materializationProtocol", "materializationDigest", "materializations"],
       "properties": {
-        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-        "commitTimestamp": { "type": "integer", "minimum": 1 },
-        "sourceManifestDigest": { "$ref": "#/$defs/digest" },
+        "runtimeSourceRevision": { "const": "f861b3e30572f1db366554a2e330d5d6c78bdb56" },
+        "sourceDateEpoch": { "const": 1787977543 },
         "sourceManifestProtocol": { "const": "sha256-canonical-json-ordered-path-mode-size-sha256/v1" },
+        "sourceManifestDigest": { "const": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1" },
         "files": {
           "type": "array",
           "minItems": 5,
           "maxItems": 5,
           "uniqueItems": true,
           "items": { "$ref": "#/$defs/sourceFile" }
+        },
+        "materializationProtocol": { "const": "sha256-canonical-json-ordered-runtime-materializations/v1" },
+        "materializationDigest": { "const": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721" },
+        "materializations": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/runModelMaterialization" },
+            { "$ref": "#/$defs/runtimeContractMaterialization" }
+          ],
+          "items": false
         }
       },
       "additionalProperties": false
@@ -56,7 +68,7 @@
         "runtimeInputManifestProtocol"
       ],
       "properties": {
-        "schemaVersion": { "const": "tf.atomistic-runtime-inputs/0.1" },
+        "schemaVersion": { "const": "tf.atomistic-runtime-inputs/0.2" },
         "platform": { "const": "linux/amd64" },
         "baseImage": {
           "type": "object",
@@ -80,7 +92,7 @@
         "networkPolicy": { "const": "fetch-online-build-and-run-offline" },
         "provenanceEnabled": { "const": false },
         "sbomEnabled": { "const": false },
-        "runtimeInputManifestProtocol": { "const": "sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.1/v1" }
+        "runtimeInputManifestProtocol": { "const": "sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.2/v1" }
       },
       "additionalProperties": false
     },
@@ -126,10 +138,38 @@
       "type": "object",
       "required": ["path", "sizeBytes", "mode", "sha256"],
       "properties": {
-        "path": { "type": "string", "pattern": "^(?:\\.dockerignore|atomistic/containers/(?:mattersim|mace)\\.Dockerfile|scripts/atomistic/(?:run_model|runtime_contract)\\.py)$" },
+        "path": { "type": "string", "pattern": "^(?:\\.dockerignore|atomistic/containers/(?:mattersim|mace)\\.Dockerfile|scripts/atomistic/v2/(?:run_model|runtime_contract)\\.py)$" },
         "sizeBytes": { "type": "integer", "minimum": 1 },
         "mode": { "const": "100644" },
         "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "runModelMaterialization": {
+      "type": "object",
+      "required": ["name", "sourcePath", "buildPath", "standardContainerPath", "sizeBytes", "mode", "sha256"],
+      "properties": {
+        "name": { "const": "run_model.py" },
+        "sourcePath": { "const": "scripts/atomistic/v2/run_model.py" },
+        "buildPath": { "const": "scripts/atomistic/run_model.py" },
+        "standardContainerPath": { "const": "/opt/tailing-venv/lib/python3.12/site-packages/run_model.py" },
+        "sizeBytes": { "const": 35311 },
+        "mode": { "const": "100644" },
+        "sha256": { "const": "sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb" }
+      },
+      "additionalProperties": false
+    },
+    "runtimeContractMaterialization": {
+      "type": "object",
+      "required": ["name", "sourcePath", "buildPath", "standardContainerPath", "sizeBytes", "mode", "sha256"],
+      "properties": {
+        "name": { "const": "runtime_contract.py" },
+        "sourcePath": { "const": "scripts/atomistic/v2/runtime_contract.py" },
+        "buildPath": { "const": "scripts/atomistic/runtime_contract.py" },
+        "standardContainerPath": { "const": "/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py" },
+        "sizeBytes": { "const": 53577 },
+        "mode": { "const": "100644" },
+        "sha256": { "const": "sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2" }
       },
       "additionalProperties": false
     },

@@ -82,16 +82,16 @@ declare `bootstrap-not-reproduced`, `comparable: false` and
 bytes. Both runs are permanently inadmissible, and the accepted-replica count
 remains **0 / 2**.
 
-Remediation must preserve the digest dependency direction. This Commit-P
-candidate actively quarantines the legacy R5 dispatch path and prepositions a
-versioned v2 runner without changing the R5 runtime-source anchor; v2 is not
-selected or executed here. After P passes protected-main Sentinel and its
-immutable merged SHA exists, Commit S may bind the discovery lock and workflow
-to P's exact runner bytes while keeping all discovery identities null. Only
-entirely fresh S runs may reach a separately controlled verifier, which must
-reject any positive promotion, comparison or reproduction claim at any nesting
-depth. Only after that receipt may a later Commit F freeze accepted identities.
-A postprocessor may reject an artifact but may not rewrite its claim bytes.
+Remediation preserves the digest dependency direction. Commit P `f861b3e`
+passed protected-main Sentinel, and dispatch `33234001808` proved its exact
+legacy R5 quarantine fails closed before any bootstrap work. This Commit-S
+candidate binds the discovery lock and workflow to P's five Git-source blobs,
+materializes only the two v2 runner files into standard build paths, and keeps
+all discovery identities null. Only entirely fresh S runs may reach a
+separately controlled verifier, which must reject any positive promotion,
+comparison or reproduction claim at any nesting depth. Only after that receipt
+may a later Commit F freeze accepted identities. A postprocessor may reject an
+artifact but may not rewrite its claim bytes.
 
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 

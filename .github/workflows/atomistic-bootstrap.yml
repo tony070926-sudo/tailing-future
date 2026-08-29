@@ -56,34 +56,118 @@ jobs:
           test "$(uname -m)" = "x86_64"
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
+          import { execFileSync } from 'node:child_process';
           import {
             closeSync,
             constants as fsConstants,
             fstatSync,
+            lstatSync,
             openSync,
+            realpathSync,
             readSync,
           } from 'node:fs';
+          import path from 'node:path';
 
           const quarantinePath = 'evaluation/atomistic/bootstrap-quarantine.json';
-          const expectedQuarantineRawDigest = 'sha256:b20ad79d1360b4482373f837421c73214d6fcf47aafe0bfa6ed6eea99bb6f17f';
+          const expectedQuarantineRawDigest = 'sha256:65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
           const expectedQuarantine = {
-            schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.1',
+            schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.2',
             state: 'active',
-            runnerDigest: 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c',
-            runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
-            runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
-            runtimeLock: {
-              path: 'evaluation/atomistic/runtime-lock.json',
-              rawDigest: 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe',
+            enforcementMode: 'deny-quarantined-require-exact-selected/v1',
+            quarantinedRunner: {
+              runnerDigest: 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c',
+              runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
+              runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
+              runtimeLock: {
+                revision: 'f861b3e30572f1db366554a2e330d5d6c78bdb56',
+                path: 'evaluation/atomistic/runtime-lock.json',
+                rawDigest: 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe',
+              },
+              scientificPlan: {
+                revision: 'f861b3e30572f1db366554a2e330d5d6c78bdb56',
+                path: 'evaluation/atomistic/reproduction-plan.json',
+                rawDigest: 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2',
+              },
+              reasonCode: 'contradictory-bootstrap-promotion-claim',
+              reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
+              acceptedReplicaCount: 0,
+              nonRetroactiveRunIds: [33231316217, 33231323492],
             },
-            scientificPlan: {
-              path: 'evaluation/atomistic/reproduction-plan.json',
-              rawDigest: 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2',
+            selectedRunner: {
+              implementation: 'tf.atomistic-runner/v2',
+              runnerDigest: 'sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4',
+              runnerDigestProtocol: 'sha256-canonical-json-sorted-name-standard-container-path-size-sha256/v1',
+              runtimeSourceRevision: 'f861b3e30572f1db366554a2e330d5d6c78bdb56',
+              sourceDateEpoch: 1787977543,
+              sourceManifestProtocol: 'sha256-canonical-json-ordered-path-mode-size-sha256/v1',
+              sourceManifestDigest: 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1',
+              sourceFiles: [
+                {
+                  path: '.dockerignore',
+                  gitBlobOid: '7dd2587d66b2803b491e281044f90e4f654ab861',
+                  mode: '100644',
+                  sizeBytes: 338,
+                  sha256: 'sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3',
+                },
+                {
+                  path: 'atomistic/containers/mace.Dockerfile',
+                  gitBlobOid: '0edc70ad532de4470efff5c170a20f17a94c4847',
+                  mode: '100644',
+                  sizeBytes: 3338,
+                  sha256: 'sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f',
+                },
+                {
+                  path: 'atomistic/containers/mattersim.Dockerfile',
+                  gitBlobOid: 'be08afa1d04a4078a559bf2d0eca1bd66eaebb0c',
+                  mode: '100644',
+                  sizeBytes: 3533,
+                  sha256: 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455',
+                },
+                {
+                  path: 'scripts/atomistic/v2/run_model.py',
+                  gitBlobOid: '6da2a799a8fcba7ada0c3c3922de03f8fa72807a',
+                  mode: '100644',
+                  sizeBytes: 35311,
+                  sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+                },
+                {
+                  path: 'scripts/atomistic/v2/runtime_contract.py',
+                  gitBlobOid: '38a2d2e263d7f25893ec5a79353300ba6ad7eb42',
+                  mode: '100644',
+                  sizeBytes: 53577,
+                  sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+                },
+              ],
+              materializationMethod: 'immutable-git-source-to-isolated-build-context-to-standard-container/v1',
+              materializationProtocol: 'sha256-canonical-json-ordered-runtime-materializations/v1',
+              materializationDigest: 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721',
+              materializations: [
+                {
+                  name: 'run_model.py',
+                  sourcePath: 'scripts/atomistic/v2/run_model.py',
+                  buildPath: 'scripts/atomistic/run_model.py',
+                  standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+                  sizeBytes: 35311,
+                  mode: '100644',
+                  sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+                },
+                {
+                  name: 'runtime_contract.py',
+                  sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+                  buildPath: 'scripts/atomistic/runtime_contract.py',
+                  standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+                  sizeBytes: 53577,
+                  mode: '100644',
+                  sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+                },
+              ],
             },
-            reasonCode: 'contradictory-bootstrap-promotion-claim',
-            reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
-            acceptedReplicaCount: 0,
-            nonRetroactiveRunIds: [33231316217, 33231323492],
+            claims: {
+              evidenceClass: 'bootstrap-not-reproduced',
+              promotionEligible: false,
+              comparable: false,
+              reproduced: false,
+            },
           };
 
           function sha256(bytes) {
@@ -99,28 +183,36 @@ jobs:
             return JSON.stringify(value);
           }
 
-          function readBoundedRegularFile(path, maximumBytes) {
-            const descriptor = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+          function readBoundedRegularFile(filename, maximumBytes) {
+            const absolute = path.resolve(filename);
+            if (realpathSync(filename) !== absolute) {
+              throw new Error(`${filename} is not one canonical non-symlink path.`);
+            }
+            const descriptor = openSync(filename, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
             try {
               const before = fstatSync(descriptor, { bigint: true });
               if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n
                   || before.size < 1n || before.size > BigInt(maximumBytes)) {
-                throw new Error(`${path} is not one bounded regular file.`);
+                throw new Error(`${filename} is not one bounded regular file.`);
               }
               const bytes = Buffer.alloc(Number(before.size));
               let offset = 0;
               while (offset < bytes.length) {
                 const count = readSync(descriptor, bytes, offset, bytes.length - offset, null);
-                if (count === 0) throw new Error(`${path} changed while it was read.`);
+                if (count === 0) throw new Error(`${filename} changed while it was read.`);
                 offset += count;
               }
               if (readSync(descriptor, Buffer.alloc(1), 0, 1, null) !== 0) {
-                throw new Error(`${path} exceeded its byte bound while it was read.`);
+                throw new Error(`${filename} exceeded its byte bound while it was read.`);
               }
               const after = fstatSync(descriptor, { bigint: true });
-              if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
-                  || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs) {
-                throw new Error(`${path} changed while it was read.`);
+              const afterPath = lstatSync(filename, { bigint: true });
+              if (realpathSync(filename) !== absolute
+                  || !afterPath.isFile() || afterPath.isSymbolicLink() || afterPath.nlink !== 1n
+                  || before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+                  || before.mode !== after.mode || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
+                  || afterPath.dev !== after.dev || afterPath.ino !== after.ino || afterPath.size !== after.size) {
+                throw new Error(`${filename} changed while it was read.`);
               }
               return bytes;
             } finally {
@@ -128,7 +220,46 @@ jobs:
             }
           }
 
-          const quarantineBytes = readBoundedRegularFile(quarantinePath, 4096);
+          function gitBlobOid(bytes) {
+            return createHash('sha1').update(`blob ${bytes.length}\0`, 'utf8').update(bytes).digest('hex');
+          }
+
+          const gitEnvironment = {
+            PATH: process.env.PATH,
+            GIT_CONFIG_NOSYSTEM: '1',
+            GIT_CONFIG_SYSTEM: '/dev/null',
+            GIT_CONFIG_GLOBAL: '/dev/null',
+            GIT_NO_REPLACE_OBJECTS: '1',
+            GIT_OPTIONAL_LOCKS: '0',
+            LC_ALL: 'C',
+          };
+          const gitOptions = { cwd: process.cwd(), env: gitEnvironment, stdio: ['ignore', 'pipe', 'pipe'] };
+
+          function gitBytes(arguments_, maximumBytes) {
+            const bytes = execFileSync('git', arguments_, { ...gitOptions, maxBuffer: maximumBytes + 1 });
+            if (bytes.length > maximumBytes) throw new Error(`Git object exceeded ${maximumBytes} bytes.`);
+            return bytes;
+          }
+
+          function readCommitBlob(revision, sourcePath, expected, maximumBytes) {
+            const tree = gitBytes(['ls-tree', '-z', revision, '--', sourcePath], 8192);
+            const records = tree.toString('utf8').split('\0').filter((entry) => entry !== '');
+            if (records.length !== 1) throw new Error(`Git tree has no unique entry for ${sourcePath}.`);
+            const match = /^(\d{6}) (\S+) ([0-9a-f]{40,64})\t(.+)$/.exec(records[0]);
+            if (!match || match[2] !== 'blob' || match[4] !== sourcePath || match[1] !== expected.mode
+                || (expected.gitBlobOid !== undefined && match[3] !== expected.gitBlobOid)) {
+              throw new Error(`Git tree identity differs for ${sourcePath}.`);
+            }
+            const bytes = gitBytes(['cat-file', 'blob', match[3]], maximumBytes);
+            if (gitBlobOid(bytes) !== match[3]
+                || (expected.sizeBytes !== undefined && bytes.length !== expected.sizeBytes)
+                || (expected.sha256 !== undefined && sha256(bytes) !== expected.sha256)) {
+              throw new Error(`Git blob bytes differ for ${sourcePath}.`);
+            }
+            return { bytes, gitBlobOid: match[3], mode: match[1] };
+          }
+
+          const quarantineBytes = readBoundedRegularFile(quarantinePath, 16 * 1024);
           if (sha256(quarantineBytes) !== expectedQuarantineRawDigest) {
             throw new Error('Bootstrap quarantine bytes differ from the reviewed policy.');
           }
@@ -137,21 +268,74 @@ jobs:
             throw new Error('Bootstrap quarantine schema or values differ from the reviewed policy.');
           }
 
-          const runtimeLockBytes = readBoundedRegularFile(quarantine.runtimeLock.path, 64 * 1024);
-          const planBytes = readBoundedRegularFile(quarantine.scientificPlan.path, 64 * 1024);
-          if (sha256(runtimeLockBytes) !== quarantine.runtimeLock.rawDigest
-              || sha256(planBytes) !== quarantine.scientificPlan.rawDigest) {
-            throw new Error('Bootstrap quarantine is not bound to the reviewed runtime lock and scientific plan.');
+          const currentRuntimeLockBytes = readBoundedRegularFile('evaluation/atomistic/runtime-lock.json', 64 * 1024);
+          if (sha256(currentRuntimeLockBytes) !== 'sha256:5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e') {
+            throw new Error('Current runtime lock bytes differ from the reviewed v0.2 policy.');
           }
-          const runtimeLock = JSON.parse(runtimeLockBytes);
-          const plan = JSON.parse(planBytes);
+          const currentRuntimeLock = JSON.parse(currentRuntimeLockBytes);
+          const selectedSourceFiles = quarantine.selectedRunner.sourceFiles.map((source) => ({
+            path: source.path,
+            sizeBytes: source.sizeBytes,
+            mode: source.mode,
+            sha256: source.sha256,
+          }));
+          if (currentRuntimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.2'
+              || currentRuntimeLock.runtimeSource?.runtimeSourceRevision !== quarantine.selectedRunner.runtimeSourceRevision
+              || currentRuntimeLock.runtimeSource?.sourceDateEpoch !== quarantine.selectedRunner.sourceDateEpoch
+              || currentRuntimeLock.runtimeSource?.sourceManifestProtocol !== quarantine.selectedRunner.sourceManifestProtocol
+              || currentRuntimeLock.runtimeSource?.sourceManifestDigest !== quarantine.selectedRunner.sourceManifestDigest
+              || currentRuntimeLock.runtimeSource?.materializationProtocol !== quarantine.selectedRunner.materializationProtocol
+              || currentRuntimeLock.runtimeSource?.materializationDigest !== quarantine.selectedRunner.materializationDigest
+              || canonicalJson(currentRuntimeLock.runtimeSource?.files) !== canonicalJson(selectedSourceFiles)
+              || canonicalJson(currentRuntimeLock.runtimeSource?.materializations) !== canonicalJson(quarantine.selectedRunner.materializations)
+              || sha256(Buffer.from(canonicalJson(selectedSourceFiles), 'utf8')) !== quarantine.selectedRunner.sourceManifestDigest
+              || sha256(Buffer.from(canonicalJson(quarantine.selectedRunner.materializations), 'utf8')) !== quarantine.selectedRunner.materializationDigest
+              || currentRuntimeLock.identities?.runnerDigest !== null
+              || currentRuntimeLock.replication?.observations?.length !== quarantine.quarantinedRunner.acceptedReplicaCount
+              || currentRuntimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'
+              || currentRuntimeLock.claims?.promotionEligible !== false
+              || currentRuntimeLock.claims?.comparable !== false
+              || currentRuntimeLock.claims?.reproduced !== false) {
+            throw new Error('Current runtime lock and selected runner quarantine do not share the reviewed v0.2 boundary.');
+          }
+
+          const sourceRevision = quarantine.selectedRunner.runtimeSourceRevision;
+          gitBytes(['cat-file', '-e', `${sourceRevision}^{commit}`], 1);
+          gitBytes(['merge-base', '--is-ancestor', sourceRevision, 'HEAD'], 1);
+          const sourceTimestamp = Number(gitBytes(['show', '-s', '--format=%ct', sourceRevision], 64).toString('utf8').trim());
+          if (sourceTimestamp !== quarantine.selectedRunner.sourceDateEpoch) {
+            throw new Error('Selected runtime-source timestamp differs from immutable P.');
+          }
+          const quarantinedRevision = quarantine.quarantinedRunner.runtimeSourceRevision;
+          gitBytes(['cat-file', '-e', `${quarantinedRevision}^{commit}`], 1);
+          gitBytes(['merge-base', '--is-ancestor', quarantinedRevision, sourceRevision], 1);
+
+          const historicLock = readCommitBlob(
+            quarantine.quarantinedRunner.runtimeLock.revision,
+            quarantine.quarantinedRunner.runtimeLock.path,
+            { mode: '100644' },
+            64 * 1024,
+          ).bytes;
+          const historicPlan = readCommitBlob(
+            quarantine.quarantinedRunner.scientificPlan.revision,
+            quarantine.quarantinedRunner.scientificPlan.path,
+            { mode: '100644' },
+            64 * 1024,
+          ).bytes;
+          if (sha256(historicLock) !== quarantine.quarantinedRunner.runtimeLock.rawDigest
+              || sha256(historicPlan) !== quarantine.quarantinedRunner.scientificPlan.rawDigest) {
+            throw new Error('Bootstrap quarantine is not bound to the historical runtime lock and scientific plan Git objects.');
+          }
+
+          const runtimeLock = JSON.parse(historicLock);
+          const plan = JSON.parse(historicPlan);
           if (runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.1'
               || runtimeLock.state !== 'discovery-not-frozen'
-              || runtimeLock.scientificPlan?.path !== quarantine.scientificPlan.path
-              || runtimeLock.scientificPlan?.rawDigest !== quarantine.scientificPlan.rawDigest
-              || runtimeLock.runtimeSource?.revision !== quarantine.runtimeSourceRevision
+              || runtimeLock.scientificPlan?.path !== quarantine.quarantinedRunner.scientificPlan.path
+              || runtimeLock.scientificPlan?.rawDigest !== quarantine.quarantinedRunner.scientificPlan.rawDigest
+              || runtimeLock.runtimeSource?.revision !== quarantine.quarantinedRunner.runtimeSourceRevision
               || runtimeLock.identities?.runnerDigest !== null
-              || runtimeLock.replication?.observations?.length !== quarantine.acceptedReplicaCount
+              || runtimeLock.replication?.observations?.length !== quarantine.quarantinedRunner.acceptedReplicaCount
               || runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'
               || runtimeLock.claims?.promotionEligible !== false
               || runtimeLock.claims?.comparable !== false
@@ -175,19 +359,80 @@ jobs:
                 || !/^sha256:[0-9a-f]{64}$/.test(matches[0].sha256)) {
               throw new Error(`Runtime lock has no unique regular identity for ${path}.`);
             }
-            const bytes = readBoundedRegularFile(path, 5 * 1024 * 1024);
+            const bytes = readCommitBlob(quarantinedRevision, path, matches[0], 5 * 1024 * 1024).bytes;
             if (bytes.length !== matches[0].sizeBytes || sha256(bytes) !== matches[0].sha256) {
               throw new Error(`Runtime source differs from the quarantined lock identity: ${path}`);
             }
             return { name, sha256: matches[0].sha256 };
           }).sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0));
           const lockedRunnerDigest = sha256(Buffer.from(canonicalJson(runnerFiles), 'utf8'));
-          if (lockedRunnerDigest !== quarantine.runnerDigest) {
+          if (lockedRunnerDigest !== quarantine.quarantinedRunner.runnerDigest) {
             throw new Error('Bootstrap quarantine runner identity differs from the reviewed runtime lock.');
           }
-          throw new Error(
-            `BOOTSTRAP_QUARANTINE_ACTIVE (${quarantine.reasonCode}): ${quarantine.reason} runner=${lockedRunnerDigest}; acceptedReplicaCount=0; runs ${quarantine.nonRetroactiveRunIds.join(',')} cannot be retroactively accepted.`,
-          );
+
+          const candidateSources = quarantine.selectedRunner.sourceFiles.map((source) => {
+            const object = readCommitBlob(sourceRevision, source.path, { mode: source.mode }, 5 * 1024 * 1024);
+            return {
+              ...source,
+              bytes: object.bytes,
+              actualGitBlobOid: object.gitBlobOid,
+              actualSizeBytes: object.bytes.length,
+              actualSha256: sha256(object.bytes),
+            };
+          });
+          const candidateSourcesByPath = new Map(candidateSources.map((source) => [source.path, source]));
+          const candidateMappings = quarantine.selectedRunner.materializations.map((mapping) => {
+            const source = candidateSourcesByPath.get(mapping.sourcePath);
+            if (source === undefined) {
+              throw new Error(`BOOTSTRAP_RUNNER_NOT_SELECTED: missing-source=${mapping.sourcePath}`);
+            }
+            return { ...mapping, source };
+          });
+          const candidateLegacyProbe = candidateMappings.map(({ name, source }) => ({
+            name,
+            sha256: source.actualSha256,
+          })).sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0));
+          const candidateLegacyDigest = sha256(Buffer.from(canonicalJson(candidateLegacyProbe), 'utf8'));
+          if (candidateLegacyDigest === quarantine.quarantinedRunner.runnerDigest) {
+            throw new Error(
+              `BOOTSTRAP_QUARANTINE_ACTIVE (${quarantine.quarantinedRunner.reasonCode}): ${quarantine.quarantinedRunner.reason} runner=${candidateLegacyDigest}; acceptedReplicaCount=0; runs ${quarantine.quarantinedRunner.nonRetroactiveRunIds.join(',')} cannot be retroactively accepted.`,
+            );
+          }
+          const candidateSourceManifest = candidateSources.map((source) => ({
+            path: source.path,
+            sizeBytes: source.actualSizeBytes,
+            mode: source.mode,
+            sha256: source.actualSha256,
+          }));
+          const candidateSourceManifestDigest = sha256(Buffer.from(canonicalJson(candidateSourceManifest), 'utf8'));
+          const candidateMaterializationDigest = sha256(Buffer.from(
+            canonicalJson(quarantine.selectedRunner.materializations),
+            'utf8',
+          ));
+          const candidateMappingIsExact = candidateSourcesByPath.size === candidateSources.length
+            && candidateSources.every((source) => (
+              source.actualGitBlobOid === source.gitBlobOid
+              && source.actualSizeBytes === source.sizeBytes
+              && source.actualSha256 === source.sha256
+            ))
+            && candidateMappings.every(({ source, ...mapping }) => (
+              source.mode === mapping.mode
+              && source.sizeBytes === mapping.sizeBytes
+              && source.sha256 === mapping.sha256
+            ))
+            && candidateSourceManifestDigest === quarantine.selectedRunner.sourceManifestDigest
+            && candidateMaterializationDigest === quarantine.selectedRunner.materializationDigest;
+          const selectedRunnerFiles = candidateMappings.map(({ source, ...mapping }) => ({
+            name: mapping.name,
+            standardContainerPath: mapping.standardContainerPath,
+            sizeBytes: source.actualSizeBytes,
+            sha256: source.actualSha256,
+          }));
+          selectedRunnerFiles.sort((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0));
+          const candidateRunnerDigest = sha256(Buffer.from(canonicalJson(selectedRunnerFiles), 'utf8'));
+          if (!candidateMappingIsExact || candidateRunnerDigest !== quarantine.selectedRunner.runnerDigest) {
+            throw new Error(`BOOTSTRAP_RUNNER_NOT_SELECTED: runner=${candidateRunnerDigest}`);
+          }
           NODE
 
       - name: Create fresh, model-isolated working directories
@@ -209,6 +454,7 @@ jobs:
           manifest_dir="$task_root/manifests"
           structure_dir="$task_root/structures"
           inference_input_dir="$task_root/inference-inputs"
+          runtime_source_root="$task_root/runtime-source"
           build_context="$task_root/build-context"
           source_build_inputs="$task_root/source-build-inputs"
           source_build_a="$task_root/source-build-a"
@@ -217,7 +463,7 @@ jobs:
           publish_dir="$RUNNER_TEMP/tailing-atomistic-publish/$MODEL"
           install -d -m 0700 \
             "$cache_root" "$wheelhouse" "$lock_dir" "$manifest_dir" \
-            "$structure_dir" "$inference_input_dir" "$build_context" \
+            "$structure_dir" "$inference_input_dir" "$runtime_source_root" "$build_context" \
             "$source_build_inputs/source" "$source_build_inputs/tools" \
             "$source_build_a" "$source_build_b" \
             "$output_dir" "$publish_dir"
@@ -229,6 +475,7 @@ jobs:
             echo "MANIFEST_DIR=$manifest_dir"
             echo "STRUCTURE_DIR=$structure_dir"
             echo "INFERENCE_INPUT_DIR=$inference_input_dir"
+            echo "RUNTIME_SOURCE_ROOT=$runtime_source_root"
             echo "BUILD_CONTEXT=$build_context"
             echo "SOURCE_BUILD_INPUTS=$source_build_inputs"
             echo "SOURCE_BUILD_A=$source_build_a"
@@ -245,18 +492,158 @@ jobs:
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
           import { execFileSync } from 'node:child_process';
-          import { appendFileSync, lstatSync, readFileSync } from 'node:fs';
+          import {
+            appendFileSync,
+            chmodSync,
+            closeSync,
+            constants as fsConstants,
+            fstatSync,
+            fsyncSync,
+            lstatSync,
+            mkdirSync,
+            openSync,
+            readSync,
+            realpathSync,
+            writeSync,
+          } from 'node:fs';
+          import path from 'node:path';
 
-          const planBytes = readFileSync('evaluation/atomistic/reproduction-plan.json');
+          const expectedRuntimeSourceRevision = 'f861b3e30572f1db366554a2e330d5d6c78bdb56';
+          const expectedSourceDateEpoch = 1787977543;
+          const expectedPlanDigest = 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
+          const expectedRuntimeLockDigest = 'sha256:5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e';
+          const expectedSourceManifestDigest = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
+          const expectedMaterializationDigest = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
+          const expectedSources = [
+            { path: '.dockerignore', gitBlobOid: '7dd2587d66b2803b491e281044f90e4f654ab861', sizeBytes: 338, mode: '100644', sha256: 'sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3' },
+            { path: 'atomistic/containers/mace.Dockerfile', gitBlobOid: '0edc70ad532de4470efff5c170a20f17a94c4847', sizeBytes: 3338, mode: '100644', sha256: 'sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f' },
+            { path: 'atomistic/containers/mattersim.Dockerfile', gitBlobOid: 'be08afa1d04a4078a559bf2d0eca1bd66eaebb0c', sizeBytes: 3533, mode: '100644', sha256: 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455' },
+            { path: 'scripts/atomistic/v2/run_model.py', gitBlobOid: '6da2a799a8fcba7ada0c3c3922de03f8fa72807a', sizeBytes: 35311, mode: '100644', sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb' },
+            { path: 'scripts/atomistic/v2/runtime_contract.py', gitBlobOid: '38a2d2e263d7f25893ec5a79353300ba6ad7eb42', sizeBytes: 53577, mode: '100644', sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2' },
+          ];
+          const expectedMaterializations = [
+            {
+              name: 'run_model.py',
+              sourcePath: 'scripts/atomistic/v2/run_model.py',
+              buildPath: 'scripts/atomistic/run_model.py',
+              standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/run_model.py',
+              sizeBytes: 35311,
+              mode: '100644',
+              sha256: 'sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb',
+            },
+            {
+              name: 'runtime_contract.py',
+              sourcePath: 'scripts/atomistic/v2/runtime_contract.py',
+              buildPath: 'scripts/atomistic/runtime_contract.py',
+              standardContainerPath: '/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py',
+              sizeBytes: 53577,
+              mode: '100644',
+              sha256: 'sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2',
+            },
+          ];
+
+          function canonicalJson(value) {
+            if (value === null) return 'null';
+            if (Array.isArray(value)) return `[${value.map((entry) => canonicalJson(entry)).join(',')}]`;
+            if (typeof value === 'object') {
+              return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(',')}}`;
+            }
+            return JSON.stringify(value);
+          }
+
+          function sha256(bytes) {
+            return `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+          }
+
+          function gitBlobOid(bytes) {
+            return createHash('sha1').update(`blob ${bytes.length}\0`, 'utf8').update(bytes).digest('hex');
+          }
+
+          function readBoundedRegularFile(filename, maximumBytes, expectedMode = null) {
+            const absolute = path.resolve(filename);
+            if (realpathSync(absolute) !== absolute) throw new Error(`${filename} is not one canonical path.`);
+            const descriptor = openSync(absolute, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+            try {
+              const before = fstatSync(descriptor, { bigint: true });
+              if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n
+                  || before.size < 1n || before.size > BigInt(maximumBytes)
+                  || (expectedMode !== null && (before.mode & 0o777n) !== BigInt(expectedMode))) {
+                throw new Error(`${filename} is not one bounded immutable regular file.`);
+              }
+              const bytes = Buffer.alloc(Number(before.size));
+              let offset = 0;
+              while (offset < bytes.length) {
+                const count = readSync(descriptor, bytes, offset, bytes.length - offset, null);
+                if (count === 0) throw new Error(`${filename} changed while it was read.`);
+                offset += count;
+              }
+              if (readSync(descriptor, Buffer.alloc(1), 0, 1, null) !== 0) throw new Error(`${filename} exceeded its byte bound.`);
+              const after = fstatSync(descriptor, { bigint: true });
+              const afterPath = lstatSync(absolute, { bigint: true });
+              if (realpathSync(absolute) !== absolute
+                  || !afterPath.isFile() || afterPath.isSymbolicLink() || afterPath.nlink !== 1n
+                  || before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+                  || before.mode !== after.mode || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
+                  || afterPath.dev !== after.dev || afterPath.ino !== after.ino || afterPath.size !== after.size
+                  || afterPath.mode !== after.mode || afterPath.mtimeNs !== after.mtimeNs || afterPath.ctimeNs !== after.ctimeNs) {
+                throw new Error(`${filename} changed while it was read.`);
+              }
+              return bytes;
+            } finally {
+              closeSync(descriptor);
+            }
+          }
+
+          function safeTarget(root, relativePath) {
+            if (typeof relativePath !== 'string' || relativePath.startsWith('/') || relativePath.includes('\\')
+                || relativePath.split('/').some((part) => part === '' || part === '.' || part === '..')) {
+              throw new Error(`Unsafe materialization path: ${relativePath}`);
+            }
+            const target = path.join(root, ...relativePath.split('/'));
+            const relative = path.relative(root, target);
+            if (relative === '' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+              throw new Error(`Materialization escaped its isolated root: ${relativePath}`);
+            }
+            return target;
+          }
+
+          function writeExclusiveRegular(root, relativePath, bytes, expectedSha256) {
+            const target = safeTarget(root, relativePath);
+            mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
+            const descriptor = openSync(
+              target,
+              fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_NOFOLLOW,
+              0o400,
+            );
+            try {
+              let offset = 0;
+              while (offset < bytes.length) {
+                const count = writeSync(descriptor, bytes, offset, bytes.length - offset, null);
+                if (count === 0) throw new Error(`Materialization made no progress at ${relativePath}.`);
+                offset += count;
+              }
+              fsyncSync(descriptor);
+            } finally {
+              closeSync(descriptor);
+            }
+            chmodSync(target, 0o444);
+            const reread = readBoundedRegularFile(target, bytes.length, 0o444);
+            if (!reread.equals(bytes) || sha256(reread) !== expectedSha256) {
+              throw new Error(`Materialized bytes differ at ${relativePath}.`);
+            }
+          }
+
+          const planBytes = readBoundedRegularFile('evaluation/atomistic/reproduction-plan.json', 64 * 1024);
           const plan = JSON.parse(planBytes);
-          const runtimeLockBytes = readFileSync('evaluation/atomistic/runtime-lock.json');
+          const runtimeLockBytes = readBoundedRegularFile('evaluation/atomistic/runtime-lock.json', 64 * 1024);
           const runtimeLock = JSON.parse(runtimeLockBytes);
-          const planDigest = `sha256:${createHash('sha256').update(planBytes).digest('hex')}`;
-          const runtimeLockDigest = `sha256:${createHash('sha256').update(runtimeLockBytes).digest('hex')}`;
+          const planDigest = sha256(planBytes);
+          const runtimeLockDigest = sha256(runtimeLockBytes);
           const expectedModelIds = {
             mattersim: 'mattersim-v1.0.0-5m',
             mace: 'mace-mpa-0-medium',
           };
+          if (!Object.hasOwn(expectedModelIds, process.env.MODEL)) throw new Error('Unexpected matrix model.');
           const expectedRunner = {
             python: '3.12.13',
             platform: 'linux',
@@ -273,51 +660,98 @@ jobs:
           if (plan.schemaVersion !== 'tf.atomistic-reproduction/0.2') {
             throw new Error('Unexpected atomistic reproduction-plan schema.');
           }
-          if (runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.1'
-              || runtimeLockDigest !== 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe'
+          if (planDigest !== expectedPlanDigest
+              || runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.2'
+              || runtimeLockDigest !== expectedRuntimeLockDigest
               || runtimeLock.state !== 'discovery-not-frozen'
               || runtimeLock.scientificPlan?.rawDigest !== planDigest
               || runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'
               || runtimeLock.claims?.promotionEligible !== false
-              || !/^[0-9a-f]{40}$/.test(runtimeLock.runtimeSource?.revision)
-              || !Number.isSafeInteger(runtimeLock.runtimeSource?.commitTimestamp)) {
+              || runtimeLock.claims?.comparable !== false
+              || runtimeLock.claims?.reproduced !== false
+              || runtimeLock.runtimeSource?.runtimeSourceRevision !== expectedRuntimeSourceRevision
+              || runtimeLock.runtimeSource?.sourceDateEpoch !== expectedSourceDateEpoch
+              || runtimeLock.runtimeSource?.sourceManifestProtocol !== 'sha256-canonical-json-ordered-path-mode-size-sha256/v1'
+              || runtimeLock.runtimeSource?.sourceManifestDigest !== expectedSourceManifestDigest
+              || runtimeLock.runtimeSource?.materializationProtocol !== 'sha256-canonical-json-ordered-runtime-materializations/v1'
+              || runtimeLock.runtimeSource?.materializationDigest !== expectedMaterializationDigest
+              || canonicalJson(runtimeLock.runtimeSource?.files) !== canonicalJson(expectedSources.map(({ gitBlobOid: ignored, ...source }) => source))
+              || canonicalJson(runtimeLock.runtimeSource?.materializations) !== canonicalJson(expectedMaterializations)
+              || sha256(Buffer.from(canonicalJson(runtimeLock.runtimeSource.files), 'utf8')) !== expectedSourceManifestDigest
+              || sha256(Buffer.from(canonicalJson(runtimeLock.runtimeSource.materializations), 'utf8')) !== expectedMaterializationDigest
+              || runtimeLock.plannedBuildContract?.schemaVersion !== 'tf.atomistic-runtime-inputs/0.2'
+              || runtimeLock.plannedBuildContract?.runtimeInputManifestProtocol !== 'sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.2/v1'
+              || runtimeLock.identities?.runnerDigest !== null
+              || runtimeLock.replication?.observations?.length !== 0) {
             throw new Error('Runtime discovery lock is incomplete or not bound to the scientific plan.');
           }
-          for (const source of runtimeLock.runtimeSource.files) {
-            const metadata = lstatSync(source.path, { bigint: true });
-            const bytes = readFileSync(source.path);
-            const digest = `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
-            if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1n
-                || Number(metadata.size) !== source.sizeBytes || digest !== source.sha256) {
-              throw new Error(`Runtime source differs from the frozen R5 byte identity: ${source.path}`);
-            }
-          }
           const gitEnvironment = {
-            ...process.env,
+            PATH: process.env.PATH,
             GIT_CONFIG_NOSYSTEM: '1',
+            GIT_CONFIG_SYSTEM: '/dev/null',
+            GIT_CONFIG_GLOBAL: '/dev/null',
             GIT_NO_REPLACE_OBJECTS: '1',
             GIT_OPTIONAL_LOCKS: '0',
             LC_ALL: 'C',
           };
-          for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_REPLACE_REF_BASE']) {
-            delete gitEnvironment[key];
-          }
           const gitOptions = { env: gitEnvironment, stdio: ['ignore', 'pipe', 'pipe'] };
-          execFileSync('git', ['cat-file', '-e', `${runtimeLock.runtimeSource.revision}^{commit}`], gitOptions);
-          execFileSync('git', ['merge-base', '--is-ancestor', runtimeLock.runtimeSource.revision, 'HEAD'], gitOptions);
+          execFileSync('git', ['cat-file', '-e', `${expectedRuntimeSourceRevision}^{commit}`], gitOptions);
+          execFileSync('git', ['merge-base', '--is-ancestor', expectedRuntimeSourceRevision, 'HEAD'], gitOptions);
           const commitTimestamp = Number(execFileSync(
             'git',
-            ['show', '-s', '--format=%ct', runtimeLock.runtimeSource.revision],
+            ['show', '-s', '--format=%ct', expectedRuntimeSourceRevision],
             { ...gitOptions, encoding: 'utf8' },
           ).trim());
-          if (commitTimestamp !== runtimeLock.runtimeSource.commitTimestamp) {
+          if (commitTimestamp !== expectedSourceDateEpoch) {
             throw new Error('Runtime source commit timestamp differs from the discovery lock.');
           }
-          execFileSync(
-            'git',
-            ['diff', '--quiet', runtimeLock.runtimeSource.revision, '--', ...runtimeLock.runtimeSource.files.map((source) => source.path)],
-            gitOptions,
-          );
+
+          const runtimeSourceRoot = realpathSync(process.env.RUNTIME_SOURCE_ROOT);
+          const buildContext = realpathSync(process.env.BUILD_CONTEXT);
+          const leftToRight = path.relative(runtimeSourceRoot, buildContext);
+          const rightToLeft = path.relative(buildContext, runtimeSourceRoot);
+          const overlaps = (relative) => relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
+          if (overlaps(leftToRight) || overlaps(rightToLeft)) throw new Error('Runtime source and build roots must be disjoint.');
+
+          const sourceBytes = new Map();
+          for (const source of expectedSources) {
+            const treeBytes = execFileSync(
+              'git',
+              ['ls-tree', '-z', expectedRuntimeSourceRevision, '--', source.path],
+              { ...gitOptions, maxBuffer: 8192 },
+            );
+            const records = treeBytes.toString('utf8').split('\0').filter((entry) => entry !== '');
+            const match = records.length === 1 ? /^(\d{6}) (\S+) ([0-9a-f]{40})\t(.+)$/.exec(records[0]) : null;
+            if (!match || match[1] !== source.mode || match[2] !== 'blob' || match[3] !== source.gitBlobOid || match[4] !== source.path) {
+              throw new Error(`P tree identity differs for ${source.path}.`);
+            }
+            const bytes = execFileSync('git', ['cat-file', 'blob', source.gitBlobOid], { ...gitOptions, maxBuffer: 5 * 1024 * 1024 + 1 });
+            if (bytes.length !== source.sizeBytes || sha256(bytes) !== source.sha256 || gitBlobOid(bytes) !== source.gitBlobOid) {
+              throw new Error(`P blob identity differs for ${source.path}.`);
+            }
+            sourceBytes.set(source.path, bytes);
+            writeExclusiveRegular(runtimeSourceRoot, source.path, bytes, source.sha256);
+          }
+
+          const materializationsBySource = new Map(expectedMaterializations.map((mapping) => [mapping.sourcePath, mapping]));
+          const selectedBuildSources = new Set([
+            '.dockerignore',
+            `atomistic/containers/${process.env.MODEL}.Dockerfile`,
+            ...expectedMaterializations.map((mapping) => mapping.sourcePath),
+          ]);
+          const buildPaths = new Set();
+          for (const source of expectedSources) {
+            if (!selectedBuildSources.has(source.path)) continue;
+            const mapping = materializationsBySource.get(source.path);
+            const buildPath = mapping?.buildPath ?? source.path;
+            if (buildPaths.has(buildPath)) throw new Error(`Duplicate build materialization path: ${buildPath}`);
+            buildPaths.add(buildPath);
+            writeExclusiveRegular(buildContext, buildPath, sourceBytes.get(source.path), source.sha256);
+          }
+          if (sourceBytes.size !== 5 || selectedBuildSources.size !== 4 || buildPaths.size !== 4) {
+            throw new Error('Runtime source materialization cardinality drifted.');
+          }
+
           for (const [field, expected] of Object.entries(expectedRunner)) {
             if (plan.protocol?.runner?.[field] !== expected) {
               throw new Error(`Runner plan drifted at ${field}.`);
@@ -339,8 +773,8 @@ jobs:
             CHECKPOINT_FILENAME: model.cachePath.split('/').at(-1),
             DATASET_CACHE_PATH: benchmark.cachePath,
             DATASET_FILENAME: benchmark.cachePath.split('/').at(-1),
-            RUNTIME_SOURCE_REVISION: runtimeLock.runtimeSource.revision,
-            SOURCE_DATE_EPOCH: String(runtimeLock.runtimeSource.commitTimestamp),
+            RUNTIME_SOURCE_REVISION: expectedRuntimeSourceRevision,
+            SOURCE_DATE_EPOCH: String(expectedSourceDateEpoch),
           };
           for (const [name, value] of Object.entries(values)) {
             if (typeof value !== 'string' || !/^[A-Za-z0-9._/+\-]+$/.test(value) || value.includes('..')) {
@@ -678,17 +1112,17 @@ jobs:
               --plan /repo/evaluation/atomistic/reproduction-plan.json \
               --model "$MODEL" \
               "${derived_arguments[@]}"
-          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          echo "d5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
           runtime_input_manifest="$LOCK_DIR/$MODEL.runtime-inputs.json"
           node scripts/atomistic/runtime-input-contract.mjs write-new \
             --model "$MODEL" \
             --plan evaluation/atomistic/reproduction-plan.json \
             --wheelhouse-manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" \
-            --dockerfile "atomistic/containers/$MODEL.Dockerfile" \
-            --dockerignore .dockerignore \
+            --dockerfile "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
+            --dockerignore "$BUILD_CONTEXT/.dockerignore" \
             --dependency-lock "$LOCK_DIR/$MODEL.requirements.lock" \
-            --run-model scripts/atomistic/run_model.py \
-            --runtime-contract scripts/atomistic/runtime_contract.py \
+            --runner-source-root "$RUNTIME_SOURCE_ROOT" \
+            --runner-build-root "$BUILD_CONTEXT" \
             --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
             --source-date-epoch "$SOURCE_DATE_EPOCH" \
             --output "$runtime_input_manifest" \
@@ -816,16 +1250,16 @@ jobs:
           python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
             --wheelhouse "$WHEELHOUSE" \
             --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
-          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          echo "d5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
           node scripts/atomistic/runtime-input-contract.mjs verify-exact \
             --model "$MODEL" \
             --plan evaluation/atomistic/reproduction-plan.json \
             --wheelhouse-manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" \
-            --dockerfile "atomistic/containers/$MODEL.Dockerfile" \
-            --dockerignore .dockerignore \
+            --dockerfile "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
+            --dockerignore "$BUILD_CONTEXT/.dockerignore" \
             --dependency-lock "$LOCK_DIR/$MODEL.requirements.lock" \
-            --run-model scripts/atomistic/run_model.py \
-            --runtime-contract scripts/atomistic/runtime_contract.py \
+            --runner-source-root "$RUNTIME_SOURCE_ROOT" \
+            --runner-build-root "$BUILD_CONTEXT" \
             --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
             --source-date-epoch "$SOURCE_DATE_EPOCH" \
             --output "$LOCK_DIR/$MODEL.runtime-inputs.json" \
@@ -978,24 +1412,43 @@ jobs:
           python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
             --wheelhouse "$WHEELHOUSE" \
             --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
-          install -d -m 0700 \
-            "$BUILD_CONTEXT/atomistic/containers" \
-            "$BUILD_CONTEXT/atomistic/locks" \
-            "$BUILD_CONTEXT/scripts/atomistic"
-          install -m 0444 \
-            "$GITHUB_WORKSPACE/atomistic/containers/$MODEL.Dockerfile" \
-            "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile"
+          test -f "$BUILD_CONTEXT/.dockerignore"
+          test -f "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile"
+          test -f "$BUILD_CONTEXT/scripts/atomistic/run_model.py"
+          test -f "$BUILD_CONTEXT/scripts/atomistic/runtime_contract.py"
+          test -z "$(find "$BUILD_CONTEXT" -type l -print -quit)"
+          for materialized in \
+            "$BUILD_CONTEXT/.dockerignore" \
+            "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
+            "$BUILD_CONTEXT/scripts/atomistic/run_model.py" \
+            "$BUILD_CONTEXT/scripts/atomistic/runtime_contract.py"; do
+            test "$(stat -c '%a' "$materialized")" = 444
+            test "$(stat -c '%h' "$materialized")" = 1
+          done
+          echo "9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3  $BUILD_CONTEXT/.dockerignore" | sha256sum -c -
+          if [ "$MODEL" = mattersim ]; then
+            echo "d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455  $BUILD_CONTEXT/atomistic/containers/mattersim.Dockerfile" | sha256sum -c -
+          else
+            test "$MODEL" = mace
+            echo "d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f  $BUILD_CONTEXT/atomistic/containers/mace.Dockerfile" | sha256sum -c -
+          fi
+          echo "f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb  $BUILD_CONTEXT/scripts/atomistic/run_model.py" | sha256sum -c -
+          echo "0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2  $BUILD_CONTEXT/scripts/atomistic/runtime_contract.py" | sha256sum -c -
+          install -d -m 0700 "$BUILD_CONTEXT/atomistic/locks"
+          test ! -e "$BUILD_CONTEXT/atomistic/locks/$MODEL.requirements.lock"
           install -m 0444 \
             "$LOCK_DIR/$MODEL.requirements.lock" \
             "$BUILD_CONTEXT/atomistic/locks/$MODEL.requirements.lock"
-          install -m 0444 \
-            "$GITHUB_WORKSPACE/scripts/atomistic/run_model.py" \
-            "$GITHUB_WORKSPACE/scripts/atomistic/runtime_contract.py" \
-            "$BUILD_CONTEXT/scripts/atomistic/"
-          install -m 0444 \
-            "$GITHUB_WORKSPACE/.dockerignore" \
-            "$BUILD_CONTEXT/.dockerignore"
           test -z "$(find "$BUILD_CONTEXT" -type l -print -quit)"
+          test -z "$(find "$BUILD_CONTEXT" -mindepth 1 ! -type d ! -type f -print -quit)"
+          expected_context_directories="$(printf '%s\n' \
+            './atomistic' \
+            './atomistic/containers' \
+            './atomistic/locks' \
+            './scripts' \
+            './scripts/atomistic')"
+          actual_context_directories="$(cd "$BUILD_CONTEXT" && find . -mindepth 1 -type d -print | LC_ALL=C sort)"
+          test "$actual_context_directories" = "$expected_context_directories"
           expected_context_files="$(printf '%s\n' \
             './.dockerignore' \
             "./atomistic/containers/$MODEL.Dockerfile" \
@@ -1004,7 +1457,7 @@ jobs:
             './scripts/atomistic/runtime_contract.py')"
           actual_context_files="$(cd "$BUILD_CONTEXT" && find . -type f -print | LC_ALL=C sort)"
           test "$actual_context_files" = "$expected_context_files"
-          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          echo "d5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
           node scripts/atomistic/runtime-input-contract.mjs verify-exact \
             --model "$MODEL" \
             --plan evaluation/atomistic/reproduction-plan.json \
@@ -1012,8 +1465,8 @@ jobs:
             --dockerfile "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
             --dockerignore "$BUILD_CONTEXT/.dockerignore" \
             --dependency-lock "$BUILD_CONTEXT/atomistic/locks/$MODEL.requirements.lock" \
-            --run-model "$BUILD_CONTEXT/scripts/atomistic/run_model.py" \
-            --runtime-contract "$BUILD_CONTEXT/scripts/atomistic/runtime_contract.py" \
+            --runner-source-root "$RUNTIME_SOURCE_ROOT" \
+            --runner-build-root "$BUILD_CONTEXT" \
             --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
             --source-date-epoch "$SOURCE_DATE_EPOCH" \
             --output "$LOCK_DIR/$MODEL.runtime-inputs.json" \
@@ -1044,7 +1497,7 @@ jobs:
           docker image inspect "$image_tag" > "$BUILD_CONTEXT/$MODEL.image-inspect.json"
           docker buildx version > "$BUILD_CONTEXT/buildx-version.txt"
           docker version --format '{{.Server.Version}}' > "$BUILD_CONTEXT/docker-server-version.txt"
-          echo "17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15  scripts/atomistic/write-container-observation.mjs" | sha256sum -c -
+          echo "83b33e718297f1a90939e029ddfe407ab6e754b35ac2e5f6a27baf8de0143b18  scripts/atomistic/write-container-observation.mjs" | sha256sum -c -
           node scripts/atomistic/write-container-observation.mjs write-new \
             --model "$MODEL" \
             --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
@@ -1073,12 +1526,12 @@ jobs:
             "$ATOMISTIC_ROOT/$MODEL.container-observation.result.json" \
             "$ATOMISTIC_ROOT/$MODEL.container-observation.verify.json"
           chmod 0444 "$BUILD_CONTEXT/$MODEL.container-observation.json"
-          image_digest="$(docker image inspect --format '{{.Id}}' "$image_tag")"
-          test "${image_digest#sha256:}" != "$image_digest"
-          test "${#image_digest}" -eq 71
+          docker_local_config_image_id="$(docker image inspect --format '{{.Id}}' "$image_tag")"
+          test "${docker_local_config_image_id#sha256:}" != "$docker_local_config_image_id"
+          test "${#docker_local_config_image_id}" -eq 71
           {
             echo "IMAGE_TAG=$image_tag"
-            echo "CONTAINER_IMAGE_DIGEST=$image_digest"
+            echo "DOCKER_LOCAL_CONFIG_IMAGE_ID=$docker_local_config_image_id"
           } >> "$GITHUB_ENV"
 
       - name: Run checkpoint deserialization and smoke predictions in the final sandbox
@@ -1117,8 +1570,9 @@ jobs:
             --ulimit core=0:0 \
             --ulimit fsize=134217728:134217728 \
             --tmpfs /tmp:rw,noexec,nosuid,nodev,size=1g,mode=1777 \
-            --env "GITHUB_SHA=$GITHUB_SHA" \
-            --env "TAILING_ATOMISTIC_CONTAINER_DIGEST=$CONTAINER_IMAGE_DIGEST" \
+            --env "TAILING_ATOMISTIC_WORKFLOW_REVISION=$GITHUB_SHA" \
+            --env "TAILING_ATOMISTIC_RUNTIME_SOURCE_REVISION=$RUNTIME_SOURCE_REVISION" \
+            --env "TAILING_ATOMISTIC_DOCKER_LOCAL_CONFIG_IMAGE_ID=$DOCKER_LOCAL_CONFIG_IMAGE_ID" \
             --mount "type=bind,src=$INFERENCE_INPUT_DIR/$PACKAGE_FILENAME,dst=/inputs/$PACKAGE_FILENAME,readonly" \
             --mount "type=bind,src=$INFERENCE_INPUT_DIR/$CHECKPOINT_FILENAME,dst=/inputs/$CHECKPOINT_FILENAME,readonly" \
             --mount "type=bind,src=$INFERENCE_INPUT_DIR/structures.jsonl,dst=/inputs/structures.jsonl,readonly" \

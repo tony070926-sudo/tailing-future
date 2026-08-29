@@ -10,6 +10,7 @@ import {
   RUN_SPECIFIC_SEMANTICS,
   STABLE_INPUT_SEMANTICS,
   buildContainerObservation,
+  canonicalJson,
   canonicalJsonBytes,
   parseJsonRejectDuplicateKeys,
   readAtMost,
@@ -17,32 +18,50 @@ import {
 } from './write-container-observation.mjs';
 import {
   PINNED_DOCKERFILE_FRONTEND,
+  PINNED_RUNTIME_SOURCE_DATE_EPOCH,
+  PINNED_RUNTIME_SOURCE_REVISION,
+  RUNNER_MATERIALIZATION,
+  RUNNER_MATERIALIZATION_PROTOCOL,
+  RUNTIME_INPUT_CLAIMS,
   buildRuntimeInputManifest,
   canonicalJsonBytes as runtimeCanonicalJsonBytes,
   expectedDependencyLockBytes,
   sha256 as runtimeSha256,
 } from './runtime-input-contract.mjs';
 
-const SOURCE_REVISION = '9a67f4509588d242838c736a580b6ec5badc18f9';
+const SOURCE_REVISION = PINNED_RUNTIME_SOURCE_REVISION;
 const WORKFLOW_REVISION = 'a67f4509588d242838c736a580b6ec5badc18f91';
-const SOURCE_DATE_EPOCH = 1_756_467_619;
-const CREATED = '2025-08-29T11:40:19Z';
+const SOURCE_DATE_EPOCH = PINNED_RUNTIME_SOURCE_DATE_EPOCH;
+const CREATED = '2026-08-29T04:25:43Z';
 const CONFIG_DIGEST = 'sha256:739ef6ded2c0ab06b448cbab2855a171d9942b4410d28df8aba4e1e3740d817e';
 const MANIFEST_DIGEST = `sha256:${'1'.repeat(64)}`;
 const DIFF_IDS = Object.freeze([`sha256:${'2'.repeat(64)}`, `sha256:${'3'.repeat(64)}`]);
 const BUILDX_VERSION = 'github.com/docker/buildx v0.27.0 1234567890abcdef\n';
 const DOCKER_SERVER_VERSION = '28.3.3\n';
+const RUN_MODEL_BYTES = await readFile(new URL('./v2/run_model.py', import.meta.url));
+const RUNTIME_CONTRACT_BYTES = await readFile(new URL('./v2/runtime_contract.py', import.meta.url));
+const RUNNER_FILES = RUNNER_MATERIALIZATION.map(({
+  name, standardContainerPath, sizeBytes, sha256: digest,
+}) => ({ name, standardContainerPath, sizeBytes, sha256: digest }));
+const RUNNER_DIGEST = 'sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4';
+const MATERIALIZATION_DIGEST = sha256(Buffer.from(canonicalJson(RUNNER_MATERIALIZATION), 'utf8'));
 
 function makeRuntimeInput(model) {
   return {
-    schemaVersion: 'tf.atomistic-runtime-inputs/0.1',
+    schemaVersion: 'tf.atomistic-runtime-inputs/0.2',
     model,
     modelId: model === 'mattersim' ? 'mattersim-v1.0.0-5m' : 'mace-mpa-0-medium',
     scientificPlan: {
       rawDigest: 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2',
       sizeBytes: 43_730,
     },
-    runtimeSource: { revision: SOURCE_REVISION, sourceDateEpoch: SOURCE_DATE_EPOCH },
+    runtimeSource: {
+      runtimeSourceRevision: SOURCE_REVISION,
+      sourceDateEpoch: SOURCE_DATE_EPOCH,
+      materializationProtocol: RUNNER_MATERIALIZATION_PROTOCOL,
+      materializationDigest: MATERIALIZATION_DIGEST,
+      materializations: RUNNER_MATERIALIZATION.map((mapping) => ({ ...mapping })),
+    },
     platform: 'linux/amd64',
     baseImage: {
       reference: `python:3.12.13-slim-bookworm@sha256:${'4'.repeat(64)}`,
@@ -54,9 +73,10 @@ function makeRuntimeInput(model) {
       manifestDigest: `sha256:${'6'.repeat(64)}`,
     },
     buildInputs: {
-      runner: { digest: `sha256:${'7'.repeat(64)}` },
+      runner: { implementation: 'tf.atomistic-runner/v2', files: RUNNER_FILES.map((file) => ({ ...file })), digest: RUNNER_DIGEST },
       dependencyLock: { sha256: `sha256:${'8'.repeat(64)}` },
     },
+    claims: { ...RUNTIME_INPUT_CLAIMS },
     policy: {
       build: {
         cache: 'disabled',
@@ -237,8 +257,8 @@ function actualRuntimeInputContract(model = 'mattersim') {
     ].join('\n')),
     dockerignoreBytes,
     dependencyLockBytes,
-    runModelBytes: Buffer.from('"""fixture runner"""\n'),
-    runtimeContractBytes: Buffer.from('"""fixture contract"""\n'),
+    runModelBytes: RUN_MODEL_BYTES,
+    runtimeContractBytes: RUNTIME_CONTRACT_BYTES,
     runtimeSourceRevision: SOURCE_REVISION,
     sourceDateEpoch: String(SOURCE_DATE_EPOCH),
   });
@@ -315,7 +335,7 @@ describe('canonical atomistic container observation', () => {
         reproduced: false,
       },
     });
-    expect(first.fileDigest).toBe('sha256:a3978e2b9d47a6c89532513672fb1a5870fb490884649bf557be7c58563b896b');
+    expect(first.fileDigest).toBe('sha256:142dcd1ebfe558c04195e3a867373e7a3c8269732ceb9c3babb0515a2b00a9eb');
   });
 
   it('accepts the exact descriptor-free docker --load metadata profile observed on GitHub-hosted runners', () => {
@@ -347,7 +367,7 @@ describe('canonical atomistic container observation', () => {
     fixture.runtimeInputManifestBytes = generated.bytes;
     const result = build(fixture);
     expect(result.observation.stableInputReference.runtimeInputManifestDigest).toBe(generated.fileDigest);
-    expect(JSON.parse(generated.bytes).schemaVersion).toBe('tf.atomistic-runtime-inputs/0.1');
+    expect(JSON.parse(generated.bytes).schemaVersion).toBe('tf.atomistic-runtime-inputs/0.2');
     expect(JSON.parse(generated.bytes).dockerfileFrontend).toEqual({
       reference: PINNED_DOCKERFILE_FRONTEND,
       manifestDigest: PINNED_DOCKERFILE_FRONTEND.slice(PINNED_DOCKERFILE_FRONTEND.indexOf('@') + 1),
@@ -357,7 +377,7 @@ describe('canonical atomistic container observation', () => {
   it('changes the exact observation for every coherent input identity mutation', () => {
     const baseline = build(makeFixture());
     const cases = [
-      ['runtime-input manifest', mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.digest = `sha256:${'a'.repeat(64)}`; })],
+      ['runtime-input manifest', mutateFixture((fixture) => { fixture.runtimeInput.scientificPlan.rawDigest = `sha256:${'a'.repeat(64)}`; })],
       ['workflow revision and local tag', mutateFixture((fixture) => {
         fixture.workflowRevision = 'b'.repeat(40);
         fixture.inspect[0].RepoTags = [`tailing-atomistic-mattersim-bootstrap:${fixture.workflowRevision}`];
@@ -390,9 +410,9 @@ describe('canonical atomistic container observation', () => {
         fixture.inspect[0].Descriptor.size = 507;
       })],
       ['Created representation', mutateFixture((fixture) => {
-        fixture.metadata['containerimage.descriptor'].annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:19.000000000Z';
-        fixture.inspect[0].Created = '2025-08-29T11:40:19.000000000Z';
-        fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:19.000000000Z';
+        fixture.metadata['containerimage.descriptor'].annotations['org.opencontainers.image.created'] = '2026-08-29T04:25:43.000000000Z';
+        fixture.inspect[0].Created = '2026-08-29T04:25:43.000000000Z';
+        fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2026-08-29T04:25:43.000000000Z';
       })],
     ];
     for (const [label, fixture] of cases) {
@@ -405,25 +425,62 @@ describe('canonical atomistic container observation', () => {
   it('rejects every cross-input identity mismatch and malformed digest', () => {
     const cases = [
       ['model', /model identity/, mutateFixture((fixture) => { fixture.runtimeInput.model = 'mace'; })],
-      ['revision', /revision differs/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.revision = 'e'.repeat(40); })],
+      ['revision', /revision differs/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.runtimeSourceRevision = 'e'.repeat(40); })],
       ['epoch', /sourceDateEpoch differs/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.sourceDateEpoch += 1; })],
       ['config annotation', /descriptor annotation/, mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].annotations['config.digest'] = `sha256:${'e'.repeat(64)}`; })],
       ['manifest descriptor', /descriptor digest/, mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].digest = `sha256:${'e'.repeat(64)}`; })],
       ['image Id', /inspect Id differs/, mutateFixture((fixture) => { fixture.inspect[0].Id = `sha256:${'e'.repeat(64)}`; })],
       ['inspect descriptor', /descriptor digest differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.digest = `sha256:${'e'.repeat(64)}`; })],
       ['inspect descriptor config annotation', /config annotation differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.annotations['config.digest'] = `sha256:${'e'.repeat(64)}`; })],
-      ['inspect descriptor created annotation', /created annotation differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:20Z'; })],
+      ['inspect descriptor created annotation', /created annotation differs/, mutateFixture((fixture) => { fixture.inspect[0].Descriptor.annotations['org.opencontainers.image.created'] = '2026-08-29T04:25:44Z'; })],
       ['image name', /Buildx image name/, mutateFixture((fixture) => { fixture.metadata['image.name'] = 'docker.io/library/unreviewed:latest'; })],
-      ['runtime-input nested digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.digest = 'sha256:abcd'; })],
+      ['runtime-input nested digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.dependencyLock.sha256 = 'sha256:abcd'; })],
       ['uppercase digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.metadata['containerimage.config.digest'] = `sha256:${'A'.repeat(64)}`; })],
       ['short digest', /lowercase sha256/, mutateFixture((fixture) => { fixture.inspect[0].RootFS.Layers[0] = 'sha256:abcd'; })],
     ];
     for (const [label, message, fixture] of cases) expect(() => build(fixture), label).toThrow(message);
   });
 
+  it('rejects every v2 materialization, runner projection, and promotion-boundary mutation', () => {
+    const cases = [
+      ['materialization protocol', /materializationProtocol/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializationProtocol = 'unreviewed/v1'; })],
+      ['source path', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].sourcePath = 'scripts/atomistic/run_model.py'; })],
+      ['build path', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].buildPath = 'scripts/atomistic/v2/run_model.py'; })],
+      ['container path', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].standardContainerPath = '/opt/unreviewed/run_model.py'; })],
+      ['source size', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].sizeBytes += 1; })],
+      ['source mode', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].mode = '100755'; })],
+      ['source sha', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations[0].sha256 = `sha256:${'a'.repeat(64)}`; })],
+      ['mapping order', /exact immutable P source-to-build mapping/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializations.reverse(); })],
+      ['materialization digest', /materializationDigest/, mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.materializationDigest = `sha256:${'a'.repeat(64)}`; })],
+      ['runner implementation', /runner implementation/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.implementation = 'tf.atomistic-runner/v1'; })],
+      ['runner file path', /runner files/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.files[0].standardContainerPath = '/opt/unreviewed/run_model.py'; })],
+      ['runner file size', /runner files/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.files[0].sizeBytes += 1; })],
+      ['runner source path leakage', /runner files/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.files[0].sourcePath = RUNNER_MATERIALIZATION[0].sourcePath; })],
+      ['runner digest', /runner digest/, mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.digest = `sha256:${'a'.repeat(64)}`; })],
+      ['evidence class', /discovery-only/, mutateFixture((fixture) => { fixture.runtimeInput.claims.evidenceClass = 'reproduced'; })],
+      ['promotion claim', /exactly false/, mutateFixture((fixture) => { fixture.runtimeInput.claims.promotionEligible = true; })],
+      ['comparability claim', /exactly false/, mutateFixture((fixture) => { fixture.runtimeInput.claims.comparable = true; })],
+      ['reproduction claim', /exactly false/, mutateFixture((fixture) => { fixture.runtimeInput.claims.reproduced = true; })],
+    ];
+    for (const [label, message, fixture] of cases) expect(() => build(fixture), label).toThrow(message);
+  });
+
+  it('recursively rejects malformed promotion claims anywhere in the accepted runtime input', () => {
+    for (const key of ['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']) {
+      for (const value of [true, null, 0, 'false']) {
+        const fixture = mutateFixture((candidate) => {
+          candidate.runtimeInput.buildInputs.nestedClaim = [{ [key]: value }];
+        });
+        expect(() => build(fixture), `${key}=${String(value)}`).toThrow(/must be exactly false/);
+      }
+    }
+  });
+
   it('rejects extra and duplicate claims at every trusted JSON surface', () => {
     for (const [label, fixture] of [
       ['runtime-input top level', mutateFixture((fixture) => { fixture.runtimeInput.unreviewed = true; })],
+      ['runtime-input runtimeSource', mutateFixture((fixture) => { fixture.runtimeInput.runtimeSource.unreviewed = true; })],
+      ['runtime-input runner', mutateFixture((fixture) => { fixture.runtimeInput.buildInputs.runner.unreviewed = true; })],
       ['metadata top level', mutateFixture((fixture) => { fixture.metadata['containerimage.push'] = true; })],
       ['descriptor', mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].registry = 'example.invalid'; })],
       ['descriptor annotations', mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].annotations.unreviewed = 'claim'; })],
@@ -441,9 +498,9 @@ describe('canonical atomistic container observation', () => {
 
   it('rejects timestamp, label, platform, cardinality, RootFS and registry-push mismatches', () => {
     const cases = [
-      [/Created differs/, mutateFixture((fixture) => { fixture.inspect[0].Created = '2025-08-29T11:40:20Z'; })],
-      [/created annotation differs/, mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].annotations['org.opencontainers.image.created'] = '2025-08-29T11:40:20Z'; })],
-      [/whole second/, mutateFixture((fixture) => { fixture.inspect[0].Created = '2025-08-29T11:40:19.1Z'; })],
+      [/Created differs/, mutateFixture((fixture) => { fixture.inspect[0].Created = '2026-08-29T04:25:44Z'; })],
+      [/created annotation differs/, mutateFixture((fixture) => { fixture.metadata['containerimage.descriptor'].annotations['org.opencontainers.image.created'] = '2026-08-29T04:25:44Z'; })],
+      [/whole second/, mutateFixture((fixture) => { fixture.inspect[0].Created = '2026-08-29T04:25:43.1Z'; })],
       [/revision label differs/, mutateFixture((fixture) => { fixture.inspect[0].Config.Labels['org.opencontainers.image.revision'] = 'e'.repeat(40); })],
       [/evidence label/, mutateFixture((fixture) => { fixture.inspect[0].Config.Labels['org.tailing-future.evidence-class'] = 'reproduced'; })],
       [/linux\/amd64/, mutateFixture((fixture) => { fixture.inspect[0].Os = 'windows'; })],

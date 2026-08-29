@@ -1,15 +1,15 @@
 {
-  "schemaVersion": "tf.atomistic-runtime-lock/0.1",
+  "schemaVersion": "tf.atomistic-runtime-lock/0.2",
   "state": "discovery-not-frozen",
   "scientificPlan": {
     "path": "evaluation/atomistic/reproduction-plan.json",
     "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
   },
   "runtimeSource": {
-    "revision": "9a67f4509588d242838c736a580b6ec5badc18f9",
-    "commitTimestamp": 1787966917,
-    "sourceManifestDigest": "sha256:b6d9fcd82a4f1ea0b8ba2f75659551432edcaf2388c6225549c0b064878ac112",
+    "runtimeSourceRevision": "f861b3e30572f1db366554a2e330d5d6c78bdb56",
+    "sourceDateEpoch": 1787977543,
     "sourceManifestProtocol": "sha256-canonical-json-ordered-path-mode-size-sha256/v1",
+    "sourceManifestDigest": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1",
     "files": [
       {
         "path": ".dockerignore",
@@ -30,21 +30,43 @@
         "sha256": "sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455"
       },
       {
-        "path": "scripts/atomistic/run_model.py",
-        "sizeBytes": 31874,
+        "path": "scripts/atomistic/v2/run_model.py",
+        "sizeBytes": 35311,
         "mode": "100644",
-        "sha256": "sha256:82704e552e7d5f0a2cdbb0603676429931997653568db70ab016533690c2efd8"
+        "sha256": "sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb"
       },
       {
-        "path": "scripts/atomistic/runtime_contract.py",
-        "sizeBytes": 47702,
+        "path": "scripts/atomistic/v2/runtime_contract.py",
+        "sizeBytes": 53577,
         "mode": "100644",
-        "sha256": "sha256:d1d94c6ee1b256a16c485e1760ea13ebddf24ef0e34ccde7d3682b9c9ceecc61"
+        "sha256": "sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2"
+      }
+    ],
+    "materializationProtocol": "sha256-canonical-json-ordered-runtime-materializations/v1",
+    "materializationDigest": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721",
+    "materializations": [
+      {
+        "name": "run_model.py",
+        "sourcePath": "scripts/atomistic/v2/run_model.py",
+        "buildPath": "scripts/atomistic/run_model.py",
+        "standardContainerPath": "/opt/tailing-venv/lib/python3.12/site-packages/run_model.py",
+        "sizeBytes": 35311,
+        "mode": "100644",
+        "sha256": "sha256:f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb"
+      },
+      {
+        "name": "runtime_contract.py",
+        "sourcePath": "scripts/atomistic/v2/runtime_contract.py",
+        "buildPath": "scripts/atomistic/runtime_contract.py",
+        "standardContainerPath": "/opt/tailing-venv/lib/python3.12/site-packages/runtime_contract.py",
+        "sizeBytes": 53577,
+        "mode": "100644",
+        "sha256": "sha256:0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2"
       }
     ]
   },
   "plannedBuildContract": {
-    "schemaVersion": "tf.atomistic-runtime-inputs/0.1",
+    "schemaVersion": "tf.atomistic-runtime-inputs/0.2",
     "platform": "linux/amd64",
     "baseImage": {
       "reference": "python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
@@ -58,7 +80,7 @@
     "networkPolicy": "fetch-online-build-and-run-offline",
     "provenanceEnabled": false,
     "sbomEnabled": false,
-    "runtimeInputManifestProtocol": "sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.1/v1"
+    "runtimeInputManifestProtocol": "sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.2/v1"
   },
   "identities": {
     "runnerDigest": null,

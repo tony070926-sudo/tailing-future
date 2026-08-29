@@ -53,16 +53,15 @@ dependency environments because their e3nn requirements conflict. The manual
 freezes a wheelhouse, proves a cold hash-locked install, builds without network
 access, and runs checkpoint inference in a non-root read-only container.
 
-This R6c Commit-P candidate places that workflow under an active, exact-byte
-quarantine after the platform/ref guard. Once P is merged and selected on
-`main`, a dispatch of P must stop with `BOOTSTRAP_QUARANTINE_ACTIVE`, stage a
-non-promotional guard-failure outcome and must not resolve, build or infer with
-the conflicting R5 runner. The v2 runner
-exists only at `scripts/atomistic/v2/`; it is prepositioned, not selected and not
-executed by this candidate. After P passes protected-main Sentinel and has an
-immutable merged SHA, Commit S may perform the separately reviewed switch. Any
-eventual bootstrap artifacts remain predictions and diagnostics only—not
-metrics, a receipt, an attestation or a reproduction claim.
+Commit P `f861b3e` placed that workflow under an active, exact-byte quarantine
+and passed protected-main Sentinel. Dispatch `33234001808` then stopped both
+model jobs with `BOOTSTRAP_QUARANTINE_ACTIVE`, published only bounded
+non-promotional guard-failure outcomes and performed no resolve, build or
+inference work. This Commit-S candidate now binds P's exact five source blobs,
+materializes the two v2 files into isolated standard build paths and rejects
+both the legacy R5 identity and every unknown runner. Any eventual bootstrap
+artifacts remain predictions and diagnostics only—not metrics, a receipt, an
+attestation or a reproduction claim.
 
 The resolver treats only one direct top-level `.dist-info` directory as wheel
 metadata, rejects case-variant or `.egg-info` roots and any `.data` relocation
@@ -119,7 +118,7 @@ that would create a self-referential hash cycle. A locally observed Docker
 image `.Id` remains run-specific evidence unless independent OCI builds prove
 the same manifest digest.
 
-The canary passes the R5 commit timestamp through BuildKit's special
+The canary passes the immutable P runtime-source timestamp through BuildKit's special
 `SOURCE_DATE_EPOCH` build argument and verifies the resulting image/config
 timestamp against `docker image inspect`; when Buildx emits a true manifest
 descriptor, its created annotation is checked too. This normalizes OCI config
@@ -133,9 +132,9 @@ schema distinguishes a true `single-image-manifest` descriptor from the
 descriptor-free Docker `--load` profile, where `containerimage.digest` is only
 a `docker-image-config-alias` and `manifestDescriptor` remains null. It also
 binds the exact normalized local image name. Its container observation
-also separates the current workflow revision (used by the local image tag)
-from the fixed R5 runtime-source revision (used by the OCI source label and
-stable runtime-input contract). The bounded bundle publishes the raw Buildx
+also separates the current S workflow revision (used by the local image tag)
+from the fixed P runtime-source revision (used by the OCI source label and
+stable v2 runtime-input contract). The bounded bundle publishes the raw Buildx
 metadata, image-inspect JSON and tool-version lines so an independent verifier
 can recompute every projected diagnostic digest.
 
@@ -148,15 +147,15 @@ also names the workflow commit while the actual runner bytes come from the
 separate R5 runtime-source commit. Neither an explanatory note nor a
 publication-time rewrite can repair those artifact bytes.
 
-The repair must be non-circular. This Commit-P candidate prepositions a
-versioned v2 runner at new paths, leaves the R5-locked source unchanged and
-actively quarantines its dispatch path. Once P passes protected-main Sentinel
-and its immutable merged SHA exists, Commit S may bind the discovery lock and
-workflow to P's exact source-to-image mapping and every executed runner/wrapper
-digest. Only entirely fresh S runs may be inspected by a separately controlled
-verifier, which must reject any positive promotion, comparison or reproduction
-claim at any nesting depth. Only a later commit F, after that controlled receipt
-exists, may freeze accepted identities.
+The repair is non-circular. Commit P prepositioned the versioned v2 runner at
+new paths, left the R5-locked source unchanged and actively quarantined its
+dispatch path. This Commit-S candidate takes P's immutable merged SHA and
+timestamp as its only runtime-source anchor, verifies P tree modes, blob OIDs,
+sizes and hashes, and records the exact source→build→container mapping without
+freezing any observed identity. Only entirely fresh S runs may be inspected by
+a separately controlled verifier, which must reject any positive promotion,
+comparison or reproduction claim at any nesting depth. Only a later commit F,
+after that controlled receipt exists, may freeze accepted identities.
 
 Full promotion requires all 693 IDs from both models. Each energy, force and
 stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
@@ -198,15 +197,18 @@ superiority. Until the separate runtime lock is independently replicated and
 the full 693-record verifier passes, both models remain `AUDITABLE`, never
 `REPRODUCED` or numerically comparable.
 
-Nine protected-main bootstrap dispatches are preserved. The first stopped during
+Ten protected-main bootstrap dispatches are preserved. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
 but stopped during offline exact-lock resolution. The fourth crossed those
 boundaries for MatterSim. The fifth crossed them for both models and produced
 two successful ten-record smoke artifacts. The sixth and seventh failed during
 R6a container observation. The eighth and ninth completed both model jobs under
 R6b but are rejected because their run summaries contain the contradictory
-nested positive promotion claim. The accepted-replica count is therefore still
-**0 / 2**. Every retained prediction bundle remains
+nested positive promotion claim. The tenth, protected-main dispatch
+[`33234001808`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33234001808),
+proved the exact legacy-runner quarantine fails closed at the guard and emitted
+no prediction payload; it is not a replica. The accepted-replica count is
+therefore still **0 / 2**. Every retained prediction bundle remains
 `bootstrap-not-reproduced`: smoke predictions are neither the 693-record
 preregistered benchmark nor an accuracy result.
 

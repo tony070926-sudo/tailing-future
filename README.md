@@ -2,7 +2,7 @@
 
 Tailing Future is an evidence-first materials and chemical-engineering world-model lab. It starts with a small solver that can be tested, then grows scale by scale toward atomistic, mesoscale, continuum, reactor and process models.
 
-Live lab: [tailing-future.tony070926.workers.dev](https://tailing-future.tony070926.workers.dev)
+Live lab: [tailing-future.tony070926.workers.dev](https://tailing-future.tony070926.workers.dev) currently serves v0.3.0. The Commit-S v0.3.1 candidate described below is local and unreleased.
 
 The current **R2 / CONDITIONAL** candidate is intentionally narrow:
 
@@ -13,7 +13,7 @@ The current **R2 / CONDITIONAL** candidate is intentionally narrow:
 - an eight-seed × 5,000-step PR tail gate with p50/p95/p99/max reporting and explicit compute budgets;
 - a live particle/heat/species view whose pixels, values, state ID and ledger come from one observation;
 - a versioned SOTA registry and Sentinel evaluator that runs physics and schema checks rather than trusting evidence labels;
-- a machine-validated atomistic reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. Protected main has completed ten-record checkpoint smoke inference for both models; neither run contains reference labels or accuracy metrics, and the full dual-model benchmark remains **planned-not-reproduced**. Two R6a discovery runs failed closed on a Docker exporter-observation mismatch. Two later R6b runs executed successfully, but their locked R5 summaries contradicted the outer non-promotional evidence with nested `promotionEligible: true`; they are inadmissible and the accepted-replica count remains **0 / 2**. This R6c candidate actively quarantines that legacy runner and prepositions a v2 runner at inert versioned paths; v2 is not selected or executed until a later non-circular lock/workflow switch, entirely fresh runs, controlled verification and only then a separate freeze commit.
+- a machine-validated atomistic reproduction protocol, label-free structure bundle, isolated dependency/bootstrap path and receipt contract for MatterSim 5M and MACE-MPA-0 on Random-TP. Protected main has completed ten-record checkpoint smoke inference for both models; neither run contains reference labels or accuracy metrics, and the full dual-model benchmark remains **planned-not-reproduced**. Two R6a discovery runs failed closed on a Docker exporter-observation mismatch. Two later R6b runs executed successfully, but their locked R5 summaries contradicted the outer non-promotional evidence with nested `promotionEligible: true`; they are inadmissible and the accepted-replica count remains **0 / 2**. Commit P `f861b3e` passed [protected-main Sentinel run `33233795434`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33233795434), and a subsequent dispatch proved its exact legacy-runner quarantine fails closed. This Commit-S candidate now selects only P's exact v2 Git blobs through a verified source→build→container mapping; it still requires protected-main Sentinel, two entirely fresh runs, controlled verification and only then a separate freeze commit.
 
 This is an educational and numerical-verification prototype. It does not model a specific material, reaction, plant or safe operating window, and it must not be used for engineering decisions.
 

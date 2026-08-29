@@ -89,12 +89,12 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
   paths now emit finite E/F/stress without labels, but remain
   `planned-not-reproduced`. Two R6b executions are inadmissible because their
   locked R5 summaries contain a nested positive promotion claim; accepted
-  replicas remain **0 / 2**. This Commit-P candidate actively quarantines the
-  legacy path and prepositions a versioned v2 runner without selecting or
-  executing it. After P has a protected, immutable merged SHA, Commit S may
-  select it non-circularly for entirely fresh runs; a controlled verifier must
-  authenticate those runs before a later Commit F freezes anything and before
-  the complete 693-record independent verifier can run;
+  replicas remain **0 / 2**. Commit P `f861b3e` now anchors the versioned v2
+  runner, and a protected-main dispatch proved the legacy path is quarantined.
+  This Commit-S candidate non-circularly selects and materializes only those P
+  blobs for future fresh runs; a controlled verifier must authenticate the new
+  runs before a later Commit F freezes anything and before the complete
+  693-record independent verifier can run;
 - a browser frame assembled from one immutable observation snapshot.
 
 The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.
