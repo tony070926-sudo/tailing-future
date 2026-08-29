@@ -7,7 +7,11 @@ the next executable experiment and its evidence contract, not a 693-record
 reproduction result. R6a discovery runs `33229898921` and `33229901480`
 subsequently failed closed after image export because the observer expected an
 OCI manifest descriptor that Docker local-load metadata did not emit. They are
-negative protocol evidence and count as **0 / 2** successful replicas.
+negative protocol evidence and contributed no accepted replica. R6b runs
+`33231316217` and `33231323492` then completed all four model jobs, but every
+run summary contradicted its outer non-promotional evidence with nested
+`environment.provenance.promotionEligible: true`. Those runs are also
+inadmissible, so the accepted-replica count remains **0 / 2**.
 
 ## Why these two models
 
@@ -45,11 +49,20 @@ emits a frozen structure-only JSONL bundle; energy, force and stress labels are
 never mounted into the model container. MatterSim and MACE run in separate
 dependency environments because their e3nn requirements conflict. The manual
 `Atomistic bootstrap predictions (non-promotional)` workflow is restricted to
-`main`, Linux/amd64 and 10 smoke IDs. It resolves and freezes a wheelhouse,
-proves a cold hash-locked install, builds without network access, and executes
-checkpoint inference in a non-root read-only container. Its artifacts are
-predictions and diagnostics only—not metrics, a receipt, an attestation or a
-reproduction claim.
+`main`, Linux/amd64 and 10 smoke IDs. Its reviewed execution path resolves and
+freezes a wheelhouse, proves a cold hash-locked install, builds without network
+access, and runs checkpoint inference in a non-root read-only container.
+
+This R6c Commit-P candidate places that workflow under an active, exact-byte
+quarantine after the platform/ref guard. Once P is merged and selected on
+`main`, a dispatch of P must stop with `BOOTSTRAP_QUARANTINE_ACTIVE`, stage a
+non-promotional guard-failure outcome and must not resolve, build or infer with
+the conflicting R5 runner. The v2 runner
+exists only at `scripts/atomistic/v2/`; it is prepositioned, not selected and not
+executed by this candidate. After P passes protected-main Sentinel and has an
+immutable merged SHA, Commit S may perform the separately reviewed switch. Any
+eventual bootstrap artifacts remain predictions and diagnostics only—not
+metrics, a receipt, an attestation or a reproduction claim.
 
 The resolver treats only one direct top-level `.dist-info` directory as wheel
 metadata, rejects case-variant or `.egg-info` roots and any `.data` relocation
@@ -93,11 +106,12 @@ separate. `reproduction-plan.json` remains byte-frozen at
 `sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2`
 with its post-execution identities left `null`. A separate runtime lock binds
 that plan digest and keeps the runner, dependency locks and canonical
-runtime-input identities `null` during R6a discovery. R6a deliberately has no
-locally assertable frozen state. After two independent protected-main replicas,
-a separately controlled verifier must authenticate the workflow, repository
-revision, artifact IDs and archive digests before a later lock version may
-freeze those identities. The
+runtime-input identities `null` during discovery. Discovery deliberately has no
+locally assertable frozen state. After two entirely fresh protected-main
+executions, a separately controlled verifier must authenticate the workflow,
+repository revision, artifact IDs, archive digests and every machine-readable
+claim; only verifier-accepted replicas may be counted before a later lock
+version freezes those identities. The
 runtime-input manifest binds the base image, Dockerfile frontend and bytes,
 `.dockerignore`, exact wheels and runtime inventory, runner files, platform and
 offline build policy while excluding resolver metadata and raw plan fields
@@ -124,6 +138,25 @@ from the fixed R5 runtime-source revision (used by the OCI source label and
 stable runtime-input contract). The bounded bundle publishes the raw Buildx
 metadata, image-inspect JSON and tool-version lines so an independent verifier
 can recompute every projected diagnostic digest.
+
+R6b exposed a second evidence-boundary defect after execution succeeded. The
+locked R5 runner treats presence of the dependency lock and container digest as
+`promotionEligible: true`, even though this establishes only environment
+identity completeness and the enclosing summary remains
+`PREDICTIONS_ONLY_NOT_REPRODUCED`. Its ambiguous `environment.sourceRevision`
+also names the workflow commit while the actual runner bytes come from the
+separate R5 runtime-source commit. Neither an explanatory note nor a
+publication-time rewrite can repair those artifact bytes.
+
+The repair must be non-circular. This Commit-P candidate prepositions a
+versioned v2 runner at new paths, leaves the R5-locked source unchanged and
+actively quarantines its dispatch path. Once P passes protected-main Sentinel
+and its immutable merged SHA exists, Commit S may bind the discovery lock and
+workflow to P's exact source-to-image mapping and every executed runner/wrapper
+digest. Only entirely fresh S runs may be inspected by a separately controlled
+verifier, which must reject any positive promotion, comparison or reproduction
+claim at any nesting depth. Only a later commit F, after that controlled receipt
+exists, may freeze accepted identities.
 
 Full promotion requires all 693 IDs from both models. Each energy, force and
 stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
@@ -165,11 +198,15 @@ superiority. Until the separate runtime lock is independently replicated and
 the full 693-record verifier passes, both models remain `AUDITABLE`, never
 `REPRODUCED` or numerically comparable.
 
-Five protected-main bootstrap dispatches have run. The first stopped during
+Nine protected-main bootstrap dispatches are preserved. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
 but stopped during offline exact-lock resolution. The fourth crossed those
 boundaries for MatterSim. The fifth crossed them for both models and produced
-two successful ten-record smoke artifacts. Every bundle deliberately remains
+two successful ten-record smoke artifacts. The sixth and seventh failed during
+R6a container observation. The eighth and ninth completed both model jobs under
+R6b but are rejected because their run summaries contain the contradictory
+nested positive promotion claim. The accepted-replica count is therefore still
+**0 / 2**. Every retained prediction bundle remains
 `bootstrap-not-reproduced`: smoke predictions are neither the 693-record
 preregistered benchmark nor an accuracy result.
 
@@ -242,8 +279,11 @@ raw plan digest was embedded in `runtime_contract.py`; hashing that runner and
 writing its digest back into the plan changed the plan digest again. The same
 attempt treated Docker's local config `.Id` as a cross-run trust root even
 though the build labels it with the current commit. This is a cryptographic
-self-reference, not a reproducibility proof. The next canary therefore emits a
-non-circular runtime-input manifest and a separate discovery-only runtime lock,
-then requires two fresh protected-main replicas plus a separately controlled
-GitHub run/artifact verification receipt before any execution identity can be
-frozen. Repository-authored observations alone can never self-approve.
+self-reference, not a reproducibility proof. R6a therefore introduced a
+non-circular runtime-input manifest and a separate discovery-only runtime lock;
+R6b corrected its Docker local-load observation but revealed the positive
+runner-claim conflict documented in
+`evaluation/reviews/2026-08-29-r6b-successful-execution-claim-conflict-review.md`.
+The versioned P-to-S source transition, fresh runs, controlled verifier and
+later F freeze are now mandatory before any execution identity can be frozen.
+Repository-authored observations alone can never self-approve.

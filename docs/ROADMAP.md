@@ -23,11 +23,11 @@ Status: completed narrow baseline.
 
 ## R2 — independently reproduced modules
 
-Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented. A protected Linux run has completed locked ten-frame smoke inference for both MatterSim and MACE; both artifacts are non-promotional and are not the 693-frame benchmark reproduction. Two R6a discovery runs later failed closed on a descriptor-free Docker local-load metadata mismatch, so the successful-replica count remains 0/2.
+Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented. A protected Linux run has completed locked ten-frame smoke inference for both MatterSim and MACE; both artifacts are non-promotional and are not the 693-frame benchmark reproduction. Two R6a discovery runs later failed closed on a descriptor-free Docker local-load metadata mismatch. Two R6b runs then completed execution but emitted a contradictory nested `promotionEligible: true`; they are inadmissible, so the accepted-replica count remains **0 / 2**. The R6c Commit-P candidate now actively quarantines the legacy R5 runner and prepositions, but does not select or execute, its v2 replacement.
 
 - completed entry gates: grid-invariant heat capacity density, three-mode Fourier convergence, analytic two-reservoir exchange, atomic forced-reaction closure, full parameter/resource envelopes and 8×5,000 tails;
 - completed manifest gates: record-level Materials Project, JARVIS, NOMAD and Open Catalyst provenance plans;
-- next: merge the corrected Docker local-load observation contract, execute two entirely new successful runtime-input replicas, authenticate both GitHub runs/artifacts with a separately controlled verifier, then freeze a later lock without changing the scientific preregistration before like-for-like complete Random-TP inference;
+- next: pass Commit P through protected-main Sentinel and obtain its immutable merged SHA; then bind P non-circularly from Commit S, execute two entirely fresh protected-main runs, authenticate both runs/artifacts and every negative claim with a separately controlled verifier, and freeze accepted identities in a later Commit F without changing the scientific preregistration before like-for-like complete Random-TP inference;
 - NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 

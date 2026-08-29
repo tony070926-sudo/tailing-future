@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "tf.atomistic-bootstrap-quarantine/0.1",
+  "state": "active",
+  "runnerDigest": "sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c",
+  "runnerDigestProtocol": "sha256-canonical-json-sorted-runner-file-identities/v1",
+  "runtimeSourceRevision": "9a67f4509588d242838c736a580b6ec5badc18f9",
+  "runtimeLock": {
+    "path": "evaluation/atomistic/runtime-lock.json",
+    "rawDigest": "sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe"
+  },
+  "scientificPlan": {
+    "path": "evaluation/atomistic/reproduction-plan.json",
+    "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+  },
+  "reasonCode": "contradictory-bootstrap-promotion-claim",
+  "reason": "The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.",
+  "acceptedReplicaCount": 0,
+  "nonRetroactiveRunIds": [33231316217, 33231323492]
+}

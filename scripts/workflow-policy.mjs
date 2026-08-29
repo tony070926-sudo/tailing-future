@@ -3,6 +3,9 @@ import { load as parseYaml } from 'js-yaml';
 
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
+export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
+export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = 'b20ad79d1360b4482373f837421c73214d6fcf47aafe0bfa6ed6eea99bb6f17f';
+export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
@@ -20,6 +23,7 @@ export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd0975179536
 export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb';
 export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = '17495e2b8ba8d452e89f6a1cfc3ba39a0b113ab4ec969e5e1f4a626803259f15';
 export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
+export const ATOMISTIC_SCIENTIFIC_PLAN_SHA256 = 'd3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';
 export const SETUPTOOLS_RUNTIME_WHEEL_SHA256 = '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670';
 export const SETUPTOOLS_STARTUP_HOOK_SHA256 = '2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224';
@@ -38,12 +42,32 @@ export const SENTINEL_REPORT_SCRIPT_DIGESTS = Object.freeze({
   'Download, bound, and publish the report as inert pull-request data': 'sha256:8f4a717e751b99b5abb603fa72cdcac8d01e4d1e193c3c36da7fb062af455c0a',
 });
 
+const ATOMISTIC_BOOTSTRAP_QUARANTINE_POLICY = Object.freeze({
+  schemaVersion: 'tf.atomistic-bootstrap-quarantine/0.1',
+  state: 'active',
+  runnerDigest: ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+  runnerDigestProtocol: 'sha256-canonical-json-sorted-runner-file-identities/v1',
+  runtimeSourceRevision: '9a67f4509588d242838c736a580b6ec5badc18f9',
+  runtimeLock: Object.freeze({
+    path: 'evaluation/atomistic/runtime-lock.json',
+    rawDigest: `sha256:${ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256}`,
+  }),
+  scientificPlan: Object.freeze({
+    path: 'evaluation/atomistic/reproduction-plan.json',
+    rawDigest: `sha256:${ATOMISTIC_SCIENTIFIC_PLAN_SHA256}`,
+  }),
+  reasonCode: 'contradictory-bootstrap-promotion-claim',
+  reason: 'The locked R5 runner emits environment.provenance.promotionEligible=true in bootstrap-not-reproduced output and conflates workflow and runtime-source revisions.',
+  acceptedReplicaCount: 0,
+  nonRetroactiveRunIds: Object.freeze([33231316217, 33231323492]),
+});
+
 // The shell programs are part of the supply-chain policy surface. Binding the
 // parsed run strings makes a weakened guard, alternate index, extra mount,
 // networked install/build or broader upload fail until policy and tests are
 // reviewed in the same change.
 export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
-  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:c880865bd6194ccdb40e5bed9294cd5d13111bfa64d7dc2e469ad7baadbaa002',
+  'Refuse non-main, non-Linux, or non-x86_64 dispatches': 'sha256:e31033fa1f202aef678cd8a231f3631ed2c01109a94243786d367b8abfa60df1',
   'Create fresh, model-isolated working directories': 'sha256:6d5ca8c98e1a9fea8634ca7dccc9d8fda9b1a50f8c86e64b3c264a47b4e3655b',
   'Bind paths and runner constants from the frozen plan': 'sha256:88f341ff777844cda99d3653a5e74f6d528445f5447b77ab69103d3f5b7930a7',
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
@@ -144,6 +168,28 @@ export function inspectWorkflowSource(relativePath, source) {
   if (relativePath === SENTINEL_EVALUATION_WORKFLOW_PATH) failures.push(...inspectSentinelEvaluationWorkflow(workflow));
   if (relativePath === SENTINEL_REPORT_WORKFLOW_PATH) failures.push(...inspectSentinelReportWorkflow(workflow));
   if (relativePath === ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapWorkflow(workflow));
+  return failures;
+}
+
+export function inspectAtomisticBootstrapQuarantineSource(relativePath, source) {
+  const failures = [];
+  if (relativePath !== ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH) {
+    return [`${relativePath}: bootstrap quarantine must use the reviewed path ${ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH}.`];
+  }
+  const rawDigest = sha256(source);
+  if (rawDigest !== `sha256:${ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256}`) {
+    failures.push(`${relativePath}: complete reviewed quarantine bytes drifted.`);
+  }
+  let quarantine;
+  try {
+    quarantine = JSON.parse(Buffer.isBuffer(source) ? source.toString('utf8') : source);
+  } catch (error) {
+    failures.push(`${relativePath}: quarantine JSON is invalid (${error instanceof Error ? error.message : String(error)}).`);
+    return failures;
+  }
+  if (!sameJson(quarantine, ATOMISTIC_BOOTSTRAP_QUARANTINE_POLICY)) {
+    failures.push(`${relativePath}: quarantine schema, runner identity, reason, replica count, or non-retroactive runs drifted.`);
+  }
   return failures;
 }
 
@@ -368,6 +414,31 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
       failures.push(`${prefix} reviewed shell program drifted: ${name}.`);
     }
   }
+
+  const guard = runSteps.get('Refuse non-main, non-Linux, or non-x86_64 dispatches')?.run ?? '';
+  if (!hasAll(guard, [
+    ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+    `sha256:${ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256}`,
+    ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+    `sha256:${ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256}`,
+    `sha256:${ATOMISTIC_SCIENTIFIC_PLAN_SHA256}`,
+    'readBoundedRegularFile(quarantinePath, 4096)',
+    'runtimeLock.identities?.runnerDigest !== null',
+    'runtimeLock.replication?.observations?.length !== quarantine.acceptedReplicaCount',
+    "runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'",
+    'runtimeLock.claims?.promotionEligible !== false',
+    'runtimeLock.claims?.comparable !== false',
+    'runtimeLock.claims?.reproduced !== false',
+    'const lockedRunnerDigest = sha256(Buffer.from(canonicalJson(runnerFiles)',
+    'if (lockedRunnerDigest !== quarantine.runnerDigest)',
+    'Bootstrap quarantine runner identity differs from the reviewed runtime lock',
+    'BOOTSTRAP_QUARANTINE_ACTIVE',
+    'contradictory-bootstrap-promotion-claim',
+    'acceptedReplicaCount=0',
+    '33231316217',
+    '33231323492',
+    'cannot be retroactively accepted',
+  ])) failures.push(`${prefix} guard must fail closed on the exact reviewed R5 runner quarantine after bounded lock and plan validation.`);
 
   const upload = steps.find((step) => step?.name === expectedStepNames.at(-1));
   if (!sameJson(upload, {

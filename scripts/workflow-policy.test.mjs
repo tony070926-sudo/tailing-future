@@ -6,6 +6,9 @@ import {
   ATOMISTIC_DOCKERFILE_DIGESTS,
   ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
   ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
+  ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+  ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256,
+  ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
   ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256,
   ATOMISTIC_BOOTSTRAP_NODE_VERSION,
   ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256,
@@ -16,6 +19,7 @@ import {
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
   DOCKERIGNORE_ALLOWLIST,
+  inspectAtomisticBootstrapQuarantineSource,
   inspectDockerfileSource,
   inspectDockerignoreSource,
   inspectWorkflowSource,
@@ -35,6 +39,9 @@ import {
 const atomisticBootstrapSource = readFileSync(
   new URL('../.github/workflows/atomistic-bootstrap.yml', import.meta.url),
   'utf8',
+);
+const atomisticBootstrapQuarantineSource = readFileSync(
+  new URL('../evaluation/atomistic/bootstrap-quarantine.json', import.meta.url),
 );
 const checkedInDockerignoreSource = readFileSync(
   new URL('../.dockerignore', import.meta.url),
@@ -311,6 +318,16 @@ describe('Docker build-context policy', () => {
 describe('atomistic bootstrap supply-chain policy', () => {
   it('accepts the checked-in manual dual-model non-promotional workflow', () => {
     expect(inspectWorkflowSource(ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH, atomisticBootstrapSource)).toEqual([]);
+    expect(inspectAtomisticBootstrapQuarantineSource(
+      ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+      atomisticBootstrapQuarantineSource,
+    )).toEqual([]);
+    expect(createHash('sha256').update(atomisticBootstrapQuarantineSource).digest('hex'))
+      .toBe(ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256);
+    const quarantine = JSON.parse(atomisticBootstrapQuarantineSource);
+    expect(quarantine.runnerDigest).toBe(ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST);
+    expect(quarantine.acceptedReplicaCount).toBe(0);
+    expect(quarantine.nonRetroactiveRunIds).toEqual([33231316217, 33231323492]);
     expect(ATOMISTIC_BOOTSTRAP_NODE_VERSION).toBe('24.16.0');
     expect(ATOMISTIC_BOOTSTRAP_BASE_IMAGE).toMatch(/^python:3\.12\.13-slim-bookworm@sha256:[0-9a-f]{64}$/);
     expect(ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST).toMatch(/^sha256:[0-9a-f]{64}$/);
@@ -340,6 +357,54 @@ describe('atomistic bootstrap supply-chain policy', () => {
     expect(matterSimBootstrapInput).toMatch(/^setuptools==84\.0\.0$/m);
     expect(matterSimBootstrapInput).toMatch(/^pymatgen==2025\.4\.17$/m);
     expect(matterSimBootstrapInput).toMatch(/^pymatgen-io-validation==0\.1\.2$/m);
+  });
+
+  it('rejects quarantine deletion, runner bypass, or retrospective acceptance', () => {
+    const workflowCases = [
+      ['deleted quarantine guard', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.slice(0, step.run.indexOf("node --input-type=module <<'NODE'"));
+      }],
+      ['quarantine program redirected to a no-op', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace("node --input-type=module <<'NODE'", "true <<'NODE'");
+      }],
+      ['active quarantine failure bypassed', (workflow) => {
+        const step = namedStep(workflow, 'Refuse non-main, non-Linux, or non-x86_64 dispatches');
+        step.run = step.run.replace(
+          /throw new Error\(\n\s+`BOOTSTRAP_QUARANTINE_ACTIVE/,
+          (match) => match.replace('throw new Error', 'console.error'),
+        );
+      }],
+    ];
+    for (const [label, mutate] of workflowCases) {
+      expect(inspectMutatedBootstrap(mutate), label).not.toEqual([]);
+    }
+
+    const changedRunner = atomisticBootstrapQuarantineSource.toString('utf8').replace(
+      ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST,
+      `sha256:${'0'.repeat(64)}`,
+    );
+    expect(inspectAtomisticBootstrapQuarantineSource(
+      ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+      changedRunner,
+    )).not.toEqual([]);
+    const retroactivelyAccepted = atomisticBootstrapQuarantineSource.toString('utf8')
+      .replace('"acceptedReplicaCount": 0', '"acceptedReplicaCount": 2');
+    expect(inspectAtomisticBootstrapQuarantineSource(
+      ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH,
+      retroactivelyAccepted,
+    )).not.toEqual([]);
+  });
+
+  it('keeps failed guard dispatches on the always-run outcome publication path', () => {
+    const workflow = parseYaml(atomisticBootstrapSource);
+    const staging = namedStep(workflow, 'Stage only non-promotional bootstrap outputs');
+    const upload = namedStep(workflow, 'Upload the allowlisted bootstrap bundle');
+    expect(staging.if).toBe('always()');
+    expect(staging.env.STAGE_GUARD).toBe('${{ steps.guard.outcome }}');
+    expect(staging.run).toContain('--stage "guard=$STAGE_GUARD"');
+    expect(upload.if).toBe("always() && steps.stage_outputs.outcome == 'success'");
   });
 
   it('keeps cold-install hook globs literal inside the nested single-quoted shell', () => {

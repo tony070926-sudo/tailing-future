@@ -72,8 +72,26 @@ four jobs failed after image export because the producer expected a manifest
 descriptor from Docker's descriptor-free local-load metadata. Stable digest
 agreement never overrides a failed run/job conclusion. The next producer
 revision records that exporter value as a run-specific
-`docker-image-config-alias`, requires two entirely new successful replicas,
-and leaves the successful-replica count at **0 / 2** until then.
+`docker-image-config-alias`.
+
+R6b runs `33231316217` and `33231323492` subsequently completed all four model
+jobs, but their locked R5 `run-summary.json` files set nested
+`environment.provenance.promotionEligible` to true while the same artifacts
+declare `bootstrap-not-reproduced`, `comparable: false` and
+`reproduced: false`. Successful execution cannot override contradictory claim
+bytes. Both runs are permanently inadmissible, and the accepted-replica count
+remains **0 / 2**.
+
+Remediation must preserve the digest dependency direction. This Commit-P
+candidate actively quarantines the legacy R5 dispatch path and prepositions a
+versioned v2 runner without changing the R5 runtime-source anchor; v2 is not
+selected or executed here. After P passes protected-main Sentinel and its
+immutable merged SHA exists, Commit S may bind the discovery lock and workflow
+to P's exact runner bytes while keeping all discovery identities null. Only
+entirely fresh S runs may reach a separately controlled verifier, which must
+reject any positive promotion, comparison or reproduction claim at any nesting
+depth. Only after that receipt may a later Commit F freeze accepted identities.
+A postprocessor may reject an artifact but may not rewrite its claim bytes.
 
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 

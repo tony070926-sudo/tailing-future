@@ -5,7 +5,9 @@ wheels are frozen, but their upstream metadata leaves most transitive
 dependencies open. Protected-main run `33226521340` established truthful
 Python 3.12/Linux x86_64 resolved sets and ten-record smoke inference for both
 models, but the runtime-input identities have not yet been independently
-replicated and frozen.
+replicated and frozen. Later R6b execution success does not change that state:
+all four fresh summaries contain a contradictory nested
+`promotionEligible: true`, so the accepted-replica count remains **0 / 2**.
 
 The environments must remain separate:
 
@@ -127,6 +129,26 @@ Protected-main discovery runs `33229898921` and `33229901480` exercised this
 failure path. Both stable runtime-input manifests and dependency locks agreed,
 but all four jobs failed after image export because the original observer
 required `containerimage.descriptor` while Docker `--load` emitted
-`image.name` and a config-ID-alias exporter digest. They remain **0 / 2**
-successful replicas. The detailed negative-evidence review is
+`image.name` and a config-ID-alias exporter digest. They contributed no
+accepted replica. The detailed negative-evidence review is
 `evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md`.
+
+Protected-main R6b runs `33231316217` and `33231323492` then completed both
+model jobs and ten-record inference, but each `run-summary.json` equated a
+complete environment identity with `promotionEligible: true`. That nested
+positive claim conflicts with the same bundle's
+`bootstrap-not-reproduced` outcome and container claims. The runs are retained
+as negative protocol evidence and cannot be rewritten or counted later; the
+accepted-replica count is still **0 / 2**. Exact jobs, artifacts and archive
+digests are recorded in
+`evaluation/reviews/2026-08-29-r6b-successful-execution-claim-conflict-review.md`.
+
+The non-circular repair order is strict. This Commit-P candidate actively
+quarantines the legacy R5 dispatch path and prepositions a versioned v2 runner
+without changing the R5 source anchor; v2 is not selected or executed here.
+After P passes protected-main Sentinel and has an immutable merged SHA, Commit S
+may switch the discovery lock and workflow to P; entirely fresh runs must then
+be authenticated by a separately controlled verifier that rejects any positive
+nested promotion claim. Only a later Commit F may freeze accepted identities. A
+publication postprocessor may reject contradictory output but must never
+sanitize it into acceptable evidence.
