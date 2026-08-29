@@ -37,6 +37,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install the pinned JavaScript runtime
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -107,9 +108,16 @@ jobs:
         run: |
           set -euo pipefail
           node --input-type=module <<'NODE'
-          import { appendFileSync, readFileSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          import { execFileSync } from 'node:child_process';
+          import { appendFileSync, lstatSync, readFileSync } from 'node:fs';
 
-          const plan = JSON.parse(readFileSync('evaluation/atomistic/reproduction-plan.json', 'utf8'));
+          const planBytes = readFileSync('evaluation/atomistic/reproduction-plan.json');
+          const plan = JSON.parse(planBytes);
+          const runtimeLockBytes = readFileSync('evaluation/atomistic/runtime-lock.json');
+          const runtimeLock = JSON.parse(runtimeLockBytes);
+          const planDigest = `sha256:${createHash('sha256').update(planBytes).digest('hex')}`;
+          const runtimeLockDigest = `sha256:${createHash('sha256').update(runtimeLockBytes).digest('hex')}`;
           const expectedModelIds = {
             mattersim: 'mattersim-v1.0.0-5m',
             mace: 'mace-mpa-0-medium',
@@ -130,6 +138,51 @@ jobs:
           if (plan.schemaVersion !== 'tf.atomistic-reproduction/0.2') {
             throw new Error('Unexpected atomistic reproduction-plan schema.');
           }
+          if (runtimeLock.schemaVersion !== 'tf.atomistic-runtime-lock/0.1'
+              || runtimeLockDigest !== 'sha256:79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe'
+              || runtimeLock.state !== 'discovery-not-frozen'
+              || runtimeLock.scientificPlan?.rawDigest !== planDigest
+              || runtimeLock.claims?.evidenceClass !== 'discovery-only-not-reproduced'
+              || runtimeLock.claims?.promotionEligible !== false
+              || !/^[0-9a-f]{40}$/.test(runtimeLock.runtimeSource?.revision)
+              || !Number.isSafeInteger(runtimeLock.runtimeSource?.commitTimestamp)) {
+            throw new Error('Runtime discovery lock is incomplete or not bound to the scientific plan.');
+          }
+          for (const source of runtimeLock.runtimeSource.files) {
+            const metadata = lstatSync(source.path, { bigint: true });
+            const bytes = readFileSync(source.path);
+            const digest = `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+            if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1n
+                || Number(metadata.size) !== source.sizeBytes || digest !== source.sha256) {
+              throw new Error(`Runtime source differs from the frozen R5 byte identity: ${source.path}`);
+            }
+          }
+          const gitEnvironment = {
+            ...process.env,
+            GIT_CONFIG_NOSYSTEM: '1',
+            GIT_NO_REPLACE_OBJECTS: '1',
+            GIT_OPTIONAL_LOCKS: '0',
+            LC_ALL: 'C',
+          };
+          for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_REPLACE_REF_BASE']) {
+            delete gitEnvironment[key];
+          }
+          const gitOptions = { env: gitEnvironment, stdio: ['ignore', 'pipe', 'pipe'] };
+          execFileSync('git', ['cat-file', '-e', `${runtimeLock.runtimeSource.revision}^{commit}`], gitOptions);
+          execFileSync('git', ['merge-base', '--is-ancestor', runtimeLock.runtimeSource.revision, 'HEAD'], gitOptions);
+          const commitTimestamp = Number(execFileSync(
+            'git',
+            ['show', '-s', '--format=%ct', runtimeLock.runtimeSource.revision],
+            { ...gitOptions, encoding: 'utf8' },
+          ).trim());
+          if (commitTimestamp !== runtimeLock.runtimeSource.commitTimestamp) {
+            throw new Error('Runtime source commit timestamp differs from the discovery lock.');
+          }
+          execFileSync(
+            'git',
+            ['diff', '--quiet', runtimeLock.runtimeSource.revision, '--', ...runtimeLock.runtimeSource.files.map((source) => source.path)],
+            gitOptions,
+          );
           for (const [field, expected] of Object.entries(expectedRunner)) {
             if (plan.protocol?.runner?.[field] !== expected) {
               throw new Error(`Runner plan drifted at ${field}.`);
@@ -151,6 +204,8 @@ jobs:
             CHECKPOINT_FILENAME: model.cachePath.split('/').at(-1),
             DATASET_CACHE_PATH: benchmark.cachePath,
             DATASET_FILENAME: benchmark.cachePath.split('/').at(-1),
+            RUNTIME_SOURCE_REVISION: runtimeLock.runtimeSource.revision,
+            SOURCE_DATE_EPOCH: String(runtimeLock.runtimeSource.commitTimestamp),
           };
           for (const [name, value] of Object.entries(values)) {
             if (typeof value !== 'string' || !/^[A-Za-z0-9._/+\-]+$/.test(value) || value.includes('..')) {
@@ -488,6 +543,23 @@ jobs:
               --plan /repo/evaluation/atomistic/reproduction-plan.json \
               --model "$MODEL" \
               "${derived_arguments[@]}"
+          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          runtime_input_manifest="$LOCK_DIR/$MODEL.runtime-inputs.json"
+          node scripts/atomistic/runtime-input-contract.mjs write-new \
+            --model "$MODEL" \
+            --plan evaluation/atomistic/reproduction-plan.json \
+            --wheelhouse-manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" \
+            --dockerfile "atomistic/containers/$MODEL.Dockerfile" \
+            --dockerignore .dockerignore \
+            --dependency-lock "$LOCK_DIR/$MODEL.requirements.lock" \
+            --run-model scripts/atomistic/run_model.py \
+            --runtime-contract scripts/atomistic/runtime_contract.py \
+            --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --output "$runtime_input_manifest" \
+            > "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.result.json"
+          runtime_input_digest="sha256:$(sha256sum "$runtime_input_manifest" | cut -d ' ' -f 1)"
+          echo "RUNTIME_INPUT_MANIFEST_DIGEST=$runtime_input_digest" >> "$GITHUB_ENV"
 
       - name: Freeze and verify the exact resolved wheel set
         id: freeze
@@ -609,6 +681,24 @@ jobs:
           python3 -I -S -B scripts/atomistic/verify_runtime_inventory.py \
             --wheelhouse "$WHEELHOUSE" \
             --manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json"
+          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          node scripts/atomistic/runtime-input-contract.mjs verify-exact \
+            --model "$MODEL" \
+            --plan evaluation/atomistic/reproduction-plan.json \
+            --wheelhouse-manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" \
+            --dockerfile "atomistic/containers/$MODEL.Dockerfile" \
+            --dockerignore .dockerignore \
+            --dependency-lock "$LOCK_DIR/$MODEL.requirements.lock" \
+            --run-model scripts/atomistic/run_model.py \
+            --runtime-contract scripts/atomistic/runtime_contract.py \
+            --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --output "$LOCK_DIR/$MODEL.runtime-inputs.json" \
+            > "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.verify.json"
+          cmp --silent \
+            "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.result.json" \
+            "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.verify.json"
+          test "sha256:$(sha256sum "$LOCK_DIR/$MODEL.runtime-inputs.json" | cut -d ' ' -f 1)" = "$RUNTIME_INPUT_MANIFEST_DIGEST"
 
       - name: Prove a cold, hash-locked install with no network
         id: cold_install
@@ -779,8 +869,26 @@ jobs:
             './scripts/atomistic/runtime_contract.py')"
           actual_context_files="$(cd "$BUILD_CONTEXT" && find . -type f -print | LC_ALL=C sort)"
           test "$actual_context_files" = "$expected_context_files"
+          echo "ed1198bf0206be6e7de22dd8a84aaed751762c83cdec2f5328fe7021816be3cb  scripts/atomistic/runtime-input-contract.mjs" | sha256sum -c -
+          node scripts/atomistic/runtime-input-contract.mjs verify-exact \
+            --model "$MODEL" \
+            --plan evaluation/atomistic/reproduction-plan.json \
+            --wheelhouse-manifest "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" \
+            --dockerfile "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
+            --dockerignore "$BUILD_CONTEXT/.dockerignore" \
+            --dependency-lock "$BUILD_CONTEXT/atomistic/locks/$MODEL.requirements.lock" \
+            --run-model "$BUILD_CONTEXT/scripts/atomistic/run_model.py" \
+            --runtime-contract "$BUILD_CONTEXT/scripts/atomistic/runtime_contract.py" \
+            --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --output "$LOCK_DIR/$MODEL.runtime-inputs.json" \
+            > "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.build-context.verify.json"
+          cmp --silent \
+            "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.result.json" \
+            "$ATOMISTIC_ROOT/$MODEL.runtime-inputs.build-context.verify.json"
+          test "sha256:$(sha256sum "$LOCK_DIR/$MODEL.runtime-inputs.json" | cut -d ' ' -f 1)" = "$RUNTIME_INPUT_MANIFEST_DIGEST"
           image_tag="tailing-atomistic-$MODEL-bootstrap:$GITHUB_SHA"
-          DOCKER_BUILDKIT=1 docker buildx build \
+          BUILDX_METADATA_PROVENANCE=disabled DOCKER_BUILDKIT=1 docker buildx build \
             --load \
             --no-cache \
             --pull=false \
@@ -790,12 +898,46 @@ jobs:
             --sbom=false \
             --build-context "wheelhouse=$WHEELHOUSE" \
             --build-arg "BASE_IMAGE=$BASE_IMAGE" \
-            --label org.opencontainers.image.revision="$GITHUB_SHA" \
+            --build-arg "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" \
+            --label org.opencontainers.image.revision="$RUNTIME_SOURCE_REVISION" \
             --label org.tailing-future.evidence-class=bootstrap-not-reproduced \
+            --metadata-file "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" \
             --file "$BUILD_CONTEXT/atomistic/containers/$MODEL.Dockerfile" \
             --tag "$image_tag" \
             "$BUILD_CONTEXT"
           verify_frozen_wheelhouse
+          docker image inspect "$image_tag" > "$BUILD_CONTEXT/$MODEL.image-inspect.json"
+          docker buildx version > "$BUILD_CONTEXT/buildx-version.txt"
+          docker version --format '{{.Server.Version}}' > "$BUILD_CONTEXT/docker-server-version.txt"
+          echo "b19a03741132e5a4cd3ae038d7950b4132077a79c9b6430ba686310deac0acfc  scripts/atomistic/write-container-observation.mjs" | sha256sum -c -
+          node scripts/atomistic/write-container-observation.mjs write-new \
+            --model "$MODEL" \
+            --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
+            --workflow-revision "$GITHUB_SHA" \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --runtime-input-manifest "$LOCK_DIR/$MODEL.runtime-inputs.json" \
+            --buildx-metadata "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" \
+            --image-inspect "$BUILD_CONTEXT/$MODEL.image-inspect.json" \
+            --buildx-version "$BUILD_CONTEXT/buildx-version.txt" \
+            --docker-server-version "$BUILD_CONTEXT/docker-server-version.txt" \
+            --output "$BUILD_CONTEXT/$MODEL.container-observation.json" \
+            > "$ATOMISTIC_ROOT/$MODEL.container-observation.result.json"
+          node scripts/atomistic/write-container-observation.mjs verify-exact \
+            --model "$MODEL" \
+            --runtime-source-revision "$RUNTIME_SOURCE_REVISION" \
+            --workflow-revision "$GITHUB_SHA" \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --runtime-input-manifest "$LOCK_DIR/$MODEL.runtime-inputs.json" \
+            --buildx-metadata "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" \
+            --image-inspect "$BUILD_CONTEXT/$MODEL.image-inspect.json" \
+            --buildx-version "$BUILD_CONTEXT/buildx-version.txt" \
+            --docker-server-version "$BUILD_CONTEXT/docker-server-version.txt" \
+            --output "$BUILD_CONTEXT/$MODEL.container-observation.json" \
+            > "$ATOMISTIC_ROOT/$MODEL.container-observation.verify.json"
+          cmp --silent \
+            "$ATOMISTIC_ROOT/$MODEL.container-observation.result.json" \
+            "$ATOMISTIC_ROOT/$MODEL.container-observation.verify.json"
+          chmod 0444 "$BUILD_CONTEXT/$MODEL.container-observation.json"
           image_digest="$(docker image inspect --format '{{.Id}}' "$image_tag")"
           test "${image_digest#sha256:}" != "$image_digest"
           test "${#image_digest}" -eq 71
@@ -902,10 +1044,12 @@ jobs:
             "$fallback_root/locks" \
             "$fallback_root/manifests" \
             "$fallback_root/structures" \
+            "$fallback_root/build-context" \
             "$fallback_root/output"
           LOCK_DIR="${LOCK_DIR:-$fallback_root/locks}"
           MANIFEST_DIR="${MANIFEST_DIR:-$fallback_root/manifests}"
           STRUCTURE_DIR="${STRUCTURE_DIR:-$fallback_root/structures}"
+          BUILD_CONTEXT="${BUILD_CONTEXT:-$fallback_root/build-context}"
           OUTPUT_DIR="${OUTPUT_DIR:-$fallback_root/output}"
           install -d -m 0700 \
             "$PUBLISH_DIR/locks" \
@@ -959,6 +1103,12 @@ jobs:
           fi
           copy_regular_if_present "$LOCK_DIR/$MODEL.requirements.lock" "$PUBLISH_DIR/locks/$MODEL.requirements.lock"
           copy_regular_if_present "$LOCK_DIR/$MODEL.wheelhouse.manifest.json" "$PUBLISH_DIR/manifests/$MODEL.wheelhouse.manifest.json"
+          copy_regular_if_present "$LOCK_DIR/$MODEL.runtime-inputs.json" "$PUBLISH_DIR/manifests/$MODEL.runtime-inputs.json"
+          copy_regular_if_present "$BUILD_CONTEXT/$MODEL.container-observation.json" "$PUBLISH_DIR/manifests/$MODEL.container-observation.json"
+          copy_regular_if_present "$BUILD_CONTEXT/$MODEL.buildx-metadata.json" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-metadata.json"
+          copy_regular_if_present "$BUILD_CONTEXT/$MODEL.image-inspect.json" "$PUBLISH_DIR/diagnostics/$MODEL.image-inspect.json"
+          copy_regular_if_present "$BUILD_CONTEXT/buildx-version.txt" "$PUBLISH_DIR/diagnostics/$MODEL.buildx-version.txt"
+          copy_regular_if_present "$BUILD_CONTEXT/docker-server-version.txt" "$PUBLISH_DIR/diagnostics/$MODEL.docker-server-version.txt"
           copy_regular_if_present "$MANIFEST_DIR/fetched-assets.manifest.json" "$PUBLISH_DIR/manifests/fetched-assets.manifest.json"
           copy_regular_if_present "$MANIFEST_DIR/pytorch-download-sources.json" "$PUBLISH_DIR/manifests/pytorch-download-sources.json"
           copy_regular_if_present "$MANIFEST_DIR/python-hostlist.derived-wheel.manifest.json" "$PUBLISH_DIR/manifests/python-hostlist.derived-wheel.manifest.json"
@@ -974,7 +1124,7 @@ jobs:
               "$PUBLISH_DIR/manifests/mace.wheelhouse.manifest.json" \
               "$PUBLISH_DIR/manifests/python-hostlist.derived-wheel.manifest.json"
           fi
-          echo "93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23  scripts/atomistic/write_bootstrap_outcome.py" | sha256sum -c -
+          echo "1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684  scripts/atomistic/write_bootstrap_outcome.py" | sha256sum -c -
           python -B scripts/atomistic/write_bootstrap_outcome.py \
             --model "$MODEL" \
             --commit-sha "$GITHUB_SHA" \

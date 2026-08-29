@@ -348,7 +348,7 @@ const markdown = [
   '',
   '## Interpretation boundary',
   '',
-  'This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R2 is still a reduced-unit thermochemical verification world with one non-promotional ten-frame MatterSim smoke and no dual-model full benchmark, not a real-material, reactor or industrial-process predictor.',
+  'This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R2 is still a reduced-unit thermochemical verification world with non-promotional ten-frame MatterSim and MACE smoke artifacts and no dual-model full benchmark, not a real-material, reactor or industrial-process predictor.',
   '',
 ].join('\n');
 

@@ -1,10 +1,10 @@
 # Atomistic foundation-model reproduction protocol
 
 Status: **planned-not-reproduced** for the full dual-model benchmark on
-2026-08-29. Protected-main run `33221777626` completed one non-promotional,
-ten-record MatterSim smoke; MACE has no prediction artifact. This document
-freezes the next executable experiment and its evidence contract, not a
-693-record reproduction result.
+2026-08-29. Protected-main run `33226521340` completed non-promotional,
+ten-record smoke inference for both MatterSim and MACE. This document freezes
+the next executable experiment and its evidence contract, not a 693-record
+reproduction result.
 
 ## Why these two models
 
@@ -33,7 +33,9 @@ The MatterSim training corpus is not hash-public, so Random-TP cannot be called 
 4. Require 693/693 finite E/F/stress outputs. Missing rows, corrupt bytes or unsupported elements fail; LJ and cached constants are forbidden fallbacks.
 5. Test translation, atom permutation and periodic-image invariance; rotate forces and stresses equivariantly; compare forces with finite differences.
 6. Publish energy/force/stress distributions, worst IDs, failure rate, batch-1 latency, throughput, memory and hardware provenance.
-7. Merkle-root canonical per-record outputs by sorted structure ID, and record runner/container/model/data digests.
+7. Merkle-root canonical per-record outputs by sorted structure ID; record the
+   stable runtime-input contract and dependency-lock digests separately from
+   each run-specific OCI image/config observation.
 
 The raw Random-TP file is parsed by a standard-library-only trusted process. It
 emits a frozen structure-only JSONL bundle; energy, force and stress labels are
@@ -83,6 +85,38 @@ hash-locked requirements file, `run_model.py` and `runtime_contract.py`.
 Wheel bytes enter only through a separately verified named BuildKit context.
 Unexpected files or symlinks fail before the build starts.
 
+The scientific preregistration and runtime discovery are intentionally
+separate. `reproduction-plan.json` remains byte-frozen at
+`sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2`
+with its post-execution identities left `null`. A separate runtime lock binds
+that plan digest and keeps the runner, dependency locks and canonical
+runtime-input identities `null` during R6a discovery. R6a deliberately has no
+locally assertable frozen state. After two independent protected-main replicas,
+a separately controlled verifier must authenticate the workflow, repository
+revision, artifact IDs and archive digests before a later lock version may
+freeze those identities. The
+runtime-input manifest binds the base image, Dockerfile frontend and bytes,
+`.dockerignore`, exact wheels and runtime inventory, runner files, platform and
+offline build policy while excluding resolver metadata and raw plan fields
+that would create a self-referential hash cycle. A locally observed Docker
+image `.Id` remains run-specific evidence unless independent OCI builds prove
+the same manifest digest.
+
+The canary passes the R5 commit timestamp through BuildKit's special
+`SOURCE_DATE_EPOCH` build argument and verifies the resulting config/descriptor
+timestamps against Buildx metadata and `docker image inspect`. This normalizes
+OCI config and history timestamps, but it is not a blanket reproducible-image
+claim: [BuildKit documents](https://github.com/moby/buildkit/blob/master/docs/build-repro.md#source_date_epoch)
+that rewriting timestamps inside exported image layers requires a compatible
+image exporter option, and image assembly behavior also depends on the named
+BuildKit compatibility path. R6a therefore records manifest/config digests as
+run-specific diagnostics, never promotion roots. Its container observation
+also separates the current workflow revision (used by the local image tag)
+from the fixed R5 runtime-source revision (used by the OCI source label and
+stable runtime-input contract). The bounded bundle publishes the raw Buildx
+metadata, image-inspect JSON and tool-version lines so an independent verifier
+can recompute every projected diagnostic digest.
+
 Full promotion requires all 693 IDs from both models. Each energy, force and
 stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
 the worst ID/error pair and a duplicate-ID-forbidden per-record evidence root.
@@ -115,14 +149,21 @@ TAILING_ATOMISTIC_CACHE=/absolute/cache node scripts/validate-atomistic-plan.mjs
 
 ## Promotion boundary
 
-MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy, 0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the manifest. MACE has no locked official Random-TP target: its first complete blind run may establish an engineering baseline, but cannot be used to claim superiority. Until checkpoint, dataset and runner digests are all present, both models remain `AUDITABLE`, never `REPRODUCED` or numerically comparable.
+MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy,
+0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the
+manifest. MACE has no locked official Random-TP target: its first complete
+blind run may establish an engineering baseline, but cannot be used to claim
+superiority. Until the separate runtime lock is independently replicated and
+the full 693-record verifier passes, both models remain `AUDITABLE`, never
+`REPRODUCED` or numerically comparable.
 
-Four protected-main bootstrap dispatches have run. The first stopped during
+Five protected-main bootstrap dispatches have run. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
 but stopped during offline exact-lock resolution. The fourth crossed those
-boundaries for MatterSim and produced a successful ten-record smoke artifact.
-Every bundle deliberately remains `bootstrap-not-reproduced`: smoke predictions
-are neither the 693-record preregistered benchmark nor an accuracy result.
+boundaries for MatterSim. The fifth crossed them for both models and produced
+two successful ten-record smoke artifacts. Every bundle deliberately remains
+`bootstrap-not-reproduced`: smoke predictions are neither the 693-record
+preregistered benchmark nor an accuracy result.
 
 The third dispatch,
 [`33219047585`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585),
@@ -168,8 +209,33 @@ it truthfully records `failureStage: wheelhouse` and no predictions.
 
 [Docker documents](https://docs.docker.com/reference/cli/docker/container/run/#for-nproc-usage)
 that `RLIMIT_NPROC` counts processes for a user rather than a container and can
-produce this exact failure. The current remediation removes all workflow
-`nproc` limits and retains the container-scoped `pids-limit` plus the existing
-CPU, memory, file, network, privilege and read-only boundaries. A new protected
-Linux dispatch must pass MACE's two clean byte-identical builds and the complete
-44-wheel chain before MACE smoke evidence exists.
+produce this exact failure. Removing the UID-scoped limit while retaining the
+container-scoped PID, CPU, memory, file, network, privilege and read-only
+boundaries allowed the fifth dispatch to pass both clean MACE source builds.
+
+The fifth dispatch,
+[`33226521340`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33226521340),
+ran at protected-main commit
+`9a67f4509588d242838c736a580b6ec5badc18f9`. MatterSim job `99031236711`
+and MACE job `99031236621` both completed. Their artifacts `9707082369` and
+`9707068855` contain the exact ten preregistered unique IDs, finite scalar
+energies, 16×3 forces and symmetric 3×3 stresses, with no reference labels.
+Both report runner digest
+`sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c`;
+the resolved dependency-lock digests are
+`sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b`
+for MatterSim and
+`sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33`
+for MACE. Independent archive and record inspection passed, but no reference
+metrics or scientific receipt was computed.
+
+R6 supervision rejected an attempted direct identity freeze before merge. The
+raw plan digest was embedded in `runtime_contract.py`; hashing that runner and
+writing its digest back into the plan changed the plan digest again. The same
+attempt treated Docker's local config `.Id` as a cross-run trust root even
+though the build labels it with the current commit. This is a cryptographic
+self-reference, not a reproducibility proof. The next canary therefore emits a
+non-circular runtime-input manifest and a separate discovery-only runtime lock,
+then requires two fresh protected-main replicas plus a separately controlled
+GitHub run/artifact verification receipt before any execution identity can be
+frozen. Repository-authored observations alone can never self-approve.

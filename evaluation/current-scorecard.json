@@ -1,6 +1,6 @@
 {
   "schemaVersion": "tf.scorecard/0.2",
-  "candidateVersion": "0.3.1-r5-atomistic-bootstrap",
+  "candidateVersion": "0.3.1-r6a-runtime-lock-discovery",
   "baselineSnapshotDate": "2026-08-29",
   "hardGateFailures": [],
   "dimensions": [
@@ -15,17 +15,17 @@
     {
       "id": "data", "label": "Data and provenance", "displayLabel": "数据与来源追踪", "weight": 8, "score": 1, "promotionFloor": 0,
       "summary": "固定资产已在受保护 Linux 验证；未完成全基准",
-      "evidence": ["Protected-main run 33221777626 hash-checked the locked Random-TP and both checkpoints, parsed all 693 frames / 11,088 atoms / 89 elements, and produced a bounded MatterSim smoke artifact; the dataset and model evidence remain non-promotional."],
-      "evidenceArtifacts": ["evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "schemas/atomistic-reproduction.schema.json", "scripts/validate-atomistic-plan.mjs", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"],
-      "nextAction": "Complete the MACE bootstrap, then independently verify full 693-record artifacts from both locked checkpoints.",
-      "acceptanceTest": "Both protected Linux jobs verify all asset bytes, emit complete per-ID prediction sets, and retain exact package, lock, runner, container and artifact digests."
+      "evidence": ["Protected-main run 33226521340 hash-checked the locked Random-TP and both checkpoints, parsed all 693 frames / 11,088 atoms / 89 elements, and produced bounded ten-record MatterSim and MACE smoke artifacts; both remain label-free and non-promotional."],
+      "evidenceArtifacts": ["evaluation/atomistic/reproduction-plan.json", "evaluation/atomistic/runtime-lock.json", "evaluation/data/datasets.json", "schemas/atomistic-reproduction.schema.json", "schemas/atomistic-runtime-lock.schema.json", "scripts/validate-atomistic-plan.mjs", "scripts/validate-atomistic-runtime-lock.mjs", "scripts/atomistic/runtime-input-contract.mjs", "scripts/atomistic/write-container-observation.mjs", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md"],
+      "nextAction": "Replicate the separate runtime-input discovery twice on protected main, then authenticate both runs and artifacts with a separately controlled verifier before any 693-record prediction run.",
+      "acceptanceTest": "Two fresh protected-main replicas produce byte-identical canonical runtime-input manifests for both models while the scientific plan remains at its preregistered digest; a controlled receipt binds workflow path, head SHA, artifact IDs and archive digests."
     },
     {
       "id": "atomistic", "label": "Atomistic physics", "displayLabel": "原子层物理", "weight": 12, "score": 1, "promotionFloor": 1,
-      "summary": "LJ 回归 + MatterSim 10 帧隔离 smoke",
-      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main MatterSim run 33221777626 also passed a 157-wheel offline build and ten-record checkpoint smoke with no reference labels in the prediction objects."],
-      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts", ".github/workflows/atomistic-bootstrap.yml", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"],
-      "nextAction": "Pass the locked MACE smoke, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
+      "summary": "LJ 回归 + 双模型 10 帧隔离 smoke",
+      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main run 33226521340 also passed both isolated offline dependency builds and ten-record checkpoint smoke inference with no reference labels in either prediction artifact."],
+      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts", ".github/workflows/atomistic-bootstrap.yml", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md"],
+      "nextAction": "Issue a controlled verification receipt for the independently replicated runtime inputs, freeze a later lock version, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {

@@ -33,7 +33,7 @@
       "revision": "MatterSim package v1.2.5 / model v1.0.0-5M / source commit 40a1eb8", "evidenceClass": "auditable", "claimOwner": "Microsoft Research", "comparable": false,
       "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "sourceDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
       "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5", "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9", "runnerDigest": null,
-      "reason": "Protected-main run 33221777626 produced a locked ten-record MatterSim smoke artifact. It has no reference labels or full-benchmark metrics, so the comparator remains auditable and non-comparable."
+      "reason": "Protected-main run 33226521340 produced a locked ten-record MatterSim smoke artifact with finite E/F/stress and no reference labels. Its Docker config ID is run-specific and no full-benchmark metrics exist, so the comparator remains auditable and non-comparable."
     },
     {
       "id": "mace-mpa-0", "name": "MACE-MPA-0", "scope": "open atomistic interatomic-potential control",
@@ -42,7 +42,7 @@
       "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e", "sourceDigest": "sha256:1ef0c309a49cf7d1035ab581b1ddc8284c678658ba375a132c4d5fcefd833038",
       "checkpointSource": "https://github.com/ACEsuit/mace-foundations/releases/tag/mace_mpa_0",
       "benchmarkCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638", "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9", "runnerDigest": null,
-      "reason": "Checkpoint and shared Random-TP bytes are pinned. Run 33221777626 stopped during the MACE wheelhouse source build, so no MACE prediction or blind engineering baseline exists."
+      "reason": "Protected-main run 33226521340 completed the two clean python-hostlist builds, exact lock, isolated image and ten-record MACE smoke predictions with finite E/F/stress and no reference labels. No full Random-TP metrics or blind engineering baseline exists, so it remains auditable and non-comparable."
     },
     {
       "id": "pfhub-benchmark-3", "name": "NIST PFHub Benchmark 3", "scope": "coupled phase-field and heat-diffusion reference",

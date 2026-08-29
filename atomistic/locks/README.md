@@ -2,8 +2,10 @@
 
 No production lock is committed yet. This is intentional: the two package
 wheels are frozen, but their upstream metadata leaves most transitive
-dependencies open, and no Python 3.12/Linux x86_64 cold-install plus inference
-run has yet established a truthful resolved set.
+dependencies open. Protected-main run `33226521340` established truthful
+Python 3.12/Linux x86_64 resolved sets and ten-record smoke inference for both
+models, but the runtime-input identities have not yet been independently
+replicated and frozen.
 
 The environments must remain separate:
 
@@ -28,7 +30,8 @@ reported as reproduced until the following sequence passes for each model:
    reviewed wheelhouse, then run the exact frozen 10-ID smoke test under
    `--network=none`.
 7. Review the predictions, environment manifest, network proof, lock digest,
-   container digest, and diagnostics behavior before committing the lock.
+   canonical runtime-input manifest, run-specific OCI config/manifest
+   observations and diagnostics behavior before committing the lock.
 
 Only after that review may a production `*.requirements.lock` be added. The
 Dockerfiles deliberately reference the currently absent production locks so an
@@ -95,11 +98,13 @@ to the wheel-only download rule:
 
 This exception is bootstrap evidence only. Its provenance always records
 `promotionEligible: false`, and the enclosing run remains
-`bootstrap-not-reproduced`. A first-run output digest must not become a
-production trust root in the same run. Before any production lock or binary
-redistribution, an independent review must freeze the accepted wheel digest and
-member inventory (or replace it with an upstream wheel/MACE dependency fix) and
-confirm the package's GPL-2.0-or-later redistribution obligations.
+`bootstrap-not-reproduced`. Run `33226521340` produced the same reviewed derived
+wheel bytes in two clean builders, but a first successful workflow remains only
+one run observation. Before any production lock or binary redistribution, two
+independent protected-main replicas must agree on the canonical runtime-input
+manifest; review must freeze the accepted wheel digest and member inventory (or
+replace it with an upstream wheel/MACE dependency fix) and confirm the
+package's GPL-2.0-or-later redistribution obligations.
 
 ## Failure evidence
 
@@ -107,7 +112,12 @@ After checkout and pinned tool setup, an always-running step attempts to stage
 `manifests/bootstrap-outcome.json`, including when any of the twelve reviewed
 shell stages fails. It records the fixed stage sequence, the first failure
 stage, whether inference succeeded, whether predictions exist, and the exact
-allowlisted files that were published. It cannot promote evidence: its only
-evidence class is `bootstrap-not-reproduced`. If checkout, the action runtime,
-or the outcome writer itself cannot run safely, upload is skipped instead of
+allowlisted files that were published. Successful resolve/build stages also
+require a model-specific runtime-input manifest and container observation; the
+former is the stable, non-self-referential identity candidate, while the latter
+remains run-scoped. Raw Buildx metadata, Docker inspect output and Buildx/Docker
+version lines are staged with the observation so its diagnostic digests can be
+independently recomputed. The outcome cannot promote evidence: its only evidence
+class is `bootstrap-not-reproduced`. If checkout, the action runtime, or the
+outcome writer itself cannot run safely, upload is skipped instead of
 fabricating an artifact.

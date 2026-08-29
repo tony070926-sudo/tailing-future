@@ -204,6 +204,29 @@ class BootstrapOutcomeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "successful structures stage"):
                 self._write(root, stages=stage_values(terminal))
 
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._root(temporary)
+            terminal = outcome.STAGES.index("cold-install")
+            self._write_files_for_successful_prefix(root, "mattersim", terminal)
+            (root / "manifests/mattersim.runtime-inputs.json").unlink()
+            with self.assertRaisesRegex(ValueError, "successful resolve stage"):
+                self._write(root, stages=stage_values(terminal))
+
+        for missing in (
+            "manifests/mattersim.container-observation.json",
+            "diagnostics/mattersim.buildx-metadata.json",
+            "diagnostics/mattersim.image-inspect.json",
+            "diagnostics/mattersim.buildx-version.txt",
+            "diagnostics/mattersim.docker-server-version.txt",
+        ):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as temporary:
+                root = self._root(temporary)
+                terminal = outcome.STAGES.index("inference")
+                self._write_files_for_successful_prefix(root, "mattersim", terminal)
+                (root / missing).unlink()
+                with self.assertRaisesRegex(ValueError, "successful build stage"):
+                    self._write(root, stages=stage_values(terminal))
+
     def test_rejects_unknown_files_links_and_non_regular_entries(self) -> None:
         cases = ("unknown", "symlink", "hardlink", "fifo")
         for case in cases:
@@ -274,6 +297,12 @@ class BootstrapOutcomeTests(unittest.TestCase):
                 "manifests/fetched-assets.manifest.json",
                 "manifests/structures.manifest.json",
                 "manifests/pytorch-download-sources.json",
+                "manifests/mattersim.runtime-inputs.json",
+                "manifests/mattersim.container-observation.json",
+                "diagnostics/mattersim.buildx-metadata.json",
+                "diagnostics/mattersim.image-inspect.json",
+                "diagnostics/mattersim.buildx-version.txt",
+                "diagnostics/mattersim.docker-server-version.txt",
             ):
                 (root / relative).write_bytes(b"")
             for relative in (
@@ -335,6 +364,12 @@ class BootstrapOutcomeTests(unittest.TestCase):
             "manifests/pytorch-download-sources.json",
             f"locks/{model}.requirements.lock",
             f"manifests/{model}.wheelhouse.manifest.json",
+            f"manifests/{model}.runtime-inputs.json",
+            f"manifests/{model}.container-observation.json",
+            f"diagnostics/{model}.buildx-metadata.json",
+            f"diagnostics/{model}.image-inspect.json",
+            f"diagnostics/{model}.buildx-version.txt",
+            f"diagnostics/{model}.docker-server-version.txt",
             "manifests/run-summary.json",
             "predictions/predictions.jsonl",
             "diagnostics/run-diagnostics.json",
@@ -358,6 +393,13 @@ class BootstrapOutcomeTests(unittest.TestCase):
         if "resolve" in succeeded:
             self._file(root, f"locks/{model}.requirements.lock")
             self._file(root, f"manifests/{model}.wheelhouse.manifest.json")
+            self._file(root, f"manifests/{model}.runtime-inputs.json")
+        if "build" in succeeded:
+            self._file(root, f"manifests/{model}.container-observation.json")
+            self._file(root, f"diagnostics/{model}.buildx-metadata.json")
+            self._file(root, f"diagnostics/{model}.image-inspect.json")
+            self._file(root, f"diagnostics/{model}.buildx-version.txt")
+            self._file(root, f"diagnostics/{model}.docker-server-version.txt")
         if "inference" in succeeded:
             self._file(root, "manifests/run-summary.json")
             self._file(root, "predictions/predictions.jsonl")
