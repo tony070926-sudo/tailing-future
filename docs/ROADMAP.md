@@ -23,11 +23,11 @@ Status: completed narrow baseline.
 
 ## R2 — independently reproduced modules
 
-Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented; no atomistic checkpoint inference has run.
+Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented. A protected Linux run has completed a locked ten-frame MatterSim smoke inference; it is non-promotional and is not the 693-frame benchmark reproduction.
 
 - completed entry gates: grid-invariant heat capacity density, three-mode Fourier convergence, analytic two-reservoir exchange, atomic forced-reaction closure, full parameter/resource envelopes and 8×5,000 tails;
 - completed manifest gates: record-level Materials Project, JARVIS, NOMAD and Open Catalyst provenance plans;
-- next: like-for-like complete Random-TP inference with pinned MatterSim 5M and MACE-MPA-0 bytes;
+- next: complete the MACE bootstrap, then run like-for-like complete Random-TP inference with pinned MatterSim 5M and MACE-MPA-0 bytes;
 - NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 

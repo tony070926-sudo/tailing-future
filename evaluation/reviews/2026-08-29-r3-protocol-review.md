@@ -291,6 +291,8 @@ resolver and hash-bound verifier completed the full MatterSim closure with
 hostlist ZIP only; members and installed-path digest match the previous Linux
 build, while checked-in policy binds the reviewed Linux SHA-256
 `498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c`.
-This preflight removes the known resolver blocker but does not prove Linux cold
-installation, container build, checkpoint deserialization or prediction. A
-fourth protected-main dispatch remains mandatory.
+At this review cutoff, the preflight removed the known resolver blocker but had
+not proved Linux cold installation, container build, checkpoint deserialization
+or prediction. The subsequently completed fourth dispatch and its R5 handoff
+are recorded in
+[`2026-08-29-r4-bootstrap-review.md`](./2026-08-29-r4-bootstrap-review.md).

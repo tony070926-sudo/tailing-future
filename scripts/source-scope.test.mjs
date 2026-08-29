@@ -12,7 +12,7 @@ describe('Tailing Future source scope', () => {
   });
 
   it('rejects traversal, platform-ambiguous and malformed paths', () => {
-    for (const candidate of ['../scripts/evaluate.mjs', '/app/page.tsx', 'app\\page.tsx', 'app//page.tsx', 'app/./page.tsx', '']) {
+    for (const candidate of ['../scripts/evaluate.mjs', '/app/page.tsx', 'app\\page.tsx', 'app//page.tsx', 'app/./page.tsx', 'app/control\n.ts', '']) {
       expect(isProjectSourcePath(candidate)).toBe(false);
     }
   });

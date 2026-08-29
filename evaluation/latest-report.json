@@ -1,23 +1,23 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
-  "candidateVersion": "0.3.1-r2-physics-r3-atomistic-protocol",
-  "generatedAt": "2026-08-28T23:37:10.734Z",
+  "candidateVersion": "0.3.1-r5-atomistic-bootstrap",
+  "generatedAt": "2026-08-29T01:22:58.456Z",
   "sourceRevision": null,
-  "baselineSnapshotDate": "2026-08-28",
-  "artifactDigest": "sha256:f0e2742666583dcadc42ca9c25188008f1d9cd831e643f3082c89a1f781061e1",
-  "sourceFileCount": 96,
+  "baselineSnapshotDate": "2026-08-29",
+  "artifactDigest": "sha256:95f0d2056de073f864ad1139603836b9d43f0eaa8dcdaafa62beb8e58d9b3f0b",
+  "sourceFileCount": 101,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:dea07d39bacc0c3f54186abe34e05fcb268e9a419543f466d7ab9a4932059566",
     ".github/ISSUE_TEMPLATE/gap.yml": "sha256:1bb098efada033d9dc069a8083115488861cc8d4ac24f130d3f7e31b3835c8b1",
     ".github/pull_request_template.md": "sha256:ccc7bac029108b664d18031021c9c367bdd9251c71a54c893d534c32b50906a2",
-    ".github/workflows/atomistic-bootstrap.yml": "sha256:fe86b0efb807a654d049cc50294e1f51a634eb06ee86428eb17aa38b3ed3fd00",
+    ".github/workflows/atomistic-bootstrap.yml": "sha256:aeb214742bdaf71951062e90bf1ff78715e0fc3c49bf64390f3b72b2b3ad55b3",
     ".github/workflows/comparator-refresh.yml": "sha256:abf1f3672af5515241eaa76818fef9be182efb062c9d7c7ea7f8772cbf4dd986",
     ".github/workflows/evaluate.yml": "sha256:7df7233850965d6a7487ae905db270129c4bdf9611b898893d73af2c79b7c43a",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d",
     ".gitignore": "sha256:db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28",
     ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
-    "README.md": "sha256:65e00ae7e4db61c0e0bfe5af9a1fd1fb74f40ab137082f67fe0def8442105f34",
+    "README.md": "sha256:9c294543bb04092bc56664aad5b40c2892872d9318045428782da7c4185fddd1",
     "app/globals.css": "sha256:0be2c001c75b93143652d02a6518af50e28c6a871ee1406c6205be07a70fd241",
     "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
     "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
@@ -29,11 +29,11 @@
     "atomistic/locks/mattersim.bootstrap.in": "sha256:4ac7c003925368ca75c125b768720ff622b873513b765bf98fcc703a6c6654a6",
     "atomistic/locks/python-hostlist-build.requirements.lock": "sha256:dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120",
     "docs/ARCHITECTURE.md": "sha256:011dddd5380698eced2a5f48a4866e1c97c52a8e80a6ea352279a18bc49759cc",
-    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:d5f5839ff4d41d6c73570f0b0286b9c8928f939742ec11f9b4b3a03e4b9930fe",
-    "docs/EVALUATION_LOOP.md": "sha256:d5290203ca3646b636978db81742cee6eeff181e32afc15fd5c8b0dd488611a9",
+    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:837f7c4a4460ab26a0fb6ffe00ed05bec30e9d319f4d5b00d61e5f4ca104884c",
+    "docs/EVALUATION_LOOP.md": "sha256:ab83c7777289bcd32fa5ffc63c91145b94f18cedf6ccf764b75b60970b7888ab",
     "docs/RESEARCH_BASELINE.md": "sha256:4d0400725a4073085c3ee31e0f5c452037e891b80e1d0a7ce6932fbd9bd29d3f",
-    "docs/ROADMAP.md": "sha256:1b174b250fb7b3de629fa7e4a5b4d8ab6aa0ddb23b0286b4f963244c02eb3d68",
-    "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
+    "docs/ROADMAP.md": "sha256:16447aa1941b65c4ec94af4f0eba6afc8f30c436a321f553fe19d0698cb414eb",
+    "docs/SAFETY.md": "sha256:f6eea83a2b42db2c617c5e561ec2c939bed0824bd1aaf99ed867c78d71742777",
     "eslint.config.mjs": "sha256:5c697206f302dadc0c8b7b2f7a707257dab15129a2149872b0f84ea1ac17d263",
     "evaluation/agent-contracts/builder.md": "sha256:09a208eaebfa78ed5a9e2b86869bc66acb526a548777e06871360166d695eb9b",
     "evaluation/agent-contracts/evaluator.md": "sha256:aa88228362db081b2eda50233d60358434c810a2d91a137f433fe87e5f402990",
@@ -41,11 +41,12 @@
     "evaluation/agent-contracts/sota-scout.md": "sha256:8437c3736e2b2b7e1b0e0d1d89627cd62f15b2b47dac9f25597cbe2cebf38529",
     "evaluation/atomistic/random-tp-id-manifest.txt": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
     "evaluation/atomistic/reproduction-plan.json": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2",
-    "evaluation/baselines/registry.json": "sha256:62746a3d396ee43b12c8a69c9275e79483af6cc1309d8cf04ca725ff00074242",
-    "evaluation/current-scorecard.json": "sha256:e924109628f7014bed2204a6130157bcadbcd6c46456619ccfeec4db1f56701a",
+    "evaluation/baselines/registry.json": "sha256:59241b407bf4c872f171426a150190b00cd11797c75cd7b89ef0312a6c7a8b52",
+    "evaluation/current-scorecard.json": "sha256:cf2a0465fe9044324cf6e72df049a6d551cefb68eb56a50044494aca4cba41e8",
     "evaluation/data/datasets.json": "sha256:fbf43a262cb7389af0f3ae842fd75d9e42b7574cf0c3d8a308e195cf6ebb3b66",
     "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
-    "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:2a1c322705fe1f32352f15776cd09952826613ca6a5ccb5f4233c9fa371706e2",
+    "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:46f96227a04a7e4ae117154c4e5515f6534f663c0ecbffb1b416747f70a91370",
+    "evaluation/reviews/2026-08-29-r4-bootstrap-review.md": "sha256:67b47d0f3beeadfdbd67e454c30680aaced88d8103c63a2c0a38d6cb9db2cab1",
     "lib/simulation/digest.ts": "sha256:e7a00c74a6011697323c771edfbb93739774dd4d0cda4cde0438c63f6f221a76",
     "lib/simulation/lennard-jones.test.ts": "sha256:0fe9d5028718e5cfaf6dedf229328799efa58b74ddbd335302961519e02306ed",
     "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
@@ -83,8 +84,10 @@
     "scripts/atomistic/write_bootstrap_outcome.py": "sha256:93e68da24fcbecfca69cf9aef2469e6feaad78eb6b8205b147fb401208fdbb23",
     "scripts/atomistic/write_bootstrap_outcome_test.py": "sha256:a9a22e879519ba9d9a511c66d9ab2e934a0c112d536ca495b9514a2b40aec57d",
     "scripts/comparator-evidence-policy.mjs": "sha256:bc223f767078b29a63de2265fc98a0488bcfce0e1517e0239916b9675c89c598",
-    "scripts/comparator-evidence-policy.test.mjs": "sha256:a4162bf10e56c60ee3ce5c5f9bf38f14f0033eb45124e3277afbf90bfc77d29f",
-    "scripts/evaluate.mjs": "sha256:71e9533078dc2a19f8219af44ce355887704e180249f3db9716650bbc9662b10",
+    "scripts/comparator-evidence-policy.test.mjs": "sha256:d49a6c107b7d3372345255d83b945c065626f9b990fbd29b5b9bbda17f9402b6",
+    "scripts/evaluate-launcher.test.mjs": "sha256:6dbdc0cc9620b9e42262a05804cf2e8cd211b614f2652e184f24c5922856ab3c",
+    "scripts/evaluate-worker.mjs": "sha256:22150178fe31b3a7c216b9308d7ab6ef7e18d73352293708bad99f3d85727844",
+    "scripts/evaluate.mjs": "sha256:f2feb201d4c1072419193c7c1a9e0061a2d700db783b208d8587e987f1debff7",
     "scripts/github-release-policy.mjs": "sha256:4e534744a60c6c02302c8ae1f34b6bb3e30804d0173b6205cd6c5d24cc967eea",
     "scripts/github-release-policy.test.mjs": "sha256:c8a49539d3bab740a680dea1312e115fa8b3c88b86a4e2a8f392d8266c1e86cf",
     "scripts/release-artifact.mjs": "sha256:3473987abdb13923caa4d4dab2f937ccc292c8b365313b4ceeacf7b510b42f6e",
@@ -95,11 +98,13 @@
     "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
     "scripts/safe_extract_zip.py": "sha256:e6b1a46b1ba471c888402cd75987819b18097d0bc6d2f87f5d1469f3d6a7caa0",
     "scripts/safe_extract_zip_test.py": "sha256:9ce8308a8cbf23d45d34ff66ffbd2905328ce4dbd4eb88241ef5a2ed396e3a59",
-    "scripts/source-scope.mjs": "sha256:4626b266a7c0543ad4550d6757f83c33c0a1d20a141331da855d1bec47809c6e",
-    "scripts/source-scope.test.mjs": "sha256:314add07ca331d19ec7add171dd713cf6c737816ab5c9ca9da1e4308dd6b61ca",
+    "scripts/source-scope.mjs": "sha256:787b1451e5220f509025b2937e610dabf4b91bfaadd5f6e67a7028a1db4db8a1",
+    "scripts/source-scope.test.mjs": "sha256:865ae272d2412dc4c8dc0870ba5861680b251482d585c0099345839398b6a665",
+    "scripts/source-snapshot.mjs": "sha256:90686b1c6ca49a606a9eb377f0c0920fd699f782c5d5b2b7b0a48a127f8c85bb",
+    "scripts/source-snapshot.test.mjs": "sha256:63fc68a999e1365be93bf12bbb1b5b690ec08c2b7ae2e8f58c5517590dc1465d",
     "scripts/validate-atomistic-plan.mjs": "sha256:f213ba182fc53be096e3132ade318204ba1a1b6df9a97864162aabcd4e03070d",
-    "scripts/workflow-policy.mjs": "sha256:5607ecc68da12ccfa127ba5e68207fa107d2c1d1e0d4b5a3abaf95c26e690b84",
-    "scripts/workflow-policy.test.mjs": "sha256:040172aa54b2d80e3fffa2935daedea7a482a81443fec145b3a50ce9d774bc54",
+    "scripts/workflow-policy.mjs": "sha256:1a87e7303c63ba2487fd65bf8b847e04355319f1bf36de8714a8422b3323d2e9",
+    "scripts/workflow-policy.test.mjs": "sha256:40f5dcc09e7a9e7f5f4a807b0c0d3777e148e4aeda00b3874770bc61dc813e4d",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
     "vitest.config.ts": "sha256:8fc9ce24c9e8dd840d0aa944448b58222dad58b3481a2dcb26140940dddd4661"
@@ -196,7 +201,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 70784.13
+    "elapsedMs": 75279.54
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -208,14 +213,19 @@
     "evaluation/data/datasets.json": "sha256:fbf43a262cb7389af0f3ae842fd75d9e42b7574cf0c3d8a308e195cf6ebb3b66",
     "schemas/atomistic-reproduction.schema.json": "sha256:72ec954452c66bbd00691ac9f882b32a05443eac77dc50271804f48d50b56b7a",
     "scripts/validate-atomistic-plan.mjs": "sha256:f213ba182fc53be096e3132ade318204ba1a1b6df9a97864162aabcd4e03070d",
+    "docs/ATOMISTIC_REPRODUCTION.md": "sha256:837f7c4a4460ab26a0fb6ffe00ed05bec30e9d319f4d5b00d61e5f4ca104884c",
+    "evaluation/reviews/2026-08-29-r4-bootstrap-review.md": "sha256:67b47d0f3beeadfdbd67e454c30680aaced88d8103c63a2c0a38d6cb9db2cab1",
     "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
+    ".github/workflows/atomistic-bootstrap.yml": "sha256:aeb214742bdaf71951062e90bf1ff78715e0fc3c49bf64390f3b72b2b3ad55b3",
     "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
     ".github/workflows/evaluate.yml": "sha256:7df7233850965d6a7487ae905db270129c4bdf9611b898893d73af2c79b7c43a",
     "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
-    "docs/SAFETY.md": "sha256:b9992027a5832633c1dc807201b9c6657212d4f21be553ed8be522c8b97153fc",
+    "docs/SAFETY.md": "sha256:f6eea83a2b42db2c617c5e561ec2c939bed0824bd1aaf99ed867c78d71742777",
     "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
-    "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:2a1c322705fe1f32352f15776cd09952826613ca6a5ccb5f4233c9fa371706e2",
-    "scripts/evaluate.mjs": "sha256:71e9533078dc2a19f8219af44ce355887704e180249f3db9716650bbc9662b10",
+    "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:46f96227a04a7e4ae117154c4e5515f6534f663c0ecbffb1b416747f70a91370",
+    "scripts/evaluate.mjs": "sha256:f2feb201d4c1072419193c7c1a9e0061a2d700db783b208d8587e987f1debff7",
+    "scripts/evaluate-worker.mjs": "sha256:22150178fe31b3a7c216b9308d7ab6ef7e18d73352293708bad99f3d85727844",
+    "scripts/evaluate-launcher.test.mjs": "sha256:6dbdc0cc9620b9e42262a05804cf2e8cd211b614f2652e184f24c5922856ab3c",
     "scripts/release-cloudflare.mjs": "sha256:d34a162724d26b880c85dd1b58617c767f35dba2374cb9713bf9753e681e4a54",
     "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d"
@@ -251,18 +261,20 @@
       "weight": 8,
       "score": 1,
       "promotionFloor": 0,
-      "summary": "哈希与许可清单，尚未本地下载",
+      "summary": "固定资产已在受保护 Linux 验证；未完成全基准",
       "evidence": [
-        "Pinned MatterSim Random-TP model/data hashes, a fail-closed reproduction protocol, and a record-level MP/JARVIS/NOMAD/OC20 license catalog; status remains manifest-only."
+        "Protected-main run 33221777626 hash-checked the locked Random-TP and both checkpoints, parsed all 693 frames / 11,088 atoms / 89 elements, and produced a bounded MatterSim smoke artifact; the dataset and model evidence remain non-promotional."
       ],
       "evidenceArtifacts": [
         "evaluation/atomistic/reproduction-plan.json",
         "evaluation/data/datasets.json",
         "schemas/atomistic-reproduction.schema.json",
-        "scripts/validate-atomistic-plan.mjs"
+        "scripts/validate-atomistic-plan.mjs",
+        "docs/ATOMISTIC_REPRODUCTION.md",
+        "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"
       ],
-      "nextAction": "Download the locked Random-TP bytes and both checkpoints into an isolated cache, then verify every digest before deserialization.",
-      "acceptanceTest": "The cache verifier confirms exact byte lengths and SHA-256 values; Random-TP parses as 693 frames, 11,088 atoms, 89 elements, with no skipped record."
+      "nextAction": "Complete the MACE bootstrap, then independently verify full 693-record artifacts from both locked checkpoints.",
+      "acceptanceTest": "Both protected Linux jobs verify all asset bytes, emit complete per-ID prediction sets, and retain exact package, lock, runner, container and artifact digests."
     },
     {
       "id": "atomistic",
@@ -271,15 +283,18 @@
       "weight": 12,
       "score": 1,
       "promotionFloor": 1,
-      "summary": "LJ 求解器 + 守恒回归",
+      "summary": "LJ 回归 + MatterSim 10 帧隔离 smoke",
       "evidence": [
-        "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests."
+        "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main MatterSim run 33221777626 also passed a 157-wheel offline build and ten-record checkpoint smoke with no reference labels in the prediction objects."
       ],
       "evidenceArtifacts": [
         "lib/simulation/lennard-jones.ts",
-        "lib/simulation/lennard-jones.test.ts"
+        "lib/simulation/lennard-jones.test.ts",
+        ".github/workflows/atomistic-bootstrap.yml",
+        "docs/ATOMISTIC_REPRODUCTION.md",
+        "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"
       ],
-      "nextAction": "Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.",
+      "nextAction": "Pass the locked MACE smoke, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {
@@ -436,6 +451,8 @@
         "evaluation/reviews/2026-08-28-r2-release-review.md",
         "evaluation/reviews/2026-08-29-r3-protocol-review.md",
         "scripts/evaluate.mjs",
+        "scripts/evaluate-worker.mjs",
+        "scripts/evaluate-launcher.test.mjs",
         "scripts/release-cloudflare.mjs",
         "scripts/release-report.test.mjs",
         ".github/workflows/evaluate.yml",
@@ -512,7 +529,7 @@
       "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5",
       "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
       "runnerDigest": null,
-      "reason": "Checkpoint and Random-TP bytes are pinned for the R2 reproduction; no local inference runner result exists yet."
+      "reason": "Protected-main run 33221777626 produced a locked ten-record MatterSim smoke artifact. It has no reference labels or full-benchmark metrics, so the comparator remains auditable and non-comparable."
     },
     {
       "id": "mace-mpa-0",
@@ -530,7 +547,7 @@
       "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638",
       "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
       "runnerDigest": null,
-      "reason": "Checkpoint and shared Random-TP bytes are pinned; the blind engineering baseline has not been executed."
+      "reason": "Checkpoint and shared Random-TP bytes are pinned. Run 33221777626 stopped during the MACE wheelhouse source build, so no MACE prediction or blind engineering baseline exists."
     },
     {
       "id": "pfhub-benchmark-3",
@@ -637,8 +654,8 @@
     {
       "severity": "P1",
       "dimension": "atomistic",
-      "evidence": "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests.",
-      "recommendedChange": "Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.",
+      "evidence": "Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main MatterSim run 33221777626 also passed a 157-wheel offline build and ten-record checkpoint smoke with no reference labels in the prediction objects.",
+      "recommendedChange": "Pass the locked MACE smoke, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {

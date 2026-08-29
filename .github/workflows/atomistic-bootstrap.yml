@@ -347,7 +347,6 @@ jobs:
                 --memory=1g \
                 --memory-swap=1g \
                 --ulimit nofile=256:256 \
-                --ulimit nproc=64:64 \
                 --ulimit fsize=16777216:16777216 \
                 --tmpfs /tmp:rw,exec,nosuid,nodev,size=512m,mode=1777 \
                 --mount "type=bind,src=$SOURCE_BUILD_INPUTS,dst=/inputs,readonly" \
@@ -627,7 +626,6 @@ jobs:
             --memory=4g \
             --memory-swap=4g \
             --ulimit nofile=1024:1024 \
-            --ulimit nproc=256:256 \
             --tmpfs /tmp:rw,exec,nosuid,nodev,size=4g,mode=1777 \
             --env MODEL \
             --mount "type=bind,src=$WHEELHOUSE,dst=/wheelhouse,readonly" \
@@ -839,7 +837,6 @@ jobs:
             --memory=6g \
             --memory-swap=6g \
             --ulimit nofile=1024:1024 \
-            --ulimit nproc=256:256 \
             --ulimit core=0:0 \
             --ulimit fsize=134217728:134217728 \
             --tmpfs /tmp:rw,noexec,nosuid,nodev,size=1g,mode=1777 \

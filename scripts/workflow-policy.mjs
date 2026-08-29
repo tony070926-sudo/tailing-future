@@ -46,12 +46,12 @@ export const ATOMISTIC_BOOTSTRAP_RUN_DIGESTS = Object.freeze({
   'Verify and pull the pinned Linux amd64 base and Dockerfile frontend': 'sha256:08fcc479df851c237b5921a6ea99099d8ceda55fb6f8e79dc82d1c25ffd3b86a',
   'Fetch and hash-check the selected assets': 'sha256:71b0cf5860fa646b6041d031d2a247c870df64f7daa193f9d6749c3845239267',
   'Preprocess structures without mounting any model checkpoint': 'sha256:80600407d01c2b63c4011632297690437eb71aefafac02dd99698eba0da7c2f7',
-  'Download one fresh resolved wheelhouse in the online phase': 'sha256:2ab1e2c82267cd46fd9ba80cf07ef329fec072bfab81167280afbe872ea2d3c8',
+  'Download one fresh resolved wheelhouse in the online phase': 'sha256:c2d2f61203b3fc136bc181d27a6dbe83a416b27b78020ebd1a03fbe94cca6ccb',
   'Resolve an exact lock from the offline wheelhouse': 'sha256:63d062b924b2ba0af093dfb4161f990e5de1ff677ea8a58096470e398f768964',
   'Freeze and verify the exact resolved wheel set': 'sha256:6fbf6725ea4fa98a87eea890d98ca654a83d743365796d68fece13a57afb6c5d',
-  'Prove a cold, hash-locked install with no network': 'sha256:743689e619cf42de5dd98c89ae1da4c11701588afe8a4e5268dcef1b8a2a2167',
+  'Prove a cold, hash-locked install with no network': 'sha256:be109a394b3a765414bcf932c12c89edf72435def72704e240cb8a183d113543',
   'Build the isolated runtime image with no build-step network': 'sha256:ac982ce0b42d6ff4038973dd2ee49f5512bd120f7d034c3608fabc70bc1ba93b',
-  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:60fbef598f6d9e12bd01bfc334ee050de67b11d919f0bbf4ac01608a605ab3c3',
+  'Run checkpoint deserialization and smoke predictions in the final sandbox': 'sha256:c6e33b9011e31baf81bece08fe74631a30ebb37d2c6c69f537fb055f80ffa5b0',
   'Stage only non-promotional bootstrap outputs': 'sha256:92fbe0ae394079db3fb00b32f1e473f2dce611c397bda5b4abab7fc3449341bf',
 });
 
@@ -355,7 +355,28 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     },
   })) failures.push(`${prefix} artifact upload must remain the exact non-promotional allowlisted bundle.`);
 
+  const nprocUlimitPattern = /--ulimit(?:=|\s+)["']?nproc=/;
   const executable = [...runSteps.values()].map((step) => step.run).join('\n');
+  if (nprocUlimitPattern.test(executable)) {
+    failures.push(`${prefix} container task limits must use cgroup pids-limit, not host-UID-scoped RLIMIT_NPROC.`);
+  }
+  const declaredUlimits = executable.match(/--ulimit(?:=|\s+)(?:["'][^"'\n]+["']|[^\s\\]+)/g) ?? [];
+  const expectedUlimits = new Map([
+    ['--ulimit nofile=64:64', 1],
+    ['--ulimit fsize=2097152:2097152', 1],
+    ['--ulimit nofile=256:256', 3],
+    ['--ulimit fsize=16777216:16777216', 1],
+    ['--ulimit nofile=1024:1024', 4],
+    ['--ulimit core=0:0', 1],
+    ['--ulimit fsize=134217728:134217728', 1],
+  ]);
+  const actualUlimits = new Map();
+  for (const declaration of declaredUlimits) actualUlimits.set(declaration, (actualUlimits.get(declaration) ?? 0) + 1);
+  if (declaredUlimits.length !== 12
+    || actualUlimits.size !== expectedUlimits.size
+    || [...expectedUlimits].some(([declaration, count]) => actualUlimits.get(declaration) !== count)) {
+    failures.push(`${prefix} Docker ulimit declarations must match the exact reviewed nofile, fsize and core multiset.`);
+  }
   const dockerRuns = executable.match(/\bdocker run\b/g) ?? [];
   const amd64DockerRuns = executable.match(/\bdocker run --rm --platform=linux\/amd64\b/g) ?? [];
   if (dockerRuns.length !== 8 || amd64DockerRuns.length !== dockerRuns.length) failures.push(`${prefix} every declared container must be Linux/amd64.`);
@@ -393,15 +414,21 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     '--user="$(id -u):$(id -g)"',
     '--cap-drop=ALL',
     '--security-opt=no-new-privileges=true',
+    '--pids-limit=64',
+    '--ulimit nofile=256:256',
+    '--ulimit fsize=16777216:16777216',
     '--mount "type=bind,src=$SOURCE_BUILD_INPUTS,dst=/inputs,readonly"',
     '--mount "type=bind,src=$derived_output,dst=/output"',
     'cmp --silent',
-  ]) || sourceBuild.includes('$GITHUB_WORKSPACE') || sourceBuild.includes('src=$WHEELHOUSE')) {
+  ]) || nprocUlimitPattern.test(sourceBuild)
+      || sourceBuild.includes('$GITHUB_WORKSPACE')
+      || sourceBuild.includes('src=$WHEELHOUSE')) {
     failures.push(`${prefix} the source-only python-hostlist dependency must be hash-pinned and built twice in networkless builders without workspace or runtime-wheelhouse access.`);
   }
   const coldInstall = runSteps.get('Prove a cold, hash-locked install with no network')?.run ?? '';
   if (!hasAll(coldInstall, [
     '--network=none',
+    '--pids-limit=256',
     'PIP_NO_INDEX=1',
     '--no-index',
     '--require-hashes',
@@ -463,7 +490,7 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
     ...inventoryVerifierFragments,
   ])) failures.push(`${prefix} Docker build must remain Linux/amd64, offline, bound to the private wheelhouse and to the exact startup-hook removal plan.`);
   const inference = runSteps.get('Run checkpoint deserialization and smoke predictions in the final sandbox')?.run ?? '';
-  if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
+  if (!hasAll(inference, ['docker run --rm --platform=linux/amd64', '--network=none', '--read-only', '--user=65532:65532', '--cap-drop=ALL', '--security-opt=no-new-privileges=true', '--pids-limit=256', '--mode smoke'])) failures.push(`${prefix} checkpoint inference must remain an offline, read-only, non-root Linux/amd64 smoke sandbox.`);
   const staging = runSteps.get('Stage only non-promotional bootstrap outputs')?.run ?? '';
   if (!hasAll(staging, [
     'scripts/atomistic/write_bootstrap_outcome.py',

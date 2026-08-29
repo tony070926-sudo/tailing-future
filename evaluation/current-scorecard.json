@@ -1,7 +1,7 @@
 {
   "schemaVersion": "tf.scorecard/0.2",
-  "candidateVersion": "0.3.1-r2-physics-r3-atomistic-protocol",
-  "baselineSnapshotDate": "2026-08-28",
+  "candidateVersion": "0.3.1-r5-atomistic-bootstrap",
+  "baselineSnapshotDate": "2026-08-29",
   "hardGateFailures": [],
   "dimensions": [
     {
@@ -14,18 +14,18 @@
     },
     {
       "id": "data", "label": "Data and provenance", "displayLabel": "数据与来源追踪", "weight": 8, "score": 1, "promotionFloor": 0,
-      "summary": "哈希与许可清单，尚未本地下载",
-      "evidence": ["Pinned MatterSim Random-TP model/data hashes, a fail-closed reproduction protocol, and a record-level MP/JARVIS/NOMAD/OC20 license catalog; status remains manifest-only."],
-      "evidenceArtifacts": ["evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "schemas/atomistic-reproduction.schema.json", "scripts/validate-atomistic-plan.mjs"],
-      "nextAction": "Download the locked Random-TP bytes and both checkpoints into an isolated cache, then verify every digest before deserialization.",
-      "acceptanceTest": "The cache verifier confirms exact byte lengths and SHA-256 values; Random-TP parses as 693 frames, 11,088 atoms, 89 elements, with no skipped record."
+      "summary": "固定资产已在受保护 Linux 验证；未完成全基准",
+      "evidence": ["Protected-main run 33221777626 hash-checked the locked Random-TP and both checkpoints, parsed all 693 frames / 11,088 atoms / 89 elements, and produced a bounded MatterSim smoke artifact; the dataset and model evidence remain non-promotional."],
+      "evidenceArtifacts": ["evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "schemas/atomistic-reproduction.schema.json", "scripts/validate-atomistic-plan.mjs", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"],
+      "nextAction": "Complete the MACE bootstrap, then independently verify full 693-record artifacts from both locked checkpoints.",
+      "acceptanceTest": "Both protected Linux jobs verify all asset bytes, emit complete per-ID prediction sets, and retain exact package, lock, runner, container and artifact digests."
     },
     {
       "id": "atomistic", "label": "Atomistic physics", "displayLabel": "原子层物理", "weight": 12, "score": 1, "promotionFloor": 1,
-      "summary": "LJ 求解器 + 守恒回归",
-      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests."],
-      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts"],
-      "nextAction": "Execute the pinned MatterSim 5M active model and MACE-MPA-0 challenger on the complete Random-TP benchmark.",
+      "summary": "LJ 回归 + MatterSim 10 帧隔离 smoke",
+      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests; protected-main MatterSim run 33221777626 also passed a 157-wheel offline build and ten-record checkpoint smoke with no reference labels in the prediction objects."],
+      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts", ".github/workflows/atomistic-bootstrap.yml", "docs/ATOMISTIC_REPRODUCTION.md", "evaluation/reviews/2026-08-29-r4-bootstrap-review.md"],
+      "nextAction": "Pass the locked MACE smoke, then execute both models on all 693 Random-TP records under the independent metric and receipt protocol.",
       "acceptanceTest": "Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests."
     },
     {
@@ -94,7 +94,7 @@
       "id": "safety", "label": "Safety, license and governance", "displayLabel": "安全 / 许可 / 治理", "weight": 4, "score": 1, "promotionFloor": 1,
       "summary": "advisory-only + claim lint",
       "evidence": ["Visible toy-model boundary, claim lint, pinned package/model/data license catalogs, an explicit fail-closed UMA exclusion, a green-commit Cloudflare release guard, dependency audit and no control-output endpoint."],
-      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "evaluation/reviews/2026-08-29-r3-protocol-review.md", "scripts/evaluate.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml", ".github/workflows/sentinel-report.yml"],
+      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "evaluation/reviews/2026-08-29-r3-protocol-review.md", "scripts/evaluate.mjs", "scripts/evaluate-worker.mjs", "scripts/evaluate-launcher.test.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml", ".github/workflows/sentinel-report.yml"],
       "nextAction": "Generate a CycloneDX SBOM and freeze the remaining dataset legal bytes and attribution obligations.",
       "acceptanceTest": "Dependency, package, model, dataset and SBOM policy gates pass; unresolved legal bytes abstain and no direct control endpoint exists."
     }

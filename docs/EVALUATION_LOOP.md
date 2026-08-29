@@ -21,7 +21,7 @@ LLM agents interpret results and propose work; they do not replace numerical tes
 
 ## Per-change automation
 
-GitHub Actions runs installation, lint, deterministic solver tests, manifest validation, production build, dependency audit and Sentinel aggregation for every push and pull request. Each upstream step reports its outcome even after another step fails. Before aggregation, the workflow removes the checked-in report; an aggregation failure therefore fails CI and cannot reuse a stale PASS. A pull-request comment is published only when the separate reporter can authenticate and validate the fresh bounded report artifact. Sentinel hashes the exact Git-tracked plus non-ignored source set into a per-file manifest, records the CI commit, rebuilds the frontend, then uploads the JSON and Markdown evidence artifacts. Cloudflare release fetches remote `main`, requires its strict Sentinel check, downloads that exact CI report, compares the source manifest with the clean local checkout and rechecks remote `main` before deploy. Source manifests, report shape, discrete counts, score, verdict and gap text remain byte-exact, while local and CI gate maps must each match their exact expected status set. Only explicitly whitelisted continuous `verification.physics` scalars may differ across macOS and Linux by `max(1e-12, 0.2% of magnitude)`, and deployment remains blocked outside that IEEE-754 portability budget.
+GitHub Actions runs installation, lint, deterministic solver tests, manifest validation, production build, dependency audit and Sentinel aggregation for every push and pull request. Each upstream step reports its outcome even after another step fails. Before aggregation, the workflow removes the checked-in report; an aggregation failure therefore fails CI and cannot reuse a stale PASS. A pull-request comment is published only when the separate reporter can authenticate and validate the fresh bounded report artifact. Sentinel uses a two-stage evaluator: a built-in-only launcher captures the exact Git-tracked plus non-ignored source set into a private, regular-file-only tree, then a fresh worker loads every project module, plan, schema, ID manifest and comparator receipt from those frozen bytes. The same snapshot supplies policy inputs, evidence digests and the per-file source manifest. The launcher recaptures the active tree after the long physics run and publishes each worker report through an atomic rename only if every path, mode, length and digest still matches; symlinked or multiply linked source is rejected. In CI it also checks the source path set, raw blob bytes and executable mode against the exact `GITHUB_SHA` tree both before capture and before publication. Drift cannot turn mixed-version execution into a passing or commit-bound report. It records the CI commit, rebuilds the frontend, then uploads the JSON and Markdown evidence artifacts. Cloudflare release fetches remote `main`, requires its strict Sentinel check, downloads that exact CI report, compares the source manifest with the clean local checkout and rechecks remote `main` before deploy. Source manifests, report shape, discrete counts, score, verdict and gap text remain byte-exact, while local and CI gate maps must each match their exact expected status set. Only explicitly whitelisted continuous `verification.physics` scalars may differ across macOS and Linux by `max(1e-12, 0.2% of magnitude)`, and deployment remains blocked outside that IEEE-754 portability budget.
 
 The pull-request evaluator itself is read-only and can only upload a bounded
 report artifact. A separate default-branch `workflow_run` reporter owns the
@@ -30,6 +30,25 @@ ID, repository ID, event, run ID/attempt, head SHA, pull-request identity and
 artifact name; it never checks out or executes candidate code, and sanitizes
 mention syntax. This keeps a candidate-authored workflow diff from acquiring
 the writer token merely by changing its own job definition.
+
+The built-in-only launcher, the frozen worker plus its evaluator, policy and
+scientific module graph, and the workspace `node_modules` dependency tree form
+an explicit repository-controlled trusted computing base. The launcher's
+envelope checks bind publication to the frozen bytes and worker exit status;
+they do not independently recompute the scientific verdict or make a malicious
+worker trustworthy. CI requires its fresh install gate, captures
+`package-lock.json`, and the launcher removes `NODE_OPTIONS` and `NODE_PATH`
+before starting the worker. This repository-owned trust boundary cannot support
+an E4 claim or independent certification.
+
+The manifest boundary is explicit: project files may live only at the repository
+root or under `.github`, `.openai`, `app`, `atomistic`, `docs`, `evaluation`,
+`lib`, `public`, `schemas` and `scripts`. A regular tracked or non-ignored file
+outside those roots makes the launcher fail, so a new `components`, `src` or
+other build-input root must first be registered and reviewed. Git's safe
+trailing-slash marker for a separate untracked repository is ignored only when
+it is outside every declared source root; a nested repository inside a source
+root fails closed.
 
 The comparator registry pins source, claim owner, revision, evidence class, benchmark commit, checkpoint/data/runner digests and snapshot date. A stale registry blocks promotion. `CLAIM` never enters a numerical ranking; `AUDITABLE` only says public artifacts can be inspected; only local like-for-like `REPRODUCED` runs may become numerical baselines.
 

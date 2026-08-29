@@ -29,6 +29,7 @@ export function isProjectSourcePath(relativePath) {
     || relativePath.length < 1
     || relativePath.includes('\0')
     || relativePath.includes('\\')
+    || /[\u0000-\u001f\u007f]/.test(relativePath)
     || relativePath.startsWith('/')
     || relativePath.split('/').some((part) => part === '' || part === '.' || part === '..')) return false;
   return PROJECT_SOURCE_ROOT_FILES.has(relativePath)

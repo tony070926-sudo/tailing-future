@@ -1,382 +1,454 @@
-import { createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
-import { createReadStream } from 'node:fs';
-import { access, lstat, readdir, readFile, readlink, writeFile } from 'node:fs/promises';
-import path from 'node:path';
-import { performance } from 'node:perf_hooks';
-import Ajv2020 from 'ajv/dist/2020.js';
+import { createHash, randomUUID } from 'node:crypto';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { constants as fsConstants } from 'node:fs';
 import {
-  runThermochemicalVerification,
-  ThermochemicalWorld,
-} from '../lib/simulation/thermochemical-world.ts';
-import { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource } from './workflow-policy.mjs';
-import { validateComparatorEvidenceRegistry } from './comparator-evidence-policy.mjs';
-import { selectProjectSourceFiles } from './source-scope.mjs';
+  chmod,
+  lstat,
+  mkdir,
+  mkdtemp,
+  open,
+  realpath,
+  rename,
+  rm,
+  unlink,
+} from 'node:fs/promises';
+import path from 'node:path';
+
+const MAX_SOURCE_FILE_BYTES = 32 * 1024 * 1024;
+const MAX_SOURCE_SNAPSHOT_BYTES = 128 * 1024 * 1024;
+const MAX_REPORT_JSON_BYTES = 16 * 1024 * 1024;
+const MAX_REPORT_MARKDOWN_BYTES = 2 * 1024 * 1024;
+const SNAPSHOT_PREFIX = '.tailing-sentinel-';
+const TRUSTED_GIT = '/usr/bin/git';
+const GIT_ENVIRONMENT = Object.freeze({
+  GIT_CONFIG_GLOBAL: '/dev/null',
+  GIT_CONFIG_NOSYSTEM: '1',
+  GIT_CONFIG_SYSTEM: '/dev/null',
+  GIT_LITERAL_PATHSPECS: '1',
+  GIT_NO_REPLACE_OBJECTS: '1',
+  LANG: 'C',
+  LC_ALL: 'C',
+  PATH: '/usr/bin:/bin',
+});
+const PROJECT_SOURCE_DIRECTORIES = Object.freeze([
+  '.github/',
+  '.openai/',
+  'app/',
+  'atomistic/',
+  'docs/',
+  'evaluation/',
+  'lib/',
+  'public/',
+  'schemas/',
+  'scripts/',
+]);
+const PROJECT_SOURCE_ROOT_FILES = new Set([
+  '.dockerignore',
+  '.gitignore',
+  'README.md',
+  'eslint.config.mjs',
+  'next.config.ts',
+  'package-lock.json',
+  'package.json',
+  'tsconfig.json',
+  'vite.config.ts',
+  'vitest.config.ts',
+]);
 
 const root = process.cwd();
-const readJson = async (relativePath) => JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
-const scorecard = await readJson('evaluation/current-scorecard.json');
-const registry = await readJson('evaluation/baselines/registry.json');
-const worldSchema = await readJson('schemas/world-state.schema.json');
-const actionSchema = await readJson('schemas/action.schema.json');
-const atomisticPlan = await readJson('evaluation/atomistic/reproduction-plan.json');
-const atomisticPlanSchema = await readJson('schemas/atomistic-reproduction.schema.json');
-const datasetCatalog = await readJson('evaluation/data/datasets.json');
-const evaluationSchema = await readJson('schemas/evaluation-report.schema.json');
-const hardGateFailures = [...scorecard.hardGateFailures];
+await clearPublishedReports(root);
+const rawPaths = gitPaths(root);
+const sourceFiles = selectProjectSourceFiles(rawPaths);
+const captured = await captureSource(root, sourceFiles);
+assertCiCommitBinding(root, sourceFiles, captured);
+const sourceManifest = Object.fromEntries(sourceFiles.map((relativePath) => [relativePath, captured.get(relativePath).digest]));
+const artifactDigest = computeArtifactDigest(sourceFiles, captured);
+let snapshotRoot;
 
-const upstreamGates = Object.fromEntries(
-  ['install', 'lint', 'typecheck', 'test', 'atomistic_manifest', 'build', 'audit'].map((name) => [name, process.env[`TAILING_${name.toUpperCase()}_STATUS`] ?? 'not-reported-local']),
-);
-for (const [name, status] of Object.entries(upstreamGates)) {
-  if (status !== 'not-reported-local' && status !== 'success') hardGateFailures.push(`Upstream ${name} gate ended with ${status}.`);
-}
-
-const totalWeight = scorecard.dimensions.reduce((sum, dimension) => sum + dimension.weight, 0);
-if (totalWeight !== 100) hardGateFailures.push(`Scorecard weights must total 100; received ${totalWeight}.`);
-
-const evidenceManifest = {};
-for (const dimension of scorecard.dimensions) {
-  if (!Number.isInteger(dimension.score) || dimension.score < 0 || dimension.score > 4) hardGateFailures.push(`${dimension.id}: evidence score must be an integer from 0 to 4.`);
-  if (!Number.isInteger(dimension.promotionFloor) || dimension.promotionFloor < 0 || dimension.promotionFloor > 4) hardGateFailures.push(`${dimension.id}: promotion floor must be an integer from 0 to 4.`);
-  if (dimension.score < dimension.promotionFloor) hardGateFailures.push(`${dimension.id}: E${dimension.score} is below the candidate promotion floor E${dimension.promotionFloor}.`);
-  if (dimension.score > 0 && (!Array.isArray(dimension.evidence) || dimension.evidence.length === 0)) hardGateFailures.push(`${dimension.id}: non-zero score has no evidence statement.`);
-  if (dimension.score > 0 && (!Array.isArray(dimension.evidenceArtifacts) || dimension.evidenceArtifacts.length === 0)) hardGateFailures.push(`${dimension.id}: non-zero score has no executable evidence artifact.`);
-  if (!dimension.acceptanceTest) hardGateFailures.push(`${dimension.id}: next iteration lacks an acceptance test.`);
-  for (const relativePath of dimension.evidenceArtifacts ?? []) {
-    try {
-      await access(path.join(root, relativePath));
-      if (!(relativePath in evidenceManifest)) evidenceManifest[relativePath] = await fileDigest(relativePath);
-    } catch {
-      hardGateFailures.push(`${dimension.id}: evidence artifact is missing: ${relativePath}.`);
-    }
-  }
-}
-
-if (registry.snapshotDate !== scorecard.baselineSnapshotDate) hardGateFailures.push('Comparator registry and candidate scorecard use different snapshot dates.');
-for (const comparator of registry.comparators) {
-  for (const key of ['id', 'name', 'scope', 'source', 'revision', 'evidenceClass', 'claimOwner', 'comparable', 'reason']) {
-    if (!(key in comparator) || comparator[key] === '') hardGateFailures.push(`${comparator.id ?? 'unknown comparator'}: missing ${key}.`);
-  }
-  for (const key of ['sourceCommit', 'sourceDigest', 'benchmarkCommit', 'checkpointDigest', 'datasetDigest', 'runnerDigest']) {
-    if (!(key in comparator)) hardGateFailures.push(`${comparator.id ?? 'unknown comparator'}: missing explicit ${key} field.`);
-  }
-  if (!/^sha256:[0-9a-f]{64}$/.test(comparator.sourceDigest ?? '')) hardGateFailures.push(`${comparator.id}: sourceDigest must be a concrete SHA-256 digest.`);
-  for (const key of ['sourceCommit', 'benchmarkCommit']) {
-    if (comparator[key] !== null && !/^[0-9a-f]{40}$/.test(comparator[key])) hardGateFailures.push(`${comparator.id}: ${key} must be null or a full Git commit.`);
-  }
-  for (const key of ['checkpointDigest', 'datasetDigest', 'runnerDigest']) {
-    if (comparator[key] !== null && !/^sha256:[0-9a-f]{64}$/.test(comparator[key])) hardGateFailures.push(`${comparator.id}: ${key} must be null or a concrete SHA-256 digest.`);
-  }
-  if (!['claim', 'auditable', 'reference', 'reproduced'].includes(comparator.evidenceClass)) hardGateFailures.push(`${comparator.id}: invalid evidence class.`);
-  if (comparator.evidenceClass !== 'reproduced' && comparator.comparable) hardGateFailures.push(`${comparator.id}: only locally reproduced evidence can enter numeric ranking.`);
-  if (comparator.evidenceClass === 'reproduced' && (!comparator.runnerDigest || !comparator.datasetDigest)) hardGateFailures.push(`${comparator.id}: reproduced evidence lacks runner or dataset digest.`);
-}
-const comparatorReceiptFailures = await validateComparatorEvidenceRegistry(registry, { root });
-hardGateFailures.push(...comparatorReceiptFailures);
-
-const snapshotAgeDays = Math.floor((Date.now() - Date.parse(`${registry.snapshotDate}T00:00:00Z`)) / 86_400_000);
-if (!Number.isFinite(snapshotAgeDays) || snapshotAgeDays < 0) hardGateFailures.push('Comparator registry snapshot date is invalid or in the future.');
-if (snapshotAgeDays > 45) hardGateFailures.push(`Comparator registry is ${snapshotAgeDays} days old; refresh and review it before promotion.`);
-
-const verificationStarted = performance.now();
-let physicsVerification = null;
 try {
-  physicsVerification = runThermochemicalVerification({ profile: 'pr' });
-  const checks = [
-    ['Fourier heat-mode relative L2 error', physicsVerification.heatModeRelativeL2Error < 2e-3, physicsVerification.heatModeRelativeL2Error],
-    ['Periodic heat-field energy residual', Math.abs(physicsVerification.heatEnergyResidual) < 5e-12, physicsVerification.heatEnergyResidual],
-    ['Two-dimensional Fourier convergence order', physicsVerification.fourierMinimumObservedOrder >= 1.8, physicsVerification.fourierMinimumObservedOrder],
-    ['Two-dimensional Fourier energy closure', physicsVerification.fourierMaximumEnergyResidual <= 5e-12, physicsVerification.fourierMaximumEnergyResidual],
-    ['Grid-independent total heat capacity', physicsVerification.gridHeatCapacitySpread < 1e-12, physicsVerification.gridHeatCapacitySpread],
-    ['Grid-independent uniform field energy', physicsVerification.gridEnergySpread < 1e-12, physicsVerification.gridEnergySpread],
-    ['Analytic exchange matrix difference decay', physicsVerification.analyticExchangeMatrix.maximumDifferenceRatioError <= 2e-12, physicsVerification.analyticExchangeMatrix.maximumDifferenceRatioError],
-    ['Analytic exchange semigroup', physicsVerification.analyticExchangeMatrix.maximumSemigroupError <= 2e-12, physicsVerification.analyticExchangeMatrix.maximumSemigroupError],
-    ['Forced A-to-B reaction settlement', physicsVerification.forcedReactionConsumedA === 1 && physicsVerification.forcedReactionProducedB === 1, `${physicsVerification.forcedReactionConsumedA}/${physicsVerification.forcedReactionProducedB}`],
-    ['Forced reaction energy closure', physicsVerification.forcedReactionClosureResidual <= 1e-12, physicsVerification.forcedReactionClosureResidual],
-    ['Closed coupled-world relative energy residual', physicsVerification.coupledEnergyResidual < 2e-3, physicsVerification.coupledEnergyResidual],
-    ['Closed coupled-world momentum residual', physicsVerification.momentumResidual < 1e-10, physicsVerification.momentumResidual],
-    ['Raw particle momentum residual', physicsVerification.rawParticleMomentumResidual < 1e-10, physicsVerification.rawParticleMomentumResidual],
-    ['Species conservation residual', physicsVerification.speciesResidual === 0, physicsVerification.speciesResidual],
-    ['Mass conservation residual', physicsVerification.massResidual === 0, physicsVerification.massResidual],
-    ['Non-trivial interface exchange', physicsVerification.interfaceEnergyMoved > 0, physicsVerification.interfaceEnergyMoved],
-    ['Coupling particle coverage', physicsVerification.couplingCoverage >= 0.9, physicsVerification.couplingCoverage],
-    ['Trajectory minimum coupling coverage', physicsVerification.minimumCouplingCoverage >= 0.9, physicsVerification.minimumCouplingCoverage],
-    ['Non-trivial reaction trajectory', physicsVerification.reactionCount > 0, physicsVerification.reactionCount],
-    ['Heat-operator closure residual', physicsVerification.heatClosureResidual < 1e-8, physicsVerification.heatClosureResidual],
-    ['Particle-field exchange closure residual', physicsVerification.exchangeClosureResidual < 1e-8, physicsVerification.exchangeClosureResidual],
-    ['Reaction closure residual', physicsVerification.reactionClosureResidual < 1e-10, physicsVerification.reactionClosureResidual],
-    ['Maximum operator closure relative residual', physicsVerification.maximumOperatorClosureRelative <= 1e-12, physicsVerification.maximumOperatorClosureRelative],
-    ['Heat cumulative closure relative residual', physicsVerification.heatClosureRelative <= 1e-10, physicsVerification.heatClosureRelative],
-    ['Exchange cumulative closure relative residual', physicsVerification.exchangeClosureRelative <= 1e-10, physicsVerification.exchangeClosureRelative],
-    ['Reaction cumulative closure relative residual', physicsVerification.reactionClosureRelative <= 1e-10, physicsVerification.reactionClosureRelative],
-    ['Deterministic full-state replay', physicsVerification.deterministicReplay === true, physicsVerification.deterministicReplay],
-    ['PR ensemble size and horizon', physicsVerification.ensemble.seeds.length === 8 && physicsVerification.ensemble.horizonSteps === 5000, `${physicsVerification.ensemble.seeds.length}x${physicsVerification.ensemble.horizonSteps}`],
-    ['PR ensemble p95 energy tail', physicsVerification.ensemble.energyResidualTail.p95 <= 3e-4, physicsVerification.ensemble.energyResidualTail.p95],
-    ['PR ensemble maximum energy tail', physicsVerification.ensemble.energyResidualTail.maximum <= 5e-4, physicsVerification.ensemble.energyResidualTail.maximum],
-    ['PR ensemble momentum maximum', physicsVerification.ensemble.maximumMomentumResidual <= 1e-10, physicsVerification.ensemble.maximumMomentumResidual],
-    ['PR ensemble raw momentum maximum', physicsVerification.ensemble.maximumRawParticleMomentumResidual <= 1e-10, physicsVerification.ensemble.maximumRawParticleMomentumResidual],
-    ['PR ensemble minimum coverage', physicsVerification.ensemble.minimumCouplingCoverage >= 0.9, physicsVerification.ensemble.minimumCouplingCoverage],
-    ['PR ensemble deterministic continuations', physicsVerification.ensemble.deterministicContinuations === physicsVerification.ensemble.seeds.length, physicsVerification.ensemble.deterministicContinuations],
-    ['PR ensemble remains in domain', physicsVerification.ensemble.allInDomain === true, physicsVerification.ensemble.allInDomain],
-    ['Locked trajectory remains in domain', physicsVerification.inDomain === true, physicsVerification.inDomain],
-  ];
-  for (const [label, passed, value] of checks) if (!passed) hardGateFailures.push(`${label} failed with ${String(value)}.`);
-} catch (error) {
-  hardGateFailures.push(`Thermochemical verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
-}
-
-let schemaVerification = { world: false, action: false, actionMutationCorpus: false, runtimeActionSemantics: false, atomisticPlan: false, datasetCatalog: false, workflowPolicy: false, comparatorReceipts: false };
-try {
-  const ajv = new Ajv2020({ allErrors: true, allowUnionTypes: true });
-  const validateWorld = ajv.compile(worldSchema);
-  const validateAction = ajv.compile(actionSchema);
-  const validateAtomisticPlan = ajv.compile(atomisticPlanSchema);
-  const sample = new ThermochemicalWorld({ count: 64, gridWidth: 5, gridHeight: 3, seed: 20260828 });
-  sample.injectCentralHeatPulse(15);
-  const serialized = sample.serialize();
-  const invalidActions = [
-    { ...serialized.lastAction, kind: 'step', parameters: { deltaKelvin: -999, unknown: 'accepted' } },
-    { ...serialized.lastAction, kind: 'set_field_temperature', parameters: { temperatureKelvin: 181, externalEnergyReduced: 0 } },
-    { ...serialized.lastAction, kind: 'inject_heat_pulse', parameters: { deltaKelvin: 0, externalEnergyReduced: 0 } },
-    { ...serialized.lastAction, kind: 'branch', parameters: { fromStep: -1, branchOrdinal: 0 } },
-  ];
-  let runtimeActionSemantics = false;
-  const crossKindState = structuredClone(serialized);
-  crossKindState.lastAction = { ...crossKindState.lastAction, kind: 'step', parameters: { substeps: 1 } };
-  try {
-    ThermochemicalWorld.fromSerialized(crossKindState);
-  } catch (error) {
-    runtimeActionSemantics = error instanceof Error && error.message.includes('step action does not match its state transition');
-  }
-  const workflowFiles = (await collectDirectoryFiles(path.join(root, '.github', 'workflows'))).filter((file) => /\.ya?ml$/.test(file));
-  const dockerfiles = (await collectDirectoryFiles(path.join(root, 'atomistic', 'containers'))).filter((file) => /\.Dockerfile$/.test(file));
-  const workflowFailures = [];
-  for (const absolutePath of workflowFiles) {
-    const relativePath = path.relative(root, absolutePath);
-    workflowFailures.push(...inspectWorkflowSource(relativePath, await readFile(absolutePath, 'utf8')));
-  }
-  for (const absolutePath of dockerfiles) {
-    const relativePath = path.relative(root, absolutePath);
-    workflowFailures.push(...inspectDockerfileSource(relativePath, await readFile(absolutePath, 'utf8')));
-  }
-  workflowFailures.push(...inspectDockerignoreSource('.dockerignore', await readFile(path.join(root, '.dockerignore'), 'utf8')));
-  schemaVerification = {
-    world: validateWorld(serialized),
-    action: validateAction(serialized.lastAction),
-    actionMutationCorpus: invalidActions.every((action) => !validateAction(action)),
-    runtimeActionSemantics,
-    atomisticPlan: validateAtomisticPlan(atomisticPlan)
-      && atomisticPlan.status === 'planned-not-reproduced'
-      && atomisticPlan.models.length === 2
-      && new Set(atomisticPlan.models.map((model) => model.role)).size === 2
-      && atomisticPlan.models.every((model) => model.defaultAliasAllowed === false
-        && model.outputs.length === 3
-        && !/\/(?:main|master)(?:\/|$)/.test(model.sourceUrl)
-        && model.sourceUrl.includes(model.sourceCommit)
-        && model.package.url.endsWith(model.package.filename)
-        && model.package.cachePath.endsWith(model.package.filename)
-        && model.outOfScope.length >= 2)
-      && atomisticPlan.excludedDefaults.some((entry) => entry.id === 'facebook-uma'
-        && entry.revision === 'f611b917d9c68566bbbeccbb0aa0f7cad1696cb2'
-        && entry.gating === 'manual'
-        && entry.industrialDefaultAllowed === false
-        && entry.legalEvidence.some((evidence) => evidence.kind === 'acceptable-use-policy' && evidence.sha256 === null))
-      && atomisticPlan.benchmarks.some((benchmark) => benchmark.role === 'primary-like-for-like' && benchmark.artifact.frames === 693 && benchmark.artifact.atoms === 11088 && benchmark.artifact.elements === 89),
-    datasetCatalog: datasetCatalog.schemaVersion === 'tf.dataset-catalog/0.1'
-      && datasetCatalog.datasets.length >= 4
-      && datasetCatalog.datasets.every((dataset) => dataset.license && dataset.source?.startsWith('https://') && dataset.requiredProvenance?.length >= 4),
-    workflowPolicy: workflowFiles.length >= 2 && dockerfiles.length === 2 && workflowFailures.length === 0,
-    comparatorReceipts: comparatorReceiptFailures.length === 0,
+  snapshotRoot = await mkdtemp(path.join(root, SNAPSHOT_PREFIX));
+  await chmod(snapshotRoot, 0o700);
+  await materializeSnapshot(snapshotRoot, sourceFiles, captured);
+  const control = {
+    schemaVersion: 'tf.evaluator-snapshot/0.1',
+    rawPaths,
+    sourceFiles,
+    sourceManifest,
+    artifactDigest,
   };
-  if (!schemaVerification.world) hardGateFailures.push(`World-state schema validation failed: ${JSON.stringify(validateWorld.errors)}.`);
-  if (!schemaVerification.action) hardGateFailures.push(`Action schema validation failed: ${JSON.stringify(validateAction.errors)}.`);
-  if (!schemaVerification.actionMutationCorpus) hardGateFailures.push('Action schema accepted an invalid per-kind mutation.');
-  if (!schemaVerification.runtimeActionSemantics) hardGateFailures.push('Runtime action semantics accepted or misclassified a cross-kind mutation.');
-  if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors)}.`);
-  if (!schemaVerification.datasetCatalog) hardGateFailures.push('Dataset provenance and license catalog validation failed.');
-  if (!schemaVerification.workflowPolicy) hardGateFailures.push('Workflow and atomistic build policy coverage is incomplete.');
-  if (!schemaVerification.comparatorReceipts) hardGateFailures.push('Comparator receipt promotion policy rejected the registry.');
-  hardGateFailures.push(...workflowFailures);
+  await writeExclusive(path.join(snapshotRoot, '.tailing-sentinel-control.json'), Buffer.from(`${JSON.stringify(control)}\n`), 0o400);
+
+  const workerEnvironment = {
+    LANG: 'C',
+    LC_ALL: 'C',
+    TAILING_SENTINEL_SNAPSHOT: '1',
+  };
+  for (const name of [
+    'GITHUB_SHA',
+    'TAILING_INSTALL_STATUS',
+    'TAILING_LINT_STATUS',
+    'TAILING_TYPECHECK_STATUS',
+    'TAILING_TEST_STATUS',
+    'TAILING_ATOMISTIC_MANIFEST_STATUS',
+    'TAILING_BUILD_STATUS',
+    'TAILING_AUDIT_STATUS',
+  ]) if (process.env[name] !== undefined) workerEnvironment[name] = process.env[name];
+  const worker = spawnSync(process.execPath, [path.join(snapshotRoot, 'scripts', 'evaluate-worker.mjs')], {
+    cwd: snapshotRoot,
+    env: workerEnvironment,
+    stdio: 'inherit',
+    timeout: 10 * 60 * 1000,
+  });
+  if (worker.error) throw worker.error;
+  if (worker.signal) throw new Error(`Evaluator worker ended with signal ${worker.signal}.`);
+
+  const currentRawPaths = gitPaths(root, path.basename(snapshotRoot));
+  const currentSourceFiles = selectProjectSourceFiles(currentRawPaths);
+  const current = await captureSource(root, currentSourceFiles);
+  assertCiCommitBinding(root, currentSourceFiles, current);
+  const drift = describeDrift(sourceFiles, captured, currentSourceFiles, current);
+  if (drift) throw new Error(drift);
+
+  const reportJson = await readBoundedRegularFile(path.join(snapshotRoot, 'evaluation', 'latest-report.json'), MAX_REPORT_JSON_BYTES);
+  const reportMarkdown = await readBoundedRegularFile(path.join(snapshotRoot, 'evaluation', 'latest-report.md'), MAX_REPORT_MARKDOWN_BYTES);
+  validateWorkerReport(reportJson, reportMarkdown, sourceFiles, sourceManifest, artifactDigest, worker.status);
+  await publishReports(root, reportJson, reportMarkdown);
+  process.exitCode = worker.status ?? 1;
 } catch (error) {
-  hardGateFailures.push(`Schema verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
-}
-const verificationElapsedMs = performance.now() - verificationStarted;
-
-const claimFiles = ['app/page.tsx', 'app/layout.tsx', 'README.md'];
-const forbiddenClaims = [/industrial[- ]grade/i, /scientifically validated/i, /已达到.{0,8}SOTA/i, /工业级预测/, /真实材料预测/];
-for (const relativePath of claimFiles) {
-  let content = '';
-  try { content = await readFile(path.join(root, relativePath), 'utf8'); } catch { continue; }
-  for (const pattern of forbiddenClaims) if (pattern.test(content)) hardGateFailures.push(`${relativePath}: unsupported product claim matches ${pattern}.`);
-}
-
-const applicationFiles = await collectDirectoryFiles(path.join(root, 'app'));
-if (applicationFiles.some((file) => /[/\\]api[/\\].*(control|plc|dcs|sis)/i.test(file))) hardGateFailures.push('A direct industrial-control endpoint exists inside the public application.');
-
-const weightedScore = scorecard.dimensions.reduce((sum, dimension) => sum + dimension.weight * dimension.score / 4, 0);
-const gaps = scorecard.dimensions
-  .filter((dimension) => dimension.score < 3)
-  .map((dimension) => {
-    const severity = dimension.score < dimension.promotionFloor ? 'P0' : dimension.score === 0 ? 'P1' : dimension.score === 1 ? 'P1' : 'P2';
-    const roadmapBoost = ({ atomistic: 300, mesoscale: 200, process: 100 })[dimension.id] ?? 0;
-    return {
-      severity,
-      dimension: dimension.id,
-      evidence: dimension.evidence.length ? dimension.evidence.join('; ') : 'No executable evidence in the current candidate.',
-      recommendedChange: dimension.nextAction,
-      acceptanceTest: dimension.acceptanceTest,
-      priority: (4 - dimension.score) * dimension.weight + roadmapBoost + (severity === 'P0' ? 100 : 0),
-    };
-  })
-  .sort((left, right) => right.priority - left.priority)
-  .slice(0, 3)
-  .map(({ severity, dimension, evidence, recommendedChange, acceptanceTest }) => ({ severity, dimension, evidence, recommendedChange, acceptanceTest }));
-
-const sourceFiles = gitSourceFiles();
-const sourceManifest = {};
-const artifactDigest = createHash('sha256');
-for (const relativePath of sourceFiles) {
-  const absolutePath = path.join(root, relativePath);
-  const metadata = await lstat(absolutePath);
-  let digest;
-  let byteLength;
-  if (metadata.isSymbolicLink()) {
-    const target = await readlink(absolutePath);
-    const content = Buffer.from(`symlink:${target}`, 'utf8');
-    digest = createHash('sha256').update(content).digest('hex');
-    byteLength = content.length;
-  } else if (metadata.isFile()) {
-    digest = await streamFileDigest(absolutePath);
-    byteLength = metadata.size;
-  } else {
-    hardGateFailures.push(`Git source entry is not a regular file or symlink: ${relativePath}.`);
-    continue;
-  }
-  sourceManifest[relativePath] = `sha256:${digest}`;
-  artifactDigest.update(`${relativePath.length}:${relativePath}:${byteLength}:sha256:${digest}\n`);
-}
-
-const upstreamReported = Object.values(upstreamGates).every((status) => status === 'success');
-let verdict = hardGateFailures.length > 0 ? 'reject' : weightedScore >= 60 && upstreamReported ? 'accept' : 'conditional';
-const report = {
-  schemaVersion: 'tf.evaluation/0.2',
-  candidateVersion: scorecard.candidateVersion,
-  generatedAt: new Date().toISOString(),
-  sourceRevision: /^[0-9a-f]{40}$/.test(process.env.GITHUB_SHA ?? '') ? process.env.GITHUB_SHA : null,
-  baselineSnapshotDate: registry.snapshotDate,
-  artifactDigest: `sha256:${artifactDigest.digest('hex')}`,
-  sourceFileCount: sourceFiles.length,
-  sourceManifest,
-  runtime: { node: process.version, platform: process.platform, architecture: process.arch },
-  upstreamGates,
-  verification: {
-    physics: physicsVerification,
-    schemas: schemaVerification,
-    elapsedMs: Number(verificationElapsedMs.toFixed(2)),
-  },
-  evidenceManifest,
-  weightedScore: Number(weightedScore.toFixed(2)),
-  hardGateFailures,
-  dimensions: scorecard.dimensions,
-  comparators: registry.comparators,
-  excludedDefaults: atomisticPlan.excludedDefaults,
-  gaps,
-  verdict,
-};
-
-try {
-  const ajv = new Ajv2020({ allErrors: true, allowUnionTypes: true, validateFormats: false });
-  const validateReport = ajv.compile(evaluationSchema);
-  if (!validateReport(report)) {
-    hardGateFailures.push(`Evaluation-report schema validation failed: ${JSON.stringify(validateReport.errors)}.`);
-    verdict = 'reject';
-    report.verdict = verdict;
-  }
-} catch (error) {
-  hardGateFailures.push(`Evaluation-report schema verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
-  verdict = 'reject';
-  report.verdict = verdict;
-}
-
-const markdown = [
-  `# Tailing Sentinel — ${report.candidateVersion}`,
-  '',
-  `- Verdict: **${verdict.toUpperCase()}**`,
-  `- Evidence maturity: **${report.weightedScore.toFixed(2)} / 100** (not a SOTA score)`,
-  `- Comparator snapshot: **${report.baselineSnapshotDate}**`,
-  `- Evaluated revision: **${report.sourceRevision ?? 'local working tree'}**`,
-  `- Artifact: \`${report.artifactDigest}\` across ${report.sourceFileCount} source files`,
-  '',
-  '## Hard gates',
-  '',
-  ...(hardGateFailures.length ? hardGateFailures.map((failure) => `- FAIL — ${failure}`) : ['- PASS — executable R2 numerical, schema, manifest and promotion-floor gates passed.']),
-  '',
-  '## Executable verification',
-  '',
-  physicsVerification
-    ? `- Fourier L2: ${physicsVerification.heatModeRelativeL2Error.toExponential(3)}; minimum 2D order: ${physicsVerification.fourierMinimumObservedOrder.toFixed(3)}; ${physicsVerification.ensemble.seeds.length}×${physicsVerification.ensemble.horizonSteps} p95/max energy tail: ${physicsVerification.ensemble.energyResidualTail.p95.toExponential(3)} / ${physicsVerification.ensemble.energyResidualTail.maximum.toExponential(3)}.`
-    : '- Physics verification unavailable.',
-  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction plan / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (manifest only)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
-  `- Industrial default exclusions: ${atomisticPlan.excludedDefaults.map((entry) => `${entry.id} (${entry.gating}; industrialDefaultAllowed=${entry.industrialDefaultAllowed})`).join(', ')}.`,
-  '',
-  '## Next iteration gaps',
-  '',
-  ...gaps.flatMap((gap, index) => [
-    `${index + 1}. **${gap.severity} · ${gap.dimension}** — ${gap.recommendedChange}`,
-    `   - Evidence: ${gap.evidence}`,
-    `   - Acceptance: ${gap.acceptanceTest}`,
-  ]),
-  '',
-  '## Interpretation boundary',
-  '',
-  'This score measures evidence and engineering maturity only. CLAIM and AUDITABLE comparator records are not treated as locally reproduced numerical baselines. R2 is still a reduced-unit thermochemical verification world with a manifest-only atomistic plan, not a real-material, reactor or industrial-process predictor.',
-  '',
-].join('\n');
-
-await writeFile(path.join(root, 'evaluation/latest-report.json'), `${JSON.stringify(report, null, 2)}\n`);
-await writeFile(path.join(root, 'evaluation/latest-report.md'), markdown);
-
-console.log(`Tailing Sentinel: ${verdict.toUpperCase()} · ${report.weightedScore.toFixed(2)}/100 · ${gaps.length} next gaps`);
-if (hardGateFailures.length) {
-  for (const failure of hardGateFailures) console.error(`HARD GATE: ${failure}`);
+  console.error(`HARD GATE: ${error instanceof Error ? error.message : String(error)}`);
   process.exitCode = 1;
-}
-
-async function fileDigest(relativePath) {
-  const content = await readFile(path.join(root, relativePath));
-  return `sha256:${createHash('sha256').update(content).digest('hex')}`;
-}
-
-async function collectDirectoryFiles(directory) {
-  const excludedDirectories = new Set(['.git', '.next', '.playwright-cli', '.vinext', '.wrangler', 'dist', 'node_modules', 'output']);
-  const files = [];
-  let entries;
-  try { entries = await readdir(directory, { withFileTypes: true }); } catch { return files; }
-  for (const entry of entries) {
-    if (entry.isDirectory() && excludedDirectories.has(entry.name)) continue;
-    const absolutePath = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...await collectDirectoryFiles(absolutePath));
-      continue;
+} finally {
+  if (snapshotRoot) {
+    const expectedParent = `${path.resolve(root)}${path.sep}`;
+    const resolvedSnapshot = path.resolve(snapshotRoot);
+    if (!resolvedSnapshot.startsWith(expectedParent) || !path.basename(resolvedSnapshot).startsWith(SNAPSHOT_PREFIX)) {
+      throw new Error('Refusing to clean an invalid evaluator snapshot path.');
     }
-    if (!entry.isFile()) continue;
-    files.push(absolutePath);
+    await rm(resolvedSnapshot, { force: true, recursive: true });
   }
-  return files.sort();
 }
 
-function gitSourceFiles() {
-  const output = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
-    cwd: root,
+function gitPaths(repositoryRoot, privateSnapshotDirectory) {
+  const output = execFileSync(TRUSTED_GIT, ['-c', 'core.excludesFile=/dev/null', 'ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
+    cwd: repositoryRoot,
     encoding: 'utf8',
+    env: GIT_ENVIRONMENT,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
-  return selectProjectSourceFiles(output.split('\0').filter(Boolean));
+  const records = output.split('\0').filter(Boolean);
+  if (records.length > 4096 || new Set(records).size !== records.length) {
+    throw new Error('Git source path inventory contains a duplicate, malformed or platform-ambiguous path.');
+  }
+  const paths = [];
+  for (const record of records) {
+    if (privateSnapshotDirectory
+      && (record === `${privateSnapshotDirectory}/` || record.startsWith(`${privateSnapshotDirectory}/`))) continue;
+    // Git represents an adjacent, untracked repository as a trailing-slash
+    // directory marker. Only a safe marker outside every declared source root
+    // is adjacent; a marker inside the project would conceal build inputs.
+    if (record.endsWith('/')) {
+      const directory = record.slice(0, -1);
+      if (!isSafeRepositoryPath(directory) || isPotentialProjectSourceDirectory(directory)) {
+        throw new Error('Git source path inventory contains a duplicate, malformed or platform-ambiguous path.');
+      }
+      continue;
+    }
+    if (!isSafeRepositoryPath(record)) {
+      throw new Error('Git source path inventory contains a duplicate, malformed or platform-ambiguous path.');
+    }
+    if (!isPotentialProjectSourcePath(record)) {
+      throw new Error(`Git file is outside the declared project source roots: ${record}.`);
+    }
+    paths.push(record);
+  }
+  return paths;
 }
 
-async function streamFileDigest(absolutePath) {
+function isPotentialProjectSourcePath(relativePath) {
+  return typeof relativePath === 'string'
+    && (PROJECT_SOURCE_ROOT_FILES.has(relativePath)
+      || !relativePath.includes('/')
+      || PROJECT_SOURCE_DIRECTORIES.some((prefix) => relativePath.startsWith(prefix)));
+}
+
+function isPotentialProjectSourceDirectory(relativePath) {
+  return PROJECT_SOURCE_DIRECTORIES.some((prefix) => relativePath === prefix.slice(0, -1) || relativePath.startsWith(prefix));
+}
+
+function assertCiCommitBinding(repositoryRoot, currentSourceFiles, currentEntries) {
+  const revision = process.env.GITHUB_SHA;
+  if (revision === undefined) return;
+  if (!/^[0-9a-f]{40}$/.test(revision)) throw new Error('GITHUB_SHA is not one full lowercase commit ID.');
+  const revisionType = execFileSync(TRUSTED_GIT, ['cat-file', '-t', revision], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+    env: GIT_ENVIRONMENT,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim();
+  if (revisionType !== 'commit') throw new Error(`GITHUB_SHA ${revision} is not a commit object.`);
+  const treeOutput = execFileSync(TRUSTED_GIT, ['ls-tree', '-r', '-z', '--full-tree', revision], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+    env: GIT_ENVIRONMENT,
+    maxBuffer: 16 * 1024 * 1024,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  const tree = new Map();
+  for (const record of treeOutput.split('\0').filter(Boolean)) {
+    const separator = record.indexOf('\t');
+    const header = separator < 0 ? [] : record.slice(0, separator).split(' ');
+    const relativePath = separator < 0 ? '' : record.slice(separator + 1);
+    if (header.length !== 3 || !/^[0-7]{6}$/.test(header[0]) || !/^[0-9a-f]{40,64}$/.test(header[2]) || !isSafeRepositoryPath(relativePath)) {
+      throw new Error(`GITHUB_SHA ${revision} has an invalid source-tree entry: ${relativePath || '<unparsed>'}.`);
+    }
+    if (isProjectSourcePath(relativePath)) tree.set(relativePath, { mode: header[0], objectId: header[2], type: header[1] });
+  }
+  const committedSourceFiles = selectProjectSourceFiles([...tree.keys()]);
+  if (JSON.stringify(committedSourceFiles) !== JSON.stringify(currentSourceFiles)) {
+    throw new Error(`Evaluator source path set is not bound to GITHUB_SHA ${revision}.`);
+  }
+  for (const relativePath of currentSourceFiles) {
+    const committed = tree.get(relativePath);
+    const current = currentEntries.get(relativePath);
+    if (!committed || committed.type !== 'blob' || !['100644', '100755'].includes(committed.mode)) {
+      throw new Error(`GITHUB_SHA ${revision} source is not a regular executable or non-executable blob: ${relativePath}.`);
+    }
+    const committedBytes = execFileSync(TRUSTED_GIT, ['cat-file', 'blob', committed.objectId], {
+      cwd: repositoryRoot,
+      encoding: 'buffer',
+      env: GIT_ENVIRONMENT,
+      maxBuffer: MAX_SOURCE_FILE_BYTES + 1,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const committedDigest = `sha256:${createHash('sha256').update(committedBytes).digest('hex')}`;
+    const currentExecutable = (current.mode & 0o111) !== 0;
+    if (committedBytes.length !== current.byteLength
+      || committedDigest !== current.digest
+      || currentExecutable !== (committed.mode === '100755')) {
+      throw new Error(`Evaluator raw source blob or executable mode is not bound to GITHUB_SHA ${revision}: ${relativePath}.`);
+    }
+  }
+}
+
+function isProjectSourcePath(relativePath) {
+  if (!isSafeRepositoryPath(relativePath)) return false;
+  return PROJECT_SOURCE_ROOT_FILES.has(relativePath)
+    || !relativePath.includes('/')
+    || PROJECT_SOURCE_DIRECTORIES.some((prefix) => relativePath.startsWith(prefix));
+}
+
+function isSafeRepositoryPath(relativePath) {
+  return typeof relativePath === 'string'
+    && relativePath.length > 0
+    && !relativePath.includes('\\')
+    && !/[\u0000-\u001f\u007f]/.test(relativePath)
+    && !path.isAbsolute(relativePath)
+    && relativePath.split('/').every((part) => part !== '' && part !== '.' && part !== '..');
+}
+
+function selectProjectSourceFiles(relativePaths) {
+  return [...new Set(relativePaths.filter(isProjectSourcePath))]
+    .filter((relativePath) => relativePath !== 'evaluation/latest-report.json'
+      && relativePath !== 'evaluation/latest-report.md')
+    .sort();
+}
+
+function sameIdentity(left, right) {
+  return left.dev === right.dev
+    && left.ino === right.ino
+    && left.mode === right.mode
+    && left.nlink === right.nlink
+    && left.size === right.size
+    && left.mtimeNs === right.mtimeNs
+    && left.ctimeNs === right.ctimeNs;
+}
+
+async function captureSource(repositoryRoot, relativePaths) {
+  const entries = new Map();
+  let totalBytes = 0;
+  const canonicalRoot = await realpath(repositoryRoot);
+  for (const relativePath of relativePaths) {
+    const absolutePath = path.join(repositoryRoot, relativePath);
+    const before = await lstat(absolutePath, { bigint: true });
+    if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n) {
+      throw new Error(`Project source must be one regular non-symlink file: ${relativePath}.`);
+    }
+    if (before.size > BigInt(MAX_SOURCE_FILE_BYTES)) throw new Error(`Project source exceeds the per-file limit: ${relativePath}.`);
+    const expectedCanonicalPath = path.join(canonicalRoot, ...relativePath.split('/'));
+    if (await realpath(absolutePath) !== expectedCanonicalPath) throw new Error(`Project source crosses a symlink boundary: ${relativePath}.`);
+    const handle = await open(absolutePath, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+    try {
+      const opened = await handle.stat({ bigint: true });
+      if (!sameIdentity(before, opened)) throw new Error(`Project source changed before capture: ${relativePath}.`);
+      const content = await readExactFile(handle, Number(before.size), `Project source ${relativePath}`);
+      const after = await handle.stat({ bigint: true });
+      if (!sameIdentity(before, after) || BigInt(content.length) !== before.size) {
+        throw new Error(`Project source changed during capture: ${relativePath}.`);
+      }
+      if (await realpath(absolutePath) !== expectedCanonicalPath) throw new Error(`Project source crossed a symlink boundary during capture: ${relativePath}.`);
+      totalBytes += content.length;
+      if (totalBytes > MAX_SOURCE_SNAPSHOT_BYTES) throw new Error('Project source exceeds the total snapshot limit.');
+      entries.set(relativePath, {
+        byteLength: content.length,
+        content,
+        digest: `sha256:${createHash('sha256').update(content).digest('hex')}`,
+        mode: Number(before.mode & 0o777n),
+      });
+    } finally {
+      await handle.close();
+    }
+  }
+  return entries;
+}
+
+function computeArtifactDigest(relativePaths, entries) {
   const digest = createHash('sha256');
-  for await (const chunk of createReadStream(absolutePath)) digest.update(chunk);
-  return digest.digest('hex');
+  for (const relativePath of relativePaths) {
+    const entry = entries.get(relativePath);
+    digest.update(`${relativePath.length}:${relativePath}:${entry.byteLength}:${entry.digest}\n`);
+  }
+  return `sha256:${digest.digest('hex')}`;
+}
+
+async function materializeSnapshot(destinationRoot, relativePaths, entries) {
+  for (const relativePath of relativePaths) {
+    const destination = path.join(destinationRoot, relativePath);
+    await mkdir(path.dirname(destination), { mode: 0o700, recursive: true });
+    await writeExclusive(destination, entries.get(relativePath).content, 0o400);
+  }
+}
+
+async function writeExclusive(destination, content, finalMode) {
+  const handle = await open(destination, fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | (fsConstants.O_NOFOLLOW ?? 0), 0o600);
+  try {
+    await handle.writeFile(content);
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+  await chmod(destination, finalMode);
+}
+
+function describeDrift(expectedPaths, expected, actualPaths, actual) {
+  const expectedSet = new Set(expectedPaths);
+  const actualSet = new Set(actualPaths);
+  const added = actualPaths.filter((relativePath) => !expectedSet.has(relativePath));
+  const removed = expectedPaths.filter((relativePath) => !actualSet.has(relativePath));
+  const changed = expectedPaths.filter((relativePath) => {
+    const current = actual.get(relativePath);
+    const prior = expected.get(relativePath);
+    return current && (current.digest !== prior.digest || current.byteLength !== prior.byteLength || current.mode !== prior.mode);
+  });
+  const sections = [];
+  for (const [label, values] of [['added', added], ['removed', removed], ['changed', changed]]) {
+    if (values.length) sections.push(`${label}=[${values.slice(0, 8).join(', ')}${values.length > 8 ? `, +${values.length - 8} more` : ''}]`);
+  }
+  return sections.length ? `Project source changed during frozen evaluation: ${sections.join('; ')}.` : null;
+}
+
+async function readBoundedRegularFile(absolutePath, maximumBytes) {
+  const before = await lstat(absolutePath, { bigint: true });
+  if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n || before.size < 1n || before.size > BigInt(maximumBytes)) {
+    throw new Error(`Evaluator report is missing, unsafe or outside its size limit: ${path.basename(absolutePath)}.`);
+  }
+  const handle = await open(absolutePath, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+  try {
+    const opened = await handle.stat({ bigint: true });
+    if (!sameIdentity(before, opened)) throw new Error(`Evaluator report changed before read: ${path.basename(absolutePath)}.`);
+    const content = await readExactFile(handle, Number(before.size), `Evaluator report ${path.basename(absolutePath)}`);
+    const after = await handle.stat({ bigint: true });
+    if (!sameIdentity(before, after) || BigInt(content.length) !== before.size) throw new Error(`Evaluator report changed during read: ${path.basename(absolutePath)}.`);
+    return content;
+  } finally {
+    await handle.close();
+  }
+}
+
+async function readExactFile(handle, expectedBytes, label) {
+  const content = Buffer.allocUnsafe(expectedBytes);
+  let offset = 0;
+  while (offset < expectedBytes) {
+    const { bytesRead } = await handle.read(content, offset, expectedBytes - offset, offset);
+    if (bytesRead === 0) throw new Error(`${label} became shorter during its bounded read.`);
+    offset += bytesRead;
+  }
+  const probe = Buffer.allocUnsafe(1);
+  if ((await handle.read(probe, 0, 1, expectedBytes)).bytesRead !== 0) {
+    throw new Error(`${label} grew during its bounded read.`);
+  }
+  return content;
+}
+
+function validateWorkerReport(reportJson, reportMarkdown, relativePaths, manifest, digest, workerStatus) {
+  let report;
+  try {
+    report = JSON.parse(reportJson.toString('utf8'));
+  } catch {
+    throw new Error('Evaluator worker produced malformed JSON.');
+  }
+  if (report.artifactDigest !== digest
+    || report.sourceFileCount !== relativePaths.length
+    || JSON.stringify(report.sourceManifest) !== JSON.stringify(manifest)
+    || report.sourceRevision !== (process.env.GITHUB_SHA ?? null)) {
+    throw new Error('Evaluator worker report is not bound to the frozen source snapshot.');
+  }
+  if (!Array.isArray(report.hardGateFailures) || !['accept', 'conditional', 'reject'].includes(report.verdict)) {
+    throw new Error('Evaluator worker report has an invalid verdict contract.');
+  }
+  const successful = workerStatus === 0 && report.hardGateFailures.length === 0 && report.verdict !== 'reject';
+  const rejected = Number.isInteger(workerStatus) && workerStatus !== 0 && report.hardGateFailures.length > 0 && report.verdict === 'reject';
+  if (!successful && !rejected) throw new Error(`Evaluator worker exit/report mismatch (${String(workerStatus)} / ${String(report.verdict)}).`);
+  const markdown = reportMarkdown.toString('utf8');
+  if (!markdown.includes(`Verdict: **${report.verdict.toUpperCase()}**`) || !markdown.includes(report.artifactDigest)) {
+    throw new Error('Evaluator Markdown is not bound to the JSON verdict and artifact.');
+  }
+}
+
+async function publishReports(repositoryRoot, reportJson, reportMarkdown) {
+  const evaluationDirectory = await safeEvaluationDirectory(repositoryRoot);
+  for (const name of ['latest-report.json', 'latest-report.md']) {
+    const target = path.join(evaluationDirectory, name);
+    try {
+      const metadata = await lstat(target);
+      if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1) throw new Error(`${name} is not one regular output file.`);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+    }
+  }
+  const token = randomUUID();
+  const jsonTemporary = path.join(evaluationDirectory, `.latest-report-${token}.json.tmp`);
+  const markdownTemporary = path.join(evaluationDirectory, `.latest-report-${token}.md.tmp`);
+  try {
+    await writeExclusive(jsonTemporary, reportJson, 0o600);
+    await writeExclusive(markdownTemporary, reportMarkdown, 0o600);
+    await rename(markdownTemporary, path.join(evaluationDirectory, 'latest-report.md'));
+    await rename(jsonTemporary, path.join(evaluationDirectory, 'latest-report.json'));
+  } finally {
+    await Promise.all([
+      rm(jsonTemporary, { force: true }),
+      rm(markdownTemporary, { force: true }),
+    ]);
+  }
+}
+
+async function clearPublishedReports(repositoryRoot) {
+  const evaluationDirectory = await safeEvaluationDirectory(repositoryRoot);
+  for (const name of ['latest-report.json', 'latest-report.md']) {
+    const target = path.join(evaluationDirectory, name);
+    try {
+      const metadata = await lstat(target);
+      if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1) throw new Error(`${name} is not one regular output file.`);
+      await unlink(target);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+    }
+  }
+}
+
+async function safeEvaluationDirectory(repositoryRoot) {
+  const canonicalRoot = await realpath(repositoryRoot);
+  const evaluationDirectory = path.join(repositoryRoot, 'evaluation');
+  const canonicalEvaluation = await realpath(evaluationDirectory);
+  if (canonicalEvaluation !== path.join(canonicalRoot, 'evaluation')) throw new Error('Evaluation output directory crosses a symlink boundary.');
+  return evaluationDirectory;
 }
