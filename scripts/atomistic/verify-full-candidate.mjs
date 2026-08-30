@@ -17,7 +17,7 @@ import {
 
 export { FULL_CANDIDATE_PLAN_PATH };
 export const FULL_CANDIDATE_PLAN_DIGEST = FULL_CANDIDATE_PLAN_RAW_DIGEST;
-export const FULL_CANDIDATE_RECEIPT_SCHEMA_VERSION = 'tf.atomistic-full-candidate-receipt/0.1';
+export const FULL_CANDIDATE_RECEIPT_SCHEMA_VERSION = 'tf.atomistic-full-candidate-receipt/0.2';
 export const FULL_CANDIDATE_RECEIPT_SCHEMA_DIGEST = FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST;
 export const MAX_FULL_PREDICTION_BYTES = 8 * 1024 * 1024;
 
@@ -33,19 +33,25 @@ const DIGEST_PATTERN = /^sha256:[0-9a-f]{64}$/;
 const SHA_PATTERN = /^[0-9a-f]{40}$/;
 const TIMESTAMP_PATTERN = /^20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?Z$/;
 const PREDICTION_FILE_PATH = 'predictions/predictions.jsonl';
-const STRUCTURE_BUNDLE_FILE_PATH = 'structures/structures.jsonl';
 const STRUCTURE_MANIFEST_FILE_PATH = 'manifests/structures.manifest.json';
-const EXPECTED_ARTIFACT_PATHS = Object.freeze([
+const EXPECTED_PRODUCER_SCIENTIFIC_PAYLOAD_PATHS = Object.freeze([
   STRUCTURE_MANIFEST_FILE_PATH,
   PREDICTION_FILE_PATH,
-  STRUCTURE_BUNDLE_FILE_PATH,
 ]);
-const FORBIDDEN_ARTIFACT_PATH = /(?:^|\/)(?:reference|labels?|metrics?|targets?|ground[-_]?truth|receipts?|attestations?)(?:[./_-]|$)/i;
+const MAX_RETAINED_PAYLOAD_FILE_OBSERVATIONS = 32;
+const MAX_RECEIPT_OBSERVED_PAYLOAD_FILES = 100_000;
+const MAX_AUTHORITATIVE_PAYLOAD_FILES = 32;
+const MAX_AUTHORITATIVE_PAYLOAD_FILE_BYTES = 16 * 1024 * 1024;
+const MAX_AUTHORITATIVE_PAYLOAD_TOTAL_BYTES = 32 * 1024 * 1024;
+const MAX_CLASSIFIABLE_PAYLOAD_PATH_BYTES = 4_096;
+const FORBIDDEN_PRODUCER_PAYLOAD_PATH = /(?:^|\/)(?:reference|labels?|metrics?|targets?|ground[-_]?truth|receipts?|attestations?|raw[-_]?data(?:set)?)(?:[./_-]|$)|(?:^|\/)structures(?:\/|\.jsonl$)|(?:^|\/)random-TP\.xyz$/i;
 const VERIFIED_CONTEXTS = new WeakSet();
 const ALLOWED_EVIDENCE_STATUSES = new Set(['complete', 'invalid', 'failed', 'cancelled', 'not-started']);
 const PRODUCER_KEYS = Object.freeze(['hardwareId', 'jobId', 'repositoryId', 'revision', 'runAttempt', 'workflowRunId']);
-const SOURCE_KEYS = Object.freeze(['repository', 'repositoryId', 'revision', 'treeDigest']);
-const EVIDENCE_KEYS = Object.freeze(['artifactFiles', 'model', 'modelId', 'producer', 'status', 'termination']);
+const SOURCE_KEYS = Object.freeze([
+  'repository', 'repositoryId', 'revision', 'treeDigest', 'treeDigestProtocol',
+]);
+const EVIDENCE_KEYS = Object.freeze(['model', 'modelId', 'producer', 'producerScientificPayloadFiles', 'status', 'termination']);
 const AUTHORITATIVE_INPUT_KEYS = Object.freeze([
   'candidatePlanBytes', 'createdAt', 'datasetBytes', 'partitionEvidence',
   'runtimeLockBytes', 'scientificPlanBytes', 'source',
@@ -100,6 +106,7 @@ const EXPECTED_PENDING_GATES = Object.freeze([
   '60 stress finite-difference checks per model',
   'versioned multi-producer hardware and run-attempt receipt semantics',
   'registry-addressable OCI manifest and config trust roots',
+  'atomic-number disclosure and public producer-payload redistribution license clearance',
 ]);
 const EXPECTED_FROZEN_BINDINGS = Object.freeze({
   scientificPlanDigest: 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2',
@@ -216,13 +223,14 @@ export function inspectFrozenCandidateInputs({
   const errors = [];
   let plan = null;
   let datasetInspection = null;
+  let verifierDerivedStructureCommitment = unavailableVerifierDerivedStructureCommitment();
   if (Buffer.isBuffer(candidatePlanBytes)) {
     try {
       plan = parseJsonRejectDuplicateKeys(candidatePlanBytes, 'full-candidate plan');
     } catch (error) {
       errors.push(error instanceof Error ? error.message : String(error));
     }
-    if (sha256(candidatePlanBytes) !== FULL_CANDIDATE_PLAN_DIGEST) errors.push('candidate plan raw digest differs from the frozen R7a contract');
+    if (sha256(candidatePlanBytes) !== FULL_CANDIDATE_PLAN_DIGEST) errors.push('candidate plan raw digest differs from the frozen v0.2 contract');
   } else errors.push('candidate plan bytes are unavailable');
   if (!Buffer.isBuffer(scientificPlanBytes) || sha256(scientificPlanBytes) !== EXPECTED_FROZEN_BINDINGS.scientificPlanDigest) {
     errors.push('scientific plan raw digest differs from the frozen candidate binding');
@@ -255,6 +263,7 @@ export function inspectFrozenCandidateInputs({
     };
     for (const [key, value] of Object.entries(actual)) if (expected[key] !== value) errors.push(`dataset ${key} differs from the candidate binding`);
     if (!datasetInspection.records.every((record) => record.atomCount === 16)) errors.push('dataset atoms-per-frame differs from the candidate binding');
+    verifierDerivedStructureCommitment = deriveVerifierStructureCommitment(datasetBytes, datasetInspection);
   } catch (error) {
     errors.push(`dataset inspection failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -262,6 +271,7 @@ export function inspectFrozenCandidateInputs({
     plan,
     datasetInspection,
     referenceRecords: datasetInspection?.records ?? [],
+    verifierDerivedStructureCommitment,
     candidatePlanBindingVerified: Buffer.isBuffer(candidatePlanBytes) && sha256(candidatePlanBytes) === FULL_CANDIDATE_PLAN_DIGEST,
     frozenBindingsVerified: false,
     errors: uniqueSorted(errors),
@@ -269,6 +279,45 @@ export function inspectFrozenCandidateInputs({
   result.frozenBindingsVerified = result.errors.length === 0;
   if (result.frozenBindingsVerified) VERIFIED_CONTEXTS.add(result);
   return result;
+}
+
+function deriveVerifierStructureCommitment(datasetBytes, datasetInspection) {
+  if (sha256(datasetBytes) !== EXPECTED_FROZEN_BINDINGS.datasetDigest
+      || datasetInspection.structureManifestSha256 !== EXPECTED_FROZEN_BINDINGS.structureManifestDigest
+      || datasetInspection.records.length !== EXPECTED_RECORDS) {
+    throw new Error('raw dataset cannot establish the frozen structure commitment');
+  }
+  const bundleBytes = Buffer.concat(
+    datasetInspection.records.map(canonicalPythonStructureRecordBytes),
+  );
+  const bundleDigest = sha256(bundleBytes);
+  if (bundleBytes.length !== EXPECTED_STRUCTURE_BUNDLE_BYTES
+      || bundleDigest !== EXPECTED_STRUCTURE_BUNDLE_DIGEST) {
+    throw new Error('deterministically regenerated structure bytes differ from the frozen trust root');
+  }
+  return {
+    status: 'verified',
+    authority: 'independent-label-bearing-verifier',
+    derivationProtocol: 'deterministic-label-stripping-from-frozen-raw-dataset/v1',
+    rawDatasetDigest: EXPECTED_FROZEN_BINDINGS.datasetDigest,
+    structureManifestDigest: EXPECTED_FROZEN_BINDINGS.structureManifestDigest,
+    regeneratedStructureBundleDigest: bundleDigest,
+    regeneratedStructureBundleBytes: bundleBytes.length,
+    producerStructureBundleAttributed: false,
+  };
+}
+
+function unavailableVerifierDerivedStructureCommitment() {
+  return {
+    status: 'unavailable',
+    authority: 'independent-label-bearing-verifier',
+    derivationProtocol: 'deterministic-label-stripping-from-frozen-raw-dataset/v1',
+    rawDatasetDigest: null,
+    structureManifestDigest: null,
+    regeneratedStructureBundleDigest: null,
+    regeneratedStructureBundleBytes: null,
+    producerStructureBundleAttributed: false,
+  };
 }
 
 function assembleFullCandidateReceipt({ context, partitionEvidence, source: sourceInput, createdAt: createdAtInput }) {
@@ -289,7 +338,7 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
         'partition-evidence-missing',
         'Ordered model partition evidence is unavailable.',
         validProducer(evidence?.producer) ? evidence.producer : null,
-        rejectedArtifactObservation(evidence?.artifactFiles),
+        rejectedProducerScientificPayloadObservation(evidence?.producerScientificPayloadFiles),
       );
     }
     const unexpectedEvidenceKeys = isPlainObject(evidence)
@@ -308,7 +357,10 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
     }
     const producer = validProducer(evidence.producer) ? structuredClone(evidence.producer) : null;
     if (evidence.producer !== undefined && !producer) integrityErrors.push(`${spec.model} producer identity is malformed`);
-    const artifactInspection = inspectArtifactFiles(evidence.artifactFiles, spec);
+    const payloadInspection = inspectProducerScientificPayloadFiles(
+      evidence.producerScientificPayloadFiles,
+      spec,
+    );
     if (!ALLOWED_EVIDENCE_STATUSES.has(evidence.status)) {
       integrityErrors.push(`${spec.model} producer status is missing or unsupported`);
       return failedPartition(
@@ -317,12 +369,13 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
         'producer-status-invalid',
         'Producer status is missing or outside the frozen status allowlist.',
         producer,
-        artifactInspection.rejectedArtifact,
-        recordCountsForParsedArtifact(artifactInspection.parsed, spec, referenceRecords),
+        payloadInspection.rejectedProducerScientificPayload,
+        recordCountsForParsedPayload(payloadInspection.parsed, spec, referenceRecords),
       );
     }
     if (['failed', 'cancelled', 'not-started'].includes(evidence.status)) {
       const message = normalizeText(evidence.termination?.message, `Producer ended ${evidence.status}.`, 2048);
+      integrityErrors.push(...payloadInspection.errors);
       integrityErrors.push(`${spec.model} producer ended ${evidence.status}: ${message}`);
       return failedPartition(
         spec,
@@ -330,8 +383,8 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
         normalizeCode(evidence.termination?.code, `producer-${evidence.status}`),
         message,
         producer,
-        artifactInspection.rejectedArtifact,
-        recordCountsForParsedArtifact(artifactInspection.parsed, spec, referenceRecords),
+        payloadInspection.rejectedProducerScientificPayload,
+        recordCountsForParsedPayload(payloadInspection.parsed, spec, referenceRecords),
       );
     }
     if (!producer) {
@@ -343,22 +396,22 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
         'producer-evidence-unavailable',
         message,
         null,
-        artifactInspection.rejectedArtifact,
-        recordCountsForParsedArtifact(artifactInspection.parsed, spec, referenceRecords),
+        payloadInspection.rejectedProducerScientificPayload,
+        recordCountsForParsedPayload(payloadInspection.parsed, spec, referenceRecords),
       );
     }
-    const parsed = artifactInspection.parsed;
+    const parsed = payloadInspection.parsed;
     if (!parsed) {
-      const localErrors = artifactInspection.errors.length > 0
-        ? artifactInspection.errors
-        : [`${spec.model} prediction artifact is unavailable`];
+      const localErrors = payloadInspection.errors.length > 0
+        ? payloadInspection.errors
+        : [`${spec.model} producer scientific payload is unavailable`];
       integrityErrors.push(...localErrors);
       return invalidPartition(
         spec,
         producer,
         null,
-        artifactInspection.rejectedArtifact,
-        zeroRecordCounts(artifactInspection.rejectedArtifact.predictionRecordsObserved ?? 0),
+        payloadInspection.rejectedProducerScientificPayload,
+        zeroRecordCounts(payloadInspection.rejectedProducerScientificPayload.predictionRecordsObserved ?? 0),
         localErrors,
       );
     }
@@ -366,27 +419,32 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
     if (metricResult.metrics) metricResults.set(spec.model, metricResult);
     const localErrors = [
       ...evidenceContractErrors,
-      ...artifactInspection.errors,
+      ...payloadInspection.errors,
       ...parsed.errors,
       ...metricResult.validation.errors,
     ];
     if (!isDeepStrictEqual(parsed.records.map((record) => record.id), referenceRecords.map((record) => record.id))) localErrors.push(`${spec.model} prediction records are not in the frozen ASCII ID order`);
-    const artifact = artifactInspection.artifact;
-    if (!artifact || artifact.referenceLabelsPresent !== false) localErrors.push(`${spec.model} producer artifact does not prove the exact label-free file allowlist`);
+    const producerScientificPayload = payloadInspection.producerScientificPayload;
+    if (!producerScientificPayload
+        || producerScientificPayload.producerPayloadReferenceLabelsPresent !== false
+        || producerScientificPayload.producerRawDatasetPresent !== false
+        || producerScientificPayload.producerStructureBundlePresent !== false) {
+      localErrors.push(`${spec.model} producer scientific payload does not prove the exact two-file label-free public allowlist`);
+    }
     if (evidence.status !== 'complete') localErrors.push(`${spec.model} producer evidence was explicitly marked invalid`);
     const recordCounts = coverageToRecordCounts(metricResult.coverage, parsed.malformedRows);
-    if (localErrors.length > 0 || !metricResult.coverage.complete || !artifact) {
+    if (localErrors.length > 0 || !metricResult.coverage.complete || !producerScientificPayload) {
       integrityErrors.push(...localErrors);
       return invalidPartition(
         spec,
         producer,
-        artifact,
-        artifact ? null : artifactInspection.rejectedArtifact,
+        producerScientificPayload,
+        producerScientificPayload ? null : payloadInspection.rejectedProducerScientificPayload,
         recordCounts,
         localErrors.length > 0 ? localErrors : ['producer evidence was marked invalid'],
       );
     }
-    return completePartition(spec, producer, artifact);
+    return completePartition(spec, producer, producerScientificPayload);
   });
 
   const producerPartitions = partitions.filter((partition) => partition.producer);
@@ -410,7 +468,7 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
     for (let index = 0; index < partitions.length; index += 1) {
       if (partitions[index].status !== 'complete') continue;
       partitions[index] = invalidPartition(
-        MODEL_SPECS[index], partitions[index].producer, partitions[index].artifact,
+        MODEL_SPECS[index], partitions[index].producer, partitions[index].producerScientificPayload,
         null, partitions[index].records, ['global campaign or frozen-binding verification failed'],
       );
     }
@@ -419,7 +477,12 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
   const complete = partitions.every((partition) => partition.status === 'complete')
     && metricResults.size === MODEL_SPECS.length
     && integrityErrors.length === 0;
-  const producerReferenceLabelsAbsent = partitions.every((partition) => partition.artifact?.referenceLabelsPresent === false);
+  const producerScientificPayloadReferenceLabelsAbsent = partitions.every(
+    (partition) => partition.producerScientificPayload?.producerPayloadReferenceLabelsPresent === false,
+  );
+  const producerScientificPayloadStructureBundleAbsent = partitions.every(
+    (partition) => partition.producerScientificPayload?.producerStructureBundlePresent === false,
+  );
   const verifierReferenceLabelsLoaded = contextBranded && referenceRecords.length === EXPECTED_RECORDS;
   const verification = {
     status: complete ? 'verified-complete' : 'verified-incomplete',
@@ -427,7 +490,8 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
     implementationDigest: FULL_CANDIDATE_VERIFIER_IMPLEMENTATION_DIGEST,
     candidatePlanBindingVerified: planBindingVerified,
     frozenBindingsVerified,
-    producerReferenceLabelsAbsent,
+    producerScientificPayloadReferenceLabelsAbsent,
+    producerScientificPayloadStructureBundleAbsent,
     verifierReferenceLabelsLoaded,
     metricRecomputationIndependent: complete,
     metricEvaluationComplete: complete,
@@ -442,11 +506,13 @@ function assembleFullCandidateReceipt({ context, partitionEvidence, source: sour
     createdAt,
     candidatePlan: {
       path: FULL_CANDIDATE_PLAN_PATH,
-      schemaVersion: 'tf.atomistic-full-candidate-plan/0.1',
+      schemaVersion: 'tf.atomistic-full-candidate-plan/0.2',
       rawDigest: FULL_CANDIDATE_PLAN_DIGEST,
     },
     source,
     frozenBindings: structuredClone(EXPECTED_FROZEN_BINDINGS),
+    verifierDerivedStructureCommitment: structuredClone(context?.verifierDerivedStructureCommitment
+      ?? unavailableVerifierDerivedStructureCommitment()),
     claims: structuredClone(EXPECTED_CLAIMS),
     claimBoundaries: structuredClone(EXPECTED_CLAIM_BOUNDARIES),
     partitions,
@@ -481,14 +547,14 @@ export function verifyFullCandidate(options = {}) {
 /**
  * Validate only the frozen receipt envelope and its internally derivable fields.
  * This deliberately does not authenticate metric reports or evidence roots:
- * those require the frozen dataset plus the observed producer artifact bytes.
+ * those require the frozen dataset plus the observed producer scientific payload bytes.
  */
 export function validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes) {
   const errors = [];
   if (!Buffer.isBuffer(receiptSchemaBytes)) {
     errors.push('frozen receipt schema raw bytes are required');
   } else if (sha256(receiptSchemaBytes) !== FULL_CANDIDATE_RECEIPT_SCHEMA_DIGEST) {
-    errors.push('receipt schema raw digest differs from the frozen R7a contract');
+    errors.push('receipt schema raw digest differs from the frozen v0.2 candidate contract');
   } else {
     try {
       const receiptSchema = parseJsonRejectDuplicateKeys(receiptSchemaBytes, 'full-candidate receipt schema');
@@ -502,7 +568,7 @@ export function validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes
   if (!isDeepStrictEqual(receipt?.claimBoundaries, EXPECTED_CLAIM_BOUNDARIES)) errors.push('candidate claim boundaries differ from the frozen non-promotional boundary');
   if (!isDeepStrictEqual(receipt?.frozenBindings, EXPECTED_FROZEN_BINDINGS)) errors.push('candidate frozen bindings differ');
   if (!isDeepStrictEqual(receipt?.pendingScientificGates, EXPECTED_PENDING_GATES)) errors.push('candidate pending scientific gates differ');
-  if (receipt?.candidatePlan?.rawDigest !== FULL_CANDIDATE_PLAN_DIGEST) errors.push('candidate receipt is not bound to the frozen R7a plan');
+  if (receipt?.candidatePlan?.rawDigest !== FULL_CANDIDATE_PLAN_DIGEST) errors.push('candidate receipt is not bound to the frozen v0.2 plan');
   if (receipt?.verification?.implementationDigest !== FULL_CANDIDATE_VERIFIER_IMPLEMENTATION_DIGEST) {
     errors.push('candidate verifier implementation digest differs from the current frozen verifier');
   }
@@ -530,8 +596,20 @@ export function validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes
     validatePartitionEvidenceSemantics(partition, errors);
   }
   const expectedLabelAbsence = partitions.length === MODEL_SPECS.length
-    && partitions.every((partition) => partition?.artifact?.referenceLabelsPresent === false);
-  if (receipt?.verification?.producerReferenceLabelsAbsent !== expectedLabelAbsence) errors.push('producer label-absence summary is inconsistent with partition artifacts');
+    && partitions.every((partition) => partition?.producerScientificPayload?.producerPayloadReferenceLabelsPresent === false);
+  if (receipt?.verification?.producerScientificPayloadReferenceLabelsAbsent !== expectedLabelAbsence) {
+    errors.push('producer scientific-payload label-absence summary is inconsistent with partition payloads');
+  }
+  const expectedStructureBundleAbsence = partitions.length === MODEL_SPECS.length
+    && partitions.every((partition) => partition?.producerScientificPayload?.producerStructureBundlePresent === false);
+  if (receipt?.verification?.producerScientificPayloadStructureBundleAbsent !== expectedStructureBundleAbsence) {
+    errors.push('producer scientific-payload structure-bundle absence summary is inconsistent with partition payloads');
+  }
+  validateVerifierDerivedStructureCommitment(
+    receipt?.verifierDerivedStructureCommitment,
+    receipt?.verification,
+    errors,
+  );
   validatePartialMetrics(receipt?.partialMetrics, errors);
   if (typeof receipt?.outcome === 'string' && receipt.outcome.startsWith('complete-')) {
     if (partitions.some((partition) => partition?.status !== 'complete')) errors.push('complete outcome contains a non-complete partition');
@@ -561,14 +639,14 @@ export function validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes
 
 /**
  * Independently re-run the label-bearing verifier from frozen raw inputs and
- * observed artifact bytes, then require an exact receipt match. A receipt plus
+ * observed producer scientific payload bytes, then require an exact receipt match. A receipt plus
  * its public bundle hash alone is not authoritative evidence.
  */
 export function validateFullCandidateReceipt(receipt, receiptSchemaBytes, verificationInputs) {
   const envelope = validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes);
   const errors = [...envelope.errors];
   if (!validAuthoritativeVerificationInputs(verificationInputs)) {
-    errors.push('authoritative receipt validation requires frozen raw inputs and observed artifact bytes');
+    errors.push('authoritative receipt validation requires frozen raw inputs and observed producer scientific payload bytes');
   } else {
     try {
       const recomputed = verifyFullCandidate(verificationInputs);
@@ -584,11 +662,12 @@ export function validateFullCandidateReceipt(receipt, receiptSchemaBytes, verifi
 
 export function computeCandidateEvidenceBundleDigest(receipt) {
   return sha256(canonicalJsonBytes({
-    domain: 'tf.atomistic-full-candidate.evidence-bundle/v1',
+    domain: 'tf.atomistic-full-candidate.evidence-bundle/v2',
     createdAt: receipt.createdAt,
     candidatePlan: receipt.candidatePlan,
     source: receipt.source,
     frozenBindings: receipt.frozenBindings,
+    verifierDerivedStructureCommitment: receipt.verifierDerivedStructureCommitment,
     partitions: receipt.partitions,
     metrics: receipt.metrics,
     assessments: receipt.assessments,
@@ -596,27 +675,45 @@ export function computeCandidateEvidenceBundleDigest(receipt) {
   }));
 }
 
-function completePartition(spec, producer, artifact) {
+function completePartition(spec, producer, producerScientificPayload) {
   return {
     partitionId: spec.partitionId, model: spec.model, modelId: spec.modelId,
     partitionIndex: 0, partitionCount: 1, status: 'complete', records: completeRecordCounts(),
-    producer: structuredClone(producer), artifact,
+    producer: structuredClone(producer), producerScientificPayload,
   };
 }
 
-function invalidPartition(spec, producer, artifact, rejectedArtifact, records, errors) {
+function invalidPartition(
+  spec,
+  producer,
+  producerScientificPayload,
+  rejectedProducerScientificPayload,
+  records,
+  errors,
+) {
   const result = {
     partitionId: spec.partitionId, model: spec.model, modelId: spec.modelId,
     partitionIndex: 0, partitionCount: 1, status: 'invalid', records,
     producer: structuredClone(producer),
     termination: terminationEvidence('independent-verification', 'prediction-invalid', errors.join('; ')),
   };
-  if (artifact) result.artifact = artifact;
-  else result.rejectedArtifact = rejectedArtifact ?? rejectedArtifactObservation(null);
+  if (producerScientificPayload) result.producerScientificPayload = producerScientificPayload;
+  else {
+    result.rejectedProducerScientificPayload = rejectedProducerScientificPayload
+      ?? rejectedProducerScientificPayloadObservation(null);
+  }
   return result;
 }
 
-function failedPartition(spec, status, code, message, producer = null, rejectedArtifact = null, records = null) {
+function failedPartition(
+  spec,
+  status,
+  code,
+  message,
+  producer = null,
+  rejectedProducerScientificPayload = null,
+  records = null,
+) {
   const normalizedStatus = ['failed', 'cancelled', 'not-started'].includes(status) ? status : 'failed';
   const result = {
     partitionId: spec.partitionId, model: spec.model, modelId: spec.modelId,
@@ -625,100 +722,267 @@ function failedPartition(spec, status, code, message, producer = null, rejectedA
     termination: terminationEvidence('producer', normalizeCode(code, `producer-${normalizedStatus}`), message),
   };
   if (producer) result.producer = structuredClone(producer);
-  if (rejectedArtifact) result.rejectedArtifact = rejectedArtifact;
+  if (rejectedProducerScientificPayload) {
+    result.rejectedProducerScientificPayload = rejectedProducerScientificPayload;
+  }
   return result;
 }
 
-function inspectArtifactFiles(artifactFiles, spec) {
+function inspectProducerScientificPayloadFiles(producerScientificPayloadFiles, spec) {
   const errors = [];
-  const rejectedArtifact = rejectedArtifactObservation(artifactFiles);
-  if (!(artifactFiles instanceof Map)) {
-    errors.push(`${spec.model} artifactFiles must be a Map of observed path to bytes`);
-    return { artifact: null, rejectedArtifact, parsed: null, errors };
+  const rejectedProducerScientificPayload = rejectedProducerScientificPayloadObservation(
+    producerScientificPayloadFiles,
+  );
+  if (!(producerScientificPayloadFiles instanceof Map)) {
+    errors.push(`${spec.model} producerScientificPayloadFiles must be a Map of observed path to bytes`);
+    return {
+      producerScientificPayload: null,
+      rejectedProducerScientificPayload,
+      parsed: null,
+      errors,
+    };
   }
-  const names = [...artifactFiles.keys()];
-  if (!names.every((name) => typeof name === 'string')) errors.push(`${spec.model} artifact file names must be strings`);
+  if (producerScientificPayloadFiles.size > MAX_AUTHORITATIVE_PAYLOAD_FILES) {
+    errors.push(`${spec.model} producer scientific payload exceeds the ${MAX_AUTHORITATIVE_PAYLOAD_FILES}-file inspection limit`);
+  }
+  let totalPayloadBytes = 0;
+  for (const [name, value] of producerScientificPayloadFiles) {
+    if (canonicalPayloadPathBytes(name) === null) {
+      errors.push(`${spec.model} producer scientific payload contains a non-canonical UTF-8 path or exceeds the ${MAX_CLASSIFIABLE_PAYLOAD_PATH_BYTES}-byte path limit`);
+    }
+    if (!Buffer.isBuffer(value)) {
+      errors.push(`${spec.model} producer scientific payload values must be byte buffers`);
+      continue;
+    }
+    if (value.length > MAX_AUTHORITATIVE_PAYLOAD_FILE_BYTES) {
+      errors.push(`${spec.model} producer scientific payload member exceeds the per-file byte limit`);
+    }
+    totalPayloadBytes += value.length;
+  }
+  if (!Number.isSafeInteger(totalPayloadBytes)
+      || totalPayloadBytes > MAX_AUTHORITATIVE_PAYLOAD_TOTAL_BYTES) {
+    errors.push(`${spec.model} producer scientific payload exceeds the aggregate byte limit`);
+  }
+  if (errors.length > 0) {
+    return {
+      producerScientificPayload: null,
+      rejectedProducerScientificPayload,
+      parsed: null,
+      errors: uniqueSorted(errors),
+    };
+  }
+  const names = [...producerScientificPayloadFiles.keys()];
+  if (!names.every((name) => typeof name === 'string')) errors.push(`${spec.model} producer scientific payload file names must be strings`);
   const orderedNames = names.filter((name) => typeof name === 'string').sort(asciiCompare);
-  if (!isDeepStrictEqual(orderedNames, EXPECTED_ARTIFACT_PATHS)) errors.push(`${spec.model} artifact file allowlist differs`);
-  if (orderedNames.some((name) => FORBIDDEN_ARTIFACT_PATH.test(name))) errors.push(`${spec.model} artifact paths expose forbidden label or result material`);
-  for (const name of EXPECTED_ARTIFACT_PATHS) {
-    if (!Buffer.isBuffer(artifactFiles.get(name))) errors.push(`${spec.model} artifact ${name} is unavailable as bytes`);
+  if (!isDeepStrictEqual(orderedNames, EXPECTED_PRODUCER_SCIENTIFIC_PAYLOAD_PATHS)) {
+    errors.push(`${spec.model} producer scientific payload file allowlist differs`);
   }
-  const predictionBytes = artifactFiles.get(PREDICTION_FILE_PATH);
-  const structureBytes = artifactFiles.get(STRUCTURE_BUNDLE_FILE_PATH);
-  const manifestBytes = artifactFiles.get(STRUCTURE_MANIFEST_FILE_PATH);
+  if (orderedNames.some((name) => FORBIDDEN_PRODUCER_PAYLOAD_PATH.test(name))) {
+    errors.push(`${spec.model} producer scientific payload paths expose forbidden labels, raw data or a structure bundle`);
+  }
+  for (const name of EXPECTED_PRODUCER_SCIENTIFIC_PAYLOAD_PATHS) {
+    if (!Buffer.isBuffer(producerScientificPayloadFiles.get(name))) {
+      errors.push(`${spec.model} producer scientific payload ${name} is unavailable as bytes`);
+    }
+  }
+  const predictionBytes = producerScientificPayloadFiles.get(PREDICTION_FILE_PATH);
+  const manifestBytes = producerScientificPayloadFiles.get(STRUCTURE_MANIFEST_FILE_PATH);
   let parsed = null;
   if (Buffer.isBuffer(predictionBytes)) {
     try {
       parsed = parseFullPredictionJsonl(predictionBytes, spec);
-      rejectedArtifact.predictionRecordsObserved = parsed.lineCount;
-      if (parsed.referenceLabelsPresent === true) rejectedArtifact.referenceLabelsPresent = true;
+      rejectedProducerScientificPayload.predictionRecordsObserved = parsed.lineCount;
+      if (parsed.referenceLabelsPresent === true) {
+        rejectedProducerScientificPayload.producerPayloadReferenceLabelsPresent = true;
+      }
     } catch (error) {
       errors.push(error instanceof Error ? error.message : String(error));
     }
   }
-  const structureDigest = Buffer.isBuffer(structureBytes) ? sha256(structureBytes) : null;
   const manifestDigest = Buffer.isBuffer(manifestBytes) ? sha256(manifestBytes) : null;
-  const structureTrusted = Buffer.isBuffer(structureBytes)
-    && structureBytes.length === EXPECTED_STRUCTURE_BUNDLE_BYTES
-    && structureDigest === EXPECTED_STRUCTURE_BUNDLE_DIGEST;
   const manifestTrusted = Buffer.isBuffer(manifestBytes)
     && manifestBytes.length === EXPECTED_STRUCTURE_MANIFEST_FILE_BYTES
     && manifestDigest === EXPECTED_STRUCTURE_MANIFEST_FILE_DIGEST;
-  if (!structureTrusted) errors.push(`${spec.model} structure bundle bytes differ from the frozen label-free artifact`);
-  if (!manifestTrusted) errors.push(`${spec.model} structure manifest bytes differ from the frozen artifact`);
-  const exactAllowlist = isDeepStrictEqual(orderedNames, EXPECTED_ARTIFACT_PATHS)
+  if (!manifestTrusted) errors.push(`${spec.model} producer structure manifest bytes differ from the frozen manifest`);
+  const exactAllowlist = isDeepStrictEqual(orderedNames, EXPECTED_PRODUCER_SCIENTIFIC_PAYLOAD_PATHS)
     && orderedNames.length === names.length
-    && !orderedNames.some((name) => FORBIDDEN_ARTIFACT_PATH.test(name));
-  const referenceLabelsPresent = rejectedArtifact.referenceLabelsPresent === true || parsed?.referenceLabelsPresent === true
+    && !orderedNames.some((name) => FORBIDDEN_PRODUCER_PAYLOAD_PATH.test(name));
+  const producerPayloadReferenceLabelsPresent = rejectedProducerScientificPayload.producerPayloadReferenceLabelsPresent === true
+      || parsed?.referenceLabelsPresent === true
     ? true
-    : exactAllowlist && structureTrusted && manifestTrusted && parsed?.referenceLabelsPresent === false
+    : exactAllowlist && manifestTrusted && parsed?.referenceLabelsPresent === false
       ? false
       : null;
-  const artifact = parsed && Buffer.isBuffer(predictionBytes) && Buffer.isBuffer(structureBytes) && Buffer.isBuffer(manifestBytes)
+  const producerScientificPayload = exactAllowlist
+      && parsed
+      && Buffer.isBuffer(predictionBytes)
+      && Buffer.isBuffer(manifestBytes)
     ? {
         predictionSchemaVersion: parsed.predictionSchemaVersion,
         predictionFileDigest: parsed.rawDigest,
         predictionBytes: predictionBytes.length,
         predictionRecords: parsed.lineCount,
         environmentDigest: parsed.environmentDigest,
-        structureBundleDigest: structureDigest,
-        structureManifestFileDigest: manifestDigest,
-        artifactFilesEvidenceDigest: rejectedArtifact.artifactFilesEvidenceDigest,
-        referenceLabelsPresent,
+        producerStructureManifestFileDigest: manifestDigest,
+        producerScientificPayloadEvidenceDigest:
+          rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest,
+        producerPayloadReferenceLabelsPresent,
+        producerRawDatasetPresent: rejectedProducerScientificPayload.producerRawDatasetPresent,
+        producerStructureBundlePresent:
+          rejectedProducerScientificPayload.producerStructureBundlePresent,
+        atomicNumbersPresent: parsed.records.length > 0
+          && parsed.records.every((record) => Array.isArray(record.atomicNumbers)),
+        atomicNumbersPublicationLicenseCleared: false,
+        publicationEligible: false,
       }
     : null;
-  return { artifact, rejectedArtifact, parsed, errors: uniqueSorted(errors) };
+  return {
+    producerScientificPayload,
+    rejectedProducerScientificPayload,
+    parsed,
+    errors: uniqueSorted(errors),
+  };
 }
 
-function rejectedArtifactObservation(artifactFiles) {
-  const isMap = artifactFiles instanceof Map;
-  const entries = isMap ? [...artifactFiles.entries()] : [];
-  const metadata = entries.slice(0, 100_000).map(([rawPath, value]) => {
-    const filePath = typeof rawPath === 'string' && rawPath.length > 0
-      ? rawPath.slice(0, 256)
-      : '<empty-or-non-string-path>';
-    return {
-      path: filePath,
-      sizeBytes: Buffer.isBuffer(value) ? value.length : null,
-      sha256: Buffer.isBuffer(value) ? sha256(value) : null,
-    };
-  }).sort((left, right) => asciiCompare(left.path, right.path));
-  const predictionBytes = isMap ? artifactFiles.get(PREDICTION_FILE_PATH) : null;
-  const observedNames = metadata.map((entry) => entry.path);
+function rejectedProducerScientificPayloadObservation(producerScientificPayloadFiles) {
+  const isMap = producerScientificPayloadFiles instanceof Map;
+  const retainedObservations = [];
+  const overflowHash = createHash('sha256');
+  overflowHash.update('tf.atomistic-full-candidate.producer-scientific-payload-overflow/v1\0', 'utf8');
+  let observedFileCount = 0;
+  let classificationComplete = isMap;
+  let referenceLabelsPresent = false;
+  let rawDatasetPresent = false;
+  let structureBundlePresent = false;
+  if (isMap) {
+    for (const [rawPath, value] of producerScientificPayloadFiles) {
+      const observation = payloadFileObservation(rawPath, value);
+      observedFileCount += 1;
+      if (observation.classificationPath === null) classificationComplete = false;
+      else {
+        referenceLabelsPresent ||= /(?:^|\/)(?:reference|labels?|targets?|ground[-_]?truth)(?:[./_-]|$)/i.test(observation.classificationPath);
+        rawDatasetPresent ||= /(?:^|\/)(?:raw[-_]?data(?:set)?)(?:[./_-]|$)|(?:^|\/)random-TP\.xyz$/i.test(observation.classificationPath);
+        structureBundlePresent ||= /(?:^|\/)structures(?:\/|\.jsonl$)/i.test(observation.classificationPath);
+      }
+      const publicObservation = publicPayloadFileObservation(observation);
+      if (retainedObservations.length < MAX_RETAINED_PAYLOAD_FILE_OBSERVATIONS) {
+        retainedObservations.push(publicObservation);
+      } else {
+        overflowHash.update(canonicalJsonBytes(publicObservation));
+      }
+    }
+  }
+  const metadata = retainedObservations
+    .sort(comparePayloadFileObservations)
+    .map((observation) => observation);
+  const predictionBytes = isMap ? producerScientificPayloadFiles.get(PREDICTION_FILE_PATH) : null;
+  const observedNames = [...new Set(metadata.map((entry) => entry.path))].sort(asciiCompare);
+  const truncated = observedFileCount > metadata.length;
+  const overflowDigest = truncated ? `sha256:${overflowHash.digest('hex')}` : null;
   return {
-    artifactFilesEvidenceDigest: sha256(canonicalJsonBytes({
-      domain: 'tf.atomistic-full-candidate.artifact-files/v1',
-      truncated: entries.length > metadata.length,
+    producerScientificPayloadEvidenceDigest: sha256(canonicalJsonBytes({
+      domain: 'tf.atomistic-full-candidate.producer-scientific-payload/v2',
+      observedFileCount,
+      retainedFileCount: metadata.length,
+      truncated,
+      overflowDigest,
       files: metadata,
     })),
-    observedFileCount: Math.min(entries.length, 100_000),
-    observedFileNames: [...new Set(observedNames)].slice(0, 32),
+    observedFileCount: Math.min(observedFileCount, MAX_RECEIPT_OBSERVED_PAYLOAD_FILES),
+    observedFileNames: observedNames.slice(0, 32),
     predictionFileDigest: Buffer.isBuffer(predictionBytes) ? sha256(predictionBytes) : null,
     predictionBytesObserved: Buffer.isBuffer(predictionBytes) ? predictionBytes.length : 0,
     predictionRecordsObserved: observedJsonlRecordCount(predictionBytes),
-    referenceLabelsPresent: observedNames.some((name) => FORBIDDEN_ARTIFACT_PATH.test(name)) ? true : null,
+    producerPayloadReferenceLabelsPresent: referenceLabelsPresent ? true : classificationComplete ? false : null,
+    producerRawDatasetPresent: rawDatasetPresent ? true : classificationComplete ? false : null,
+    producerStructureBundlePresent: structureBundlePresent ? true : classificationComplete ? false : null,
   };
+}
+
+function payloadFileObservation(rawPath, value) {
+  const validStringPath = typeof rawPath === 'string' && rawPath.length > 0;
+  const pathBytes = validStringPath ? wellFormedUtf8Bytes(rawPath) : null;
+  const classificationPath = canonicalPayloadPathBytes(rawPath) === null ? null : rawPath;
+  return {
+    path: pathBytes
+      ? truncateCodePoints(rawPath, 256)
+      : validStringPath
+        ? '<invalid-utf16-path>'
+        : '<empty-or-non-string-path>',
+    pathByteLength: pathBytes?.length ?? null,
+    pathSha256: pathBytes
+      ? sha256(pathBytes)
+      : validStringPath
+        ? invalidUtf16PathDigest(rawPath)
+        : null,
+    sizeBytes: Buffer.isBuffer(value) ? value.length : null,
+    sha256: Buffer.isBuffer(value) ? sha256(value) : null,
+    classificationPath,
+  };
+}
+
+function publicPayloadFileObservation(observation) {
+  return {
+    path: observation.path,
+    pathByteLength: observation.pathByteLength,
+    pathSha256: observation.pathSha256,
+    sizeBytes: observation.sizeBytes,
+    sha256: observation.sha256,
+  };
+}
+
+function wellFormedUtf8Bytes(value) {
+  if (typeof value !== 'string' || value.length === 0) return null;
+  const bytes = Buffer.from(value, 'utf8');
+  return bytes.toString('utf8') === value ? bytes : null;
+}
+
+function canonicalPayloadPathBytes(value) {
+  if (typeof value !== 'string'
+      || value.length === 0
+      || value.length > MAX_CLASSIFIABLE_PAYLOAD_PATH_BYTES) return null;
+  const bytes = wellFormedUtf8Bytes(value);
+  if (!bytes
+      || bytes.length > MAX_CLASSIFIABLE_PAYLOAD_PATH_BYTES
+      || value.normalize('NFC') !== value
+      || value.includes('\\')
+      || /[\p{Cc}\p{Cf}]/u.test(value)
+      || value.startsWith('/')
+      || value.endsWith('/')) return null;
+  const components = value.split('/');
+  if (components.some((component) => component === '' || component === '.' || component === '..')) {
+    return null;
+  }
+  return bytes;
+}
+
+function invalidUtf16PathDigest(value) {
+  const codeUnits = Buffer.allocUnsafe(value.length * 2);
+  for (let index = 0; index < value.length; index += 1) {
+    codeUnits.writeUInt16BE(value.charCodeAt(index), index * 2);
+  }
+  return sha256(Buffer.concat([
+    Buffer.from('tf.atomistic-full-candidate.invalid-utf16-path/v1\0', 'utf8'),
+    codeUnits,
+  ]));
+}
+
+function truncateCodePoints(value, maximum) {
+  let result = '';
+  let count = 0;
+  for (const codePoint of value) {
+    if (count >= maximum) break;
+    result += codePoint;
+    count += 1;
+  }
+  return result;
+}
+
+function comparePayloadFileObservations(left, right) {
+  return asciiCompare(left.pathSha256 ?? '', right.pathSha256 ?? '')
+    || asciiCompare(left.path, right.path)
+    || ((left.sizeBytes ?? -1) - (right.sizeBytes ?? -1))
+    || asciiCompare(left.sha256 ?? '', right.sha256 ?? '');
 }
 
 function observedJsonlRecordCount(bytes) {
@@ -728,7 +992,7 @@ function observedJsonlRecordCount(bytes) {
   return lines <= 100_000 ? lines : null;
 }
 
-function recordCountsForParsedArtifact(parsed, spec, referenceRecords) {
+function recordCountsForParsedPayload(parsed, spec, referenceRecords) {
   if (!parsed) return null;
   const result = evaluateFullCandidateMetrics(spec.modelId, parsed.records, referenceRecords);
   return coverageToRecordCounts(result.coverage, parsed.malformedRows);
@@ -801,14 +1065,37 @@ function normalizeSource(source, errors) {
     repository: EXPECTED_REPOSITORY,
     repositoryId: EXPECTED_REPOSITORY_ID,
     revision: SHA_PATTERN.test(source?.revision ?? '') ? source.revision : '0'.repeat(40),
+    treeDigestProtocol: 'tf.git-source-tree/v1',
     treeDigest: DIGEST_PATTERN.test(source?.treeDigest ?? '') ? source.treeDigest : sha256(Buffer.from('source-tree-unavailable', 'utf8')),
   };
 }
 
 function normalizeTimestamp(value, errors) {
-  if (typeof value === 'string' && TIMESTAMP_PATTERN.test(value) && Number.isFinite(Date.parse(value))) return value;
+  if (validUtcTimestamp(value)) return value;
   errors.push('candidate creation timestamp is invalid');
   return '2000-01-01T00:00:00Z';
+}
+
+function validUtcTimestamp(value) {
+  if (typeof value !== 'string') return false;
+  const match = TIMESTAMP_PATTERN.exec(value);
+  if (!match) return false;
+  const components = value.match(
+    /^(20[0-9]{2})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.[0-9]{1,6})?Z$/,
+  );
+  if (!components) return false;
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText] = components;
+  const [year, month, day, hour, minute, second] = [
+    yearText, monthText, dayText, hourText, minuteText, secondText,
+  ].map(Number);
+  if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return false;
+  const observed = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+  return observed.getUTCFullYear() === year
+    && observed.getUTCMonth() === month - 1
+    && observed.getUTCDate() === day
+    && observed.getUTCHours() === hour
+    && observed.getUTCMinutes() === minute
+    && observed.getUTCSeconds() === second;
 }
 
 function normalizeObservedSchemaVersion(value) {
@@ -848,48 +1135,72 @@ function validatePartitionEvidenceSemantics(partition, errors) {
       errors.push(`${partition.model ?? 'unknown'} termination evidence digest is inconsistent`);
     }
   }
-  if (isPlainObject(partition?.rejectedArtifact)) {
-    const names = partition.rejectedArtifact.observedFileNames;
+  if (isPlainObject(partition?.rejectedProducerScientificPayload)) {
+    const names = partition.rejectedProducerScientificPayload.observedFileNames;
     if (Array.isArray(names) && !isDeepStrictEqual(names, [...new Set(names)].sort(asciiCompare))) {
-      errors.push(`${partition.model ?? 'unknown'} rejected artifact file names are not uniquely ASCII sorted`);
+      errors.push(`${partition.model ?? 'unknown'} rejected producer scientific payload file names are not uniquely ASCII sorted`);
     }
     if (Array.isArray(names)
-        && Number.isSafeInteger(partition.rejectedArtifact.observedFileCount)
-        && partition.rejectedArtifact.observedFileCount < names.length) {
-      errors.push(`${partition.model ?? 'unknown'} rejected artifact file count is smaller than its retained names`);
+        && Number.isSafeInteger(partition.rejectedProducerScientificPayload.observedFileCount)
+        && partition.rejectedProducerScientificPayload.observedFileCount < names.length) {
+      errors.push(`${partition.model ?? 'unknown'} rejected producer scientific payload file count is smaller than its retained names`);
     }
   }
-  if (partition?.status === 'complete' && isPlainObject(partition.artifact)) {
-    const expected = completeArtifactFilesEvidenceDigest(partition.artifact);
-    if (partition.artifact.artifactFilesEvidenceDigest !== expected) {
-      errors.push(`${partition.model ?? 'unknown'} complete artifact file evidence digest is inconsistent`);
+  if (partition?.status === 'complete' && isPlainObject(partition.producerScientificPayload)) {
+    const expected = completeProducerScientificPayloadEvidenceDigest(
+      partition.producerScientificPayload,
+    );
+    if (partition.producerScientificPayload.producerScientificPayloadEvidenceDigest !== expected) {
+      errors.push(`${partition.model ?? 'unknown'} complete producer scientific payload evidence digest is inconsistent`);
     }
   }
 }
 
-function completeArtifactFilesEvidenceDigest(artifact) {
+function completeProducerScientificPayloadEvidenceDigest(producerScientificPayload) {
   const metadata = [
     {
       path: STRUCTURE_MANIFEST_FILE_PATH,
+      pathByteLength: Buffer.byteLength(STRUCTURE_MANIFEST_FILE_PATH, 'utf8'),
+      pathSha256: sha256(Buffer.from(STRUCTURE_MANIFEST_FILE_PATH, 'utf8')),
       sizeBytes: EXPECTED_STRUCTURE_MANIFEST_FILE_BYTES,
-      sha256: artifact.structureManifestFileDigest,
+      sha256: producerScientificPayload.producerStructureManifestFileDigest,
     },
     {
       path: PREDICTION_FILE_PATH,
-      sizeBytes: artifact.predictionBytes,
-      sha256: artifact.predictionFileDigest,
+      pathByteLength: Buffer.byteLength(PREDICTION_FILE_PATH, 'utf8'),
+      pathSha256: sha256(Buffer.from(PREDICTION_FILE_PATH, 'utf8')),
+      sizeBytes: producerScientificPayload.predictionBytes,
+      sha256: producerScientificPayload.predictionFileDigest,
     },
-    {
-      path: STRUCTURE_BUNDLE_FILE_PATH,
-      sizeBytes: EXPECTED_STRUCTURE_BUNDLE_BYTES,
-      sha256: artifact.structureBundleDigest,
-    },
-  ];
+  ].sort(comparePayloadFileObservations);
   return sha256(canonicalJsonBytes({
-    domain: 'tf.atomistic-full-candidate.artifact-files/v1',
+    domain: 'tf.atomistic-full-candidate.producer-scientific-payload/v2',
+    observedFileCount: metadata.length,
+    retainedFileCount: metadata.length,
     truncated: false,
+    overflowDigest: null,
     files: metadata,
   }));
+}
+
+function validateVerifierDerivedStructureCommitment(commitment, verification, errors) {
+  const verified = {
+    status: 'verified',
+    authority: 'independent-label-bearing-verifier',
+    derivationProtocol: 'deterministic-label-stripping-from-frozen-raw-dataset/v1',
+    rawDatasetDigest: EXPECTED_FROZEN_BINDINGS.datasetDigest,
+    structureManifestDigest: EXPECTED_FROZEN_BINDINGS.structureManifestDigest,
+    regeneratedStructureBundleDigest: EXPECTED_STRUCTURE_BUNDLE_DIGEST,
+    regeneratedStructureBundleBytes: EXPECTED_STRUCTURE_BUNDLE_BYTES,
+    producerStructureBundleAttributed: false,
+  };
+  const unavailable = unavailableVerifierDerivedStructureCommitment();
+  if (!isDeepStrictEqual(commitment, verified) && !isDeepStrictEqual(commitment, unavailable)) {
+    errors.push('verifier-derived structure commitment differs from the frozen deterministic forms');
+  }
+  if (verification?.frozenBindingsVerified === true && !isDeepStrictEqual(commitment, verified)) {
+    errors.push('verified frozen bindings lack the independently derived structure commitment');
+  }
 }
 
 function validatePartialMetrics(partialMetrics, errors) {
@@ -930,6 +1241,43 @@ function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function rows(values, width) {
+  return Array.from(
+    { length: values.length / width },
+    (_, index) => values.slice(index * width, (index + 1) * width),
+  );
+}
+
+function canonicalPythonStructureRecordBytes(record) {
+  const lattice = pythonFloatMatrix(rows(record.lattice, 3));
+  const positions = pythonFloatMatrix(rows(record.positions, 3));
+  const line = `{"atomCount":${record.atomCount},"atomicNumbers":${JSON.stringify(record.atomicNumbers)},"id":${JSON.stringify(record.id)},"inputStructureDigest":${JSON.stringify(record.inputStructureDigest)},"lattice":${lattice},"pbc":[true,true,true],"positions":${positions},"schemaVersion":"tf.atomistic-structure/0.1"}\n`;
+  return Buffer.from(line, 'utf8');
+}
+
+function pythonFloatMatrix(matrix) {
+  return `[${matrix.map((row) => `[${row.map(pythonFloatLiteral).join(',')}]`).join(',')}]`;
+}
+
+function pythonFloatLiteral(value) {
+  if (!Number.isFinite(value)) throw new Error('structure geometry contains a nonfinite value');
+  if (Object.is(value, -0)) return '-0.0';
+  const magnitude = Math.abs(value);
+  if (magnitude !== 0 && (magnitude < 1e-4 || magnitude >= 1e16)) {
+    return normalizePythonExponent(value.toExponential());
+  }
+  if (Number.isInteger(value) && Math.abs(value) < 1e16) return `${value}.0`;
+  const text = String(value);
+  return /[eE]/.test(text) ? normalizePythonExponent(text) : text;
+}
+
+function normalizePythonExponent(text) {
+  const exponent = text.match(/^(.+)[eE]([+-]?)([0-9]+)$/);
+  if (!exponent) return text;
+  const sign = exponent[2] === '-' ? '-' : '+';
+  return `${exponent[1]}e${sign}${exponent[3].padStart(2, '0')}`;
+}
+
 function validAuthoritativeVerificationInputs(value) {
   return isDictionary(value)
     && isDeepStrictEqual(Object.keys(value).sort(asciiCompare), AUTHORITATIVE_INPUT_KEYS)
@@ -940,12 +1288,16 @@ function validAuthoritativeVerificationInputs(value) {
     && value.partitionEvidence.every((evidence, index) => isDictionary(evidence)
       && evidence.model === MODEL_SPECS[index].model
       && evidence.modelId === MODEL_SPECS[index].modelId
-      && evidence.artifactFiles instanceof Map
-      && [...evidence.artifactFiles.entries()].every(([name, bytes]) => typeof name === 'string' && Buffer.isBuffer(bytes)))
+      && evidence.producerScientificPayloadFiles instanceof Map
+      && evidence.producerScientificPayloadFiles.size <= MAX_AUTHORITATIVE_PAYLOAD_FILES
+      && [...evidence.producerScientificPayloadFiles.entries()]
+        .every(([name, bytes]) => canonicalPayloadPathBytes(name) !== null
+          && Buffer.isBuffer(bytes)
+          && bytes.length <= MAX_AUTHORITATIVE_PAYLOAD_FILE_BYTES)
+      && [...evidence.producerScientificPayloadFiles.values()]
+        .reduce((sum, bytes) => sum + bytes.length, 0) <= MAX_AUTHORITATIVE_PAYLOAD_TOTAL_BYTES)
     && validSource(value.source)
-    && typeof value.createdAt === 'string'
-    && TIMESTAMP_PATTERN.test(value.createdAt)
-    && Number.isFinite(Date.parse(value.createdAt));
+    && validUtcTimestamp(value.createdAt);
 }
 
 function validSource(value) {
@@ -954,6 +1306,7 @@ function validSource(value) {
     && value.repository === EXPECTED_REPOSITORY
     && value.repositoryId === EXPECTED_REPOSITORY_ID
     && SHA_PATTERN.test(value.revision ?? '')
+    && value.treeDigestProtocol === 'tf.git-source-tree/v1'
     && DIGEST_PATTERN.test(value.treeDigest ?? '');
 }
 

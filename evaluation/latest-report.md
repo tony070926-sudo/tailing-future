@@ -1,10 +1,10 @@
-# Tailing Sentinel — 0.3.1-r6f-runtime-freeze
+# Tailing Sentinel — 0.3.1-r7b1-evidence-boundary
 
 - Verdict: **CONDITIONAL**
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-29**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:d646fd83dd0f99a6f53ef85c5240bc6d3d3655fc6ca40ddf20ccf2fcd1db4e42` across 131 source files
+- Artifact: `sha256:7c956cd2a3290fc66c6a7a969f6eb4bf5a0b95f5138ef42502afabd75832943f` across 149 source files
 
 ## Hard gates
 
@@ -13,14 +13,14 @@
 ## Executable verification
 
 - Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
-- World/action schemas and negative mutation corpus: PASS; atomistic reproduction plan / dataset catalog / comparator receipts: PASS (manifest only); evaluator runtime: 73693.5 ms.
+- World/action schemas and negative mutation corpus: PASS; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 78258.2 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps
 
-1. **P1 · atomistic** — Execute both frozen runtimes on all 693 Random-TP records with an independent scientific verifier.
+1. **P1 · atomistic** — Complete the authenticated provenance/archive adapter and private handoff, then execute both frozen runtimes on all 693 Random-TP records with an independent scientific verifier.
    - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests remain unchanged. The authenticated S replicas each contain ten finite label-free outputs per model. MACE physical predictions agree across the two runs; MatterSim differs only below the frozen bootstrap numerical tolerances. Commit F freezes the stable runtime inputs at 2/2 but these remain smoke observations without labels or accuracy metrics, not a scientific reproduction, model comparison or score increase.
-   - Acceptance: Energy, force, stress, stability, OOD and cost metrics are reproduced with checkpoint and runner digests.
+   - Acceptance: Authenticated inputs produce two 693/693 receipts; energy, force, stress, stability, OOD and cost metrics are recomputed with checkpoint, runner, source-tree and outcome digests.
 2. **P1 · mesoscale** — Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.
    - Evidence: No executable evidence in the current candidate.
    - Acceptance: Free energy, solid fraction, tip position and zero contour meet preregistered PFHub tolerances.

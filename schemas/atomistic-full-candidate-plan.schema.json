@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-full-candidate-plan/0.1",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-plan/0.2",
   "title": "Tailing Future Atomistic Full Candidate Plan",
   "description": "A frozen, non-promotional 693-by-two candidate evaluation contract. It does not amend or satisfy the formal atomistic reproduction receipt.",
   "type": "object",
   "required": ["schemaVersion", "status", "frozenAt", "purpose", "bindings", "execution", "metrics", "acceptance", "resultPolicy", "claimBoundaries", "scientificGatesPending"],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.1" },
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.2" },
     "status": { "const": "frozen-candidate-contract-not-run" },
     "frozenAt": { "const": "2026-08-30" },
     "purpose": { "type": "string", "minLength": 80 },
@@ -18,7 +18,7 @@
     "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" },
     "scientificGatesPending": {
       "type": "array",
-      "minItems": 6,
+      "minItems": 7,
       "uniqueItems": true,
       "items": { "type": "string", "minLength": 20 }
     }
@@ -33,6 +33,16 @@
         "path": { "const": "evaluation/atomistic/reproduction-plan.json" },
         "schemaVersion": { "const": "tf.atomistic-reproduction/0.2" },
         "rawDigest": { "const": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2" }
+      },
+      "additionalProperties": false
+    },
+    "producerOutcomeSchemaBinding": {
+      "type": "object",
+      "required": ["path", "schemaVersion", "rawDigest"],
+      "properties": {
+        "path": { "const": "schemas/atomistic-full-candidate-producer-outcome.schema.json" },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-producer-outcome/0.2" },
+        "rawDigest": { "const": "sha256:e3671d5fee2b68964c19bfac954fe99f9c72801c482008228b7dde4e0df85fa7" }
       },
       "additionalProperties": false
     },
@@ -109,9 +119,10 @@
     },
     "bindings": {
       "type": "object",
-      "required": ["scientificPlan", "runtimeLock", "benchmark"],
+      "required": ["scientificPlan", "producerOutcomeSchema", "runtimeLock", "benchmark"],
       "properties": {
         "scientificPlan": { "$ref": "#/$defs/scientificPlanBinding" },
+        "producerOutcomeSchema": { "$ref": "#/$defs/producerOutcomeSchemaBinding" },
         "runtimeLock": { "$ref": "#/$defs/runtimeLockBinding" },
         "benchmark": { "$ref": "#/$defs/benchmarkBinding" }
       },
@@ -141,7 +152,7 @@
     },
     "execution": {
       "type": "object",
-      "required": ["profile", "mode", "canonicalDevice", "dtype", "batchSize", "threads", "networkPolicy", "producerReferenceLabelAccess", "independentVerifierReferenceLabelAccess", "mixedRunAttemptsAllowed", "partitioning"],
+      "required": ["profile", "mode", "canonicalDevice", "dtype", "batchSize", "threads", "networkPolicy", "trustedPreprocessorReferenceLabelAccess", "modelSandboxReferenceLabelAccess", "independentVerifierReferenceLabelAccess", "producerScientificPayloadPolicy", "mixedRunAttemptsAllowed", "partitioning"],
       "properties": {
         "profile": { "const": "full-candidate" },
         "mode": { "const": "full" },
@@ -150,8 +161,26 @@
         "batchSize": { "const": 1 },
         "threads": { "const": 1 },
         "networkPolicy": { "const": "fetch-online-build-and-run-offline" },
-        "producerReferenceLabelAccess": { "const": false },
+        "trustedPreprocessorReferenceLabelAccess": { "const": true },
+        "modelSandboxReferenceLabelAccess": { "const": false },
         "independentVerifierReferenceLabelAccess": { "const": true },
+        "producerScientificPayloadPolicy": {
+          "type": "object",
+          "required": ["exactPaths", "scientificArtifactUsesExactPayload", "administrativeEvidenceSeparated", "rawDatasetIncluded", "structureBundleIncluded", "referenceLabelsIncluded", "atomicNumbersIncluded", "atomicNumbersPublicationLicenseCleared", "publicationEligible", "structureCommitmentAuthority"],
+          "properties": {
+            "exactPaths": { "const": ["manifests/structures.manifest.json", "predictions/predictions.jsonl"] },
+            "scientificArtifactUsesExactPayload": { "const": true },
+            "administrativeEvidenceSeparated": { "const": true },
+            "rawDatasetIncluded": { "const": false },
+            "structureBundleIncluded": { "const": false },
+            "referenceLabelsIncluded": { "const": false },
+            "atomicNumbersIncluded": { "const": true },
+            "atomicNumbersPublicationLicenseCleared": { "const": false },
+            "publicationEligible": { "const": false },
+            "structureCommitmentAuthority": { "const": "independent-verifier-derived-from-frozen-raw-dataset" }
+          },
+          "additionalProperties": false
+        },
         "mixedRunAttemptsAllowed": { "const": false },
         "partitioning": {
           "type": "object",

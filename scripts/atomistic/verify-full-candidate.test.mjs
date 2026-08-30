@@ -33,13 +33,23 @@ const SOURCE = Object.freeze({
   repository: 'tony070926-sudo/tailing-future',
   repositoryId: 1349498456,
   revision: SOURCE_REVISION,
+  treeDigestProtocol: 'tf.git-source-tree/v1',
   treeDigest: digest('source-tree'),
 });
 const CREATED_AT = '2026-08-30T12:00:00Z';
 const STRUCTURE_BUNDLE_DIGEST = 'sha256:d4ff1ee210abf80884e1526b1e2600e918103f3505a2a712bce57d6fba3a1b5c';
 const STRUCTURE_MANIFEST_FILE_DIGEST = 'sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e';
-const FAKE_STRUCTURE_BYTES = Buffer.alloc(681_414);
 const FAKE_MANIFEST_BYTES = Buffer.alloc(1_147);
+const VERIFIER_DERIVED_STRUCTURE_COMMITMENT = Object.freeze({
+  status: 'verified',
+  authority: 'independent-label-bearing-verifier',
+  derivationProtocol: 'deterministic-label-stripping-from-frozen-raw-dataset/v1',
+  rawDatasetDigest: 'sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9',
+  structureManifestDigest: 'sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7',
+  regeneratedStructureBundleDigest: STRUCTURE_BUNDLE_DIGEST,
+  regeneratedStructureBundleBytes: 681_414,
+  producerStructureBundleAttributed: false,
+});
 const MODEL = Object.freeze({
   mattersim: Object.freeze({
     modelId: 'mattersim-v1.0.0-5m',
@@ -119,11 +129,10 @@ function producer(jobId, runId = 101, runAttempt = 1) {
   };
 }
 
-function artifactFiles(predictionBytes, structureBytes = FAKE_STRUCTURE_BYTES, manifestBytes = FAKE_MANIFEST_BYTES) {
+function producerScientificPayloadFiles(predictionBytes, manifestBytes = FAKE_MANIFEST_BYTES) {
   return new Map([
     ['manifests/structures.manifest.json', manifestBytes],
     ['predictions/predictions.jsonl', predictionBytes],
-    ['structures/structures.jsonl', structureBytes],
   ]);
 }
 
@@ -133,7 +142,7 @@ function evidence(model, records, jobId, overrides = {}) {
     modelId: MODEL[model].modelId,
     status: 'complete',
     producer: producer(jobId),
-    artifactFiles: artifactFiles(jsonl(records)),
+    producerScientificPayloadFiles: producerScientificPayloadFiles(jsonl(records)),
     ...overrides,
   };
 }
@@ -167,27 +176,38 @@ function completeRecords() {
   };
 }
 
-function completeArtifact(model, records) {
+function completeProducerScientificPayload(model, records) {
   const bytes = jsonl(records);
   const predictionFileDigest = digest(bytes);
+  const files = [
+    { path: 'manifests/structures.manifest.json', sizeBytes: 1_147, sha256: STRUCTURE_MANIFEST_FILE_DIGEST },
+    { path: 'predictions/predictions.jsonl', sizeBytes: bytes.length, sha256: predictionFileDigest },
+  ].map((entry) => ({
+    ...entry,
+    pathByteLength: Buffer.byteLength(entry.path, 'utf8'),
+    pathSha256: digest(Buffer.from(entry.path, 'utf8')),
+  })).sort((left, right) => left.pathSha256 < right.pathSha256 ? -1 : left.pathSha256 > right.pathSha256 ? 1 : 0);
   return {
     predictionSchemaVersion: 'tf.atomistic-prediction/0.3',
     predictionFileDigest,
     predictionBytes: bytes.length,
     predictionRecords: 693,
     environmentDigest: digest(model + ':environment'),
-    structureBundleDigest: STRUCTURE_BUNDLE_DIGEST,
-    structureManifestFileDigest: STRUCTURE_MANIFEST_FILE_DIGEST,
-    artifactFilesEvidenceDigest: digest(canonicalJsonBytes({
-      domain: 'tf.atomistic-full-candidate.artifact-files/v1',
+    producerStructureManifestFileDigest: STRUCTURE_MANIFEST_FILE_DIGEST,
+    producerScientificPayloadEvidenceDigest: digest(canonicalJsonBytes({
+      domain: 'tf.atomistic-full-candidate.producer-scientific-payload/v2',
+      observedFileCount: 2,
+      retainedFileCount: 2,
       truncated: false,
-      files: [
-        { path: 'manifests/structures.manifest.json', sizeBytes: 1_147, sha256: STRUCTURE_MANIFEST_FILE_DIGEST },
-        { path: 'predictions/predictions.jsonl', sizeBytes: bytes.length, sha256: predictionFileDigest },
-        { path: 'structures/structures.jsonl', sizeBytes: 681_414, sha256: STRUCTURE_BUNDLE_DIGEST },
-      ],
+      overflowDigest: null,
+      files,
     })),
-    referenceLabelsPresent: false,
+    producerPayloadReferenceLabelsPresent: false,
+    producerRawDatasetPresent: false,
+    producerStructureBundlePresent: false,
+    atomicNumbersPresent: true,
+    atomicNumbersPublicationLicenseCleared: false,
+    publicationEligible: false,
   };
 }
 
@@ -210,7 +230,7 @@ function completeReceipt(options = {}) {
       status: 'complete',
       records: completeRecords(),
       producer: producer(11),
-      artifact: completeArtifact('mattersim', matterRecords),
+      producerScientificPayload: completeProducerScientificPayload('mattersim', matterRecords),
     },
     {
       partitionId: 'mace-full-000',
@@ -221,7 +241,7 @@ function completeReceipt(options = {}) {
       status: 'complete',
       records: completeRecords(),
       producer: producer(12),
-      artifact: completeArtifact('mace', maceRecords),
+      producerScientificPayload: completeProducerScientificPayload('mace', maceRecords),
     },
   ];
   receipt.verification = {
@@ -230,13 +250,17 @@ function completeReceipt(options = {}) {
     implementationDigest: FULL_CANDIDATE_VERIFIER_IMPLEMENTATION_DIGEST,
     candidatePlanBindingVerified: true,
     frozenBindingsVerified: true,
-    producerReferenceLabelsAbsent: true,
+    producerScientificPayloadReferenceLabelsAbsent: true,
+    producerScientificPayloadStructureBundleAbsent: true,
     verifierReferenceLabelsLoaded: true,
     metricRecomputationIndependent: true,
     metricEvaluationComplete: true,
     mixedRunAttemptsObserved: false,
     integrityErrors: [],
   };
+  receipt.verifierDerivedStructureCommitment = structuredClone(
+    VERIFIER_DERIVED_STRUCTURE_COMMITMENT,
+  );
   receipt.metrics = { models: [matterResult.metrics, maceResult.metrics] };
   receipt.assessments = { mattersim: matterResult.assessment, mace: maceResult.assessment };
   delete receipt.partialMetrics;
@@ -261,7 +285,7 @@ function invalidVerificationOptions(overrides = {}) {
   };
 }
 
-describe('R7a full-candidate prediction parser', () => {
+describe('R7b1 v0.2 full-candidate prediction parser', () => {
   const refs = references();
   const spec = {
     model: 'mattersim',
@@ -306,7 +330,7 @@ describe('R7a full-candidate prediction parser', () => {
   });
 });
 
-describe('R7a frozen verifier and failure receipts', () => {
+describe('R7b1 v0.2 frozen verifier and failure receipts', () => {
   it('does not export the unsafe low-level receipt assembler', async () => {
     const verifierModule = await import('./verify-full-candidate.mjs');
     expect(verifierModule).not.toHaveProperty('assembleFullCandidateReceipt');
@@ -323,7 +347,7 @@ describe('R7a frozen verifier and failure receipts', () => {
     expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).ok).toBe(true);
   });
 
-  it('retains failed and cancelled producer provenance plus rejected artifact observations', () => {
+  it('retains failed and cancelled producer provenance plus rejected payload observations', () => {
     const options = invalidVerificationOptions();
     options.partitionEvidence[0].status = 'failed';
     options.partitionEvidence[0].termination = { code: 'gpu-failure', message: 'Producer stopped after partial output.' };
@@ -333,33 +357,33 @@ describe('R7a frozen verifier and failure receipts', () => {
       status: 'failed',
       records: { attempted: 0, extra: 693, malformedRows: 0 },
       producer: { jobId: 11 },
-      rejectedArtifact: { observedFileCount: 3, predictionRecordsObserved: 693 },
+      rejectedProducerScientificPayload: { observedFileCount: 2, predictionRecordsObserved: 693 },
     });
     expect(receipt.partitions[1]).toMatchObject({
       status: 'cancelled',
       producer: { jobId: 12 },
-      rejectedArtifact: { observedFileCount: 3 },
+      rejectedProducerScientificPayload: { observedFileCount: 2 },
     });
     expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).ok).toBe(true);
   });
 
-  it('publishes schema-valid incomplete receipts for empty and oversized prediction artifacts', () => {
+  it('publishes schema-valid incomplete receipts for empty and oversized prediction payloads', () => {
     const refs = references();
     const options = invalidVerificationOptions({
       partitionEvidence: [
         evidence('mattersim', predictions('mattersim', refs), 11, {
-          artifactFiles: artifactFiles(Buffer.alloc(0)),
+          producerScientificPayloadFiles: producerScientificPayloadFiles(Buffer.alloc(0)),
         }),
         evidence('mace', predictions('mace', refs), 12, {
-          artifactFiles: artifactFiles(Buffer.alloc(MAX_FULL_PREDICTION_BYTES + 1)),
+          producerScientificPayloadFiles: producerScientificPayloadFiles(Buffer.alloc(MAX_FULL_PREDICTION_BYTES + 1)),
         }),
       ],
     });
     const receipt = verifyFullCandidate(options);
     expect(receipt.outcome).toBe('incomplete');
     expect(receipt.partitions.map((partition) => partition.status)).toEqual(['invalid', 'invalid']);
-    expect(receipt.partitions[0].rejectedArtifact.predictionBytesObserved).toBe(0);
-    expect(receipt.partitions[1].rejectedArtifact.predictionBytesObserved).toBe(MAX_FULL_PREDICTION_BYTES + 1);
+    expect(receipt.partitions[0].rejectedProducerScientificPayload.predictionBytesObserved).toBe(0);
+    expect(receipt.partitions[1].rejectedProducerScientificPayload.predictionBytesObserved).toBe(MAX_FULL_PREDICTION_BYTES + 1);
     expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options)).toEqual({ ok: true, errors: [] });
   });
 
@@ -373,18 +397,176 @@ describe('R7a frozen verifier and failure receipts', () => {
     options.partitionEvidence[0] = {
       ...options.partitionEvidence[0],
       status: 'failed',
-      artifactFiles: new Map([['', Buffer.from('observed-invalid-path')]]),
+      producerScientificPayloadFiles: new Map([['', Buffer.from('observed-invalid-path')]]),
     };
     options.partitionEvidence[1] = {
       ...options.partitionEvidence[1],
-      artifactFiles: artifactFiles(jsonl(longSchemaRecords)),
+      producerScientificPayloadFiles: producerScientificPayloadFiles(jsonl(longSchemaRecords)),
     };
     const receipt = verifyFullCandidate(options);
-    expect(receipt.partitions[0].rejectedArtifact.observedFileNames).toEqual([
+    expect(receipt.partitions[0].rejectedProducerScientificPayload.observedFileNames).toEqual([
       '<empty-or-non-string-path>',
     ]);
-    expect(receipt.partitions[1].artifact.predictionSchemaVersion).toBe('unavailable');
-    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options)).toEqual({ ok: true, errors: [] });
+    expect(receipt.partitions[1].producerScientificPayload.predictionSchemaVersion).toBe('unavailable');
+    expect(validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes)).toEqual({
+      ok: true,
+      errors: [],
+    });
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).errors.join('\n')).toMatch(
+      /requires frozen raw inputs and observed producer scientific payload bytes/,
+    );
+  });
+
+  it('rejects structure-bundle, raw-dataset and label-like producer payload paths', () => {
+    const options = invalidVerificationOptions();
+    options.partitionEvidence[0].producerScientificPayloadFiles.set(
+      'structures/structures.jsonl',
+      Buffer.from('locally-regenerated-structure-bytes'),
+    );
+    options.partitionEvidence[1].producerScientificPayloadFiles.set(
+      'labels/reference.jsonl',
+      Buffer.from('forbidden-label-like-bytes'),
+    );
+    options.partitionEvidence[1].producerScientificPayloadFiles.set(
+      'raw-dataset/random-TP.xyz',
+      Buffer.from('forbidden-raw-dataset-bytes'),
+    );
+    const receipt = verifyFullCandidate(options);
+    expect(receipt.outcome).toBe('incomplete');
+    expect(receipt.partitions.map((partition) => partition.status)).toEqual(['invalid', 'invalid']);
+    expect(receipt.partitions[0].rejectedProducerScientificPayload).toMatchObject({
+      producerStructureBundlePresent: true,
+    });
+    expect(receipt.partitions[1].rejectedProducerScientificPayload).toMatchObject({
+      producerPayloadReferenceLabelsPresent: true,
+      producerRawDatasetPresent: true,
+    });
+    expect(receipt.verification.integrityErrors.join('\n')).toMatch(
+      /paths expose forbidden labels, raw data or a structure bundle/,
+    );
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options)).toEqual({
+      ok: true,
+      errors: [],
+    });
+  });
+
+  it('classifies full long paths while disclosing only truncated names and binds their suffixes', () => {
+    const prefix = 'x'.repeat(256);
+    const sensitive = invalidVerificationOptions();
+    sensitive.partitionEvidence[0].status = 'failed';
+    sensitive.partitionEvidence[0].producerScientificPayloadFiles = new Map([
+      [`${prefix}/structures/structures.jsonl`, Buffer.from('same-bytes')],
+    ]);
+    sensitive.partitionEvidence[1].status = 'cancelled';
+    sensitive.partitionEvidence[1].producerScientificPayloadFiles = new Map([
+      [`${prefix}/raw-dataset/random-TP.xyz`, Buffer.from('same-bytes')],
+    ]);
+    const benign = invalidVerificationOptions();
+    benign.partitionEvidence[0].status = 'failed';
+    benign.partitionEvidence[0].producerScientificPayloadFiles = new Map([
+      [`${prefix}/ordinary-a.json`, Buffer.from('same-bytes')],
+    ]);
+    benign.partitionEvidence[1].status = 'cancelled';
+    benign.partitionEvidence[1].producerScientificPayloadFiles = new Map([
+      [`${prefix}/ordinary-b.json`, Buffer.from('same-bytes')],
+    ]);
+
+    const sensitiveReceipt = verifyFullCandidate(sensitive);
+    const benignReceipt = verifyFullCandidate(benign);
+    expect(sensitiveReceipt.partitions[0].rejectedProducerScientificPayload).toMatchObject({
+      observedFileNames: [prefix],
+      producerStructureBundlePresent: true,
+    });
+    expect(sensitiveReceipt.partitions[1].rejectedProducerScientificPayload).toMatchObject({
+      observedFileNames: [prefix],
+      producerRawDatasetPresent: true,
+    });
+    expect(sensitiveReceipt.partitions[0].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest)
+      .not.toBe(benignReceipt.partitions[0].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest);
+    expect(sensitiveReceipt.partitions[1].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest)
+      .not.toBe(benignReceipt.partitions[1].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest);
+    expect(validateFullCandidateReceipt(sensitiveReceipt, receiptSchemaBytes, sensitive)).toEqual({
+      ok: true,
+      errors: [],
+    });
+  });
+
+  it('rejects ill-formed UTF-16 paths and keeps their full identities collision-resistant', () => {
+    const prefix = 'x'.repeat(256);
+    const malformed = (suffix) => {
+      const options = invalidVerificationOptions();
+      options.partitionEvidence[0].status = 'failed';
+      options.partitionEvidence[0].producerScientificPayloadFiles = new Map([
+        [`${prefix}${suffix}`, Buffer.from('same-bytes')],
+      ]);
+      return options;
+    };
+    const first = malformed('\uD800');
+    const second = malformed('\uD801');
+    const replacementCharacter = malformed('\uFFFD');
+    const firstReceipt = verifyFullCandidate(first);
+    const secondReceipt = verifyFullCandidate(second);
+    const replacementReceipt = verifyFullCandidate(replacementCharacter);
+
+    for (const receipt of [firstReceipt, secondReceipt]) {
+      expect(receipt.partitions[0].rejectedProducerScientificPayload.observedFileNames).toEqual([
+        '<invalid-utf16-path>',
+      ]);
+      expect(receipt.verification.integrityErrors.join('\n')).toMatch(/non-canonical UTF-8 path/);
+      expect(validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes)).toEqual({
+        ok: true,
+        errors: [],
+      });
+    }
+    const digests = [firstReceipt, secondReceipt, replacementReceipt].map(
+      (receipt) => receipt.partitions[0].rejectedProducerScientificPayload
+        .producerScientificPayloadEvidenceDigest,
+    );
+    expect(new Set(digests).size).toBe(3);
+    expect(validateFullCandidateReceipt(firstReceipt, receiptSchemaBytes, first).errors.join('\n')).toMatch(
+      /requires frozen raw inputs and observed producer scientific payload bytes/,
+    );
+    expect(validateFullCandidateReceipt(replacementReceipt, receiptSchemaBytes, replacementCharacter)).toEqual({
+      ok: true,
+      errors: [],
+    });
+  });
+
+  it('bounds authoritative payload maps while committing overflow members', () => {
+    const overflowMap = (lastPath) => new Map([
+      ...Array.from({ length: 32 }, (_, index) => [
+        `extra/member-${String(index).padStart(2, '0')}.bin`,
+        Buffer.from(`member-${index}`),
+      ]),
+      [lastPath, Buffer.from('overflow-member')],
+    ]);
+    const first = invalidVerificationOptions();
+    first.partitionEvidence[0].status = 'failed';
+    first.partitionEvidence[0].producerScientificPayloadFiles = overflowMap(
+      'structures/structures.jsonl',
+    );
+    const second = invalidVerificationOptions();
+    second.partitionEvidence[0].status = 'failed';
+    second.partitionEvidence[0].producerScientificPayloadFiles = overflowMap(
+      'ordinary/overflow.bin',
+    );
+
+    const firstReceipt = verifyFullCandidate(first);
+    const secondReceipt = verifyFullCandidate(second);
+    expect(firstReceipt.partitions[0].rejectedProducerScientificPayload).toMatchObject({
+      observedFileCount: 33,
+      producerStructureBundlePresent: true,
+    });
+    expect(firstReceipt.partitions[0].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest)
+      .not.toBe(secondReceipt.partitions[0].rejectedProducerScientificPayload.producerScientificPayloadEvidenceDigest);
+    expect(firstReceipt.verification.integrityErrors.join('\n')).toMatch(/32-file inspection limit/);
+    expect(validateFullCandidateReceiptEnvelope(firstReceipt, receiptSchemaBytes)).toEqual({
+      ok: true,
+      errors: [],
+    });
+    expect(validateFullCandidateReceipt(firstReceipt, receiptSchemaBytes, first).errors.join('\n')).toMatch(
+      /requires frozen raw inputs and observed producer scientific payload bytes/,
+    );
   });
 
   it('never ignores producer termination attached to complete evidence', () => {
@@ -415,10 +597,24 @@ describe('R7a frozen verifier and failure receipts', () => {
     expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).ok).toBe(true);
   });
 
+  it('rejects calendar-invalid UTC timestamps instead of accepting Date.parse rollover', () => {
+    const options = invalidVerificationOptions({ createdAt: '2026-02-31T12:00:00Z' });
+    const receipt = verifyFullCandidate(options);
+    expect(receipt.createdAt).toBe('2000-01-01T00:00:00Z');
+    expect(receipt.verification.integrityErrors.join('\n')).toMatch(/creation timestamp is invalid/);
+    expect(validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes)).toEqual({
+      ok: true,
+      errors: [],
+    });
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).errors.join('\n')).toMatch(
+      /requires frozen raw inputs and observed producer scientific payload bytes/,
+    );
+  });
+
   it('detects duplicate plan members and every frozen input drift before completion', () => {
     const duplicatePlan = Buffer.from(candidatePlanBytes.toString().replace(
-      '  "schemaVersion": "tf.atomistic-full-candidate-plan/0.1",',
-      '  "schemaVersion": "forged",\n  "schemaVersion": "tf.atomistic-full-candidate-plan/0.1",',
+      '  "schemaVersion": "tf.atomistic-full-candidate-plan/0.2",',
+      '  "schemaVersion": "forged",\n  "schemaVersion": "tf.atomistic-full-candidate-plan/0.2",',
     ));
     const inspected = inspectFrozenCandidateInputs({
       candidatePlanBytes: duplicatePlan,
@@ -430,7 +626,7 @@ describe('R7a frozen verifier and failure receipts', () => {
   });
 });
 
-describe('R7a receipt schema and semantic validator', () => {
+describe('R7b1 v0.2 receipt schema and semantic validator', () => {
   it('accepts non-promotional complete pass and complete metric failure receipts', () => {
     const passed = completeReceipt();
     expect(passed.outcome).toBe('complete-pass');
@@ -457,7 +653,7 @@ describe('R7a receipt schema and semantic validator', () => {
     receipt.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(receipt);
     for (const inputs of [undefined, {}, Buffer.from('not-inputs'), new Map()]) {
       expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, inputs).errors.join('\n')).toMatch(
-        /requires frozen raw inputs and observed artifact bytes/,
+        /requires frozen raw inputs and observed producer scientific payload bytes/,
       );
     }
   });
@@ -472,6 +668,12 @@ describe('R7a receipt schema and semantic validator', () => {
     expect(validateFullCandidateReceiptEnvelope(forged, receiptSchemaBytes)).toEqual({ ok: true, errors: [] });
     expect(validateFullCandidateReceipt(forged, receiptSchemaBytes, options).errors.join('\n')).toMatch(
       /differs from the independently recomputed frozen-input result/,
+    );
+
+    const missingRawDataset = { ...options };
+    delete missingRawDataset.datasetBytes;
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, missingRawDataset).errors.join('\n')).toMatch(
+      /requires frozen raw inputs and observed producer scientific payload bytes/,
     );
   });
 
@@ -494,7 +696,7 @@ describe('R7a receipt schema and semantic validator', () => {
     expect(errors).toMatch(/job IDs are not distinct/);
   });
 
-  it('binds verifier, termination and exact complete-artifact evidence digests', () => {
+  it('binds verifier, termination and exact producer-payload evidence digests', () => {
     const implementation = completeReceipt();
     implementation.verification.implementationDigest = digest('different-verifier');
     implementation.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(implementation);
@@ -502,11 +704,11 @@ describe('R7a receipt schema and semantic validator', () => {
       /implementation digest/,
     );
 
-    const artifact = completeReceipt();
-    artifact.partitions[0].artifact.artifactFilesEvidenceDigest = digest('different-artifact-files');
-    artifact.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(artifact);
-    expect(validateFullCandidateReceiptEnvelope(artifact, receiptSchemaBytes).errors.join('\n')).toMatch(
-      /artifact file evidence digest/,
+    const payload = completeReceipt();
+    payload.partitions[0].producerScientificPayload.producerScientificPayloadEvidenceDigest = digest('different-producer-payload');
+    payload.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(payload);
+    expect(validateFullCandidateReceiptEnvelope(payload, receiptSchemaBytes).errors.join('\n')).toMatch(
+      /producer scientific payload evidence digest/,
     );
 
     const termination = incompleteBase();
@@ -537,6 +739,16 @@ describe('R7a receipt schema and semantic validator', () => {
     bundle.evidenceBundleDigest = digest('forged');
     expect(validateFullCandidateReceiptEnvelope(bundle, receiptSchemaBytes).errors.join('\n')).toMatch(/bundle digest/);
 
+    const structureCommitment = completeReceipt();
+    structureCommitment.verifierDerivedStructureCommitment.producerStructureBundleAttributed = true;
+    structureCommitment.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(
+      structureCommitment,
+    );
+    expect(validateFullCandidateReceiptEnvelope(
+      structureCommitment,
+      receiptSchemaBytes,
+    ).errors.join('\n')).toMatch(/verifier-derived structure commitment|schema/);
+
     const outcome = completeReceipt();
     outcome.outcome = 'complete-fail';
     expect(validateFullCandidateReceiptEnvelope(outcome, receiptSchemaBytes).ok).toBe(false);
@@ -544,7 +756,7 @@ describe('R7a receipt schema and semantic validator', () => {
 });
 
 it.skipIf(!existsSync(cachedDatasetPath))(
-  'verifies the actual frozen Random-TP bytes and exact label-free artifact files end to end',
+  'verifies the actual frozen Random-TP bytes and exact label-free producer payload end to end',
   async () => {
     const temporary = await realpath(await mkdtemp(path.join(os.tmpdir(), 'tailing-r7a-verifier-')));
     try {
@@ -562,10 +774,10 @@ it.skipIf(!existsSync(cachedDatasetPath))(
       const refs = inspectRandomTp(datasetBytes).records;
       const partitionEvidence = [
         evidence('mattersim', predictions('mattersim', refs), 11, {
-          artifactFiles: artifactFiles(jsonl(predictions('mattersim', refs)), structureBytes, manifestBytes),
+          producerScientificPayloadFiles: producerScientificPayloadFiles(jsonl(predictions('mattersim', refs)), manifestBytes),
         }),
         evidence('mace', predictions('mace', refs), 12, {
-          artifactFiles: artifactFiles(jsonl(predictions('mace', refs)), structureBytes, manifestBytes),
+          producerScientificPayloadFiles: producerScientificPayloadFiles(jsonl(predictions('mace', refs)), manifestBytes),
         }),
       ];
       const verificationInputs = {
@@ -581,7 +793,76 @@ it.skipIf(!existsSync(cachedDatasetPath))(
       expect(receipt.outcome).toBe('complete-pass');
       expect(receipt.partitions.map((partition) => partition.status)).toEqual(['complete', 'complete']);
       expect(receipt.verification.integrityErrors).toEqual([]);
+      expect(receipt.verifierDerivedStructureCommitment).toEqual(
+        VERIFIER_DERIVED_STRUCTURE_COMMITMENT,
+      );
+      expect(receipt.partitions[0].producerScientificPayload).toMatchObject({
+        producerStructureBundlePresent: false,
+        atomicNumbersPresent: true,
+        atomicNumbersPublicationLicenseCleared: false,
+        publicationEligible: false,
+      });
+      expect(receipt.partitions[0].producerScientificPayload).not.toHaveProperty(
+        'structureBundleDigest',
+      );
       expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, verificationInputs)).toEqual({ ok: true, errors: [] });
+
+      const missingRawDataset = { ...verificationInputs };
+      delete missingRawDataset.datasetBytes;
+      expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, missingRawDataset).errors.join('\n')).toMatch(
+        /requires frozen raw inputs and observed producer scientific payload bytes/,
+      );
+
+      const structurePollutedInputs = {
+        ...verificationInputs,
+        partitionEvidence: [
+          {
+            ...partitionEvidence[0],
+            producerScientificPayloadFiles: new Map([
+              ...partitionEvidence[0].producerScientificPayloadFiles,
+              ['structures/structures.jsonl', structureBytes],
+            ]),
+          },
+          partitionEvidence[1],
+        ],
+      };
+      const structurePolluted = verifyFullCandidate(structurePollutedInputs);
+      expect(structurePolluted.outcome).toBe('incomplete');
+      expect(structurePolluted.partitions[0].status).toBe('invalid');
+      expect(structurePolluted.partitions[0].rejectedProducerScientificPayload).toMatchObject({
+        producerStructureBundlePresent: true,
+      });
+      expect(structurePolluted.partitions[0].rejectedProducerScientificPayload).not.toHaveProperty(
+        'structureBundleDigest',
+      );
+      expect(structurePolluted.verifierDerivedStructureCommitment).toEqual(
+        VERIFIER_DERIVED_STRUCTURE_COMMITMENT,
+      );
+      expect(validateFullCandidateReceipt(
+        structurePolluted,
+        receiptSchemaBytes,
+        structurePollutedInputs,
+      )).toEqual({ ok: true, errors: [] });
+
+      const completeFailInputs = {
+        ...verificationInputs,
+        partitionEvidence: [
+          evidence('mattersim', predictions('mattersim', refs, { pass: false }), 11, {
+            producerScientificPayloadFiles: producerScientificPayloadFiles(
+              jsonl(predictions('mattersim', refs, { pass: false })),
+              manifestBytes,
+            ),
+          }),
+          partitionEvidence[1],
+        ],
+      };
+      const completeFail = verifyFullCandidate(completeFailInputs);
+      expect(completeFail.outcome).toBe('complete-fail');
+      expect(validateFullCandidateReceipt(
+        completeFail,
+        receiptSchemaBytes,
+        completeFailInputs,
+      )).toEqual({ ok: true, errors: [] });
 
       const forgedMetrics = structuredClone(receipt);
       forgedMetrics.metrics.models[0].energy.p50 = 999;
@@ -620,7 +901,6 @@ it.skipIf(!existsSync(cachedDatasetPath))(
         partitionEvidence: [
           { ...partitionEvidence[0], unexpectedEvidenceField: true },
           partitionEvidence[1],
-          partitionEvidence[1],
         ],
         source: { ...SOURCE, unexpectedSourceField: true },
         createdAt: 'invalid-timestamp',
@@ -630,7 +910,7 @@ it.skipIf(!existsSync(cachedDatasetPath))(
       expect(globallyInvalid.partitions.map((partition) => partition.status)).toEqual(['invalid', 'complete']);
       expect(validateFullCandidateReceiptEnvelope(globallyInvalid, receiptSchemaBytes)).toEqual({ ok: true, errors: [] });
       expect(validateFullCandidateReceipt(globallyInvalid, receiptSchemaBytes, globallyInvalidInputs).errors.join('\n')).toMatch(
-        /requires frozen raw inputs and observed artifact bytes/,
+        /requires frozen raw inputs and observed producer scientific payload bytes/,
       );
     } finally {
       await rm(temporary, { recursive: true, force: true });

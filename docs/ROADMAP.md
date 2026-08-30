@@ -28,8 +28,8 @@ Status: in progress. The numerical entry gate and atomistic reproduction spec ar
 - completed entry gates: grid-invariant heat capacity density, three-mode Fourier convergence, analytic two-reservoir exchange, atomic forced-reaction closure, full parameter/resource envelopes and 8×5,000 tails;
 - completed manifest gates: record-level Materials Project, JARVIS, NOMAD and Open Catalyst provenance plans;
 - completed bootstrap trust gate: protected-main Commit-V receipt plus offline verification of its exact certificate identity, subject digest, transparency-log timestamp and GitHub-hosted runner provenance;
-- current: pass Commit F through local and protected-main policy gates while keeping all scientific claims false and the Sentinel score at 41;
-- next: execute like-for-like complete 693-record Random-TP inference on both frozen runtimes and require an independent scientific verifier before any accuracy or comparability claim;
+- current: R7b1 freezes the label boundary, canonical producer outcome, source-tree identity and bounded verifier evidence while keeping all scientific claims false and the Sentinel score at 41;
+- next: build the authenticated GitHub provenance/archive adapter and a legally cleared private handoff before dispatching like-for-like 693-record Random-TP inference on both frozen runtimes;
 - NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 

@@ -1,13 +1,18 @@
 {
-  "schemaVersion": "tf.atomistic-full-candidate-plan/0.1",
+  "schemaVersion": "tf.atomistic-full-candidate-plan/0.2",
   "status": "frozen-candidate-contract-not-run",
   "frozenAt": "2026-08-30",
-  "purpose": "Run one complete 693-structure Random-TP prediction partition for each frozen model, then let an independent label-bearing verifier compute evidence-bound metrics while preserving pass, fail and incomplete outcomes.",
+  "purpose": "Use a trusted preprocessor to validate and strip labels from the frozen Random-TP source, run one label-blind 693-structure prediction partition for each frozen model, and let an independent label-bearing verifier derive the structure commitment and compute evidence-bound metrics while preserving pass, fail and incomplete outcomes.",
   "bindings": {
     "scientificPlan": {
       "path": "evaluation/atomistic/reproduction-plan.json",
       "schemaVersion": "tf.atomistic-reproduction/0.2",
       "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+    },
+    "producerOutcomeSchema": {
+      "path": "schemas/atomistic-full-candidate-producer-outcome.schema.json",
+      "schemaVersion": "tf.atomistic-full-candidate-producer-outcome/0.2",
+      "rawDigest": "sha256:e3671d5fee2b68964c19bfac954fe99f9c72801c482008228b7dde4e0df85fa7"
     },
     "runtimeLock": {
       "path": "evaluation/atomistic/runtime-lock.json",
@@ -55,8 +60,24 @@
     "batchSize": 1,
     "threads": 1,
     "networkPolicy": "fetch-online-build-and-run-offline",
-    "producerReferenceLabelAccess": false,
+    "trustedPreprocessorReferenceLabelAccess": true,
+    "modelSandboxReferenceLabelAccess": false,
     "independentVerifierReferenceLabelAccess": true,
+    "producerScientificPayloadPolicy": {
+      "exactPaths": [
+        "manifests/structures.manifest.json",
+        "predictions/predictions.jsonl"
+      ],
+      "scientificArtifactUsesExactPayload": true,
+      "administrativeEvidenceSeparated": true,
+      "rawDatasetIncluded": false,
+      "structureBundleIncluded": false,
+      "referenceLabelsIncluded": false,
+      "atomicNumbersIncluded": true,
+      "atomicNumbersPublicationLicenseCleared": false,
+      "publicationEligible": false,
+      "structureCommitmentAuthority": "independent-verifier-derived-from-frozen-raw-dataset"
+    },
     "mixedRunAttemptsAllowed": false,
     "partitioning": {
       "partitionKey": "model",
@@ -168,6 +189,7 @@
     "89 force finite-difference checks per model",
     "60 stress finite-difference checks per model",
     "versioned multi-producer hardware and run-attempt receipt semantics",
-    "registry-addressable OCI manifest and config trust roots"
+    "registry-addressable OCI manifest and config trust roots",
+    "atomic-number disclosure and public producer-payload redistribution license clearance"
   ]
 }

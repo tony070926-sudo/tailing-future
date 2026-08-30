@@ -12,14 +12,23 @@ import {
   parseJsonRejectingDuplicateMembers,
   recomputeRuntimeSourceIdentity,
 } from './runtime-lock-policy.mjs';
+import {
+  FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
+  FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
+} from './full-candidate-producer-outcome-policy.mjs';
+
+export {
+  FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
+  FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
+};
 
 export const FULL_CANDIDATE_PLAN_PATH = 'evaluation/atomistic/full-candidate-plan.json';
 export const FULL_CANDIDATE_PLAN_SCHEMA_PATH = 'schemas/atomistic-full-candidate-plan.schema.json';
 export const FULL_CANDIDATE_RECEIPT_SCHEMA_PATH = 'schemas/atomistic-full-candidate-receipt.schema.json';
-export const FULL_CANDIDATE_PLAN_RAW_DIGEST = 'sha256:1e96300c7119bd82661ad63404dc6f2c51df254656d4974c4c7282592740265c';
-export const FULL_CANDIDATE_PLAN_SEMANTIC_DIGEST = 'sha256:632bb6bd978d40ad9377b9a8e5881d1449baccf7e0122a08ecf02be45ec11379';
-export const FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST = 'sha256:6157ead4697d07025bffe47d130b1758176125e9c30170821ce29b56ac724a93';
-export const FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST = 'sha256:0988cd4fe080e858036b943ce5aa8a61f604b71540c248de41e43d42bccb3ca0';
+export const FULL_CANDIDATE_PLAN_RAW_DIGEST = 'sha256:22a32d92a2c094c86f1978f066b631c503a8775e6e846831dcca5dde4376fe4b';
+export const FULL_CANDIDATE_PLAN_SEMANTIC_DIGEST = 'sha256:825412a4d0bd4ba337d2cbf28edfbad6cf3bfbd5f4a62a7f4e0754ad1d27a570';
+export const FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST = 'sha256:659cd4a6ca3d2cde790fbc9ad199ef6d6b4893ba61442e6809c72f570ba7c474';
+export const FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST = 'sha256:f6dfdec4d81bd1467ec459f6e0153dee5fe877a17819de4704c0ae189dcc70aa';
 export const FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT = '2026-08-30';
 
 const SCIENTIFIC_PLAN_PATH = 'evaluation/atomistic/reproduction-plan.json';
@@ -35,6 +44,11 @@ export const EXPECTED_FULL_CANDIDATE_BINDINGS = deepFreeze({
     path: SCIENTIFIC_PLAN_PATH,
     schemaVersion: 'tf.atomistic-reproduction/0.2',
     rawDigest: SCIENTIFIC_PLAN_RAW_DIGEST,
+  },
+  producerOutcomeSchema: {
+    path: FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
+    schemaVersion: 'tf.atomistic-full-candidate-producer-outcome/0.2',
+    rawDigest: FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
   },
   runtimeLock: {
     path: RUNTIME_LOCK_PATH,
@@ -175,6 +189,7 @@ export const EXPECTED_FULL_CANDIDATE_PENDING_GATES = deepFreeze([
   '60 stress finite-difference checks per model',
   'versioned multi-producer hardware and run-attempt receipt semantics',
   'registry-addressable OCI manifest and config trust roots',
+  'atomic-number disclosure and public producer-payload redistribution license clearance',
 ]);
 
 const EXPECTED_EXECUTION = deepFreeze({
@@ -185,8 +200,24 @@ const EXPECTED_EXECUTION = deepFreeze({
   batchSize: 1,
   threads: 1,
   networkPolicy: 'fetch-online-build-and-run-offline',
-  producerReferenceLabelAccess: false,
+  trustedPreprocessorReferenceLabelAccess: true,
+  modelSandboxReferenceLabelAccess: false,
   independentVerifierReferenceLabelAccess: true,
+  producerScientificPayloadPolicy: {
+    exactPaths: [
+      'manifests/structures.manifest.json',
+      'predictions/predictions.jsonl',
+    ],
+    scientificArtifactUsesExactPayload: true,
+    administrativeEvidenceSeparated: true,
+    rawDatasetIncluded: false,
+    structureBundleIncluded: false,
+    referenceLabelsIncluded: false,
+    atomicNumbersIncluded: true,
+    atomicNumbersPublicationLicenseCleared: false,
+    publicationEligible: false,
+    structureCommitmentAuthority: 'independent-verifier-derived-from-frozen-raw-dataset',
+  },
   mixedRunAttemptsAllowed: false,
   partitioning: {
     partitionKey: 'model',
@@ -295,7 +326,7 @@ export function validateFullCandidatePlanSemantics(plan) {
   catch (error) { failures.push(`candidate-plan.semantic: canonicalization failed (${message(error)})`); }
   if (semanticDigest !== FULL_CANDIDATE_PLAN_SEMANTIC_DIGEST) failures.push('candidate-plan.semantic: exact frozen contract digest mismatch');
 
-  compare(failures, 'candidate-plan.schemaVersion', plan.schemaVersion, 'tf.atomistic-full-candidate-plan/0.1');
+  compare(failures, 'candidate-plan.schemaVersion', plan.schemaVersion, 'tf.atomistic-full-candidate-plan/0.2');
   compare(failures, 'candidate-plan.status', plan.status, 'frozen-candidate-contract-not-run');
   compare(failures, 'candidate-plan.frozenAt', plan.frozenAt, '2026-08-30');
   compare(failures, 'candidate-plan.bindings', plan.bindings, EXPECTED_FULL_CANDIDATE_BINDINGS);
@@ -353,14 +384,16 @@ export async function validateFullCandidatePlanRepository(planBytes, {
   };
   let schemaBytes;
   let receiptSchemaBytes;
+  let producerOutcomeSchemaBytes;
   let scientificPlanBytes;
   let runtimeLockBytes;
   let idManifestBytes;
   let catalogBytes;
   try {
-    [schemaBytes, receiptSchemaBytes, scientificPlanBytes, runtimeLockBytes, idManifestBytes, catalogBytes] = await Promise.all([
+    [schemaBytes, receiptSchemaBytes, producerOutcomeSchemaBytes, scientificPlanBytes, runtimeLockBytes, idManifestBytes, catalogBytes] = await Promise.all([
       readPolicyFile(FULL_CANDIDATE_PLAN_SCHEMA_PATH),
       readPolicyFile(FULL_CANDIDATE_RECEIPT_SCHEMA_PATH),
+      readPolicyFile(FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH),
       readPolicyFile(SCIENTIFIC_PLAN_PATH),
       readPolicyFile(RUNTIME_LOCK_PATH),
       readPolicyFile(RANDOM_TP_ID_MANIFEST_PATH),
@@ -377,6 +410,28 @@ export async function validateFullCandidatePlanRepository(planBytes, {
   compare(failures, 'candidate-receipt.schema.rawDigest', sha256(receiptSchemaBytes), FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST);
   const receiptSchema = parseBoundJson(receiptSchemaBytes, 'candidate-receipt.schema', failures);
   if (receiptSchema) failures.push(...validateFullCandidateReceiptSchema(receiptSchema));
+  compare(
+    failures,
+    'candidate-producer-outcome.schema.rawDigest',
+    sha256(producerOutcomeSchemaBytes),
+    FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
+  );
+  compareBoundRawDigest(
+    failures,
+    'candidate-plan.producer-outcome-schema',
+    producerOutcomeSchemaBytes,
+    plan.bindings?.producerOutcomeSchema?.rawDigest,
+    FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
+  );
+  const producerOutcomeSchema = parseBoundJson(
+    producerOutcomeSchemaBytes,
+    'candidate-producer-outcome.schema',
+    failures,
+  );
+  if (producerOutcomeSchema) failures.push(...validateFullCandidateReceiptSchema(
+    producerOutcomeSchema,
+    'candidate-producer-outcome.schema',
+  ));
 
   compareBoundRawDigest(failures, 'candidate-plan.scientific-plan', scientificPlanBytes, plan.bindings?.scientificPlan?.rawDigest, SCIENTIFIC_PLAN_RAW_DIGEST);
   const scientificPlan = parseBoundJson(scientificPlanBytes, 'candidate-plan.scientific-plan', failures);
@@ -394,12 +449,12 @@ export async function validateFullCandidatePlanRepository(planBytes, {
   return { ...inspection, failures };
 }
 
-function validateFullCandidateReceiptSchema(schema) {
+function validateFullCandidateReceiptSchema(schema, label = 'candidate-receipt.schema') {
   try {
     new Ajv2020({ allErrors: true, strict: true, validateFormats: false, validateSchema: true }).compile(schema);
     return [];
   } catch (error) {
-    return [`candidate-receipt.schema: strict AJV compilation failed (${message(error)})`];
+    return [`${label}: strict AJV compilation failed (${message(error)})`];
   }
 }
 

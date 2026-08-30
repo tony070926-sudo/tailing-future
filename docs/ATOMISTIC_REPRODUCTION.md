@@ -177,6 +177,34 @@ An independent verifier owns finite-difference, invariance and batch-1 checks
 and must emit the canonical receipt bound to the exact plan bytes and trusted
 attestation claims.
 
+R7b1 freezes only the evidence-boundary foundations for that future run. The
+candidate plan is `tf.atomistic-full-candidate-plan/0.2`: a trusted
+preprocessor may read the frozen labeled source, the model sandbox may not read
+reference labels, and the independent verifier privately regenerates the
+structure commitment from the exact 1,514,015 source bytes. A producer's
+scientific projection is exactly `manifests/structures.manifest.json` plus
+`predictions/predictions.jsonl`; raw Random-TP bytes and the regenerated
+`structures.jsonl` bundle are forbidden.
+
+`write_full_candidate_outcome.py` writes
+`tf.atomistic-full-candidate-producer-outcome/0.2`. Its `complete` status is
+explicitly scoped to producer execution, never scientific acceptance. The
+scanned working directory is an internal evidence inventory—not a public
+artifact—and both scientific and administrative artifact publication remain
+ineligible while the atomic-number/data-redistribution decision is unresolved.
+The JavaScript outcome policy independently re-derives the twelve ordered stage
+states, rejects cross-field evidence for skipped or failed stages, freezes the
+schema bytes and keeps every positive claim false.
+
+The future verifier workflow must not accept caller-reported provenance. It
+must fetch GitHub run/job/artifact metadata, hash actual archive members, derive
+`tf.git-source-tree/v1` from the commit object database, and then project an
+exact two-file byte map into the label-bearing verifier. The current source-tree
+utility SHA-256-binds every regular blob and every raw tree object, including
+empty-subtree topology, but it is not yet connected to a branded GitHub API
+observation. Therefore R7b1 remains **NOT RUN / NO AUTHORITATIVE RECEIPT / NO
+PUBLIC PRODUCER ARTIFACT**.
+
 The future full-promotion guard must verify the GitHub artifact attestation
 cryptographically outside the candidate receipt. Its trusted observation must
 bind the certificate issuer and subject alternative name, repository and

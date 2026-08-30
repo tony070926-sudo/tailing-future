@@ -1,17 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-full-candidate-receipt/0.1",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-receipt/0.2",
   "title": "Tailing Future Atomistic Full Candidate Receipt",
   "description": "A non-promotional receipt for one 693-record MatterSim partition and one 693-record MACE partition. Complete metric passes, complete metric failures and incomplete executions remain distinguishable; no outcome is a formal reproduction, comparison or promotion receipt.",
   "type": "object",
-  "required": ["schemaVersion", "outcome", "createdAt", "candidatePlan", "source", "frozenBindings", "claims", "claimBoundaries", "partitions", "verification", "pendingScientificGates"],
+  "required": ["schemaVersion", "outcome", "createdAt", "candidatePlan", "source", "frozenBindings", "verifierDerivedStructureCommitment", "claims", "claimBoundaries", "partitions", "verification", "pendingScientificGates"],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-full-candidate-receipt/0.1" },
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-receipt/0.2" },
     "outcome": { "enum": ["complete-pass", "complete-fail", "incomplete"] },
     "createdAt": { "$ref": "#/$defs/timestamp" },
     "candidatePlan": { "$ref": "#/$defs/candidatePlanReference" },
     "source": { "$ref": "#/$defs/source" },
     "frozenBindings": { "$ref": "#/$defs/frozenBindings" },
+    "verifierDerivedStructureCommitment": { "$ref": "#/$defs/verifierDerivedStructureCommitment" },
     "claims": { "$ref": "#/$defs/claims" },
     "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" },
     "partitions": {
@@ -35,7 +36,8 @@
         "89 force finite-difference checks per model",
         "60 stress finite-difference checks per model",
         "versioned multi-producer hardware and run-attempt receipt semantics",
-        "registry-addressable OCI manifest and config trust roots"
+        "registry-addressable OCI manifest and config trust roots",
+        "atomic-number disclosure and public producer-payload redistribution license clearance"
       ]
     },
     "evidenceBundleDigest": { "$ref": "#/$defs/digest" }
@@ -47,6 +49,7 @@
       "required": ["metrics", "assessments", "evidenceBundleDigest"],
       "properties": {
         "outcome": { "const": "complete-pass" },
+        "verifierDerivedStructureCommitment": { "$ref": "#/$defs/verifiedVerifierDerivedStructureCommitment" },
         "metrics": { "$ref": "#/$defs/completeMetrics" },
         "evidenceBundleDigest": { "$ref": "#/$defs/digest" },
         "partitions": {
@@ -88,6 +91,7 @@
       "required": ["metrics", "assessments", "evidenceBundleDigest"],
       "properties": {
         "outcome": { "const": "complete-fail" },
+        "verifierDerivedStructureCommitment": { "$ref": "#/$defs/verifiedVerifierDerivedStructureCommitment" },
         "metrics": { "$ref": "#/$defs/completeMetrics" },
         "evidenceBundleDigest": { "$ref": "#/$defs/digest" },
         "partitions": {
@@ -164,18 +168,19 @@
       "required": ["path", "schemaVersion", "rawDigest"],
       "properties": {
         "path": { "const": "evaluation/atomistic/full-candidate-plan.json" },
-        "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.1" },
-        "rawDigest": { "const": "sha256:1e96300c7119bd82661ad63404dc6f2c51df254656d4974c4c7282592740265c" }
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.2" },
+        "rawDigest": { "const": "sha256:22a32d92a2c094c86f1978f066b631c503a8775e6e846831dcca5dde4376fe4b" }
       },
       "additionalProperties": false
     },
     "source": {
       "type": "object",
-      "required": ["repository", "repositoryId", "revision", "treeDigest"],
+      "required": ["repository", "repositoryId", "revision", "treeDigestProtocol", "treeDigest"],
       "properties": {
         "repository": { "const": "tony070926-sudo/tailing-future" },
         "repositoryId": { "const": 1349498456 },
         "revision": { "$ref": "#/$defs/sha" },
+        "treeDigestProtocol": { "const": "tf.git-source-tree/v1" },
         "treeDigest": { "$ref": "#/$defs/digest" }
       },
       "additionalProperties": false
@@ -230,6 +235,36 @@
       },
       "additionalProperties": false
     },
+    "verifierDerivedStructureCommitment": {
+      "oneOf": [
+        { "$ref": "#/$defs/verifiedVerifierDerivedStructureCommitment" },
+        { "$ref": "#/$defs/unavailableVerifierDerivedStructureCommitment" }
+      ]
+    },
+    "verifiedVerifierDerivedStructureCommitment": {
+      "const": {
+        "status": "verified",
+        "authority": "independent-label-bearing-verifier",
+        "derivationProtocol": "deterministic-label-stripping-from-frozen-raw-dataset/v1",
+        "rawDatasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+        "structureManifestDigest": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7",
+        "regeneratedStructureBundleDigest": "sha256:d4ff1ee210abf80884e1526b1e2600e918103f3505a2a712bce57d6fba3a1b5c",
+        "regeneratedStructureBundleBytes": 681414,
+        "producerStructureBundleAttributed": false
+      }
+    },
+    "unavailableVerifierDerivedStructureCommitment": {
+      "const": {
+        "status": "unavailable",
+        "authority": "independent-label-bearing-verifier",
+        "derivationProtocol": "deterministic-label-stripping-from-frozen-raw-dataset/v1",
+        "rawDatasetDigest": null,
+        "structureManifestDigest": null,
+        "regeneratedStructureBundleDigest": null,
+        "regeneratedStructureBundleBytes": null,
+        "producerStructureBundleAttributed": false
+      }
+    },
     "claims": {
       "const": {
         "claimEligible": false,
@@ -283,42 +318,50 @@
       },
       "additionalProperties": false
     },
-    "predictionArtifact": {
+    "producerScientificPayload": {
       "type": "object",
-      "required": ["predictionSchemaVersion", "predictionFileDigest", "predictionBytes", "predictionRecords", "environmentDigest", "structureBundleDigest", "structureManifestFileDigest", "artifactFilesEvidenceDigest", "referenceLabelsPresent"],
+      "required": ["predictionSchemaVersion", "predictionFileDigest", "predictionBytes", "predictionRecords", "environmentDigest", "producerStructureManifestFileDigest", "producerScientificPayloadEvidenceDigest", "producerPayloadReferenceLabelsPresent", "producerRawDatasetPresent", "producerStructureBundlePresent", "atomicNumbersPresent", "atomicNumbersPublicationLicenseCleared", "publicationEligible"],
       "properties": {
         "predictionSchemaVersion": { "type": "string", "minLength": 1, "maxLength": 128 },
         "predictionFileDigest": { "$ref": "#/$defs/digest" },
         "predictionBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
         "predictionRecords": { "type": "integer", "minimum": 0, "maximum": 100000 },
         "environmentDigest": { "$ref": "#/$defs/digest" },
-        "structureBundleDigest": { "$ref": "#/$defs/digest" },
-        "structureManifestFileDigest": { "$ref": "#/$defs/digest" },
-        "artifactFilesEvidenceDigest": { "$ref": "#/$defs/digest" },
-        "referenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] }
+        "producerStructureManifestFileDigest": { "$ref": "#/$defs/digest" },
+        "producerScientificPayloadEvidenceDigest": { "$ref": "#/$defs/digest" },
+        "producerPayloadReferenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "producerRawDatasetPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "producerStructureBundlePresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "atomicNumbersPresent": { "type": "boolean" },
+        "atomicNumbersPublicationLicenseCleared": { "const": false },
+        "publicationEligible": { "const": false }
       },
       "additionalProperties": false
     },
-    "completePredictionArtifact": {
+    "completeProducerScientificPayload": {
       "allOf": [
-        { "$ref": "#/$defs/predictionArtifact" },
+        { "$ref": "#/$defs/producerScientificPayload" },
         {
           "type": "object",
           "properties": {
           "predictionSchemaVersion": { "const": "tf.atomistic-prediction/0.3" },
           "predictionRecords": { "const": 693 },
-          "structureBundleDigest": { "const": "sha256:d4ff1ee210abf80884e1526b1e2600e918103f3505a2a712bce57d6fba3a1b5c" },
-          "structureManifestFileDigest": { "const": "sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e" },
-          "referenceLabelsPresent": { "const": false }
+          "producerStructureManifestFileDigest": { "const": "sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e" },
+          "producerPayloadReferenceLabelsPresent": { "const": false },
+          "producerRawDatasetPresent": { "const": false },
+          "producerStructureBundlePresent": { "const": false },
+          "atomicNumbersPresent": { "const": true },
+          "atomicNumbersPublicationLicenseCleared": { "const": false },
+          "publicationEligible": { "const": false }
           }
         }
       ]
     },
-    "rejectedArtifact": {
+    "rejectedProducerScientificPayload": {
       "type": "object",
-      "required": ["artifactFilesEvidenceDigest", "observedFileCount", "observedFileNames", "predictionFileDigest", "predictionBytesObserved", "predictionRecordsObserved", "referenceLabelsPresent"],
+      "required": ["producerScientificPayloadEvidenceDigest", "observedFileCount", "observedFileNames", "predictionFileDigest", "predictionBytesObserved", "predictionRecordsObserved", "producerPayloadReferenceLabelsPresent", "producerRawDatasetPresent", "producerStructureBundlePresent"],
       "properties": {
-        "artifactFilesEvidenceDigest": { "$ref": "#/$defs/digest" },
+        "producerScientificPayloadEvidenceDigest": { "$ref": "#/$defs/digest" },
         "observedFileCount": { "type": "integer", "minimum": 0, "maximum": 100000 },
         "observedFileNames": {
           "type": "array",
@@ -328,7 +371,9 @@
         "predictionFileDigest": { "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
         "predictionBytesObserved": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
         "predictionRecordsObserved": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 100000 }, { "type": "null" }] },
-        "referenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] }
+        "producerPayloadReferenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "producerRawDatasetPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+        "producerStructureBundlePresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] }
       },
       "additionalProperties": false
     },
@@ -355,24 +400,24 @@
         "status": { "enum": ["complete", "invalid", "failed", "cancelled", "not-started"] },
         "records": { "$ref": "#/$defs/recordCounts" },
         "producer": { "$ref": "#/$defs/producerIdentity" },
-        "artifact": { "$ref": "#/$defs/predictionArtifact" },
-        "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+        "producerScientificPayload": { "$ref": "#/$defs/producerScientificPayload" },
+        "rejectedProducerScientificPayload": { "$ref": "#/$defs/rejectedProducerScientificPayload" },
         "termination": { "$ref": "#/$defs/terminationEvidence" }
       },
       "oneOf": [
         {
           "type": "object",
-          "required": ["producer", "artifact"],
+          "required": ["producer", "producerScientificPayload"],
           "properties": {
             "status": { "const": "complete" },
             "records": { "$ref": "#/$defs/completeRecordCounts" },
             "producer": { "$ref": "#/$defs/producerIdentity" },
-            "artifact": { "$ref": "#/$defs/completePredictionArtifact" }
+            "producerScientificPayload": { "$ref": "#/$defs/completeProducerScientificPayload" }
           },
           "not": {
             "anyOf": [
               { "properties": { "termination": {} }, "required": ["termination"] },
-              { "properties": { "rejectedArtifact": {} }, "required": ["rejectedArtifact"] }
+              { "properties": { "rejectedProducerScientificPayload": {} }, "required": ["rejectedProducerScientificPayload"] }
             ]
           }
         },
@@ -382,20 +427,20 @@
           "properties": {
             "status": { "const": "invalid" },
             "producer": { "$ref": "#/$defs/producerIdentity" },
-            "artifact": { "$ref": "#/$defs/predictionArtifact" },
-            "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+            "producerScientificPayload": { "$ref": "#/$defs/producerScientificPayload" },
+            "rejectedProducerScientificPayload": { "$ref": "#/$defs/rejectedProducerScientificPayload" },
             "termination": { "$ref": "#/$defs/terminationEvidence" }
           },
           "oneOf": [
             {
-              "properties": { "artifact": {}, "rejectedArtifact": {} },
-              "required": ["artifact"],
-              "not": { "properties": { "rejectedArtifact": {} }, "required": ["rejectedArtifact"] }
+              "properties": { "producerScientificPayload": {}, "rejectedProducerScientificPayload": {} },
+              "required": ["producerScientificPayload"],
+              "not": { "properties": { "rejectedProducerScientificPayload": {} }, "required": ["rejectedProducerScientificPayload"] }
             },
             {
-              "properties": { "artifact": {}, "rejectedArtifact": {} },
-              "required": ["rejectedArtifact"],
-              "not": { "properties": { "artifact": {} }, "required": ["artifact"] }
+              "properties": { "producerScientificPayload": {}, "rejectedProducerScientificPayload": {} },
+              "required": ["rejectedProducerScientificPayload"],
+              "not": { "properties": { "producerScientificPayload": {} }, "required": ["producerScientificPayload"] }
             }
           ]
         },
@@ -405,10 +450,10 @@
           "properties": {
             "status": { "enum": ["failed", "cancelled", "not-started"] },
             "producer": { "$ref": "#/$defs/producerIdentity" },
-            "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+            "rejectedProducerScientificPayload": { "$ref": "#/$defs/rejectedProducerScientificPayload" },
             "termination": { "$ref": "#/$defs/terminationEvidence" }
           },
-          "not": { "properties": { "artifact": {} }, "required": ["artifact"] }
+          "not": { "properties": { "producerScientificPayload": {} }, "required": ["producerScientificPayload"] }
         }
       ],
       "additionalProperties": false
@@ -645,14 +690,15 @@
     },
     "verification": {
       "type": "object",
-      "required": ["status", "verifierClass", "implementationDigest", "candidatePlanBindingVerified", "frozenBindingsVerified", "producerReferenceLabelsAbsent", "verifierReferenceLabelsLoaded", "metricRecomputationIndependent", "metricEvaluationComplete", "mixedRunAttemptsObserved", "integrityErrors"],
+      "required": ["status", "verifierClass", "implementationDigest", "candidatePlanBindingVerified", "frozenBindingsVerified", "producerScientificPayloadReferenceLabelsAbsent", "producerScientificPayloadStructureBundleAbsent", "verifierReferenceLabelsLoaded", "metricRecomputationIndependent", "metricEvaluationComplete", "mixedRunAttemptsObserved", "integrityErrors"],
       "properties": {
         "status": { "enum": ["verified-complete", "verified-incomplete"] },
         "verifierClass": { "const": "independent-label-bearing-verifier" },
         "implementationDigest": { "$ref": "#/$defs/digest" },
         "candidatePlanBindingVerified": { "type": "boolean" },
         "frozenBindingsVerified": { "type": "boolean" },
-        "producerReferenceLabelsAbsent": { "type": "boolean" },
+        "producerScientificPayloadReferenceLabelsAbsent": { "type": "boolean" },
+        "producerScientificPayloadStructureBundleAbsent": { "type": "boolean" },
         "verifierReferenceLabelsLoaded": { "type": "boolean" },
         "metricRecomputationIndependent": { "type": "boolean" },
         "metricEvaluationComplete": { "type": "boolean" },
@@ -672,7 +718,8 @@
           "status": { "const": "verified-complete" },
           "candidatePlanBindingVerified": { "const": true },
           "frozenBindingsVerified": { "const": true },
-          "producerReferenceLabelsAbsent": { "const": true },
+          "producerScientificPayloadReferenceLabelsAbsent": { "const": true },
+          "producerScientificPayloadStructureBundleAbsent": { "const": true },
           "verifierReferenceLabelsLoaded": { "const": true },
           "metricRecomputationIndependent": { "const": true },
           "metricEvaluationComplete": { "const": true },
