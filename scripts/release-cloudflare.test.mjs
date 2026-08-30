@@ -22,7 +22,10 @@ import {
   EXPECTED_CLOUDFLARE_ACCOUNT_ID,
   NPM_CI_ARGS,
   resolveReleaseInputs,
+  validateInstalledWranglerManifest,
   validateWranglerLock,
+  WRANGLER_LOCK_BIN_PATH,
+  WRANGLER_PACKAGE_BIN_PATH,
   WRANGLER_VERSION,
 } from './release-cloudflare.mjs';
 
@@ -343,6 +346,8 @@ describe('Cloudflare release process boundaries', () => {
     ));
 
     expect(WRANGLER_VERSION).toBe('4.127.0');
+    expect(WRANGLER_LOCK_BIN_PATH).toBe('bin/wrangler.js');
+    expect(WRANGLER_PACKAGE_BIN_PATH).toBe('./bin/wrangler.js');
     expect(NPM_CI_ARGS).toEqual([
       'ci',
       '--ignore-scripts',
@@ -363,6 +368,23 @@ describe('Cloudflare release process boundaries', () => {
       const changedLock = structuredClone(packageLock);
       mutate(changedManifest, changedLock);
       expect(() => validateWranglerLock(changedManifest, changedLock)).toThrow(/pin Wrangler/);
+    }
+
+    const installedManifest = JSON.parse(await readFile(
+      path.join(repositoryRoot, 'node_modules/wrangler/package.json'),
+      'utf8',
+    ));
+    expect(() => validateInstalledWranglerManifest(installedManifest)).not.toThrow();
+    for (const mutate of [
+      (manifest) => { manifest.version = '4.126.0'; },
+      (manifest) => { manifest.bin.wrangler = 'bin/wrangler.js'; },
+      (manifest) => { delete manifest.bin.wrangler; },
+    ]) {
+      const changedManifest = structuredClone(installedManifest);
+      mutate(changedManifest);
+      expect(() => validateInstalledWranglerManifest(changedManifest)).toThrow(
+        /rebuilt Wrangler manifest/,
+      );
     }
   });
 

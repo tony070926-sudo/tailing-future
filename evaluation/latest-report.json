@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.1-r7b1-evidence-boundary",
-  "generatedAt": "2026-08-30T17:47:07.662Z",
+  "generatedAt": "2026-08-30T18:04:44.269Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-29",
-  "artifactDigest": "sha256:7c956cd2a3290fc66c6a7a969f6eb4bf5a0b95f5138ef42502afabd75832943f",
+  "artifactDigest": "sha256:6a337893d3420afea6adff991d9ed3897b0a1a1d93f87e0d56f9eb1926c44186",
   "sourceFileCount": 149,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -139,8 +139,8 @@
     "scripts/github-release-policy.test.mjs": "sha256:c8a49539d3bab740a680dea1312e115fa8b3c88b86a4e2a8f392d8266c1e86cf",
     "scripts/release-artifact.mjs": "sha256:3473987abdb13923caa4d4dab2f937ccc292c8b365313b4ceeacf7b510b42f6e",
     "scripts/release-artifact.test.mjs": "sha256:004fe5399600bc7009508ed12fbce529d1a060ad86ced3224ebdbd40bc9157ac",
-    "scripts/release-cloudflare.mjs": "sha256:d34a162724d26b880c85dd1b58617c767f35dba2374cb9713bf9753e681e4a54",
-    "scripts/release-cloudflare.test.mjs": "sha256:71034ba3bc761d1e2d5cb58b205fed4bc640b0785bd26c739469c601c322d03d",
+    "scripts/release-cloudflare.mjs": "sha256:4ca3254ce970b8761e6aabe3bfcfc591f07e970a66429a08fd186e88f1225c9d",
+    "scripts/release-cloudflare.test.mjs": "sha256:ac1818a3ccec2d6808b56645296520d63de517d5682f047393e8d159883e99ce",
     "scripts/release-report.mjs": "sha256:67638c540bbf540503c80de0cba1479fd33a80df06c9aa22de1235f09d6cc935",
     "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
     "scripts/safe_extract_zip.py": "sha256:e6b1a46b1ba471c888402cd75987819b18097d0bc6d2f87f5d1469f3d6a7caa0",
@@ -249,7 +249,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 78258.2
+    "elapsedMs": 76276.39
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -313,7 +313,7 @@
     "scripts/evaluate.mjs": "sha256:f2feb201d4c1072419193c7c1a9e0061a2d700db783b208d8587e987f1debff7",
     "scripts/evaluate-worker.mjs": "sha256:25189810fa7449a54ea684c176f3dc08e967c7bc484cf7ed39e42e3e24735d43",
     "scripts/evaluate-launcher.test.mjs": "sha256:6dbdc0cc9620b9e42262a05804cf2e8cd211b614f2652e184f24c5922856ab3c",
-    "scripts/release-cloudflare.mjs": "sha256:d34a162724d26b880c85dd1b58617c767f35dba2374cb9713bf9753e681e4a54",
+    "scripts/release-cloudflare.mjs": "sha256:4ca3254ce970b8761e6aabe3bfcfc591f07e970a66429a08fd186e88f1225c9d",
     "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d"
   },
