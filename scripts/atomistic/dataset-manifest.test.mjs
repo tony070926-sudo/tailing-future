@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { inspectRandomTp } from './dataset-manifest.mjs';
+import {
+  inspectRandomTp,
+  labelManifestDigest,
+  referenceLabelDigest,
+  structureDigest,
+  structureManifestDigest,
+} from './dataset-manifest.mjs';
 
 const frame = ({ id = 'random-TP-000000', symbol = 'Si', force = '0 0 0', energy = '-1' } = {}) => Buffer.from([
   '1',
@@ -17,8 +23,13 @@ describe('Random-TP record manifest', () => {
 
     expect(left.recordManifestSha256).toBe(right.recordManifestSha256);
     expect(left.smokeManifestSha256).toBe(right.smokeManifestSha256);
+    expect(left.structureManifestSha256).toBe(right.structureManifestSha256);
+    expect(left.labelManifestSha256).toBe(right.labelManifestSha256);
     expect(left.ids).toEqual(['random-TP-000000', 'random-TP-000001']);
     expect(left).toMatchObject({ frames: 2, atoms: 2, elements: 2, smokeElements: 1 });
+    expect(left.records[0]).toMatchObject({
+      atomicNumbers: [14], positions: [0, 0, 0], forces: [0, 0, 0], pbc: [true, true, true],
+    });
   });
 
   it('changes the record and smoke manifests when a bound scientific value changes', () => {
@@ -26,7 +37,20 @@ describe('Random-TP record manifest', () => {
     const changed = inspectRandomTp(frame({ force: '0 0 0.1' }), ['random-TP-000000']);
     expect(changed.recordManifestSha256).not.toBe(original.recordManifestSha256);
     expect(changed.smokeRecordManifestSha256).not.toBe(original.smokeRecordManifestSha256);
+    expect(changed.labelManifestSha256).not.toBe(original.labelManifestSha256);
+    expect(changed.structureManifestSha256).toBe(original.structureManifestSha256);
     expect(changed.smokeManifestSha256).toBe(original.smokeManifestSha256);
+  });
+
+  it('exposes separately domain-bound structure and reference-label commitments', () => {
+    const inspected = inspectRandomTp(frame());
+    const [record] = inspected.records;
+    expect(record.inputStructureDigest).toBe(structureDigest(record));
+    expect(record.inputStructureDigest).toBe('sha256:1e52aa2f439d07deca1b6e7717596853d16d14935381a82e894e54848b503931');
+    expect(record.labelDigest).toBe(referenceLabelDigest(record));
+    expect(inspected.structureManifestSha256).toBe(structureManifestDigest(inspected.records));
+    expect(inspected.labelManifestSha256).toBe(labelManifestDigest(inspected.records));
+    expect(record.inputStructureDigest).not.toBe(record.labelDigest);
   });
 
   it('rejects duplicate IDs, non-finite values, missing smoke IDs and unit drift', () => {

@@ -16,6 +16,7 @@ for (const specifier of ['ajv/dist/2020.js', 'js-yaml']) {
 }
 const projectSpecifiers = [
   '../lib/simulation/thermochemical-world.ts',
+  './atomistic/full-candidate-plan-policy.mjs',
   './workflow-policy.mjs',
   './comparator-evidence-policy.mjs',
   './source-snapshot.mjs',
@@ -31,6 +32,12 @@ for (const specifier of projectSpecifiers) {
 const [
   { default: Ajv2020 },
   { runThermochemicalVerification, ThermochemicalWorld },
+  {
+    FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT,
+    FULL_CANDIDATE_PLAN_RAW_DIGEST,
+    FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST,
+    FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST,
+  },
   { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource },
   { validateComparatorEvidenceRegistry },
   { captureProjectSourceSnapshot },
@@ -38,6 +45,7 @@ const [
 ] = await Promise.all([
   import('ajv/dist/2020.js'),
   import('../lib/simulation/thermochemical-world.ts'),
+  import('./atomistic/full-candidate-plan-policy.mjs'),
   import('./workflow-policy.mjs'),
   import('./comparator-evidence-policy.mjs'),
   import('./source-snapshot.mjs'),
@@ -60,6 +68,9 @@ const worldSchema = await readJson('schemas/world-state.schema.json');
 const actionSchema = await readJson('schemas/action.schema.json');
 const atomisticPlan = await readJson('evaluation/atomistic/reproduction-plan.json');
 const atomisticPlanSchema = await readJson('schemas/atomistic-reproduction.schema.json');
+const atomisticCandidatePlan = await readJson('evaluation/atomistic/full-candidate-plan.json');
+const atomisticCandidatePlanSchema = await readJson('schemas/atomistic-full-candidate-plan.schema.json');
+const atomisticCandidateReceiptSchema = await readJson('schemas/atomistic-full-candidate-receipt.schema.json');
 const datasetCatalog = await readJson('evaluation/data/datasets.json');
 const evaluationSchema = await readJson('schemas/evaluation-report.schema.json');
 const hardGateFailures = [...scorecard.hardGateFailures];
@@ -170,6 +181,8 @@ try {
   const validateWorld = ajv.compile(worldSchema);
   const validateAction = ajv.compile(actionSchema);
   const validateAtomisticPlan = ajv.compile(atomisticPlanSchema);
+  const validateAtomisticCandidatePlan = ajv.compile(atomisticCandidatePlanSchema);
+  ajv.compile(atomisticCandidateReceiptSchema);
   const sample = new ThermochemicalWorld({ count: 64, gridWidth: 5, gridHeight: 3, seed: 20260828 });
   sample.injectCentralHeatPulse(15);
   const serialized = sample.serialize();
@@ -197,6 +210,23 @@ try {
     workflowFailures.push(...inspectDockerfileSource(relativePath, readSnapshotText(relativePath)));
   }
   workflowFailures.push(...inspectDockerignoreSource('.dockerignore', readSnapshotText('.dockerignore')));
+  const randomTpCatalog = datasetCatalog.datasets.find((dataset) => dataset.id === 'mattersim-random-tp');
+  const candidateBenchmark = atomisticCandidatePlan.bindings?.benchmark;
+  const candidateContractValid = validateAtomisticCandidatePlan(atomisticCandidatePlan)
+    && sourceSnapshot.digest('evaluation/atomistic/full-candidate-plan.json') === FULL_CANDIDATE_PLAN_RAW_DIGEST
+    && sourceSnapshot.digest('schemas/atomistic-full-candidate-plan.schema.json') === FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST
+    && sourceSnapshot.digest('schemas/atomistic-full-candidate-receipt.schema.json') === FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST
+    && atomisticCandidatePlan.status === 'frozen-candidate-contract-not-run'
+    && atomisticCandidatePlan.execution.partitioning.partitions.length === 2
+    && atomisticCandidatePlan.execution.partitioning.partitions.every((partition) => partition.expectedRecords === 693 && partition.partitionCount === 1)
+    && Object.values(atomisticCandidatePlan.resultPolicy.claims).every((claim) => claim === false)
+    && atomisticCandidatePlan.claimBoundaries.randomTpIsMatbenchWbm === false
+    && atomisticCandidatePlan.claimBoundaries.currentSotaClaimAllowed === false
+    && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
+    && randomTpCatalog?.redistribute === false
+    && randomTpCatalog?.license?.startsWith('NOASSERTION:')
+    && ['sha256', 'idSetSha256', 'recordManifestSha256', 'structureManifestSha256', 'labelManifestSha256']
+      .every((catalogKey, index) => randomTpCatalog?.[catalogKey] === candidateBenchmark?.[['datasetDigest', 'idSetDigest', 'recordManifestDigest', 'structureManifestDigest', 'labelManifestDigest'][index]]);
   schemaVerification = {
     world: validateWorld(serialized),
     action: validateAction(serialized.lastAction),
@@ -218,8 +248,10 @@ try {
         && entry.gating === 'manual'
         && entry.industrialDefaultAllowed === false
         && entry.legalEvidence.some((evidence) => evidence.kind === 'acceptable-use-policy' && evidence.sha256 === null))
-      && atomisticPlan.benchmarks.some((benchmark) => benchmark.role === 'primary-like-for-like' && benchmark.artifact.frames === 693 && benchmark.artifact.atoms === 11088 && benchmark.artifact.elements === 89),
+      && atomisticPlan.benchmarks.some((benchmark) => benchmark.role === 'primary-like-for-like' && benchmark.artifact.frames === 693 && benchmark.artifact.atoms === 11088 && benchmark.artifact.elements === 89)
+      && candidateContractValid,
     datasetCatalog: datasetCatalog.schemaVersion === 'tf.dataset-catalog/0.1'
+      && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
       && datasetCatalog.datasets.length >= 4
       && datasetCatalog.datasets.every((dataset) => dataset.license && dataset.source?.startsWith('https://') && dataset.requiredProvenance?.length >= 4),
     workflowPolicy: workflowFiles.length >= 2 && dockerfiles.length === 2 && workflowFailures.length === 0,
@@ -229,7 +261,7 @@ try {
   if (!schemaVerification.action) hardGateFailures.push(`Action schema validation failed: ${JSON.stringify(validateAction.errors)}.`);
   if (!schemaVerification.actionMutationCorpus) hardGateFailures.push('Action schema accepted an invalid per-kind mutation.');
   if (!schemaVerification.runtimeActionSemantics) hardGateFailures.push('Runtime action semantics accepted or misclassified a cross-kind mutation.');
-  if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors)}.`);
+  if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors ?? validateAtomisticCandidatePlan.errors)}.`);
   if (!schemaVerification.datasetCatalog) hardGateFailures.push('Dataset provenance and license catalog validation failed.');
   if (!schemaVerification.workflowPolicy) hardGateFailures.push('Workflow and atomistic build policy coverage is incomplete.');
   if (!schemaVerification.comparatorReceipts) hardGateFailures.push('Comparator receipt promotion policy rejected the registry.');
@@ -335,7 +367,7 @@ const markdown = [
   physicsVerification
     ? `- Fourier L2: ${physicsVerification.heatModeRelativeL2Error.toExponential(3)}; minimum 2D order: ${physicsVerification.fourierMinimumObservedOrder.toFixed(3)}; ${physicsVerification.ensemble.seeds.length}×${physicsVerification.ensemble.horizonSteps} p95/max energy tail: ${physicsVerification.ensemble.energyResidualTail.p95.toExponential(3)} / ${physicsVerification.ensemble.energyResidualTail.maximum.toExponential(3)}.`
     : '- Physics verification unavailable.',
-  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction plan / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (manifest only)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
+  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (candidate contract only; no full run)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
   `- Industrial default exclusions: ${atomisticPlan.excludedDefaults.map((entry) => `${entry.id} (${entry.gating}; industrialDefaultAllowed=${entry.industrialDefaultAllowed})`).join(', ')}.`,
   '',
   '## Next iteration gaps',

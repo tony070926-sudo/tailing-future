@@ -1,0 +1,685 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-receipt/0.1",
+  "title": "Tailing Future Atomistic Full Candidate Receipt",
+  "description": "A non-promotional receipt for one 693-record MatterSim partition and one 693-record MACE partition. Complete metric passes, complete metric failures and incomplete executions remain distinguishable; no outcome is a formal reproduction, comparison or promotion receipt.",
+  "type": "object",
+  "required": ["schemaVersion", "outcome", "createdAt", "candidatePlan", "source", "frozenBindings", "claims", "claimBoundaries", "partitions", "verification", "pendingScientificGates"],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-receipt/0.1" },
+    "outcome": { "enum": ["complete-pass", "complete-fail", "incomplete"] },
+    "createdAt": { "$ref": "#/$defs/timestamp" },
+    "candidatePlan": { "$ref": "#/$defs/candidatePlanReference" },
+    "source": { "$ref": "#/$defs/source" },
+    "frozenBindings": { "$ref": "#/$defs/frozenBindings" },
+    "claims": { "$ref": "#/$defs/claims" },
+    "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" },
+    "partitions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "$ref": "#/$defs/mattersimPartitionResult" },
+        { "$ref": "#/$defs/macePartitionResult" }
+      ],
+      "items": false
+    },
+    "metrics": { "$ref": "#/$defs/completeMetrics" },
+    "partialMetrics": { "$ref": "#/$defs/partialMetrics" },
+    "assessments": { "$ref": "#/$defs/assessments" },
+    "verification": { "$ref": "#/$defs/verification" },
+    "pendingScientificGates": {
+      "const": [
+        "two independent protected-main full-candidate receipts with durable attestations",
+        "40 invariance checks per model",
+        "89 force finite-difference checks per model",
+        "60 stress finite-difference checks per model",
+        "versioned multi-producer hardware and run-attempt receipt semantics",
+        "registry-addressable OCI manifest and config trust roots"
+      ]
+    },
+    "evidenceBundleDigest": { "$ref": "#/$defs/digest" }
+  },
+  "oneOf": [
+    {
+      "title": "Complete candidate pass",
+      "type": "object",
+      "required": ["metrics", "assessments", "evidenceBundleDigest"],
+      "properties": {
+        "outcome": { "const": "complete-pass" },
+        "metrics": { "$ref": "#/$defs/completeMetrics" },
+        "evidenceBundleDigest": { "$ref": "#/$defs/digest" },
+        "partitions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/mattersimPartitionResult" }, { "type": "object", "properties": { "status": { "const": "complete" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/macePartitionResult" }, { "type": "object", "properties": { "status": { "const": "complete" } } }] }
+          ],
+          "items": false
+        },
+        "assessments": {
+          "allOf": [
+            { "$ref": "#/$defs/assessments" },
+            {
+              "type": "object",
+              "properties": {
+                "mattersim": {
+                  "allOf": [
+                    { "$ref": "#/$defs/mattersimAssessment" },
+                    { "type": "object", "properties": {
+                      "status": { "const": "passed" },
+                      "metricPass": { "const": { "energy": true, "force": true, "stress": true } }
+                    } }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "verification": { "$ref": "#/$defs/completeVerification" }
+      },
+      "not": { "properties": { "partialMetrics": {} }, "required": ["partialMetrics"] }
+    },
+    {
+      "title": "Complete candidate metric failure",
+      "type": "object",
+      "required": ["metrics", "assessments", "evidenceBundleDigest"],
+      "properties": {
+        "outcome": { "const": "complete-fail" },
+        "metrics": { "$ref": "#/$defs/completeMetrics" },
+        "evidenceBundleDigest": { "$ref": "#/$defs/digest" },
+        "partitions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/mattersimPartitionResult" }, { "type": "object", "properties": { "status": { "const": "complete" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/macePartitionResult" }, { "type": "object", "properties": { "status": { "const": "complete" } } }] }
+          ],
+          "items": false
+        },
+        "assessments": {
+          "allOf": [
+            { "$ref": "#/$defs/assessments" },
+            {
+              "type": "object",
+              "properties": {
+                "mattersim": {
+                  "allOf": [
+                    { "$ref": "#/$defs/mattersimAssessment" },
+                    {
+                      "type": "object",
+                      "properties": { "status": { "const": "failed" } },
+                      "anyOf": [
+                        { "type": "object", "properties": { "metricPass": { "type": "object", "properties": { "energy": { "const": false } } } } },
+                        { "type": "object", "properties": { "metricPass": { "type": "object", "properties": { "force": { "const": false } } } } },
+                        { "type": "object", "properties": { "metricPass": { "type": "object", "properties": { "stress": { "const": false } } } } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "verification": { "$ref": "#/$defs/completeVerification" }
+      },
+      "not": { "properties": { "partialMetrics": {} }, "required": ["partialMetrics"] }
+    },
+    {
+      "title": "Incomplete candidate execution or verification",
+      "type": "object",
+      "properties": {
+        "outcome": { "const": "incomplete" },
+        "partitions": {
+          "type": "array",
+          "contains": { "type": "object", "properties": { "status": { "enum": ["invalid", "failed", "cancelled", "not-started"] } }, "required": ["status"] },
+          "minContains": 1
+        },
+        "verification": {
+          "allOf": [
+            { "$ref": "#/$defs/verification" },
+            { "type": "object", "properties": { "status": { "const": "verified-incomplete" }, "metricRecomputationIndependent": { "const": false }, "metricEvaluationComplete": { "const": false } } }
+          ]
+        }
+      },
+      "not": {
+        "anyOf": [
+          { "properties": { "metrics": {} }, "required": ["metrics"] },
+          { "properties": { "assessments": {} }, "required": ["assessments"] },
+          { "properties": { "evidenceBundleDigest": {} }, "required": ["evidenceBundleDigest"] }
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "timestamp": { "type": "string", "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$" },
+    "candidatePlanReference": {
+      "type": "object",
+      "required": ["path", "schemaVersion", "rawDigest"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/full-candidate-plan.json" },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.1" },
+        "rawDigest": { "const": "sha256:1e96300c7119bd82661ad63404dc6f2c51df254656d4974c4c7282592740265c" }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["repository", "repositoryId", "revision", "treeDigest"],
+      "properties": {
+        "repository": { "const": "tony070926-sudo/tailing-future" },
+        "repositoryId": { "const": 1349498456 },
+        "revision": { "$ref": "#/$defs/sha" },
+        "treeDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "modelRuntimeBindings": {
+      "type": "object",
+      "required": ["mattersim", "mace"],
+      "properties": {
+        "mattersim": {
+          "const": {
+            "dependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+            "runtimeInputManifestDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53"
+          }
+        },
+        "mace": {
+          "const": {
+            "dependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33",
+            "runtimeInputManifestDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "frozenBindings": {
+      "type": "object",
+      "required": ["scientificPlanDigest", "runtimeLockDigest", "runtimeStableInputsCommitment", "runtimeSourceManifestDigest", "runtimeMaterializationDigest", "runnerDigest", "modelRuntimeIdentities", "datasetDigest", "idSetDigest", "recordManifestDigest", "recordManifestProtocol", "structureManifestDigest", "structureManifestProtocol", "labelManifestDigest", "labelManifestProtocol", "metricProtocol"],
+      "properties": {
+        "scientificPlanDigest": { "const": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2" },
+        "runtimeLockDigest": { "const": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1" },
+        "runtimeStableInputsCommitment": { "const": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb" },
+        "runtimeSourceManifestDigest": { "const": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1" },
+        "runtimeMaterializationDigest": { "const": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721" },
+        "runnerDigest": { "const": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4" },
+        "modelRuntimeIdentities": { "$ref": "#/$defs/modelRuntimeBindings" },
+        "datasetDigest": { "const": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9" },
+        "idSetDigest": { "const": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91" },
+        "recordManifestDigest": { "const": "sha256:6afbbdc0cd745efaca4bf5d7a2a7604db9f1d1f59749b86d3c0a51d48f07893a" },
+        "recordManifestProtocol": { "const": "tf.random-tp.record-manifest/v1" },
+        "structureManifestDigest": { "const": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7" },
+        "structureManifestProtocol": { "const": "tf.atomistic-structure-manifest/v1" },
+        "labelManifestDigest": { "const": "sha256:a0eda4ac1c7720002a32f42f91c635bf8398b93c02846fb83ae97437e3e8422f" },
+        "labelManifestProtocol": { "const": "tf.random-tp.reference-label-manifest/v1" },
+        "metricProtocol": {
+          "const": {
+            "definitionId": "mattersim-model-card-frobenius/v1",
+            "summation": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1",
+            "quantileMethod": "Hyndman-Fan-7-linear",
+            "perIdMetricEvidenceRootProtocol": "sha256-merkle-canonical-json-array-model-id-metric-id-error-ascii-id-order-duplicate-id-forbidden/v1",
+            "binary64MetricEvidenceRootProtocol": "sha256-merkle-domain-separated-model-id-metric-id-ieee754-binary64-little-endian-ascii-id-order-duplicate-id-forbidden/v1"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "const": {
+        "claimEligible": false,
+        "promotionEligible": false,
+        "comparisonEligible": false,
+        "reproductionEligible": false,
+        "reproduced": false,
+        "superiorityClaimAllowed": false
+      }
+    },
+    "claimBoundaries": {
+      "const": {
+        "randomTpIsMatbenchWbm": false,
+        "matterSimInterpretation": "frozen-frobenius-protocol-equivalent-only",
+        "maceInterpretation": "blind-engineering-baseline-only",
+        "currentSotaClaimAllowed": false,
+        "experimentalGroundTruthClaimAllowed": false,
+        "industrialFitnessClaimAllowed": false,
+        "crossModelSuperiorityClaimAllowed": false
+      }
+    },
+    "recordCounts": {
+      "type": "object",
+      "required": ["expected", "attempted", "succeeded", "missing", "extra", "duplicate", "failed", "nonfinite", "malformedRows"],
+      "properties": {
+        "expected": { "const": 693 },
+        "attempted": { "type": "integer", "minimum": 0, "maximum": 693 },
+        "succeeded": { "type": "integer", "minimum": 0, "maximum": 693 },
+        "missing": { "type": "integer", "minimum": 0, "maximum": 693 },
+        "extra": { "type": "integer", "minimum": 0 },
+        "duplicate": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0, "maximum": 693 },
+        "nonfinite": { "type": "integer", "minimum": 0, "maximum": 693 },
+        "malformedRows": { "type": "integer", "minimum": 0, "maximum": 100000 }
+      },
+      "additionalProperties": false
+    },
+    "completeRecordCounts": {
+      "const": { "expected": 693, "attempted": 693, "succeeded": 693, "missing": 0, "extra": 0, "duplicate": 0, "failed": 0, "nonfinite": 0, "malformedRows": 0 }
+    },
+    "producerIdentity": {
+      "type": "object",
+      "required": ["repositoryId", "revision", "workflowRunId", "runAttempt", "jobId", "hardwareId"],
+      "properties": {
+        "repositoryId": { "const": 1349498456 },
+        "revision": { "$ref": "#/$defs/sha" },
+        "workflowRunId": { "type": "integer", "minimum": 1 },
+        "runAttempt": { "type": "integer", "minimum": 1 },
+        "jobId": { "type": "integer", "minimum": 1 },
+        "hardwareId": { "type": "string", "minLength": 3, "maxLength": 128 }
+      },
+      "additionalProperties": false
+    },
+    "predictionArtifact": {
+      "type": "object",
+      "required": ["predictionSchemaVersion", "predictionFileDigest", "predictionBytes", "predictionRecords", "environmentDigest", "structureBundleDigest", "structureManifestFileDigest", "artifactFilesEvidenceDigest", "referenceLabelsPresent"],
+      "properties": {
+        "predictionSchemaVersion": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "predictionFileDigest": { "$ref": "#/$defs/digest" },
+        "predictionBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
+        "predictionRecords": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "environmentDigest": { "$ref": "#/$defs/digest" },
+        "structureBundleDigest": { "$ref": "#/$defs/digest" },
+        "structureManifestFileDigest": { "$ref": "#/$defs/digest" },
+        "artifactFilesEvidenceDigest": { "$ref": "#/$defs/digest" },
+        "referenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "completePredictionArtifact": {
+      "allOf": [
+        { "$ref": "#/$defs/predictionArtifact" },
+        {
+          "type": "object",
+          "properties": {
+          "predictionSchemaVersion": { "const": "tf.atomistic-prediction/0.3" },
+          "predictionRecords": { "const": 693 },
+          "structureBundleDigest": { "const": "sha256:d4ff1ee210abf80884e1526b1e2600e918103f3505a2a712bce57d6fba3a1b5c" },
+          "structureManifestFileDigest": { "const": "sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e" },
+          "referenceLabelsPresent": { "const": false }
+          }
+        }
+      ]
+    },
+    "rejectedArtifact": {
+      "type": "object",
+      "required": ["artifactFilesEvidenceDigest", "observedFileCount", "observedFileNames", "predictionFileDigest", "predictionBytesObserved", "predictionRecordsObserved", "referenceLabelsPresent"],
+      "properties": {
+        "artifactFilesEvidenceDigest": { "$ref": "#/$defs/digest" },
+        "observedFileCount": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "observedFileNames": {
+          "type": "array",
+          "maxItems": 32,
+          "items": { "type": "string", "minLength": 1, "maxLength": 256 }
+        },
+        "predictionFileDigest": { "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+        "predictionBytesObserved": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "predictionRecordsObserved": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 100000 }, { "type": "null" }] },
+        "referenceLabelsPresent": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "terminationEvidence": {
+      "type": "object",
+      "required": ["stage", "code", "message", "evidenceDigest"],
+      "properties": {
+        "stage": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "code": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,127}$" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 2048 },
+        "evidenceDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "partitionResult": {
+      "type": "object",
+      "required": ["partitionId", "model", "modelId", "partitionIndex", "partitionCount", "status", "records"],
+      "properties": {
+        "partitionId": { "enum": ["mattersim-full-000", "mace-full-000"] },
+        "model": { "enum": ["mattersim", "mace"] },
+        "modelId": { "enum": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"] },
+        "partitionIndex": { "const": 0 },
+        "partitionCount": { "const": 1 },
+        "status": { "enum": ["complete", "invalid", "failed", "cancelled", "not-started"] },
+        "records": { "$ref": "#/$defs/recordCounts" },
+        "producer": { "$ref": "#/$defs/producerIdentity" },
+        "artifact": { "$ref": "#/$defs/predictionArtifact" },
+        "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+        "termination": { "$ref": "#/$defs/terminationEvidence" }
+      },
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["producer", "artifact"],
+          "properties": {
+            "status": { "const": "complete" },
+            "records": { "$ref": "#/$defs/completeRecordCounts" },
+            "producer": { "$ref": "#/$defs/producerIdentity" },
+            "artifact": { "$ref": "#/$defs/completePredictionArtifact" }
+          },
+          "not": {
+            "anyOf": [
+              { "properties": { "termination": {} }, "required": ["termination"] },
+              { "properties": { "rejectedArtifact": {} }, "required": ["rejectedArtifact"] }
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "required": ["producer", "termination"],
+          "properties": {
+            "status": { "const": "invalid" },
+            "producer": { "$ref": "#/$defs/producerIdentity" },
+            "artifact": { "$ref": "#/$defs/predictionArtifact" },
+            "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+            "termination": { "$ref": "#/$defs/terminationEvidence" }
+          },
+          "oneOf": [
+            {
+              "properties": { "artifact": {}, "rejectedArtifact": {} },
+              "required": ["artifact"],
+              "not": { "properties": { "rejectedArtifact": {} }, "required": ["rejectedArtifact"] }
+            },
+            {
+              "properties": { "artifact": {}, "rejectedArtifact": {} },
+              "required": ["rejectedArtifact"],
+              "not": { "properties": { "artifact": {} }, "required": ["artifact"] }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "required": ["termination"],
+          "properties": {
+            "status": { "enum": ["failed", "cancelled", "not-started"] },
+            "producer": { "$ref": "#/$defs/producerIdentity" },
+            "rejectedArtifact": { "$ref": "#/$defs/rejectedArtifact" },
+            "termination": { "$ref": "#/$defs/terminationEvidence" }
+          },
+          "not": { "properties": { "artifact": {} }, "required": ["artifact"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "mattersimPartitionResult": {
+      "allOf": [
+        { "$ref": "#/$defs/partitionResult" },
+        { "type": "object", "properties": { "partitionId": { "const": "mattersim-full-000" }, "model": { "const": "mattersim" }, "modelId": { "const": "mattersim-v1.0.0-5m" } } }
+      ]
+    },
+    "macePartitionResult": {
+      "allOf": [
+        { "$ref": "#/$defs/partitionResult" },
+        { "type": "object", "properties": { "partitionId": { "const": "mace-full-000" }, "model": { "const": "mace" }, "modelId": { "const": "mace-mpa-0-medium" } } }
+      ]
+    },
+    "metricWorst": {
+      "type": "object",
+      "required": ["id", "error"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^random-TP-[0-9]{6}$" },
+        "error": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "metricReport": {
+      "type": "object",
+      "required": ["definition", "unit", "records", "mean", "p50", "p90", "p95", "p99", "worst", "perIdMetricEvidenceRoot", "binary64MetricEvidenceRoot"],
+      "properties": {
+        "definition": { "enum": [
+          "absolute-total-energy-error-divided-by-frame-atom-count",
+          "mean-per-atom-l2-vector-error-per-frame",
+          "full-3x3-frobenius-error-in-gpa-per-frame",
+          "symmetric-3x3-spectral-norm-error-in-gpa-per-frame",
+          "unweighted-voigt6-l2-error-in-gpa-per-frame",
+          "absolute-stress-component-error-in-gpa-per-frame:xx",
+          "absolute-stress-component-error-in-gpa-per-frame:yy",
+          "absolute-stress-component-error-in-gpa-per-frame:zz",
+          "absolute-stress-component-error-in-gpa-per-frame:yz",
+          "absolute-stress-component-error-in-gpa-per-frame:xz",
+          "absolute-stress-component-error-in-gpa-per-frame:xy"
+        ] },
+        "unit": { "enum": ["eV/atom", "eV/angstrom", "GPa"] },
+        "records": { "const": 693 },
+        "mean": { "type": "number", "minimum": 0 },
+        "p50": { "type": "number", "minimum": 0 },
+        "p90": { "type": "number", "minimum": 0 },
+        "p95": { "type": "number", "minimum": 0 },
+        "p99": { "type": "number", "minimum": 0 },
+        "worst": { "$ref": "#/$defs/metricWorst" },
+        "perIdMetricEvidenceRoot": { "$ref": "#/$defs/digest" },
+        "binary64MetricEvidenceRoot": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "energyMetric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "const": "absolute-total-energy-error-divided-by-frame-atom-count" }, "unit": { "const": "eV/atom" } } }
+      ]
+    },
+    "forceMetric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "const": "mean-per-atom-l2-vector-error-per-frame" }, "unit": { "const": "eV/angstrom" } } }
+      ]
+    },
+    "stressMetric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "const": "full-3x3-frobenius-error-in-gpa-per-frame" }, "unit": { "const": "GPa" } } }
+      ]
+    },
+    "stressDiagnostics": {
+      "type": "object",
+      "required": ["spectralNormMeanGpa", "voigt6L2MeanGpa", "sixComponentMaeGpa", "voigtOrder", "reports"],
+      "properties": {
+        "spectralNormMeanGpa": { "type": "number", "minimum": 0 },
+        "voigt6L2MeanGpa": { "type": "number", "minimum": 0 },
+        "sixComponentMaeGpa": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "voigtOrder": { "const": ["xx", "yy", "zz", "yz", "xz", "xy"] },
+        "reports": { "$ref": "#/$defs/diagnosticMetricReports" }
+      },
+      "additionalProperties": false
+    },
+    "spectralNormMetric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "const": "symmetric-3x3-spectral-norm-error-in-gpa-per-frame" }, "unit": { "const": "GPa" } } }
+      ]
+    },
+    "voigt6L2Metric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "const": "unweighted-voigt6-l2-error-in-gpa-per-frame" }, "unit": { "const": "GPa" } } }
+      ]
+    },
+    "stressComponentMetric": {
+      "allOf": [
+        { "$ref": "#/$defs/metricReport" },
+        { "type": "object", "properties": { "definition": { "type": "string", "pattern": "^absolute-stress-component-error-in-gpa-per-frame:(?:xx|yy|zz|yz|xz|xy)$" }, "unit": { "const": "GPa" } } }
+      ]
+    },
+    "diagnosticMetricReports": {
+      "type": "object",
+      "required": ["spectralNorm", "unweightedVoigt6L2", "sixComponent"],
+      "properties": {
+        "spectralNorm": { "$ref": "#/$defs/spectralNormMetric" },
+        "unweightedVoigt6L2": { "$ref": "#/$defs/voigt6L2Metric" },
+        "sixComponent": {
+          "type": "object",
+          "required": ["xx", "yy", "zz", "yz", "xz", "xy"],
+          "properties": {
+            "xx": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:xx" } } }] },
+            "yy": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:yy" } } }] },
+            "zz": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:zz" } } }] },
+            "yz": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:yz" } } }] },
+            "xz": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:xz" } } }] },
+            "xy": { "allOf": [{ "$ref": "#/$defs/stressComponentMetric" }, { "type": "object", "properties": { "definition": { "const": "absolute-stress-component-error-in-gpa-per-frame:xy" } } }] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "modelMetrics": {
+      "type": "object",
+      "required": ["model", "definitionId", "aggregation", "summation", "quantileMethod", "energy", "force", "stress", "stressDiagnostics"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "definitionId": { "const": "mattersim-model-card-frobenius/v1" },
+        "aggregation": { "const": "equal-weight-structure-mean-float64" },
+        "summation": { "const": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1" },
+        "quantileMethod": { "const": "Hyndman-Fan-7-linear" },
+        "energy": { "$ref": "#/$defs/energyMetric" },
+        "force": { "$ref": "#/$defs/forceMetric" },
+        "stress": { "$ref": "#/$defs/stressMetric" },
+        "stressDiagnostics": { "$ref": "#/$defs/stressDiagnostics" }
+      },
+      "additionalProperties": false
+    },
+    "completeMetrics": {
+      "type": "object",
+      "required": ["models"],
+      "properties": {
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mattersim" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mace" } } }] }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "partialMetrics": {
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mattersim" } } }] }
+          ],
+          "items": false
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mace" } } }] }
+          ],
+          "items": false
+        },
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mattersim" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/modelMetrics" }, { "type": "object", "properties": { "model": { "const": "mace" } } }] }
+          ],
+          "items": false
+        }
+      ]
+    },
+    "mattersimAssessment": {
+      "type": "object",
+      "required": ["model", "assessment", "status", "conjunction", "metricPass", "targets", "acceptedIntervals", "officialOrBitExactClaimAllowed"],
+      "properties": {
+        "model": { "const": "mattersim" },
+        "assessment": { "const": "protocol-equivalent-model-card-interval-check" },
+        "status": { "enum": ["passed", "failed"] },
+        "conjunction": { "const": "energy-and-force-and-stress" },
+        "metricPass": {
+          "type": "object",
+          "required": ["energy", "force", "stress"],
+          "properties": { "energy": { "type": "boolean" }, "force": { "type": "boolean" }, "stress": { "type": "boolean" } },
+          "additionalProperties": false
+        },
+        "targets": { "const": { "energyMaeEvPerAtom": 0.199, "forceVectorMaeEvPerAngstrom": 0.824, "stressFrobeniusMaeGpa": 1.999 } },
+        "acceptedIntervals": { "const": { "energyMaeEvPerAtom": [0.19502, 0.20298], "forceVectorMaeEvPerAngstrom": [0.80752, 0.84048], "stressFrobeniusMaeGpa": [1.95902, 2.03898] } },
+        "officialOrBitExactClaimAllowed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "maceAssessment": {
+      "const": {
+        "model": "mace",
+        "assessment": "blind-engineering-baseline",
+        "status": "baseline-recorded",
+        "publishedRandomTpTargetAvailable": false,
+        "fitOffsetScaleOrSignAfterObservationApplied": false,
+        "superiorityClaimed": false
+      }
+    },
+    "assessments": {
+      "type": "object",
+      "required": ["mattersim", "mace"],
+      "properties": {
+        "mattersim": { "$ref": "#/$defs/mattersimAssessment" },
+        "mace": { "$ref": "#/$defs/maceAssessment" }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status", "verifierClass", "implementationDigest", "candidatePlanBindingVerified", "frozenBindingsVerified", "producerReferenceLabelsAbsent", "verifierReferenceLabelsLoaded", "metricRecomputationIndependent", "metricEvaluationComplete", "mixedRunAttemptsObserved", "integrityErrors"],
+      "properties": {
+        "status": { "enum": ["verified-complete", "verified-incomplete"] },
+        "verifierClass": { "const": "independent-label-bearing-verifier" },
+        "implementationDigest": { "$ref": "#/$defs/digest" },
+        "candidatePlanBindingVerified": { "type": "boolean" },
+        "frozenBindingsVerified": { "type": "boolean" },
+        "producerReferenceLabelsAbsent": { "type": "boolean" },
+        "verifierReferenceLabelsLoaded": { "type": "boolean" },
+        "metricRecomputationIndependent": { "type": "boolean" },
+        "metricEvaluationComplete": { "type": "boolean" },
+        "mixedRunAttemptsObserved": { "type": "boolean" },
+        "integrityErrors": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 2048 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "completeVerification": {
+      "allOf": [
+        { "$ref": "#/$defs/verification" },
+        { "type": "object", "properties": {
+          "status": { "const": "verified-complete" },
+          "candidatePlanBindingVerified": { "const": true },
+          "frozenBindingsVerified": { "const": true },
+          "producerReferenceLabelsAbsent": { "const": true },
+          "verifierReferenceLabelsLoaded": { "const": true },
+          "metricRecomputationIndependent": { "const": true },
+          "metricEvaluationComplete": { "const": true },
+          "mixedRunAttemptsObserved": { "const": false },
+          "integrityErrors": { "const": [] }
+        } }
+      ]
+    }
+  }
+}
