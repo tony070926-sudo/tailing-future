@@ -23,6 +23,8 @@ import { pathToFileURL } from 'node:url';
 const capturedCloudflareEnvironment = captureAndDeleteCloudflareEnvironment(process.env);
 
 export const WRANGLER_VERSION = '4.127.0';
+export const WRANGLER_LOCK_BIN_PATH = 'bin/wrangler.js';
+export const WRANGLER_PACKAGE_BIN_PATH = './bin/wrangler.js';
 export const EXPECTED_CLOUDFLARE_ACCOUNT_ID = '9755cd236862dadca7cf413336ee661b';
 export const NPM_CI_ARGS = Object.freeze([
   'ci',
@@ -406,8 +408,15 @@ export function validateWranglerLock(packageJson, packageLock) {
       || wranglerLock?.version !== WRANGLER_VERSION
       || wranglerLock?.resolved !== WRANGLER_RESOLVED_URL
       || !/^sha512-[A-Za-z0-9+/]+={0,2}$/.test(wranglerLock?.integrity ?? '')
-      || wranglerLock?.bin?.wrangler !== 'bin/wrangler.js') {
+      || wranglerLock?.bin?.wrangler !== WRANGLER_LOCK_BIN_PATH) {
     throw new Error(`release blocked: package-lock does not pin Wrangler ${WRANGLER_VERSION} exactly`);
+  }
+}
+
+export function validateInstalledWranglerManifest(installedPackage) {
+  if (installedPackage?.version !== WRANGLER_VERSION
+      || installedPackage?.bin?.wrangler !== WRANGLER_PACKAGE_BIN_PATH) {
+    throw new Error(`release blocked: rebuilt Wrangler manifest is not the exact ${WRANGLER_VERSION} package`);
   }
 }
 
@@ -458,9 +467,8 @@ function rebuildWranglerTool({ root, scratchRoot, sourceEnvironment }) {
   const installedPackage = JSON.parse(readFileSync(installedPackagePath, 'utf8'));
   const packageMetadata = lstatSync(installedPackagePath);
   const entryMetadata = lstatSync(wranglerEntry);
-  if (installedPackage.version !== WRANGLER_VERSION
-      || installedPackage.bin?.wrangler !== 'bin/wrangler.js'
-      || !packageMetadata.isFile()
+  validateInstalledWranglerManifest(installedPackage);
+  if (!packageMetadata.isFile()
       || packageMetadata.isSymbolicLink()
       || packageMetadata.nlink !== 1
       || !entryMetadata.isFile()
