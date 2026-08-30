@@ -3,12 +3,17 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import {
+  MINIMUM_SYSTEM_PATH,
+  validateRuntimeFreezeEvidence,
+  validateRuntimeFreezeProjection,
+} from './runtime-freeze-evidence-policy.mjs';
 
 export const RUNTIME_LOCK_PATH = 'evaluation/atomistic/runtime-lock.json';
 export const RUNTIME_LOCK_SCHEMA_PATH = 'schemas/atomistic-runtime-lock.schema.json';
 export const SCIENTIFIC_PLAN_PATH = 'evaluation/atomistic/reproduction-plan.json';
-export const EXPECTED_RUNTIME_LOCK_RAW_DIGEST = 'sha256:5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e';
-export const EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST = 'sha256:acf4710b2b219c9b59893e78cf7a25ff8f9f5cd3da31149ce556840d42d8e900';
+export const EXPECTED_RUNTIME_LOCK_RAW_DIGEST = 'sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1';
+export const EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST = 'sha256:3f817d5536589d7d1eaeda32d27917ba590d517ee8172d6572b4bee90cc1193a';
 export const EXPECTED_SCIENTIFIC_PLAN_RAW_DIGEST = 'sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
 
 export const RUNTIME_LOCK_CONTROL_PATHS = Object.freeze([
@@ -16,6 +21,8 @@ export const RUNTIME_LOCK_CONTROL_PATHS = Object.freeze([
   RUNTIME_LOCK_SCHEMA_PATH,
   'scripts/atomistic/runtime-lock-policy.mjs',
   'scripts/atomistic/runtime-lock-policy.test.mjs',
+  'scripts/atomistic/runtime-freeze-evidence-policy.mjs',
+  'scripts/atomistic/runtime-freeze-evidence-policy.test.mjs',
   'scripts/validate-atomistic-runtime-lock.mjs',
 ]);
 
@@ -118,7 +125,8 @@ const EXPECTED_BUILD_CONTRACT = Object.freeze({
   runtimeInputManifestProtocol: 'sha256-canonical-json-plus-lf-tf.atomistic-runtime-inputs-0.2/v1',
 });
 
-const DISCOVERY_EVIDENCE_CLASS = 'discovery-only-not-reproduced';
+const FROZEN_STATE = 'bootstrap-runtime-frozen-not-reproduced';
+const FROZEN_EVIDENCE_CLASS = 'runtime-frozen-not-reproduced';
 const OCI_IDENTITY_SEMANTICS = 'run-specific-diagnostics-not-promotion-trust-roots/v1';
 const INDEPENDENCE_PROTOCOL = 'distinct-github-run-id-and-attempt-protected-main-identical-promotion-roots/v1';
 const NON_PROMOTIONAL_BOOLEAN_KEYS = new Set(['promotionEligible', 'promotionTrustRoot', 'comparable', 'reproduced']);
@@ -173,7 +181,8 @@ export function validateRuntimeLockSemantics(lock) {
   const failures = [];
   if (!lock || typeof lock !== 'object' || Array.isArray(lock)) return ['runtime-lock.semantic: root must be an object'];
 
-  compare(failures, 'schemaVersion', lock.schemaVersion, 'tf.atomistic-runtime-lock/0.2');
+  compare(failures, 'schemaVersion', lock.schemaVersion, 'tf.atomistic-runtime-lock/0.3');
+  compare(failures, 'state', lock.state, FROZEN_STATE);
   compare(failures, 'scientificPlan', lock.scientificPlan, {
     path: SCIENTIFIC_PLAN_PATH,
     rawDigest: EXPECTED_SCIENTIFIC_PLAN_RAW_DIGEST,
@@ -181,10 +190,17 @@ export function validateRuntimeLockSemantics(lock) {
   compare(failures, 'runtimeSource', lock.runtimeSource, EXPECTED_RUNTIME_SOURCE);
   compare(failures, 'plannedBuildContract', lock.plannedBuildContract, EXPECTED_BUILD_CONTRACT);
   compare(failures, 'replication.requiredIndependentProtectedMainReplicas', lock.replication?.requiredIndependentProtectedMainReplicas, 2);
+  compare(failures, 'replication.acceptedProtectedMainReplicas', lock.replication?.acceptedProtectedMainReplicas, 2);
   compare(failures, 'replication.independenceProtocol', lock.replication?.independenceProtocol, INDEPENDENCE_PROTOCOL);
   compare(failures, 'identities.ociImages.identitySemantics', lock.identities?.ociImages?.identitySemantics, OCI_IDENTITY_SEMANTICS);
   compare(failures, 'identities.ociImages.promotionTrustRoot', lock.identities?.ociImages?.promotionTrustRoot, false);
-  for (const claim of ['promotionEligible', 'comparable', 'reproduced']) compare(failures, `claims.${claim}`, lock.claims?.[claim], false);
+  compare(failures, 'claims', lock.claims, {
+    evidenceClass: FROZEN_EVIDENCE_CLASS,
+    promotionEligible: false,
+    promotionTrustRoot: false,
+    comparable: false,
+    reproduced: false,
+  });
   rejectPositivePromotionClaims(lock, failures);
 
   for (const model of ['mattersim', 'mace']) {
@@ -195,16 +211,12 @@ export function validateRuntimeLockSemantics(lock) {
     }
   }
 
-  if (lock.state === 'discovery-not-frozen') validateDiscoveryState(lock, failures);
-  else failures.push('state: this discovery policy accepts discovery-not-frozen only; freezing requires a separately controlled verifier receipt');
-
-  if (lock.state === 'discovery-not-frozen') {
-    let actualSemanticDigest = null;
-    try { actualSemanticDigest = sha256(Buffer.from(canonicalJson(lock), 'utf8')); }
-    catch { /* the specific structural failure is reported above or by the schema */ }
-    if (actualSemanticDigest !== EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST) {
-      failures.push('runtime-lock.semantic: exact discovery contract digest mismatch');
-    }
+  failures.push(...validateRuntimeFreezeProjection(lock));
+  let actualSemanticDigest = null;
+  try { actualSemanticDigest = sha256(Buffer.from(canonicalJson(lock), 'utf8')); }
+  catch { /* the specific structural failure is reported above or by the schema */ }
+  if (actualSemanticDigest !== EXPECTED_RUNTIME_LOCK_SEMANTIC_DIGEST) {
+    failures.push('runtime-lock.semantic: exact frozen contract digest mismatch');
   }
   return failures;
 }
@@ -320,7 +332,7 @@ export async function validateRuntimeSourceCommit(lock, { root = process.cwd() }
   const failures = [];
   const revision = lock?.runtimeSource?.runtimeSourceRevision;
   if (!/^[0-9a-f]{40}$/.test(revision ?? '')) return ['runtime-source.git: full revision is required'];
-  const options = gitOptions(root);
+  const options = runtimeSourceGitOptions(root);
   try {
     compare(failures, 'runtime-source.git.runtimeSourceRevision', revision, EXPECTED_RUNTIME_SOURCE.runtimeSourceRevision);
     const { stdout: typeBytes } = await execFile('git', ['cat-file', '-t', revision], options);
@@ -354,13 +366,20 @@ export async function validateRuntimeSourceCommit(lock, { root = process.cwd() }
   return failures;
 }
 
-export async function validateAtomisticRuntimeLock(lockBytes, { root = process.cwd(), enforceCheckedInBytes = true } = {}) {
+export async function validateAtomisticRuntimeLock(lockBytes, {
+  root = process.cwd(),
+  enforceCheckedInBytes = true,
+  runGit,
+  runGh,
+} = {}) {
   const inspection = inspectRuntimeLockBytes(lockBytes, { enforceCheckedInBytes });
   const failures = [...inspection.failures];
   if (inspection.lock) {
     failures.push(...validateRuntimeLockSemantics(inspection.lock));
     failures.push(...await validateRuntimeLockRepository(inspection.lock, lockBytes, { root }));
     failures.push(...await validateRuntimeSourceCommit(inspection.lock, { root }));
+    const freezeEvidence = await validateRuntimeFreezeEvidence(inspection.lock, { root, runGit, runGh });
+    failures.push(...freezeEvidence.failures);
   }
   return { ...inspection, failures };
 }
@@ -393,25 +412,6 @@ function rejectPositivePromotionClaims(value, failures, location = '$', seen = n
     }
   }
   seen.delete(value);
-}
-
-function validateDiscoveryState(lock, failures) {
-  compare(failures, 'claims.evidenceClass', lock.claims?.evidenceClass, DISCOVERY_EVIDENCE_CLASS);
-  for (const [label, value] of promotionRootEntries(lock.identities)) {
-    if (value !== null) failures.push(`${label}: discovery identity must remain null until independent replication`);
-  }
-  const observations = lock.replication?.observations;
-  if (!Array.isArray(observations) || observations.length !== 0) failures.push('replication.observations: discovery state must not contain observations');
-}
-
-function promotionRootEntries(identities) {
-  return [
-    ['identities.runnerDigest', identities?.runnerDigest],
-    ['identities.dependencyLockDigests.mattersim', identities?.dependencyLockDigests?.mattersim],
-    ['identities.dependencyLockDigests.mace', identities?.dependencyLockDigests?.mace],
-    ['identities.runtimeInputManifestDigests.mattersim', identities?.runtimeInputManifestDigests?.mattersim],
-    ['identities.runtimeInputManifestDigests.mace', identities?.runtimeInputManifestDigests?.mace],
-  ];
 }
 
 function sourceFileProjection(snapshot) {
@@ -449,7 +449,7 @@ async function readRuntimeSourceCommitSnapshot(root, revision) {
 }
 
 async function readCommitBlob(root, revision, relativePath) {
-  const options = gitOptions(root);
+  const options = runtimeSourceGitOptions(root);
   const { stdout: treeBytes } = await execFile('git', ['ls-tree', '-z', revision, '--', relativePath], options);
   const treeText = new TextDecoder('utf-8', { fatal: true }).decode(treeBytes);
   if (!treeText.endsWith('\0') || treeText.indexOf('\0') !== treeText.length - 1) {
@@ -480,13 +480,13 @@ async function readCommitBlob(root, revision, relativePath) {
   };
 }
 
-function gitOptions(root) {
+export function runtimeSourceGitOptions(root) {
   return {
     cwd: root,
     encoding: null,
     maxBuffer: 5 * 1024 * 1024,
     env: {
-      PATH: process.env.PATH,
+      PATH: MINIMUM_SYSTEM_PATH,
       GIT_CONFIG_NOSYSTEM: '1',
       GIT_CONFIG_SYSTEM: '/dev/null',
       GIT_CONFIG_GLOBAL: '/dev/null',
@@ -508,7 +508,7 @@ function runtimeLockCircularReferenceNeedles(lockBytes, lock) {
     .filter(Boolean)
     .flatMap((digest) => [digest, digest.slice('sha256:'.length)]);
   return [...new Set([
-    'tf.atomistic-runtime-lock/0.2',
+    'tf.atomistic-runtime-lock/0.3',
     'runtime-lock.json',
     gitBlobDigest,
     ...RUNTIME_LOCK_CONTROL_PATHS,

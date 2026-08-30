@@ -88,18 +88,18 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
   non-self-referential runtime-lock protocol. Both isolated ten-frame smoke
   paths now emit finite E/F/stress without labels, but remain
   `planned-not-reproduced`. Two R6b executions are inadmissible because their
-  locked R5 summaries contain a nested positive promotion claim; runtime lock
-  accepted replicas remain **0 / 2**. Commit P `f861b3e` anchors the versioned v2
-  runner, and a protected-main dispatch proved the legacy path is quarantined.
-  Commit S `687755a` non-circularly selects and materializes only those P blobs
-  and has now produced two successful fresh protected-main candidate replicas.
-  Manual cross-inspection is not a trust root: the separately generated but
-  repository-controlled Commit-V verifier must re-fetch and bind their GitHub
-  metadata, logs and raw archives, keep stable inputs separate from run-specific
-  numerical/container observations and emit a bootstrap-only externally
-  attested receipt that cannot authorize a freeze. A later Commit F may then
-  freeze only those stable identities before the complete 693-record
-  independent verifier can run;
+  locked R5 summaries contain a nested positive promotion claim. Commit P
+  `f861b3e` anchors the versioned v2 runner, and a protected-main dispatch proved
+  the legacy path is quarantined. Commit S `687755a` non-circularly selected and
+  materialized only those P blobs and produced two successful fresh
+  protected-main candidates. Protected-main Commit-V run `33296529694` then
+  re-fetched and bound their GitHub metadata, logs and raw archives and emitted
+  one externally attested, bootstrap-only receipt. Commit F validates the
+  vendored receipt, Sigstore bundle, trusted root, V Git blobs and ancestry
+  offline before projecting only stable input identities into a **2 / 2**
+  `runtime-frozen-not-reproduced` lock. Run-specific OCI identities stay null,
+  every scientific claim stays false and the complete 693-record independent
+  verifier is still required;
 - a browser frame assembled from one immutable observation snapshot.
 
 The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.

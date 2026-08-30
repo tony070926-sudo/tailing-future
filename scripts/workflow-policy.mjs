@@ -28,7 +28,11 @@ export const ATOMISTIC_BOOTSTRAP_OUTCOME_SCRIPT_SHA256 = '1f4198da6874f2ad10138c
 export const ATOMISTIC_RUNTIME_INVENTORY_VERIFIER_SHA256 = 'bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c';
 export const ATOMISTIC_RUNTIME_INPUT_CONTRACT_SHA256 = 'd5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937';
 export const ATOMISTIC_CONTAINER_OBSERVATION_WRITER_SHA256 = '83b33e718297f1a90939e029ddfe407ab6e754b35ac2e5f6a27baf8de0143b18';
+// The S/V workflows are immutable historical programs and must keep binding
+// the exact discovery-only 0.2 lock they executed. The checked-in Commit-F
+// lock is separately pinned below; changing it must not rewrite that history.
 export const ATOMISTIC_RUNTIME_DISCOVERY_LOCK_SHA256 = '5ce8c368b73f2f34e414caa349b89096ee844b3135a724045e65fbb5bd1aed2e';
+export const ATOMISTIC_CURRENT_RUNTIME_LOCK_SHA256 = 'b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1';
 export const ATOMISTIC_HISTORICAL_RUNTIME_DISCOVERY_LOCK_SHA256 = '79e72ba821cfaac298a4898a9b09bd4f0159d3560cdf8f2ac5ba4b005402f6fe';
 export const ATOMISTIC_SCIENTIFIC_PLAN_SHA256 = 'd3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2';
 export const SETUPTOOLS_RUNTIME_WHEEL_FILENAME = 'setuptools-84.0.0-py3-none-any.whl';

@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-runtime-lock/0.2",
-  "title": "Tailing Future atomistic runtime discovery lock",
+  "$id": "https://tailing.future/schemas/atomistic-runtime-lock/0.3",
+  "title": "Tailing Future externally attested bootstrap runtime freeze",
+  "description": "Freezes two externally verified bootstrap runtime observations without asserting scientific reproduction, comparability, promotion eligibility, or OCI trust roots.",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -9,13 +10,14 @@
     "scientificPlan",
     "runtimeSource",
     "plannedBuildContract",
+    "freezeEvidence",
     "identities",
     "replication",
     "claims"
   ],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-runtime-lock/0.2" },
-    "state": { "const": "discovery-not-frozen" },
+    "schemaVersion": { "const": "tf.atomistic-runtime-lock/0.3" },
+    "state": { "const": "bootstrap-runtime-frozen-not-reproduced" },
     "scientificPlan": {
       "type": "object",
       "required": ["path", "rawDigest"],
@@ -96,26 +98,35 @@
       },
       "additionalProperties": false
     },
-    "identities": { "$ref": "#/$defs/discoveryIdentities" },
+    "freezeEvidence": { "$ref": "#/$defs/freezeEvidence" },
+    "identities": { "$ref": "#/$defs/frozenIdentities" },
     "replication": {
       "type": "object",
-      "required": ["requiredIndependentProtectedMainReplicas", "independenceProtocol", "observations"],
+      "required": ["requiredIndependentProtectedMainReplicas", "acceptedProtectedMainReplicas", "independenceProtocol", "observations"],
       "properties": {
         "requiredIndependentProtectedMainReplicas": { "const": 2 },
+        "acceptedProtectedMainReplicas": { "const": 2 },
         "independenceProtocol": { "const": "distinct-github-run-id-and-attempt-protected-main-identical-promotion-roots/v1" },
         "observations": {
           "type": "array",
-          "maxItems": 0
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/firstProtectedMainObservation" },
+            { "$ref": "#/$defs/secondProtectedMainObservation" }
+          ],
+          "items": false
         }
       },
       "additionalProperties": false
     },
     "claims": {
       "type": "object",
-      "required": ["evidenceClass", "promotionEligible", "comparable", "reproduced"],
+      "required": ["evidenceClass", "promotionEligible", "promotionTrustRoot", "comparable", "reproduced"],
       "properties": {
-        "evidenceClass": { "const": "discovery-only-not-reproduced" },
+        "evidenceClass": { "const": "runtime-frozen-not-reproduced" },
         "promotionEligible": { "const": false },
+        "promotionTrustRoot": { "const": false },
         "comparable": { "const": false },
         "reproduced": { "const": false }
       },
@@ -212,31 +223,185 @@
       },
       "additionalProperties": false
     },
-    "discoveryIdentities": {
-      "allOf": [
-        { "$ref": "#/$defs/runtimeIdentities" },
-        {
-          "type": "object",
-          "properties": {
-            "runnerDigest": { "type": "null" },
-            "dependencyLockDigests": {
-              "type": "object",
-              "properties": { "mattersim": { "type": "null" }, "mace": { "type": "null" } }
-            },
-            "runtimeInputManifestDigests": {
-              "type": "object",
-              "properties": { "mattersim": { "type": "null" }, "mace": { "type": "null" } }
-            },
-            "ociImages": {
-              "type": "object",
-              "properties": {
-                "mattersim": { "type": "object", "properties": { "manifestDigest": { "type": "null" }, "configDigest": { "type": "null" } } },
-                "mace": { "type": "object", "properties": { "manifestDigest": { "type": "null" }, "configDigest": { "type": "null" } } }
-              }
+    "freezeEvidence": {
+      "description": "Exact persisted formal-V receipt, source, artifact and offline Sigstore verification binding used by Commit F.",
+      "const": {
+        "protocol": "externally-attested-bootstrap-runtime-freeze/v1",
+        "verifier": {
+          "repositoryFullName": "tony070926-sudo/tailing-future",
+          "repositoryId": 1349498456,
+          "workflow": {
+            "path": ".github/workflows/atomistic-bootstrap-verify.yml",
+            "id": 345720281,
+            "name": "Atomistic bootstrap replica verifier (non-promotional)",
+            "revision": "fb687f8cbe4841de496031415be0053bd0c7c510",
+            "gitBlobOid": "f07254a46f02ad3fedca2aefa1dc76a90cb93e41",
+            "sizeBytes": 11808,
+            "sha256": "sha256:39a2ebedeaf136b127cb66c20e89f121e211085985b14d3c40fd7dc9eb5626eb",
+            "ref": "refs/heads/main",
+            "event": "workflow_dispatch",
+            "runId": 33296529694,
+            "runAttempt": 1,
+            "runStatus": "completed",
+            "runConclusion": "success",
+            "runCreatedAt": "2026-08-30T06:16:38Z",
+            "runUpdatedAt": "2026-08-30T06:17:19Z"
+          },
+          "implementation": {
+            "path": "scripts/atomistic/verify-bootstrap-replicas.mjs",
+            "gitBlobOid": "27d5e0885f67dbe2c9196618ed13840ddc1c5b9b",
+            "sizeBytes": 66134,
+            "sha256": "sha256:877e57767b13d52a9abe41236a3ea3ac1f2b41a616b5acac4b891df4e9cb6441"
+          }
+        },
+        "sourceReceipt": {
+          "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/atomistic-bootstrap-replica-receipt.json",
+          "schemaVersion": "tf.atomistic-bootstrap-replica-receipt/0.1",
+          "sizeBytes": 27676,
+          "rawDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4",
+          "semanticDigest": "sha256:ab6a7ea36118e388bc26fca532f571a34536156a0226d027708f793adbfad868",
+          "createdAt": "2026-08-30T06:17:07.843Z",
+          "status": "verified-stable-input-agreement",
+          "stableInputsCommitment": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb"
+        },
+        "artifact": {
+          "id": 9727579469,
+          "name": "tailing-atomistic-bootstrap-replica-receipt-fb687f8cbe4841de496031415be0053bd0c7c510-33296529694-1",
+          "sizeBytes": 6811,
+          "archiveDigest": "sha256:61a191224f5b1922a118302919f6e8cc192c3ba7cee5b3b5c30d3ed98ab5ba8a",
+          "createdAt": "2026-08-30T06:17:08Z",
+          "updatedAt": "2026-08-30T06:17:08Z",
+          "expiresAt": "2026-09-06T06:17:08Z",
+          "apiExpiredAtCapture": false
+        },
+        "attestation": {
+          "attestationId": 43928932,
+          "repository": {
+            "fullName": "tony070926-sudo/tailing-future",
+            "id": 1349498456
+          },
+          "bundlePath": "evaluation/atomistic/evidence/r6e-verifier-33296529694/receipt-attestation.sigstore.jsonl",
+          "mediaType": "application/vnd.dev.sigstore.bundle.v0.3+json",
+          "sizeBytes": 11787,
+          "rawDigest": "sha256:2200a92fadbb596e5b16ee7b66b097f2aa3fa7f756ff15066d2d2b4a4b85b542",
+          "subjectName": "atomistic-bootstrap-replica-receipt.json",
+          "subjectDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4",
+          "predicateType": "https://slsa.dev/provenance/v1",
+          "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+          "certificateIdentity": "https://github.com/tony070926-sudo/tailing-future/.github/workflows/atomistic-bootstrap-verify.yml@refs/heads/main",
+          "oidcIssuer": "https://token.actions.githubusercontent.com",
+          "sourceRepository": "https://github.com/tony070926-sudo/tailing-future",
+          "sourceRef": "refs/heads/main",
+          "sourceRevision": "fb687f8cbe4841de496031415be0053bd0c7c510",
+          "runnerEnvironment": "github-hosted",
+          "invocationId": "https://github.com/tony070926-sudo/tailing-future/actions/runs/33296529694/attempts/1",
+          "rekorIntegratedAt": "2026-08-30T06:17:17Z",
+          "rekorIntegratedTimeEpoch": 1788070637,
+          "transparencyLog": {
+            "globalLogIndex": 2647884657,
+            "inclusionProofLogIndex": 2525980395,
+            "treeSize": 2525980413,
+            "integratedTimeEpoch": 1788070637,
+            "indexSemantics": "rekor-v1-global-entry-index-and-shard-local-inclusion-proof-index/v1",
+            "checkpoint": {
+              "origin": "rekor.sigstore.dev - 1193050959916656506",
+              "treeId": "1193050959916656506",
+              "treeSize": 2525980413,
+              "rootHash": "LxShnheCrgeQmKw8BGv8CEDGlrqFGM03YfxEgjA4XYM="
             }
           }
+        },
+        "trustedRoot": {
+          "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/trusted-root.jsonl",
+          "sizeBytes": 34634,
+          "rawDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+          "semantics": "offline-verification-root-snapshot-not-runtime-promotion-trust-root/v1",
+          "nonAuthoritativeSnapshot": true
+        },
+        "receiptVerification": {
+          "verifierAcceptedReplicaCount": 2,
+          "runtimeLockAcceptedReplicaCountBeforeCommitF": 0,
+          "runtimeLockFreezeCandidate": true,
+          "runtimeLockFreezeAuthorized": false,
+          "externalReceiptAttestationRequired": true,
+          "scientificPromotionEligible": false,
+          "independentVerifierRequiredForScientificPromotion": true
         }
-      ]
+      }
+    },
+    "frozenIdentities": {
+      "description": "Stable bootstrap roots projected from the externally attested receipt. Run-specific OCI identities remain excluded.",
+      "const": {
+        "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+        "dependencyLockDigests": {
+          "mattersim": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+          "mace": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+        },
+        "runtimeInputManifestDigests": {
+          "mattersim": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+          "mace": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+        },
+        "ociImages": {
+          "identitySemantics": "run-specific-diagnostics-not-promotion-trust-roots/v1",
+          "promotionTrustRoot": false,
+          "mattersim": { "manifestDigest": null, "configDigest": null },
+          "mace": { "manifestDigest": null, "configDigest": null }
+        }
+      }
+    },
+    "firstProtectedMainObservation": {
+      "const": {
+        "ordinal": 1,
+        "repositoryRevision": "687755a5835b92b632fc116e9b73ab11c1eb6cb5",
+        "ref": "refs/heads/main",
+        "protectedMain": true,
+        "workflowId": 344903345,
+        "runId": 33242996794,
+        "runAttempt": 1,
+        "observedAt": "2026-08-29T08:25:41Z",
+        "evidenceAttestedAt": "2026-08-30T06:17:17Z",
+        "conclusion": "success",
+        "stableInputsCommitment": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb",
+        "acceptanceReceiptRawDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4",
+        "identities": {
+          "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+          "dependencyLockDigests": {
+            "mattersim": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+            "mace": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+          },
+          "runtimeInputManifestDigests": {
+            "mattersim": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+            "mace": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+          }
+        }
+      }
+    },
+    "secondProtectedMainObservation": {
+      "const": {
+        "ordinal": 2,
+        "repositoryRevision": "687755a5835b92b632fc116e9b73ab11c1eb6cb5",
+        "ref": "refs/heads/main",
+        "protectedMain": true,
+        "workflowId": 344903345,
+        "runId": 33242999376,
+        "runAttempt": 1,
+        "observedAt": "2026-08-29T08:28:15Z",
+        "evidenceAttestedAt": "2026-08-30T06:17:17Z",
+        "conclusion": "success",
+        "stableInputsCommitment": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb",
+        "acceptanceReceiptRawDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4",
+        "identities": {
+          "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+          "dependencyLockDigests": {
+            "mattersim": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+            "mace": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+          },
+          "runtimeInputManifestDigests": {
+            "mattersim": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+            "mace": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+          }
+        }
+      }
     }
   }
 }

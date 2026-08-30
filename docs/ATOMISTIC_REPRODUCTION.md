@@ -1,24 +1,21 @@
 # Atomistic foundation-model reproduction protocol
 
-Status: **planned-not-reproduced** for the full dual-model benchmark on
-2026-08-29. Protected-main run `33226521340` completed non-promotional,
-ten-record smoke inference for both MatterSim and MACE. This document freezes
-the next executable experiment and its evidence contract, not a 693-record
-reproduction result. R6a discovery runs `33229898921` and `33229901480`
-subsequently failed closed after image export because the observer expected an
-OCI manifest descriptor that Docker local-load metadata did not emit. They are
-negative protocol evidence and contributed no runtime-lock-accepted replica. R6b runs
-`33231316217` and `33231323492` then completed all four model jobs, but every
-run summary contradicted its outer non-promotional evidence with nested
-`environment.provenance.promotionEligible: true`. Those runs are also
-inadmissible, so the runtime-lock-accepted count remains **0 / 2**.
-Commit S `687755a` has since passed protected-main Sentinel. Its fresh runs
-`33242996794` and `33242999376` both completed, and independent manual
-inspection found stable input agreement, exactly ten finite label-free
-predictions per model and recursively negative promotion, comparison and
-reproduction claims. Manual inspection is not the separately controlled trust
-root required by this protocol, so both remain candidates and the runtime lock
-accepted count is still **0 / 2**.
+Status: **runtime-frozen-not-reproduced** for bootstrap execution and
+**planned-not-reproduced** for the full dual-model benchmark on 2026-08-30.
+Protected-main run `33226521340` first completed non-promotional, ten-record
+smoke inference for both MatterSim and MACE. R6a discovery runs
+`33229898921` and `33229901480` later failed closed after image export; R6b
+runs `33231316217` and `33231323492` are permanently inadmissible because
+their summaries contain a contradictory nested positive promotion claim.
+Commit S `687755a` then produced fresh protected-main runs `33242996794` and
+`33242999376`, each with ten finite label-free predictions per model and
+recursively negative promotion, comparison and reproduction claims. Commit V
+`fb687f8` passed protected-main Sentinel, and its protected-main verifier run
+`33296529694` re-fetched and authenticated both candidates, emitted one
+canonical receipt and attested its exact bytes. Commit F verifies and preserves
+that receipt, Sigstore bundle and captured trusted root and freezes only the
+stable bootstrap identities at **2 / 2**. This is still not a 693-record
+reproduction result, an accuracy comparison or independent scientific review.
 
 ## Why these two models
 
@@ -111,16 +108,18 @@ Unexpected files or symlinks fail before the build starts.
 The scientific preregistration and runtime discovery are intentionally
 separate. `reproduction-plan.json` remains byte-frozen at
 `sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2`
-with its post-execution identities left `null`. A separate runtime lock binds
-that plan digest and keeps the runner, dependency locks and canonical
-runtime-input identities `null` during discovery. Discovery deliberately has no
-locally assertable frozen state. After two entirely fresh protected-main
-executions, a separately generated, repository-controlled verifier must
-authenticate the workflow, repository revision, artifact IDs, archive digests
-and every machine-readable claim. Its receipt may record two verifier-accepted
-candidates, but must keep the runtime-lock-accepted count at zero and freeze
-authorization false. Only a later lock version may freeze those identities. The
-runtime-input manifest binds the base image, Dockerfile frontend and bytes,
+with its post-execution identities left `null`. During discovery the separate
+runtime lock kept runner, dependency-lock and canonical runtime-input
+identities null. After two fresh protected-main executions, the separately
+generated Commit-V verifier authenticated workflow and repository identities,
+job/run conclusions, raw logs, artifact IDs, archive digests and every
+machine-readable claim. Its receipt kept runtime-lock freeze authorization and
+all scientific claims false. Commit F independently pins V's Git objects and
+ancestry, verifies the exact receipt through its Sigstore bundle and captured
+trusted root, then projects only the receipt's stable roots into runtime-lock
+version `0.3`. That lock accepts two distinct source observations but remains
+`runtime-frozen-not-reproduced`. The runtime-input manifest binds the base image,
+Dockerfile frontend and bytes,
 `.dockerignore`, exact wheels and runtime inventory, runner files, platform and
 offline build policy while excluding resolver metadata and raw plan fields
 that would create a self-referential hash cycle. A locally observed Docker
@@ -161,14 +160,15 @@ new paths, left the R5-locked source unchanged and actively quarantined its
 dispatch path. Commit S takes P's immutable merged SHA and timestamp as its
 only runtime-source anchor, verifies P tree modes, blob OIDs, sizes and hashes,
 and records the exact source→build→container mapping without freezing any
-observed identity. S is now merged and the two entirely fresh runs above are
-available, but only a separately generated, repository-controlled verifier may
-authenticate them. It must reject any positive promotion, comparison or
-reproduction claim at any nesting depth, separate stable input roots from
-run-specific container and prediction observations, and emit a bootstrap-only
-receipt whose bytes are attested outside the receipt. The receipt itself cannot
-authorize the freeze. Only a later Commit F, after that receipt and attestation
-are independently checked, may freeze accepted identities.
+observed identity. S is merged and the separately generated,
+repository-controlled Commit-V verifier has authenticated its two fresh runs.
+It rejected positive promotion, comparison or reproduction claims at every
+nesting depth, separated stable input roots from run-specific container and
+prediction observations, and emitted a bootstrap-only receipt whose exact
+bytes were attested outside the receipt. The receipt itself still does not
+authorize the freeze. Commit F applies the reviewed decision by validating the
+external attestation and freezing only the accepted stable identities; it does
+not rewrite V's claim bytes or promote the scientific evidence class.
 
 Full promotion requires all 693 IDs from both models. Each energy, force and
 stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
@@ -224,16 +224,19 @@ no prediction payload; it is not a replica. The eleventh and twelfth dispatches,
 [`33242996794`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33242996794)
 and [`33242999376`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33242999376),
 ran Commit S `687755a` and completed both model jobs. Their four raw archives
-were manually cross-checked for stable input agreement, safe exact member sets,
-ten finite label-free predictions and recursively negative claims. MatterSim's
-two prediction sets differ only within the preregistered bootstrap numerical
-tolerances; MACE's physical predictions are equal. These are run-specific
-observations, not accuracy metrics or scientific reproduction. Until the
-Commit-V verifier emits an independently checked, externally attested receipt,
-the runtime-lock-accepted count is therefore still **0 / 2**. Every retained
-prediction bundle remains
-`bootstrap-not-reproduced`: smoke predictions are neither the 693-record
-preregistered benchmark nor an accuracy result.
+were cross-checked for stable input agreement, safe exact member sets, ten
+finite label-free predictions and recursively negative claims. MatterSim's two
+prediction sets differ only within the preregistered bootstrap numerical
+tolerances; MACE's physical predictions are equal. Protected-main Commit-V run
+[`33296529694`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33296529694)
+then independently re-fetched all four artifacts and logs. The canonical receipt
+binds both candidates, stable-input commitment
+`sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb`
+and recursively negative claims; GitHub attested its exact raw digest
+`sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4`.
+Commit F freezes the authenticated runtime roots at **2 / 2**. Every retained
+prediction bundle remains `bootstrap-not-reproduced`: smoke predictions are
+neither the 693-record preregistered benchmark nor an accuracy result.
 
 The third dispatch,
 [`33219047585`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33219047585),

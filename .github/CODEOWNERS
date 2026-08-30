@@ -23,11 +23,15 @@
 /scripts/workflow-policy.test.mjs @tony070926-sudo
 /evaluation/current-scorecard.json @tony070926-sudo
 /evaluation/baselines/registry.json @tony070926-sudo
+/evaluation/atomistic/evidence/ @tony070926-sudo
 /evaluation/atomistic/reproduction-plan.json @tony070926-sudo
+/evaluation/atomistic/runtime-lock.json @tony070926-sudo
 /evaluation/data/datasets.json @tony070926-sudo
 /evaluation/latest-report.json @tony070926-sudo
 /evaluation/latest-report.md @tony070926-sudo
+/evaluation/reviews/ @tony070926-sudo
 /schemas/atomistic-reproduction.schema.json @tony070926-sudo
 /schemas/atomistic-reproduction-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-bootstrap-replica-receipt.schema.json @tony070926-sudo
+/schemas/atomistic-runtime-lock.schema.json @tony070926-sudo
 /schemas/evaluation-report.schema.json @tony070926-sudo

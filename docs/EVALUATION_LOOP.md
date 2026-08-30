@@ -55,12 +55,14 @@ The comparator registry pins source, claim owner, revision, evidence class, benc
 Scientific preregistration and execution discovery use separate trust roots.
 The atomistic plan stays byte-frozen before execution; post-plan runner, lock
 and runtime-input identities live in a separate runtime lock that is excluded
-from the model image. A discovery lock is never promotion evidence, and the R6a
-schema accepts discovery state only. A later lock can become frozen only after
-at least two independent protected-main replicas agree on the canonical
-runtime-input manifests and a separately controlled verifier authenticates the
-workflow path, repository revision, run conclusion, artifact IDs and archive
-digests through GitHub rather than trusting self-reported JSON. Run-specific Docker config/image IDs
+from the model image. A discovery lock is never promotion evidence. Version
+`0.3` can freeze bootstrap runtime roots only after at least two distinct
+protected-main replicas agree on the canonical runtime-input manifests and a
+separately generated verifier authenticates workflow path, repository revision,
+run conclusion, artifact IDs and archive digests through GitHub rather than
+trusting self-reported JSON. The frozen lock then verifies a vendored receipt,
+Sigstore bundle, captured trusted root, certificate identity, transparency-log
+timestamp and exact V Git objects offline. Run-specific Docker config/image IDs
 remain observations unless a separately controlled reproducible OCI export
 proves an identical manifest digest. Sentinel rejects any digest dependency
 cycle that feeds a plan or runtime-lock output back into the runner bytes it
@@ -79,8 +81,8 @@ jobs, but their locked R5 `run-summary.json` files set nested
 `environment.provenance.promotionEligible` to true while the same artifacts
 declare `bootstrap-not-reproduced`, `comparable: false` and
 `reproduced: false`. Successful execution cannot override contradictory claim
-bytes. Both runs are permanently inadmissible, and the runtime-lock-accepted count
-remains **0 / 2**.
+bytes. Both runs are permanently inadmissible and do not contribute to the
+runtime-lock-accepted count.
 
 Remediation preserves the digest dependency direction. Commit P `f861b3e`
 passed protected-main Sentinel, and dispatch `33234001808` proved its exact
@@ -90,17 +92,19 @@ blobs, materialized only the two v2 runner files into standard build paths,
 kept all discovery identities null and passed protected-main Sentinel. Fresh S
 runs `33242996794` and `33242999376` both completed; independent manual archive
 inspection found matching stable inputs, ten finite label-free predictions per
-model and no positive promotion, comparison or reproduction claim. Those are
-still candidate bundles, not runtime-lock-accepted replicas. This Commit-V
-candidate adds a separately generated, repository-controlled verifier workflow
-whose read-only job re-fetches GitHub metadata, logs and raw archives and whose
-isolated write-capable job attests only the emitted receipt bytes. The receipt
-may record two verifier-accepted candidates, but it cannot authorize the later
-runtime-lock freeze, assert scientific reproduction or contain its own artifact
-or attestation identity. Only after V passes
-protected-main Sentinel, runs there and its external attestation is checked may
-a later Commit F freeze stable bootstrap identities. A postprocessor may reject
-an artifact but may not rewrite its claim bytes.
+model and no positive promotion, comparison or reproduction claim. Commit V
+`fb687f8` then passed protected-main Sentinel. Its protected-main run
+`33296529694` used a separately generated, repository-controlled verifier whose
+read-only job re-fetched GitHub metadata, logs and raw archives and whose
+isolated write-capable job attested only the emitted receipt bytes. External
+verification pinned the receipt raw digest, exact workflow certificate
+identity, V source/signer revision, `refs/heads/main`, GitHub-hosted runner and
+Rekor timestamp. Commit F preserves that three-file evidence set and projects
+the authenticated stable roots into a **2 / 2** runtime lock. The resulting
+evidence class is `runtime-frozen-not-reproduced`; the receipt still says
+freeze authorization false and every scientific promotion, comparison,
+reproduction and trust-root claim remains false. A postprocessor may reject an
+artifact but may not rewrite its claim bytes.
 
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 
