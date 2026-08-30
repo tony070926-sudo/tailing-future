@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { describe, expect, it } from 'vitest';
+import { MINIMUM_SYSTEM_PATH } from './runtime-freeze-evidence-policy.mjs';
 import {
   EXPECTED_DOCKERIGNORE_LINES,
   EXPECTED_RUNTIME_LOCK_RAW_DIGEST,
@@ -17,6 +18,7 @@ import {
   isAllowedRuntimeBuildContextPath,
   parseJsonRejectingDuplicateMembers,
   recomputeRuntimeSourceIdentity,
+  runtimeSourceGitOptions,
   validateAtomisticRuntimeLock,
   validateRuntimeLockRepository,
   validateRuntimeLockSemantics,
@@ -35,7 +37,7 @@ const mutate = (change) => {
   return validateRuntimeLockSemantics(candidate);
 };
 
-describe('atomistic runtime discovery lock', () => {
+describe('atomistic bootstrap runtime freeze lock', () => {
   it('accepts the checked-in lock with schema, source, plan, and non-circular context checks', async () => {
     const schema = parseJsonRejectingDuplicateMembers(await readFile(path.join(root, RUNTIME_LOCK_SCHEMA_PATH)));
     const validate = new Ajv2020({ allErrors: true, validateFormats: false }).compile(schema);
@@ -48,8 +50,8 @@ describe('atomistic runtime discovery lock', () => {
       cwd: root,
       encoding: 'utf8',
     });
-    expect(output).toMatch(/VALID · discovery-not-frozen · 0\/2 accepted protected-main replicas/);
-    expect(output).toMatch(/NOT REPRODUCED/);
+    expect(output).toMatch(/VALID · bootstrap-runtime-frozen-not-reproduced · 2\/2 accepted protected-main replicas/);
+    expect(output).toMatch(/NOT SCIENTIFICALLY REPRODUCED/);
   });
 
   it('rejects every static trust-root, build-contract, identity, replication, and claim mutation', () => {
@@ -80,7 +82,11 @@ describe('atomistic runtime discovery lock', () => {
       (candidate) => { candidate.identities.runtimeInputManifestDigests.mattersim = digest('2'); },
       (candidate) => { candidate.identities.ociImages.mattersim.configDigest = digest('3'); },
       (candidate) => { candidate.identities.ociImages.promotionTrustRoot = true; },
+      (candidate) => { candidate.freezeEvidence.sourceReceipt.rawDigest = digest('4'); },
+      (candidate) => { candidate.freezeEvidence.attestation.transparencyLog.globalLogIndex += 1; },
+      (candidate) => { candidate.freezeEvidence.trustedRoot.nonAuthoritativeSnapshot = false; },
       (candidate) => { candidate.replication.requiredIndependentProtectedMainReplicas = 1; },
+      (candidate) => { candidate.replication.acceptedProtectedMainReplicas = 1; },
       (candidate) => { candidate.replication.independenceProtocol = 'same-run-is-enough/v0'; },
       (candidate) => { candidate.replication.observations.push({}); },
       (candidate) => { candidate.claims.evidenceClass = 'reproduced'; },
@@ -101,25 +107,13 @@ describe('atomistic runtime discovery lock', () => {
     }
   });
 
-  it('rejects a locally asserted frozen state even when every self-reported identity looks complete', async () => {
+  it('rejects a locally asserted freeze when the externally attested evidence is absent', async () => {
     const candidate = structuredClone(lock);
-    candidate.state = 'frozen';
-    candidate.claims.evidenceClass = 'runtime-frozen-not-reproduced';
-    candidate.identities.runnerDigest = digest('4');
-    candidate.identities.dependencyLockDigests = { mattersim: digest('5'), mace: digest('6') };
-    candidate.identities.runtimeInputManifestDigests = { mattersim: digest('7'), mace: digest('8') };
-    candidate.replication.observations = [{
-      repositoryRevision: '9'.repeat(40),
-      repositoryRef: 'refs/heads/main',
-      protectedMain: true,
-      runId: '100',
-      runAttempt: 1,
-      observedAt: '2026-08-29T00:00:00Z',
-      conclusion: 'success',
-      identities: structuredClone(candidate.identities),
-    }];
+    delete candidate.freezeEvidence;
+    candidate.replication.acceptedProtectedMainReplicas = 0;
+    candidate.replication.observations = [];
 
-    expect(validateRuntimeLockSemantics(candidate).join('\n')).toMatch(/separately controlled verifier receipt/);
+    expect(validateRuntimeLockSemantics(candidate).join('\n')).toMatch(/freezeEvidence|acceptedProtectedMainReplicas|observations/);
     const schema = parseJsonRejectingDuplicateMembers(await readFile(path.join(root, RUNTIME_LOCK_SCHEMA_PATH)));
     const validate = new Ajv2020({ allErrors: true, validateFormats: false }).compile(schema);
     expect(validate(candidate)).toBe(false);
@@ -150,11 +144,21 @@ describe('atomistic runtime discovery lock', () => {
     expect((await validateRuntimeSourceCommit(missingCommit, { root })).join('\n')).toMatch(/unable to verify/);
   });
 
+  it('uses only the fixed minimum system PATH for every P commit and blob Git read', () => {
+    const options = runtimeSourceGitOptions(root);
+    expect(options.env.PATH).toBe(MINIMUM_SYSTEM_PATH);
+    expect(options.env.PATH).not.toContain('node_modules');
+    expect(options.env.PATH).not.toContain(root);
+    expect(options.env.GIT_CONFIG_NOSYSTEM).toBe('1');
+    expect(options.env.GIT_NO_REPLACE_OBJECTS).toBe('1');
+  });
+
   it('rejects the exact P object when it is not an ancestor of the executing checkout', async () => {
     const { temporaryRoot, repository } = await makeGitRoot();
     try {
       const environment = {
         ...process.env,
+        PATH: MINIMUM_SYSTEM_PATH,
         GIT_AUTHOR_NAME: 'Tailing Future Test',
         GIT_AUTHOR_EMAIL: 'test@tailing.future',
         GIT_COMMITTER_NAME: 'Tailing Future Test',
@@ -215,15 +219,15 @@ describe('atomistic runtime discovery lock', () => {
 
   it('rejects duplicate members, including escape-equivalent keys, before last-wins JSON parsing', () => {
     const duplicate = lockText.replace(
-      '  "state": "discovery-not-frozen",',
-      '  "state": "forged",\n  "state": "discovery-not-frozen",',
+      '  "state": "bootstrap-runtime-frozen-not-reproduced",',
+      '  "state": "forged",\n  "state": "bootstrap-runtime-frozen-not-reproduced",',
     );
     expect(JSON.parse(duplicate)).toEqual(lock);
     expect(inspectRuntimeLockBytes(Buffer.from(duplicate)).failures.join('\n')).toMatch(/duplicate JSON member/);
 
     const escapedDuplicate = lockText.replace(
-      '  "state": "discovery-not-frozen",',
-      '  "\\u0073tate": "forged",\n  "state": "discovery-not-frozen",',
+      '  "state": "bootstrap-runtime-frozen-not-reproduced",',
+      '  "\\u0073tate": "forged",\n  "state": "bootstrap-runtime-frozen-not-reproduced",',
     );
     expect(JSON.parse(escapedDuplicate)).toEqual(lock);
     expect(() => parseJsonRejectingDuplicateMembers(Buffer.from(escapedDuplicate))).toThrow(/duplicate JSON member/);
@@ -241,7 +245,7 @@ async function makeGitRoot() {
   const repository = path.join(temporaryRoot, 'repository');
   execFileSync('git', ['clone', '--quiet', '--no-hardlinks', root, repository], {
     env: {
-      PATH: process.env.PATH,
+      PATH: MINIMUM_SYSTEM_PATH,
       GIT_CONFIG_NOSYSTEM: '1',
       GIT_CONFIG_SYSTEM: '/dev/null',
       GIT_CONFIG_GLOBAL: '/dev/null',
