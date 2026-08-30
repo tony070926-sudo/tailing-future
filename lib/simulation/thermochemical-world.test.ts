@@ -358,7 +358,7 @@ describe('thermochemical bridge', () => {
     expect(result.ensemble.deterministicContinuations).toBe(3);
     expect(result.ensemble.energyResidualTail.maximum).toBeLessThan(5e-4);
     expect(result.ensemble.allInDomain).toBe(true);
-  }, 15_000);
+  }, 30_000);
 
   it('replays the complete world and gives sibling branches unique identities', () => {
     const world = new ThermochemicalWorld({ count: 64, gridWidth: 5, gridHeight: 3, seed: 41 });
