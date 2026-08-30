@@ -4,6 +4,10 @@ import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { artifactContracts, canonicalCacheRoot, verifyCachedArtifact } from './atomistic/artifact-cache.mjs';
 import { inspectRandomTp } from './atomistic/dataset-manifest.mjs';
+import {
+  FULL_CANDIDATE_PLAN_PATH,
+  validateFullCandidatePlanRepository,
+} from './atomistic/full-candidate-plan-policy.mjs';
 import { validateFrozenAtomisticPlan, validateFrozenAtomisticPlanBytes } from './atomistic/plan-policy.mjs';
 
 const root = process.cwd();
@@ -13,6 +17,10 @@ const plan = JSON.parse(planBytes.toString('utf8'));
 const schema = await readJson('schemas/atomistic-reproduction.schema.json');
 const catalog = await readJson('evaluation/data/datasets.json');
 const failures = [];
+const candidatePlanBytes = await readFile(path.join(root, FULL_CANDIDATE_PLAN_PATH));
+const candidateValidation = await validateFullCandidatePlanRepository(candidatePlanBytes, { root });
+const candidatePlan = candidateValidation.plan;
+failures.push(...candidateValidation.failures);
 
 const ajv = new Ajv2020({ allErrors: true, validateFormats: false });
 const validate = ajv.compile(schema);
@@ -130,5 +138,5 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
+  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
 }

@@ -8,6 +8,7 @@
 /scripts/comparator-evidence-policy.mjs @tony070926-sudo
 /scripts/comparator-evidence-policy.test.mjs @tony070926-sudo
 /scripts/evaluate.mjs @tony070926-sudo
+/scripts/evaluate-worker.mjs @tony070926-sudo
 /scripts/github-release-policy.mjs @tony070926-sudo
 /scripts/github-release-policy.test.mjs @tony070926-sudo
 /scripts/release-artifact.mjs @tony070926-sudo
@@ -19,11 +20,13 @@
 /scripts/safe_extract_zip_test.py @tony070926-sudo
 /scripts/source-scope.mjs @tony070926-sudo
 /scripts/source-scope.test.mjs @tony070926-sudo
+/scripts/validate-atomistic-plan.mjs @tony070926-sudo
 /scripts/workflow-policy.mjs @tony070926-sudo
 /scripts/workflow-policy.test.mjs @tony070926-sudo
 /evaluation/current-scorecard.json @tony070926-sudo
 /evaluation/baselines/registry.json @tony070926-sudo
 /evaluation/atomistic/evidence/ @tony070926-sudo
+/evaluation/atomistic/full-candidate-plan.json @tony070926-sudo
 /evaluation/atomistic/reproduction-plan.json @tony070926-sudo
 /evaluation/atomistic/runtime-lock.json @tony070926-sudo
 /evaluation/data/datasets.json @tony070926-sudo
@@ -33,5 +36,7 @@
 /schemas/atomistic-reproduction.schema.json @tony070926-sudo
 /schemas/atomistic-reproduction-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-bootstrap-replica-receipt.schema.json @tony070926-sudo
+/schemas/atomistic-full-candidate-plan.schema.json @tony070926-sudo
+/schemas/atomistic-full-candidate-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-runtime-lock.schema.json @tony070926-sudo
 /schemas/evaluation-report.schema.json @tony070926-sudo

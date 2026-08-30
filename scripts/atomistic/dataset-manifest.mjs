@@ -21,6 +21,10 @@ const ATOMIC_NUMBER = new Map(PERIODIC_SYMBOLS.map((symbol, index) => [symbol, i
 
 export const RANDOM_TP_RECORD_DOMAIN = 'tf.random-tp.record/v1';
 export const RANDOM_TP_RECORD_MANIFEST_DOMAIN = 'tf.random-tp.record-manifest/v1';
+export const RANDOM_TP_LABEL_DOMAIN = 'tf.random-tp.reference-label/v1';
+export const RANDOM_TP_LABEL_MANIFEST_DOMAIN = 'tf.random-tp.reference-label-manifest/v1';
+export const ATOMISTIC_STRUCTURE_DOMAIN = 'tf.atomistic-structure/v1';
+export const ATOMISTIC_STRUCTURE_MANIFEST_DOMAIN = 'tf.atomistic-structure-manifest/v1';
 
 export function inspectRandomTp(buffer, smokeIds = []) {
   if (!Buffer.isBuffer(buffer)) throw new TypeError('Random-TP input must be a Buffer.');
@@ -85,25 +89,35 @@ export function inspectRandomTp(buffer, smokeIds = []) {
     const frameEnd = lines[finalAtomIndex].endWithNewline;
     const rawDigest = digest(buffer.subarray(frameStart, frameEnd));
     const atomicOrderDigest = digest(Buffer.from(`${atomicSymbols.join('\0')}\n`, 'utf8'));
+    const inputStructureDigest = structureDigest({ id, atomCount, atomicNumbers, lattice, positions });
+    const labelDigest = referenceLabelDigest({ id, atomCount, energy, forces, stress });
     const recordDigest = scientificRecordDigest({ id, atomCount, atomicNumbers, lattice, positions, energy, forces, stress });
     records.push({
       id,
       atomCount,
       atomicOrderDigest,
       rawDigest,
+      inputStructureDigest,
+      labelDigest,
       recordDigest,
       elements: [...new Set(atomicSymbols)].sort(),
+      atomicNumbers,
       energy,
       lattice,
+      positions,
+      forces,
       stress,
+      pbc: [true, true, true],
     });
     atomTotal += atomCount;
     cursor = finalAtomIndex + 1;
   }
 
-  const sortedRecords = [...records].sort((left, right) => left.id.localeCompare(right.id));
+  const sortedRecords = [...records].sort((left, right) => asciiCompare(left.id, right.id));
   const idSetSha256 = idSetDigest(sortedRecords.map((record) => record.id));
   const recordManifestSha256 = recordManifestDigest(sortedRecords);
+  const structureManifestSha256 = structureManifestDigest(sortedRecords);
+  const labelManifestSha256 = labelManifestDigest(sortedRecords);
   const smokeSet = new Set(smokeIds);
   if (smokeSet.size !== smokeIds.length) throw new Error('Random-TP smoke IDs must be unique.');
   const smokeRecords = sortedRecords.filter((record) => smokeSet.has(record.id));
@@ -112,6 +126,8 @@ export function inspectRandomTp(buffer, smokeIds = []) {
   if (missingSmokeIds.length > 0) throw new Error(`Random-TP smoke IDs are missing: ${missingSmokeIds.join(', ')}.`);
   const smokeManifestSha256 = idSetDigest(smokeRecords.map((record) => record.id));
   const smokeRecordManifestSha256 = recordManifestDigest(smokeRecords);
+  const smokeStructureManifestSha256 = structureManifestDigest(smokeRecords);
+  const smokeLabelManifestSha256 = labelManifestDigest(smokeRecords);
 
   return {
     frames: records.length,
@@ -122,8 +138,12 @@ export function inspectRandomTp(buffer, smokeIds = []) {
     smokeElements: smokeElements.size,
     idSetSha256,
     recordManifestSha256,
+    structureManifestSha256,
+    labelManifestSha256,
     smokeManifestSha256,
     smokeRecordManifestSha256,
+    smokeStructureManifestSha256,
+    smokeLabelManifestSha256,
   };
 }
 
@@ -132,13 +152,15 @@ export function idSetDigest(ids) {
 }
 
 export function recordManifestDigest(records) {
-  const hash = createHash('sha256');
-  hash.update(`${RANDOM_TP_RECORD_MANIFEST_DOMAIN}\0`, 'utf8');
-  for (const record of [...records].sort((left, right) => left.id.localeCompare(right.id))) {
-    hash.update(`${record.id}\0`, 'utf8');
-    hash.update(Buffer.from(record.recordDigest.slice('sha256:'.length), 'hex'));
-  }
-  return `sha256:${hash.digest('hex')}`;
+  return boundManifestDigest(records, RANDOM_TP_RECORD_MANIFEST_DOMAIN, 'recordDigest');
+}
+
+export function structureManifestDigest(records) {
+  return boundManifestDigest(records, ATOMISTIC_STRUCTURE_MANIFEST_DOMAIN, 'inputStructureDigest');
+}
+
+export function labelManifestDigest(records) {
+  return boundManifestDigest(records, RANDOM_TP_LABEL_MANIFEST_DOMAIN, 'labelDigest');
 }
 
 export function scientificRecordDigest({ id, atomCount, atomicNumbers, lattice, positions, energy, forces, stress }) {
@@ -151,6 +173,39 @@ export function scientificRecordDigest({ id, atomCount, atomicNumbers, lattice, 
   chunks.push(numbers, Buffer.from([1, 1, 1]));
   chunks.push(float64Buffer([...lattice, ...positions, energy, ...forces, ...stress]));
   return digest(Buffer.concat(chunks));
+}
+
+export function structureDigest({ id, atomCount, atomicNumbers, lattice, positions }) {
+  const chunks = [Buffer.from(`${ATOMISTIC_STRUCTURE_DOMAIN}\0${id}\0`, 'utf8')];
+  const count = Buffer.alloc(4);
+  count.writeUInt32LE(atomCount);
+  chunks.push(count);
+  const numbers = Buffer.alloc(atomCount * 2);
+  atomicNumbers.forEach((value, index) => numbers.writeUInt16LE(value, index * 2));
+  chunks.push(numbers, Buffer.from([1, 1, 1]));
+  chunks.push(float64Buffer([...lattice, ...positions]));
+  return digest(Buffer.concat(chunks));
+}
+
+export function referenceLabelDigest({ id, atomCount, energy, forces, stress }) {
+  const chunks = [Buffer.from(`${RANDOM_TP_LABEL_DOMAIN}\0${id}\0`, 'utf8')];
+  const count = Buffer.alloc(4);
+  count.writeUInt32LE(atomCount);
+  chunks.push(count, float64Buffer([energy, ...forces, ...stress]));
+  return digest(Buffer.concat(chunks));
+}
+
+function boundManifestDigest(records, domain, field) {
+  const ordered = [...records].sort((left, right) => asciiCompare(left.id, right.id));
+  if (new Set(ordered.map((record) => record.id)).size !== ordered.length) throw new Error(`${field} manifest IDs must be unique.`);
+  const hash = createHash('sha256');
+  hash.update(`${domain}\0`, 'utf8');
+  for (const record of ordered) {
+    if (typeof record[field] !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(record[field])) throw new Error(`${record.id}: invalid ${field}.`);
+    hash.update(`${record.id}\0`, 'utf8');
+    hash.update(Buffer.from(record[field].slice('sha256:'.length), 'hex'));
+  }
+  return `sha256:${hash.digest('hex')}`;
 }
 
 function splitLines(buffer) {
@@ -199,4 +254,8 @@ function float64Buffer(values) {
 
 function digest(value) {
   return `sha256:${createHash('sha256').update(value).digest('hex')}`;
+}
+
+function asciiCompare(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
 }

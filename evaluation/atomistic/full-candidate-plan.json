@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "tf.atomistic-full-candidate-plan/0.1",
+  "status": "frozen-candidate-contract-not-run",
+  "frozenAt": "2026-08-30",
+  "purpose": "Run one complete 693-structure Random-TP prediction partition for each frozen model, then let an independent label-bearing verifier compute evidence-bound metrics while preserving pass, fail and incomplete outcomes.",
+  "bindings": {
+    "scientificPlan": {
+      "path": "evaluation/atomistic/reproduction-plan.json",
+      "schemaVersion": "tf.atomistic-reproduction/0.2",
+      "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+    },
+    "runtimeLock": {
+      "path": "evaluation/atomistic/runtime-lock.json",
+      "schemaVersion": "tf.atomistic-runtime-lock/0.3",
+      "rawDigest": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1",
+      "stableInputsCommitment": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb",
+      "sourceManifestDigest": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1",
+      "materializationDigest": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721",
+      "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+      "modelRuntimeIdentities": {
+        "mattersim": {
+          "dependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+          "runtimeInputManifestDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53"
+        },
+        "mace": {
+          "dependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33",
+          "runtimeInputManifestDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+        }
+      },
+      "ociPromotionTrustRootsAvailable": false
+    },
+    "benchmark": {
+      "id": "mattersim-random-tp",
+      "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+      "idSetDigest": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
+      "idManifestPath": "evaluation/atomistic/random-tp-id-manifest.txt",
+      "recordManifestDigest": "sha256:6afbbdc0cd745efaca4bf5d7a2a7604db9f1d1f59749b86d3c0a51d48f07893a",
+      "recordManifestProtocol": "tf.random-tp.record-manifest/v1",
+      "structureManifestDigest": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7",
+      "structureManifestProtocol": "tf.atomistic-structure-manifest/v1",
+      "labelManifestDigest": "sha256:a0eda4ac1c7720002a32f42f91c635bf8398b93c02846fb83ae97437e3e8422f",
+      "labelManifestProtocol": "tf.random-tp.reference-label-manifest/v1",
+      "frames": 693,
+      "atoms": 11088,
+      "elements": 89,
+      "atomsPerFrame": 16,
+      "redistributionAllowed": false
+    }
+  },
+  "execution": {
+    "profile": "full-candidate",
+    "mode": "full",
+    "canonicalDevice": "cpu",
+    "dtype": "float32",
+    "batchSize": 1,
+    "threads": 1,
+    "networkPolicy": "fetch-online-build-and-run-offline",
+    "producerReferenceLabelAccess": false,
+    "independentVerifierReferenceLabelAccess": true,
+    "mixedRunAttemptsAllowed": false,
+    "partitioning": {
+      "partitionKey": "model",
+      "currentStrategy": "one-complete-id-set-partition-per-model",
+      "futureShardingPolicy": "A future record-sharded run requires a new versioned plan and receipt contract; this plan forbids mixing shards, hardware identities or run attempts.",
+      "partitions": [
+        {
+          "partitionId": "mattersim-full-000",
+          "model": "mattersim",
+          "modelId": "mattersim-v1.0.0-5m",
+          "selection": "all-693-ids-from-frozen-manifest-in-ascii-order",
+          "expectedRecords": 693,
+          "partitionIndex": 0,
+          "partitionCount": 1
+        },
+        {
+          "partitionId": "mace-full-000",
+          "model": "mace",
+          "modelId": "mace-mpa-0-medium",
+          "selection": "all-693-ids-from-frozen-manifest-in-ascii-order",
+          "expectedRecords": 693,
+          "partitionIndex": 0,
+          "partitionCount": 1
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "definitionId": "mattersim-model-card-frobenius/v1",
+    "energyError": "absolute-total-energy-error-divided-by-frame-atom-count",
+    "forceError": "mean-per-atom-l2-vector-error-per-frame",
+    "stressGateError": "full-3x3-frobenius-error-in-gpa-per-frame",
+    "stressDiagnostics": [
+      "spectral-norm",
+      "unweighted-voigt6-l2",
+      "six-component-mae"
+    ],
+    "evA3ToGpa": 160.21766208,
+    "aggregation": "equal-weight-structure-mean-float64",
+    "summation": "ascii-id-order-python-3.12-math-fsum-divide-by-693/v1",
+    "quantileMethod": "Hyndman-Fan-7-linear",
+    "quantiles": [0.5, 0.9, 0.95, 0.99],
+    "reportedStatistics": ["mean", "p50", "p90", "p95", "p99", "worst"],
+    "worstTieBreak": "error-descending-then-ascii-id-ascending",
+    "perIdMetricEvidenceRootProtocol": "sha256-merkle-canonical-json-array-model-id-metric-id-error-ascii-id-order-duplicate-id-forbidden/v1",
+    "binary64MetricEvidenceRootProtocol": "sha256-merkle-domain-separated-model-id-metric-id-ieee754-binary64-little-endian-ascii-id-order-duplicate-id-forbidden/v1"
+  },
+  "acceptance": {
+    "completeness": {
+      "requiredModels": 2,
+      "requiredRecordsPerModel": 693,
+      "requiredTotalPredictions": 1386,
+      "allowedMissing": 0,
+      "allowedExtra": 0,
+      "allowedDuplicate": 0,
+      "allowedFailed": 0,
+      "allowedNonfinite": 0
+    },
+    "mattersim": {
+      "model": "mattersim",
+      "assessment": "protocol-equivalent-model-card-interval-check",
+      "conjunction": "energy-and-force-and-stress",
+      "targets": {
+        "energyMaeEvPerAtom": 0.199,
+        "forceVectorMaeEvPerAngstrom": 0.824,
+        "stressFrobeniusMaeGpa": 1.999
+      },
+      "acceptedIntervals": {
+        "energyMaeEvPerAtom": [0.19502, 0.20298],
+        "forceVectorMaeEvPerAngstrom": [0.80752, 0.84048],
+        "stressFrobeniusMaeGpa": [1.95902, 2.03898]
+      },
+      "officialOrBitExactClaimAllowed": false
+    },
+    "mace": {
+      "model": "mace",
+      "assessment": "blind-engineering-baseline",
+      "publishedRandomTpTargetAvailable": false,
+      "fitOffsetScaleOrSignAfterObservationAllowed": false,
+      "superiorityClaimAllowed": false
+    }
+  },
+  "resultPolicy": {
+    "allowedOutcomes": ["complete-pass", "complete-fail", "incomplete"],
+    "completePass": "Both model partitions contain exactly 693 valid predictions and the independently recomputed MatterSim means pass all three frozen intervals.",
+    "completeFail": "Both model partitions contain exactly 693 valid predictions and independent metrics are complete, but at least one frozen MatterSim interval fails.",
+    "incomplete": "At least one model partition is absent, cancelled, failed, partial, corrupt or otherwise cannot support all frozen metrics; available failure evidence must be retained.",
+    "claims": {
+      "claimEligible": false,
+      "promotionEligible": false,
+      "comparisonEligible": false,
+      "reproductionEligible": false,
+      "reproduced": false,
+      "superiorityClaimAllowed": false
+    }
+  },
+  "claimBoundaries": {
+    "randomTpIsMatbenchWbm": false,
+    "matterSimInterpretation": "frozen-frobenius-protocol-equivalent-only",
+    "maceInterpretation": "blind-engineering-baseline-only",
+    "currentSotaClaimAllowed": false,
+    "experimentalGroundTruthClaimAllowed": false,
+    "industrialFitnessClaimAllowed": false,
+    "crossModelSuperiorityClaimAllowed": false
+  },
+  "scientificGatesPending": [
+    "two independent protected-main full-candidate receipts with durable attestations",
+    "40 invariance checks per model",
+    "89 force finite-difference checks per model",
+    "60 stress finite-difference checks per model",
+    "versioned multi-producer hardware and run-attempt receipt semantics",
+    "registry-addressable OCI manifest and config trust roots"
+  ]
+}
