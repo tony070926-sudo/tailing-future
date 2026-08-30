@@ -29,4 +29,5 @@
 /evaluation/latest-report.md @tony070926-sudo
 /schemas/atomistic-reproduction.schema.json @tony070926-sudo
 /schemas/atomistic-reproduction-receipt.schema.json @tony070926-sudo
+/schemas/atomistic-bootstrap-replica-receipt.schema.json @tony070926-sudo
 /schemas/evaluation-report.schema.json @tony070926-sudo

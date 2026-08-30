@@ -79,19 +79,28 @@ jobs, but their locked R5 `run-summary.json` files set nested
 `environment.provenance.promotionEligible` to true while the same artifacts
 declare `bootstrap-not-reproduced`, `comparable: false` and
 `reproduced: false`. Successful execution cannot override contradictory claim
-bytes. Both runs are permanently inadmissible, and the accepted-replica count
+bytes. Both runs are permanently inadmissible, and the runtime-lock-accepted count
 remains **0 / 2**.
 
 Remediation preserves the digest dependency direction. Commit P `f861b3e`
 passed protected-main Sentinel, and dispatch `33234001808` proved its exact
-legacy R5 quarantine fails closed before any bootstrap work. This Commit-S
-candidate binds the discovery lock and workflow to P's five Git-source blobs,
-materializes only the two v2 runner files into standard build paths, and keeps
-all discovery identities null. Only entirely fresh S runs may reach a
-separately controlled verifier, which must reject any positive promotion,
-comparison or reproduction claim at any nesting depth. Only after that receipt
-may a later Commit F freeze accepted identities. A postprocessor may reject an
-artifact but may not rewrite its claim bytes.
+legacy R5 quarantine fails closed before any bootstrap work. Commit S
+`687755a` then bound the discovery lock and workflow to P's five Git-source
+blobs, materialized only the two v2 runner files into standard build paths,
+kept all discovery identities null and passed protected-main Sentinel. Fresh S
+runs `33242996794` and `33242999376` both completed; independent manual archive
+inspection found matching stable inputs, ten finite label-free predictions per
+model and no positive promotion, comparison or reproduction claim. Those are
+still candidate bundles, not runtime-lock-accepted replicas. This Commit-V
+candidate adds a separately generated, repository-controlled verifier workflow
+whose read-only job re-fetches GitHub metadata, logs and raw archives and whose
+isolated write-capable job attests only the emitted receipt bytes. The receipt
+may record two verifier-accepted candidates, but it cannot authorize the later
+runtime-lock freeze, assert scientific reproduction or contain its own artifact
+or attestation identity. Only after V passes
+protected-main Sentinel, runs there and its external attestation is checked may
+a later Commit F freeze stable bootstrap identities. A postprocessor may reject
+an artifact but may not rewrite its claim bytes.
 
 The evaluator, scorecard and comparator registry still live in this repository. `CODEOWNERS` makes policy changes visible; the R2 release checklist must also confirm strict branch protection and the required Sentinel status check in live GitHub settings before deployment. These controls are not organizationally independent certification. E4 remains unavailable until an external party controls or reproduces the policy and evidence.
 

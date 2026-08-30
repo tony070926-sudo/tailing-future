@@ -7,11 +7,18 @@ the next executable experiment and its evidence contract, not a 693-record
 reproduction result. R6a discovery runs `33229898921` and `33229901480`
 subsequently failed closed after image export because the observer expected an
 OCI manifest descriptor that Docker local-load metadata did not emit. They are
-negative protocol evidence and contributed no accepted replica. R6b runs
+negative protocol evidence and contributed no runtime-lock-accepted replica. R6b runs
 `33231316217` and `33231323492` then completed all four model jobs, but every
 run summary contradicted its outer non-promotional evidence with nested
 `environment.provenance.promotionEligible: true`. Those runs are also
-inadmissible, so the accepted-replica count remains **0 / 2**.
+inadmissible, so the runtime-lock-accepted count remains **0 / 2**.
+Commit S `687755a` has since passed protected-main Sentinel. Its fresh runs
+`33242996794` and `33242999376` both completed, and independent manual
+inspection found stable input agreement, exactly ten finite label-free
+predictions per model and recursively negative promotion, comparison and
+reproduction claims. Manual inspection is not the separately controlled trust
+root required by this protocol, so both remain candidates and the runtime lock
+accepted count is still **0 / 2**.
 
 ## Why these two models
 
@@ -57,11 +64,12 @@ Commit P `f861b3e` placed that workflow under an active, exact-byte quarantine
 and passed protected-main Sentinel. Dispatch `33234001808` then stopped both
 model jobs with `BOOTSTRAP_QUARANTINE_ACTIVE`, published only bounded
 non-promotional guard-failure outcomes and performed no resolve, build or
-inference work. This Commit-S candidate now binds P's exact five source blobs,
+inference work. Commit S `687755a` now binds P's exact five source blobs,
 materializes the two v2 files into isolated standard build paths and rejects
-both the legacy R5 identity and every unknown runner. Any eventual bootstrap
-artifacts remain predictions and diagnostics only—not metrics, a receipt, an
-attestation or a reproduction claim.
+both the legacy R5 identity and every unknown runner. Its two fresh
+protected-main executions are candidate inputs for the Commit-V verifier.
+Their bootstrap artifacts remain predictions and diagnostics only—not metrics,
+a receipt, an attestation or a reproduction claim.
 
 The resolver treats only one direct top-level `.dist-info` directory as wheel
 metadata, rejects case-variant or `.egg-info` roots and any `.data` relocation
@@ -107,10 +115,11 @@ with its post-execution identities left `null`. A separate runtime lock binds
 that plan digest and keeps the runner, dependency locks and canonical
 runtime-input identities `null` during discovery. Discovery deliberately has no
 locally assertable frozen state. After two entirely fresh protected-main
-executions, a separately controlled verifier must authenticate the workflow,
-repository revision, artifact IDs, archive digests and every machine-readable
-claim; only verifier-accepted replicas may be counted before a later lock
-version freezes those identities. The
+executions, a separately generated, repository-controlled verifier must
+authenticate the workflow, repository revision, artifact IDs, archive digests
+and every machine-readable claim. Its receipt may record two verifier-accepted
+candidates, but must keep the runtime-lock-accepted count at zero and freeze
+authorization false. Only a later lock version may freeze those identities. The
 runtime-input manifest binds the base image, Dockerfile frontend and bytes,
 `.dockerignore`, exact wheels and runtime inventory, runner files, platform and
 offline build policy while excluding resolver metadata and raw plan fields
@@ -149,13 +158,17 @@ publication-time rewrite can repair those artifact bytes.
 
 The repair is non-circular. Commit P prepositioned the versioned v2 runner at
 new paths, left the R5-locked source unchanged and actively quarantined its
-dispatch path. This Commit-S candidate takes P's immutable merged SHA and
-timestamp as its only runtime-source anchor, verifies P tree modes, blob OIDs,
-sizes and hashes, and records the exact source→build→container mapping without
-freezing any observed identity. Only entirely fresh S runs may be inspected by
-a separately controlled verifier, which must reject any positive promotion,
-comparison or reproduction claim at any nesting depth. Only a later commit F,
-after that controlled receipt exists, may freeze accepted identities.
+dispatch path. Commit S takes P's immutable merged SHA and timestamp as its
+only runtime-source anchor, verifies P tree modes, blob OIDs, sizes and hashes,
+and records the exact source→build→container mapping without freezing any
+observed identity. S is now merged and the two entirely fresh runs above are
+available, but only a separately generated, repository-controlled verifier may
+authenticate them. It must reject any positive promotion, comparison or
+reproduction claim at any nesting depth, separate stable input roots from
+run-specific container and prediction observations, and emit a bootstrap-only
+receipt whose bytes are attested outside the receipt. The receipt itself cannot
+authorize the freeze. Only a later Commit F, after that receipt and attestation
+are independently checked, may freeze accepted identities.
 
 Full promotion requires all 693 IDs from both models. Each energy, force and
 stress metric report must include a deterministic mean, HF7 p50/p90/p95/p99,
@@ -197,7 +210,7 @@ superiority. Until the separate runtime lock is independently replicated and
 the full 693-record verifier passes, both models remain `AUDITABLE`, never
 `REPRODUCED` or numerically comparable.
 
-Ten protected-main bootstrap dispatches are preserved. The first stopped during
+Twelve protected-main bootstrap dispatches are preserved. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
 but stopped during offline exact-lock resolution. The fourth crossed those
 boundaries for MatterSim. The fifth crossed them for both models and produced
@@ -207,8 +220,18 @@ R6b but are rejected because their run summaries contain the contradictory
 nested positive promotion claim. The tenth, protected-main dispatch
 [`33234001808`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33234001808),
 proved the exact legacy-runner quarantine fails closed at the guard and emitted
-no prediction payload; it is not a replica. The accepted-replica count is
-therefore still **0 / 2**. Every retained prediction bundle remains
+no prediction payload; it is not a replica. The eleventh and twelfth dispatches,
+[`33242996794`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33242996794)
+and [`33242999376`](https://github.com/tony070926-sudo/tailing-future/actions/runs/33242999376),
+ran Commit S `687755a` and completed both model jobs. Their four raw archives
+were manually cross-checked for stable input agreement, safe exact member sets,
+ten finite label-free predictions and recursively negative claims. MatterSim's
+two prediction sets differ only within the preregistered bootstrap numerical
+tolerances; MACE's physical predictions are equal. These are run-specific
+observations, not accuracy metrics or scientific reproduction. Until the
+Commit-V verifier emits an independently checked, externally attested receipt,
+the runtime-lock-accepted count is therefore still **0 / 2**. Every retained
+prediction bundle remains
 `bootstrap-not-reproduced`: smoke predictions are neither the 693-record
 preregistered benchmark nor an accuracy result.
 

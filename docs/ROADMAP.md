@@ -23,11 +23,12 @@ Status: completed narrow baseline.
 
 ## R2 — independently reproduced modules
 
-Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented. A protected Linux run has completed locked ten-frame smoke inference for both MatterSim and MACE; both artifacts are non-promotional and are not the 693-frame benchmark reproduction. Two R6a discovery runs later failed closed on a descriptor-free Docker local-load metadata mismatch. Two R6b runs then completed execution but emitted a contradictory nested `promotionEligible: true`; they are inadmissible, so the accepted-replica count remains **0 / 2**. Commit P `f861b3e` passed protected-main Sentinel, and dispatch `33234001808` proved its legacy R5 quarantine fails closed. The current Commit-S candidate binds only P's exact v2 Git blobs and keeps every discovery identity null.
+Status: in progress. The numerical entry gate and atomistic reproduction spec are implemented. A protected Linux run has completed locked ten-frame smoke inference for both MatterSim and MACE; these smoke artifacts are non-promotional and are not the 693-frame benchmark reproduction. Two R6a discovery runs failed closed and two R6b runs remain inadmissible because of contradictory nested promotion claims. Commit P `f861b3e` established the quarantined v2 producer. Commit S `687755a` passed protected-main Sentinel, bound only P's exact v2 Git blobs and kept every discovery identity null. Fresh S runs `33242996794` and `33242999376` both completed and their candidate bundles passed independent manual inspection, but no controlled receipt exists yet, so the runtime-lock-accepted count remains **0 / 2**.
 
 - completed entry gates: grid-invariant heat capacity density, three-mode Fourier convergence, analytic two-reservoir exchange, atomic forced-reaction closure, full parameter/resource envelopes and 8×5,000 tails;
 - completed manifest gates: record-level Materials Project, JARVIS, NOMAD and Open Catalyst provenance plans;
-- next: pass Commit S through protected-main Sentinel, execute two entirely fresh protected-main runs, authenticate both runs/artifacts and every negative claim with a separately controlled verifier, and freeze accepted identities in a later Commit F without changing the scientific preregistration before like-for-like complete Random-TP inference;
+- current: pass the Commit-V bootstrap-only verifier through protected-main Sentinel, run it against the two exact S runs and independently verify its external artifact attestation;
+- next: freeze only verifier-authenticated stable bootstrap identities in a later Commit F, without changing the scientific preregistration, then execute like-for-like complete Random-TP inference;
 - NIST PFHub Benchmark 3 and Cantera 3.2 CSTR reference jobs;
 - model cards, licenses, cost and OOD limits.
 
