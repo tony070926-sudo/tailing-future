@@ -1,0 +1,753 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-producer-outcome/0.2",
+  "title": "Tailing Future Atomistic Full-Candidate Producer Outcome",
+  "description": "A non-promotional internal evidence inventory for one full Random-TP model partition. Status describes producer execution only; the working directory is not a public artifact, and scientific pass/fail is exclusively owned by an independent label-bearing verifier.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "evidenceClass",
+    "statusDomain",
+    "model",
+    "partitionId",
+    "commitSha",
+    "runId",
+    "runAttempt",
+    "status",
+    "terminalStage",
+    "stages",
+    "evidence",
+    "outputPath",
+    "publicationPolicy",
+    "claims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-producer-outcome/0.2" },
+    "profile": { "const": "full-candidate-producer" },
+    "evidenceClass": { "const": "producer-output-awaiting-independent-verification" },
+    "statusDomain": { "const": "producer-execution-only-not-scientific-assessment" },
+    "model": { "enum": ["mattersim", "mace"] },
+    "partitionId": { "enum": ["mattersim-full-000", "mace-full-000"] },
+    "commitSha": { "type": "string", "pattern": "^(?!0000000000000000000000000000000000000000$)[0-9a-f]{40}$" },
+    "runId": { "$ref": "#/$defs/safeInteger" },
+    "runAttempt": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+    "status": { "enum": ["complete", "failed", "cancelled", "not-started"] },
+    "terminalStage": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/stageName" }
+      ]
+    },
+    "stages": { "$ref": "#/$defs/stages" },
+    "evidence": { "$ref": "#/$defs/evidence" },
+    "outputPath": { "const": "manifests/producer-outcome.json" },
+    "publicationPolicy": {
+      "const": {
+        "profile": "tf.atomistic-full-candidate-producer-evidence-inventory/0.2",
+        "workingDirectoryIsPublicArtifact": false,
+        "scientificArtifactExactPaths": [
+          "manifests/structures.manifest.json",
+          "predictions/predictions.jsonl"
+        ],
+        "scientificArtifactPublicationEligible": false,
+        "administrativeEvidenceArtifactPublicationEligible": false,
+        "atomicNumbersPublicationLicenseCleared": false,
+        "forbiddenMemberClasses": [
+          "raw-dataset",
+          "raw-structure-records",
+          "positions-cell-pbc",
+          "reference-labels-targets",
+          "scientific-metrics",
+          "receipts-attestations",
+          "model-checkpoints"
+        ],
+        "independentLabelBearingVerificationRequired": true
+      }
+    },
+    "claims": {
+      "const": {
+        "claimEligible": false,
+        "comparisonEligible": false,
+        "promotionEligible": false,
+        "reproduced": false,
+        "reproductionEligible": false,
+        "superiorityClaimAllowed": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "type": "object", "properties": { "model": { "const": "mattersim" } }, "required": ["model"] },
+      "then": { "type": "object", "properties": { "partitionId": { "const": "mattersim-full-000" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "model": { "const": "mace" } }, "required": ["model"] },
+      "then": { "type": "object", "properties": { "partitionId": { "const": "mace-full-000" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "guard" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalGuardStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "directories" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalDirectoriesStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "bind" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalBindStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "base" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalBaseStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "assets" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalAssetsStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "structures" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalStructuresStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "wheelhouse" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalWheelhouseStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "resolve" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalResolveStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "freeze" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalFreezeStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "cold-install" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalColdInstallStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "build" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalBuildStages" } } }
+    },
+    {
+      "if": { "type": "object", "properties": { "terminalStage": { "const": "inference" } }, "required": ["terminalStage"] },
+      "then": { "type": "object", "properties": { "stages": { "$ref": "#/$defs/terminalInferenceStages" } } }
+    }
+  ],
+  "oneOf": [
+    {
+      "type": "object",
+      "title": "Producer execution complete; scientific result not assessed",
+      "properties": {
+        "status": { "const": "complete" },
+        "terminalStage": { "type": "null" },
+        "stages": { "$ref": "#/$defs/completeStages" },
+        "evidence": {
+          "allOf": [
+            { "$ref": "#/$defs/evidence" },
+            {
+              "type": "object",
+              "properties": {
+                "predictions": { "$ref": "#/$defs/predictionEvidence" },
+                "structureManifest": { "$ref": "#/$defs/structureManifestEvidence" },
+                "partial": { "type": "array", "maxItems": 0 },
+                "failure": { "type": "array", "maxItems": 0 }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "title": "Producer execution failed",
+      "properties": {
+        "status": { "const": "failed" },
+        "terminalStage": { "$ref": "#/$defs/stageName" },
+        "stages": {
+          "allOf": [
+            { "$ref": "#/$defs/stages" },
+            { "type": "array", "contains": { "$ref": "#/$defs/failureStageRecord" }, "minContains": 1, "maxContains": 1 },
+            { "not": { "type": "array", "contains": { "$ref": "#/$defs/cancelledStageRecord" } } }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "title": "Producer execution cancelled",
+      "properties": {
+        "status": { "const": "cancelled" },
+        "terminalStage": { "$ref": "#/$defs/stageName" },
+        "stages": {
+          "allOf": [
+            { "$ref": "#/$defs/stages" },
+            { "type": "array", "contains": { "$ref": "#/$defs/cancelledStageRecord" }, "minContains": 1, "maxContains": 1 },
+            { "not": { "type": "array", "contains": { "$ref": "#/$defs/failureStageRecord" } } }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "title": "Producer execution did not start",
+      "properties": {
+        "status": { "const": "not-started" },
+        "terminalStage": { "type": "null" },
+        "stages": { "$ref": "#/$defs/notStartedStages" },
+        "evidence": {
+          "allOf": [
+            { "$ref": "#/$defs/evidence" },
+            {
+              "type": "object",
+              "properties": {
+                "predictions": { "type": "null" },
+                "structureManifest": { "type": "null" },
+                "control": { "type": "array", "maxItems": 0 },
+                "partial": { "type": "array", "maxItems": 0 },
+                "failure": { "type": "array", "maxItems": 0 }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "safeInteger": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "stageName": {
+      "type": "string",
+      "enum": ["guard", "directories", "bind", "base", "assets", "structures", "wheelhouse", "resolve", "freeze", "cold-install", "build", "inference"]
+    },
+    "stageOutcome": {
+      "type": "string",
+      "enum": ["success", "failure", "cancelled", "skipped"]
+    },
+    "stageRecord": {
+      "type": "object",
+      "required": ["stage", "outcome"],
+      "properties": {
+        "stage": { "$ref": "#/$defs/stageName" },
+        "outcome": { "$ref": "#/$defs/stageOutcome" }
+      },
+      "additionalProperties": false
+    },
+    "failureStageRecord": {
+      "type": "object",
+      "required": ["outcome"],
+      "properties": { "outcome": { "const": "failure" } }
+    },
+    "cancelledStageRecord": {
+      "type": "object",
+      "required": ["outcome"],
+      "properties": { "outcome": { "const": "cancelled" } }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "guard" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "directories" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "bind" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "base" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "assets" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "structures" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "wheelhouse" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "resolve" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "freeze" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "cold-install" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "build" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/stageRecord" }, { "type": "object", "properties": { "stage": { "const": "inference" } } }] }
+      ],
+      "items": false
+    },
+    "completeStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } }
+          ]
+        }
+      ]
+    },
+    "notStartedStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalGuardStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalDirectoriesStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalBindStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalBaseStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalAssetsStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalStructuresStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalWheelhouseStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalResolveStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalFreezeStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalColdInstallStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalBuildStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } },
+            { "type": "object", "properties": { "outcome": { "const": "skipped" } } }
+          ]
+        }
+      ]
+    },
+    "terminalInferenceStages": {
+      "allOf": [
+        { "$ref": "#/$defs/stages" },
+        {
+          "minItems": 12,
+          "maxItems": 12,
+          "items": false,
+          "type": "array",
+          "prefixItems": [
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "const": "success" } } },
+            { "type": "object", "properties": { "outcome": { "enum": ["failure", "cancelled"] } } }
+          ]
+        }
+      ]
+    },
+    "fileEvidence": {
+      "type": "object",
+      "required": ["path", "stage", "stageOutcome", "sizeBytes", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/publicMemberPath" },
+        "stage": { "$ref": "#/$defs/stageName" },
+        "stageOutcome": { "enum": ["success", "failure", "cancelled"] },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 16777216 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "publicMemberPath": {
+      "type": "string",
+      "enum": [
+        "diagnostics/failure-diagnostics.json",
+        "diagnostics/mace.buildx-metadata.json",
+        "diagnostics/mace.buildx-version.txt",
+        "diagnostics/mace.docker-server-version.txt",
+        "diagnostics/mace.image-inspect.json",
+        "diagnostics/mattersim.buildx-metadata.json",
+        "diagnostics/mattersim.buildx-version.txt",
+        "diagnostics/mattersim.docker-server-version.txt",
+        "diagnostics/mattersim.image-inspect.json",
+        "diagnostics/run-diagnostics.json",
+        "locks/mace.requirements.lock",
+        "locks/mattersim.requirements.lock",
+        "manifests/fetched-assets.manifest.json",
+        "manifests/mace.container-observation.json",
+        "manifests/mace.runtime-inputs.json",
+        "manifests/mace.wheelhouse.manifest.json",
+        "manifests/mattersim.container-observation.json",
+        "manifests/mattersim.runtime-inputs.json",
+        "manifests/mattersim.wheelhouse.manifest.json",
+        "manifests/python-hostlist.derived-wheel.manifest.json",
+        "manifests/pytorch-download-sources.json",
+        "manifests/run-summary.json",
+        "manifests/structures.manifest.json",
+        "predictions/predictions.jsonl"
+      ]
+    },
+    "predictionEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/fileEvidence" },
+        { "type": "object", "properties": { "path": { "const": "predictions/predictions.jsonl" }, "stage": { "const": "inference" }, "stageOutcome": { "const": "success" } } }
+      ]
+    },
+    "structureManifestEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/fileEvidence" },
+        { "type": "object", "properties": { "path": { "const": "manifests/structures.manifest.json" }, "stage": { "const": "structures" }, "stageOutcome": { "const": "success" } } }
+      ]
+    },
+    "controlEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/fileEvidence" },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "not": {
+                "enum": [
+                  "predictions/predictions.jsonl",
+                  "manifests/structures.manifest.json",
+                  "diagnostics/failure-diagnostics.json"
+                ]
+              }
+            },
+            "stageOutcome": { "const": "success" }
+          }
+        }
+      ]
+    },
+    "partialEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/fileEvidence" },
+        {
+          "type": "object",
+          "properties": {
+            "path": { "not": { "const": "diagnostics/failure-diagnostics.json" } },
+            "stageOutcome": { "enum": ["failure", "cancelled"] }
+          }
+        }
+      ]
+    },
+    "failureEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/fileEvidence" },
+        {
+          "type": "object",
+          "properties": {
+            "path": { "const": "diagnostics/failure-diagnostics.json" },
+            "stage": { "const": "inference" },
+            "stageOutcome": { "enum": ["failure", "cancelled"] }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["predictions", "structureManifest", "control", "partial", "failure"],
+      "properties": {
+        "predictions": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/predictionEvidence" }
+          ]
+        },
+        "structureManifest": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/structureManifestEvidence" }
+          ]
+        },
+        "control": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/controlEvidence" }
+        },
+        "partial": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/partialEvidence" }
+        },
+        "failure": {
+          "type": "array",
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/failureEvidence" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -7,6 +7,7 @@ import {
   FULL_CANDIDATE_PLAN_PATH,
   FULL_CANDIDATE_PLAN_RAW_DIGEST,
   FULL_CANDIDATE_PLAN_SCHEMA_PATH,
+  FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
   FULL_CANDIDATE_RECEIPT_SCHEMA_PATH,
   inspectFullCandidatePlanBytes,
   validateFullCandidateIdManifest,
@@ -82,6 +83,49 @@ describe('atomistic full-candidate frozen plan policy', () => {
     }
   });
 
+  it('freezes the trusted-preprocessor, label-blind sandbox and two-file public payload boundary', () => {
+    expect(plan.bindings.producerOutcomeSchema).toMatchObject({
+      path: FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
+      schemaVersion: 'tf.atomistic-full-candidate-producer-outcome/0.2',
+    });
+    expect(plan.execution).toMatchObject({
+      trustedPreprocessorReferenceLabelAccess: true,
+      modelSandboxReferenceLabelAccess: false,
+      independentVerifierReferenceLabelAccess: true,
+      producerScientificPayloadPolicy: {
+        exactPaths: [
+          'manifests/structures.manifest.json',
+          'predictions/predictions.jsonl',
+        ],
+        scientificArtifactUsesExactPayload: true,
+        administrativeEvidenceSeparated: true,
+        rawDatasetIncluded: false,
+        structureBundleIncluded: false,
+        referenceLabelsIncluded: false,
+        atomicNumbersIncluded: true,
+        atomicNumbersPublicationLicenseCleared: false,
+        publicationEligible: false,
+        structureCommitmentAuthority:
+          'independent-verifier-derived-from-frozen-raw-dataset',
+      },
+    });
+    const mutations = [
+      (candidate) => { candidate.execution.trustedPreprocessorReferenceLabelAccess = false; },
+      (candidate) => { candidate.execution.modelSandboxReferenceLabelAccess = true; },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.exactPaths.push('structures/structures.jsonl'); },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.administrativeEvidenceSeparated = false; },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.rawDatasetIncluded = true; },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.structureBundleIncluded = true; },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.atomicNumbersPublicationLicenseCleared = true; },
+      (candidate) => { candidate.execution.producerScientificPayloadPolicy.publicationEligible = true; },
+    ];
+    for (const [index, mutation] of mutations.entries()) {
+      expect(semanticFailures(mutation), `boundary mutation ${index}`).toMatch(
+        /exact frozen contract|execution/,
+      );
+    }
+  });
+
   it('rejects claim, SOTA boundary and pending-gate drift even when internally coherent', () => {
     const mutations = [
       (candidate) => { candidate.resultPolicy.claims.claimEligible = true; },
@@ -122,6 +166,22 @@ describe('atomistic full-candidate frozen plan policy', () => {
     });
     expect(receiptResult.failures.join('\n')).toMatch(/candidate-receipt\.schema\.rawDigest/);
     expect(receiptResult.failures.join('\n')).toMatch(/candidate-receipt\.schema: strict AJV compilation failed/);
+
+    const producerOutcomeSchemaBytes = await readFile(path.join(
+      root,
+      FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH,
+    ));
+    const producerResult = await validateFullCandidatePlanRepository(planBytes, {
+      root,
+      fileOverrides: {
+        [FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_PATH]: Buffer.concat([
+          producerOutcomeSchemaBytes,
+          Buffer.from(' '),
+        ]),
+      },
+    });
+    expect(producerResult.failures.join('\n')).toMatch(/candidate-producer-outcome\.schema\.rawDigest/);
+    expect(producerResult.failures.join('\n')).toMatch(/producer-outcome-schema\.rawDigest/);
   });
 
   it('recomputes and rejects drift in scientific-plan, runtime-lock and ID-manifest bytes', async () => {

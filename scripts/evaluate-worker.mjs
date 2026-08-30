@@ -36,6 +36,7 @@ const [
     FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT,
     FULL_CANDIDATE_PLAN_RAW_DIGEST,
     FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST,
+    FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
     FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST,
   },
   { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource },
@@ -71,6 +72,7 @@ const atomisticPlanSchema = await readJson('schemas/atomistic-reproduction.schem
 const atomisticCandidatePlan = await readJson('evaluation/atomistic/full-candidate-plan.json');
 const atomisticCandidatePlanSchema = await readJson('schemas/atomistic-full-candidate-plan.schema.json');
 const atomisticCandidateReceiptSchema = await readJson('schemas/atomistic-full-candidate-receipt.schema.json');
+const atomisticCandidateProducerOutcomeSchema = await readJson('schemas/atomistic-full-candidate-producer-outcome.schema.json');
 const datasetCatalog = await readJson('evaluation/data/datasets.json');
 const evaluationSchema = await readJson('schemas/evaluation-report.schema.json');
 const hardGateFailures = [...scorecard.hardGateFailures];
@@ -183,6 +185,7 @@ try {
   const validateAtomisticPlan = ajv.compile(atomisticPlanSchema);
   const validateAtomisticCandidatePlan = ajv.compile(atomisticCandidatePlanSchema);
   ajv.compile(atomisticCandidateReceiptSchema);
+  ajv.compile(atomisticCandidateProducerOutcomeSchema);
   const sample = new ThermochemicalWorld({ count: 64, gridWidth: 5, gridHeight: 3, seed: 20260828 });
   sample.injectCentralHeatPulse(15);
   const serialized = sample.serialize();
@@ -216,10 +219,16 @@ try {
     && sourceSnapshot.digest('evaluation/atomistic/full-candidate-plan.json') === FULL_CANDIDATE_PLAN_RAW_DIGEST
     && sourceSnapshot.digest('schemas/atomistic-full-candidate-plan.schema.json') === FULL_CANDIDATE_PLAN_SCHEMA_RAW_DIGEST
     && sourceSnapshot.digest('schemas/atomistic-full-candidate-receipt.schema.json') === FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST
+    && sourceSnapshot.digest('schemas/atomistic-full-candidate-producer-outcome.schema.json') === FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST
+    && atomisticCandidatePlan.bindings.producerOutcomeSchema.rawDigest === FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST
+    && atomisticCandidatePlan.bindings.producerOutcomeSchema.schemaVersion === 'tf.atomistic-full-candidate-producer-outcome/0.2'
     && atomisticCandidatePlan.status === 'frozen-candidate-contract-not-run'
     && atomisticCandidatePlan.execution.partitioning.partitions.length === 2
     && atomisticCandidatePlan.execution.partitioning.partitions.every((partition) => partition.expectedRecords === 693 && partition.partitionCount === 1)
     && Object.values(atomisticCandidatePlan.resultPolicy.claims).every((claim) => claim === false)
+    && atomisticCandidatePlan.execution.producerScientificPayloadPolicy.scientificArtifactUsesExactPayload === true
+    && atomisticCandidatePlan.execution.producerScientificPayloadPolicy.administrativeEvidenceSeparated === true
+    && atomisticCandidatePlan.execution.producerScientificPayloadPolicy.publicationEligible === false
     && atomisticCandidatePlan.claimBoundaries.randomTpIsMatbenchWbm === false
     && atomisticCandidatePlan.claimBoundaries.currentSotaClaimAllowed === false
     && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT

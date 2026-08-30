@@ -2,7 +2,7 @@
 
 Tailing Future is an evidence-first materials and chemical-engineering world-model lab. It starts with a small solver that can be tested, then grows scale by scale toward atomistic, mesoscale, continuum, reactor and process models.
 
-Live lab: [tailing-future.tony070926.workers.dev](https://tailing-future.tony070926.workers.dev) currently serves v0.3.0. Protected `main` and the local Commit-F v0.3.1 evidence candidate remain unreleased.
+Live lab: [tailing-future.tony070926.workers.dev](https://tailing-future.tony070926.workers.dev). Releases originate only from protected `main` through the guarded Cloudflare workflow. This v0.3.1 R7b1 evidence-boundary candidate keeps the full 693-by-two atomistic run **not run**, with no authoritative scientific receipt or public producer artifact.
 
 The current **R2 / CONDITIONAL** candidate is intentionally narrow:
 

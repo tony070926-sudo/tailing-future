@@ -37,6 +37,7 @@
 /schemas/atomistic-reproduction-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-bootstrap-replica-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-full-candidate-plan.schema.json @tony070926-sudo
+/schemas/atomistic-full-candidate-producer-outcome.schema.json @tony070926-sudo
 /schemas/atomistic-full-candidate-receipt.schema.json @tony070926-sudo
 /schemas/atomistic-runtime-lock.schema.json @tony070926-sudo
 /schemas/evaluation-report.schema.json @tony070926-sudo
