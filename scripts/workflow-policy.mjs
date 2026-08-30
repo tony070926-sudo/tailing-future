@@ -3,6 +3,7 @@ import { load as parseYaml } from 'js-yaml';
 
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap-verify.yml';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = '65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
@@ -42,6 +43,19 @@ const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af6772
 const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020';
 const UPLOAD_ARTIFACT_ACTION = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02';
 const GITHUB_SCRIPT_ACTION = 'actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION = 'actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION = 'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_UPLOAD_ACTION = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_DOWNLOAD_ACTION = 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_ATTEST_ACTION = 'actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION = '24.16.0';
+export const ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS = Object.freeze({
+  'Refuse unapproved runs or a verifier outside protected main': 'sha256:3fccf4de4cb0611cb8e7bb45ac05d4b433d4f3823a3a5cc06649cd5b1ed04049',
+  'Install locked verifier dependencies without lifecycle scripts': 'sha256:9514b3517c824a0127f135c25784c58557b6a032b154a5a28b501578c90fc70e',
+  'Verify both replicas and create one canonical bootstrap-only receipt': 'sha256:2c84744b91126abf23ac2e5d615b2a94976535e96372c1c6d1919789c1d2cc3f',
+  'Create a clean receipt download directory': 'sha256:50df08f79a467e5aa999616094b630f87faa2fa9f386c1a09a50e056f0e46e60',
+  'Match the single downloaded receipt to the verify job bytes': 'sha256:55d6c9d0fe405505ceb9487e78e1a07fefbd3d025a44437f7dfb748520b97299',
+});
 
 export const ATOMISTIC_SELECTED_SOURCE_FILES = Object.freeze([
   Object.freeze({
@@ -258,6 +272,7 @@ export function inspectWorkflowSource(relativePath, source) {
   if (relativePath === SENTINEL_EVALUATION_WORKFLOW_PATH) failures.push(...inspectSentinelEvaluationWorkflow(workflow));
   if (relativePath === SENTINEL_REPORT_WORKFLOW_PATH) failures.push(...inspectSentinelReportWorkflow(workflow));
   if (relativePath === ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapWorkflow(workflow));
+  if (relativePath === ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapVerifyWorkflow(workflow));
   return failures;
 }
 
@@ -844,6 +859,236 @@ export function inspectAtomisticBootstrapWorkflow(workflow) {
       || /evidence-class=(?!bootstrap-not-reproduced)/.test(executable)
       || /REPRODUCED_MODEL_CARD_PROTOCOL|ENGINEERING_BASELINE_COMPLETE/.test(executable)) {
     failures.push(`${prefix} bootstrap executable may not compute metrics, receipts, attestations or promotional result classes.`);
+  }
+  return failures;
+}
+
+export function inspectAtomisticBootstrapVerifyWorkflow(workflow) {
+  const failures = [];
+  const prefix = `${ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH}:`;
+  const readOnlyPermissions = { contents: 'read', actions: 'read' };
+  const attestPermissions = {
+    contents: 'read',
+    actions: 'read',
+    'id-token': 'write',
+    attestations: 'write',
+    'artifact-metadata': 'write',
+  };
+  const receiptArtifactName = 'tailing-atomistic-bootstrap-replica-receipt-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}';
+  const receiptSourcePath = '${{ runner.temp }}/tailing-atomistic-bootstrap-replica-receipt/atomistic-bootstrap-replica-receipt.json';
+  const receiptAttestDirectory = '${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest';
+  const receiptAttestPath = `${receiptAttestDirectory}/atomistic-bootstrap-replica-receipt.json`;
+
+  if (!sameJson(Object.keys(workflow).sort(), ['concurrency', 'jobs', 'name', 'on', 'permissions'])) {
+    failures.push(`${prefix} workflow contains an unreviewed top-level key.`);
+  }
+  if (workflow.name !== 'Atomistic bootstrap replica verifier (non-promotional)') {
+    failures.push(`${prefix} workflow name must preserve the bootstrap-only non-promotional boundary.`);
+  }
+  if (!sameJson(workflow.on, {
+    workflow_dispatch: {
+      inputs: {
+        run_id_1: {
+          description: 'First approved bootstrap workflow run ID',
+          required: true,
+          type: 'string',
+        },
+        run_id_2: {
+          description: 'Second approved bootstrap workflow run ID',
+          required: true,
+          type: 'string',
+        },
+      },
+    },
+  })) failures.push(`${prefix} verifier must have only two required string workflow_dispatch inputs.`);
+  if (!sameJson(workflow.permissions, readOnlyPermissions)) {
+    failures.push(`${prefix} workflow permissions must remain read-only without OIDC or attestation authority.`);
+  }
+  if (!sameJson(workflow.concurrency, {
+    group: 'atomistic-bootstrap-verify-${{ inputs.run_id_1 }}-${{ inputs.run_id_2 }}',
+    'cancel-in-progress': false,
+  })) failures.push(`${prefix} concurrency must bind both approved source run IDs.`);
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs) ? workflow.jobs : {};
+  if (!sameJson(Object.keys(jobs), ['verify', 'attest'])) {
+    failures.push(`${prefix} verifier must contain only the separated verify and attest jobs.`);
+  }
+
+  const verify = jobs.verify;
+  if (!verify || typeof verify !== 'object' || Array.isArray(verify)) {
+    failures.push(`${prefix} read-only verify job is missing.`);
+  } else {
+    if (!sameJson(Object.keys(verify).sort(), ['name', 'outputs', 'permissions', 'runs-on', 'steps', 'timeout-minutes'].sort())) {
+      failures.push(`${prefix} verify job contains an unreviewed key.`);
+    }
+    if (verify.name !== 'Verify approved bootstrap replicas without promotion authority'
+        || verify['runs-on'] !== 'ubuntu-24.04' || verify['timeout-minutes'] !== 30) {
+      failures.push(`${prefix} verify must remain a bounded Ubuntu 24.04 job.`);
+    }
+    if (!sameJson(verify.permissions, readOnlyPermissions)) {
+      failures.push(`${prefix} verify job must have only contents: read and actions: read.`);
+    }
+    if (!sameJson(verify.outputs, {
+      receipt_artifact_name: '${{ steps.receipt.outputs.receipt_artifact_name }}',
+      receipt_sha256: '${{ steps.receipt.outputs.receipt_sha256 }}',
+      receipt_size_bytes: '${{ steps.receipt.outputs.receipt_size_bytes }}',
+    })) failures.push(`${prefix} verify job outputs must bind the reviewed receipt name, raw digest, and size.`);
+
+    const steps = Array.isArray(verify.steps) ? verify.steps : [];
+    const expectedNames = [
+      'Check out the protected-main verifier without credentials',
+      'Install the pinned JavaScript runtime',
+      'Refuse unapproved runs or a verifier outside protected main',
+      'Install locked verifier dependencies without lifecycle scripts',
+      'Verify both replicas and create one canonical bootstrap-only receipt',
+      'Upload only the canonical bootstrap replica receipt',
+    ];
+    if (!sameJson(steps.map((step) => step?.name), expectedNames)) {
+      failures.push(`${prefix} verify step set or order drifted.`);
+    }
+    if (!sameJson(steps[0], {
+      name: expectedNames[0],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION,
+      with: { ref: '${{ github.sha }}', 'persist-credentials': false, 'fetch-depth': 0 },
+    })) failures.push(`${prefix} verifier checkout must bind the dispatched main SHA with full ancestry and no credentials.`);
+    if (!sameJson(steps[1], {
+      name: expectedNames[1],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION,
+      with: { 'node-version': ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION },
+    })) failures.push(`${prefix} verifier Node action or exact runtime drifted.`);
+
+    const guard = steps[2];
+    if (!guard || guard.shell !== 'bash'
+        || !sameJson(Object.keys(guard).sort(), ['env', 'name', 'run', 'shell'])
+        || !sameJson(guard.env, { RUN_ID_1: '${{ inputs.run_id_1 }}', RUN_ID_2: '${{ inputs.run_id_2 }}' })
+        || typeof guard.run !== 'string'
+        || sha256(guard.run) !== ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS[expectedNames[2]]) {
+      failures.push(`${prefix} protected-main and approved-run guard program drifted.`);
+    } else if (!hasAll(guard.run, [
+      'test "$GITHUB_REF" = "refs/heads/main"',
+      'test "$GITHUB_REF_PROTECTED" = "true"',
+      'git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main',
+      'test "$RUN_ID_1" = "33242996794"',
+      'test "$RUN_ID_2" = "33242999376"',
+      'test "$RUN_ID_1" != "$RUN_ID_2"',
+    ])) failures.push(`${prefix} guard must fail closed outside protected main or the exact two approved runs.`);
+
+    const install = steps[3];
+    if (!install || install.name !== expectedNames[3] || install.shell !== 'bash'
+        || !sameJson(Object.keys(install).sort(), ['name', 'run', 'shell'])
+        || typeof install.run !== 'string'
+        || sha256(install.run) !== ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS[expectedNames[3]]) {
+      failures.push(`${prefix} locked dependency installation program drifted.`);
+    }
+
+    const receipt = steps[4];
+    if (!receipt || receipt.id !== 'receipt' || receipt.shell !== 'bash'
+        || !sameJson(Object.keys(receipt).sort(), ['env', 'id', 'name', 'run', 'shell'].sort())
+        || !sameJson(receipt.env, {
+          GITHUB_TOKEN: '${{ github.token }}',
+          RUN_ID_1: '${{ inputs.run_id_1 }}',
+          RUN_ID_2: '${{ inputs.run_id_2 }}',
+          RECEIPT_PATH: receiptSourcePath,
+          RECEIPT_ARTIFACT_NAME: receiptArtifactName,
+          MAX_RECEIPT_BYTES: '1048576',
+        })
+        || typeof receipt.run !== 'string'
+        || sha256(receipt.run) !== ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS[expectedNames[4]]) {
+      failures.push(`${prefix} controlled verifier invocation or raw receipt binding drifted.`);
+    } else if (!hasAll(receipt.run, [
+      'scripts/atomistic/verify-bootstrap-replicas.mjs',
+      '--run-id-1 "$RUN_ID_1"',
+      '--run-id-2 "$RUN_ID_2"',
+      '--output "$RECEIPT_PATH"',
+      'receipt_sha256="sha256:$(sha256sum -- "$RECEIPT_PATH"',
+    ]) || receipt.run.includes('set -x')) failures.push(`${prefix} verifier must consume the token only through the environment and publish only bounded receipt metadata.`);
+
+    if (!sameJson(steps[5], {
+      name: expectedNames[5],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_UPLOAD_ACTION,
+      with: {
+        name: '${{ steps.receipt.outputs.receipt_artifact_name }}',
+        path: receiptSourcePath,
+        'if-no-files-found': 'error',
+        'include-hidden-files': false,
+        overwrite: false,
+        'retention-days': 7,
+      },
+    })) failures.push(`${prefix} receipt upload action, exact path, name, or bounded retention drifted.`);
+  }
+
+  const attest = jobs.attest;
+  if (!attest || typeof attest !== 'object' || Array.isArray(attest)) {
+    failures.push(`${prefix} isolated attest job is missing.`);
+  } else {
+    if (!sameJson(Object.keys(attest).sort(), ['name', 'needs', 'permissions', 'runs-on', 'steps', 'timeout-minutes'].sort())) {
+      failures.push(`${prefix} attest job contains an unreviewed key.`);
+    }
+    if (attest.name !== 'Attest the verified receipt bytes without repository execution'
+        || attest.needs !== 'verify' || attest['runs-on'] !== 'ubuntu-24.04' || attest['timeout-minutes'] !== 10) {
+      failures.push(`${prefix} attest must remain a bounded Ubuntu 24.04 job that needs verify.`);
+    }
+    if (!sameJson(attest.permissions, attestPermissions)) {
+      failures.push(`${prefix} attest job permissions must be the exact read, OIDC, attestation, and artifact-metadata set.`);
+    }
+    const steps = Array.isArray(attest.steps) ? attest.steps : [];
+    const expectedNames = [
+      'Create a clean receipt download directory',
+      'Download the exact receipt artifact from this verifier run',
+      'Match the single downloaded receipt to the verify job bytes',
+      'Attest only the verified bootstrap replica receipt',
+    ];
+    if (!sameJson(steps.map((step) => step?.name), expectedNames)) {
+      failures.push(`${prefix} attest step set or order drifted.`);
+    }
+    if (steps.some((step) => String(step?.uses ?? '').startsWith('actions/checkout@')
+        || String(step?.uses ?? '').startsWith('./')
+        || (typeof step?.run === 'string' && /(?:^|[\s"'])scripts\//m.test(step.run)))) {
+      failures.push(`${prefix} attest job may not check out or execute repository code.`);
+    }
+    const prepare = steps[0];
+    if (!prepare || prepare.shell !== 'bash'
+        || !sameJson(Object.keys(prepare).sort(), ['env', 'name', 'run', 'shell'])
+        || !sameJson(prepare.env, { RECEIPT_DIR: receiptAttestDirectory })
+        || typeof prepare.run !== 'string'
+        || sha256(prepare.run) !== ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS[expectedNames[0]]) {
+      failures.push(`${prefix} clean attest directory program drifted.`);
+    }
+    if (!sameJson(steps[1], {
+      name: expectedNames[1],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_DOWNLOAD_ACTION,
+      with: {
+        name: '${{ needs.verify.outputs.receipt_artifact_name }}',
+        path: receiptAttestDirectory,
+        'github-token': '${{ github.token }}',
+        repository: '${{ github.repository }}',
+        'run-id': '${{ github.run_id }}',
+      },
+    })) failures.push(`${prefix} receipt download must use the exact artifact name, repository, and current verifier run.`);
+    const match = steps[2];
+    if (!match || match.shell !== 'bash'
+        || !sameJson(Object.keys(match).sort(), ['env', 'name', 'run', 'shell'])
+        || !sameJson(match.env, {
+          RECEIPT_DIR: receiptAttestDirectory,
+          RECEIPT_PATH: receiptAttestPath,
+          SOURCE_ARTIFACT_NAME: '${{ needs.verify.outputs.receipt_artifact_name }}',
+          EXPECTED_RECEIPT_SHA256: '${{ needs.verify.outputs.receipt_sha256 }}',
+          EXPECTED_RECEIPT_SIZE_BYTES: '${{ needs.verify.outputs.receipt_size_bytes }}',
+          MAX_RECEIPT_BYTES: '1048576',
+        })
+        || typeof match.run !== 'string'
+        || sha256(match.run) !== ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS[expectedNames[2]]) {
+      failures.push(`${prefix} single-file raw receipt size and digest verifier drifted.`);
+    }
+    if (!sameJson(steps[3], {
+      name: expectedNames[3],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_ATTEST_ACTION,
+      with: {
+        'subject-path': receiptAttestPath,
+        'show-summary': false,
+        'github-token': '${{ github.token }}',
+      },
+    })) failures.push(`${prefix} attest must be last and bind only the verified receipt subject path.`);
   }
   return failures;
 }

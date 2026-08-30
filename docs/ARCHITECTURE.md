@@ -88,13 +88,18 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
   non-self-referential runtime-lock protocol. Both isolated ten-frame smoke
   paths now emit finite E/F/stress without labels, but remain
   `planned-not-reproduced`. Two R6b executions are inadmissible because their
-  locked R5 summaries contain a nested positive promotion claim; accepted
-  replicas remain **0 / 2**. Commit P `f861b3e` now anchors the versioned v2
+  locked R5 summaries contain a nested positive promotion claim; runtime lock
+  accepted replicas remain **0 / 2**. Commit P `f861b3e` anchors the versioned v2
   runner, and a protected-main dispatch proved the legacy path is quarantined.
-  This Commit-S candidate non-circularly selects and materializes only those P
-  blobs for future fresh runs; a controlled verifier must authenticate the new
-  runs before a later Commit F freezes anything and before the complete
-  693-record independent verifier can run;
+  Commit S `687755a` non-circularly selects and materializes only those P blobs
+  and has now produced two successful fresh protected-main candidate replicas.
+  Manual cross-inspection is not a trust root: the separately generated but
+  repository-controlled Commit-V verifier must re-fetch and bind their GitHub
+  metadata, logs and raw archives, keep stable inputs separate from run-specific
+  numerical/container observations and emit a bootstrap-only externally
+  attested receipt that cannot authorize a freeze. A later Commit F may then
+  freeze only those stable identities before the complete 693-record
+  independent verifier can run;
 - a browser frame assembled from one immutable observation snapshot.
 
 The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.

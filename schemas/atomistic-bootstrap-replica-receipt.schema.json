@@ -1,0 +1,493 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-bootstrap-replica-receipt/0.1",
+  "title": "Tailing Future Atomistic Bootstrap Replica Receipt",
+  "description": "A separately generated, repository-controlled bootstrap-only receipt for two protected-main candidates. It records a possible later runtime-lock freeze candidate but cannot authorize that freeze, and it is never a scientific reproduction, comparison, promotion receipt, or attestation.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "status",
+    "createdAt",
+    "repository",
+    "bootstrapWorkflow",
+    "verifier",
+    "replicas",
+    "stableInputs",
+    "numericalConsistency",
+    "candidateBundle",
+    "verification",
+    "runSpecificObservations",
+    "claims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-bootstrap-replica-receipt/0.1" },
+    "profile": { "const": "bootstrap-two-replica" },
+    "status": { "const": "verified-stable-input-agreement" },
+    "createdAt": { "$ref": "#/$defs/timestamp" },
+    "repository": { "$ref": "#/$defs/repository" },
+    "bootstrapWorkflow": { "$ref": "#/$defs/bootstrapWorkflow" },
+    "verifier": { "$ref": "#/$defs/verifier" },
+    "replicas": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "$ref": "#/$defs/replica" },
+        { "$ref": "#/$defs/replica" }
+      ],
+      "items": false
+    },
+    "stableInputs": { "$ref": "#/$defs/stableInputs" },
+    "numericalConsistency": { "$ref": "#/$defs/numericalConsistency" },
+    "candidateBundle": { "$ref": "#/$defs/candidateBundle" },
+    "verification": { "$ref": "#/$defs/verification" },
+    "runSpecificObservations": { "$ref": "#/$defs/runSpecificObservations" },
+    "claims": { "$ref": "#/$defs/claims" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "safeInteger": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$"
+    },
+    "repository": {
+      "type": "object",
+      "required": ["fullName", "id"],
+      "properties": {
+        "fullName": { "const": "tony070926-sudo/tailing-future" },
+        "id": { "const": 1349498456 }
+      },
+      "additionalProperties": false
+    },
+    "bootstrapWorkflow": {
+      "type": "object",
+      "required": ["id", "path", "name", "sourceRevision", "runtimeSourceRevision", "event", "ref"],
+      "properties": {
+        "id": { "const": 344903345 },
+        "path": { "const": ".github/workflows/atomistic-bootstrap.yml" },
+        "name": { "const": "Atomistic bootstrap predictions (non-promotional)" },
+        "sourceRevision": { "const": "687755a5835b92b632fc116e9b73ab11c1eb6cb5" },
+        "runtimeSourceRevision": { "const": "f861b3e30572f1db366554a2e330d5d6c78bdb56" },
+        "event": { "const": "workflow_dispatch" },
+        "ref": { "const": "refs/heads/main" }
+      },
+      "additionalProperties": false
+    },
+    "verifier": {
+      "type": "object",
+      "required": ["workflow", "implementation"],
+      "properties": {
+        "workflow": {
+          "type": "object",
+          "required": ["id", "path", "revision", "runId", "runAttempt", "event", "ref"],
+          "properties": {
+            "id": { "$ref": "#/$defs/safeInteger" },
+            "path": { "const": ".github/workflows/atomistic-bootstrap-verify.yml" },
+            "revision": { "$ref": "#/$defs/sha" },
+            "runId": { "$ref": "#/$defs/safeInteger" },
+            "runAttempt": { "const": 1 },
+            "event": { "const": "workflow_dispatch" },
+            "ref": { "const": "refs/heads/main" }
+          },
+          "additionalProperties": false
+        },
+        "implementation": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "const": "scripts/atomistic/verify-bootstrap-replicas.mjs" },
+            "sha256": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "replica": {
+      "type": "object",
+      "required": ["ordinal", "run", "runLog", "jobs", "artifacts"],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "run": { "$ref": "#/$defs/sourceRun" },
+        "runLog": { "$ref": "#/$defs/runLog" },
+        "jobs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/job" },
+            { "$ref": "#/$defs/job" }
+          ],
+          "items": false
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/artifact" },
+            { "$ref": "#/$defs/artifact" }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceRun": {
+      "type": "object",
+      "required": ["id", "attempt", "event", "ref", "headSha", "status", "conclusion", "createdAt", "startedAt", "updatedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/safeInteger" },
+        "attempt": { "const": 1 },
+        "event": { "const": "workflow_dispatch" },
+        "ref": { "const": "refs/heads/main" },
+        "headSha": { "const": "687755a5835b92b632fc116e9b73ab11c1eb6cb5" },
+        "status": { "const": "completed" },
+        "conclusion": { "const": "success" },
+        "createdAt": { "$ref": "#/$defs/timestamp" },
+        "startedAt": { "$ref": "#/$defs/timestamp" },
+        "updatedAt": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "evidenceFile": {
+      "type": "object",
+      "required": ["path", "sizeBytes", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._/-]{0,255}$" },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 16777216 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "runLog": {
+      "type": "object",
+      "required": ["downloadDigest", "sizeBytes", "fileCount", "files", "filesCommitment"],
+      "properties": {
+        "downloadDigest": { "$ref": "#/$defs/digest" },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 16777216 },
+        "fileCount": { "const": 4 },
+        "files": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/evidenceFile" }
+        },
+        "filesCommitment": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "reviewedStages": {
+      "type": "object",
+      "required": ["guard", "directories", "bind", "base-images", "assets", "preprocess", "wheelhouse", "resolve", "freeze", "cold-install", "build", "inference", "publish"],
+      "properties": {
+        "guard": { "const": "success" },
+        "directories": { "const": "success" },
+        "bind": { "const": "success" },
+        "base-images": { "const": "success" },
+        "assets": { "const": "success" },
+        "preprocess": { "const": "success" },
+        "wheelhouse": { "const": "success" },
+        "resolve": { "const": "success" },
+        "freeze": { "const": "success" },
+        "cold-install": { "const": "success" },
+        "build": { "const": "success" },
+        "inference": { "const": "success" },
+        "publish": { "const": "success" }
+      },
+      "additionalProperties": false
+    },
+    "job": {
+      "type": "object",
+      "required": ["model", "id", "name", "status", "conclusion", "runnerLabel", "startedAt", "completedAt", "reviewedStages"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "id": { "$ref": "#/$defs/safeInteger" },
+        "name": { "type": "string", "pattern": "^(?:mattersim|mace) isolated bootstrap smoke$" },
+        "status": { "const": "completed" },
+        "conclusion": { "const": "success" },
+        "runnerLabel": { "const": "ubuntu-24.04" },
+        "startedAt": { "$ref": "#/$defs/timestamp" },
+        "completedAt": { "$ref": "#/$defs/timestamp" },
+        "reviewedStages": { "$ref": "#/$defs/reviewedStages" }
+      },
+      "additionalProperties": false
+    },
+    "workflowRunBinding": {
+      "type": "object",
+      "required": ["id", "repositoryId", "headRepositoryId", "headBranch", "headSha"],
+      "properties": {
+        "id": { "$ref": "#/$defs/safeInteger" },
+        "repositoryId": { "const": 1349498456 },
+        "headRepositoryId": { "const": 1349498456 },
+        "headBranch": { "const": "main" },
+        "headSha": { "const": "687755a5835b92b632fc116e9b73ab11c1eb6cb5" }
+      },
+      "additionalProperties": false
+    },
+    "uploadBinding": {
+      "type": "object",
+      "required": ["jobId", "jobName", "publishStep", "conclusion", "jobLogFileDigest"],
+      "properties": {
+        "jobId": { "$ref": "#/$defs/safeInteger" },
+        "jobName": { "type": "string", "pattern": "^(?:mattersim|mace) isolated bootstrap smoke$" },
+        "publishStep": { "const": "Upload the allowlisted bootstrap bundle" },
+        "conclusion": { "const": "success" },
+        "jobLogFileDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "criticalFiles": {
+      "type": "object",
+      "required": ["runtimeInput", "dependencyLock", "wheelhouse", "structureManifest", "predictions", "runSummary", "containerObservation"],
+      "properties": {
+        "runtimeInput": { "$ref": "#/$defs/digest" },
+        "dependencyLock": { "$ref": "#/$defs/digest" },
+        "wheelhouse": { "$ref": "#/$defs/digest" },
+        "structureManifest": { "$ref": "#/$defs/digest" },
+        "predictions": { "$ref": "#/$defs/digest" },
+        "runSummary": { "$ref": "#/$defs/digest" },
+        "containerObservation": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "contentAudit": {
+      "type": "object",
+      "required": ["metricsPresent", "referenceLabelsPresent", "receiptPresent", "attestationPresent", "predictionsOnly"],
+      "properties": {
+        "metricsPresent": { "const": false },
+        "referenceLabelsPresent": { "const": false },
+        "receiptPresent": { "const": false },
+        "attestationPresent": { "const": false },
+        "predictionsOnly": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "bundle": {
+      "type": "object",
+      "required": ["fileCount", "expandedBytes", "files", "filesCommitment", "criticalFiles", "contentAudit"],
+      "properties": {
+        "fileCount": { "type": "integer", "minimum": 15, "maximum": 16 },
+        "expandedBytes": { "type": "integer", "minimum": 1, "maximum": 16777216 },
+        "files": {
+          "type": "array",
+          "minItems": 15,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/evidenceFile" }
+        },
+        "filesCommitment": { "$ref": "#/$defs/digest" },
+        "criticalFiles": { "$ref": "#/$defs/criticalFiles" },
+        "contentAudit": { "$ref": "#/$defs/contentAudit" }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["model", "id", "name", "sizeBytes", "apiDigest", "downloadDigest", "createdAt", "updatedAt", "expiresAt", "expired", "workflowRun", "uploadBinding", "bundle"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "id": { "$ref": "#/$defs/safeInteger" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 16777216 },
+        "apiDigest": { "$ref": "#/$defs/digest" },
+        "downloadDigest": { "$ref": "#/$defs/digest" },
+        "createdAt": { "$ref": "#/$defs/timestamp" },
+        "updatedAt": { "$ref": "#/$defs/timestamp" },
+        "expiresAt": { "$ref": "#/$defs/timestamp" },
+        "expired": { "const": false },
+        "workflowRun": { "$ref": "#/$defs/workflowRunBinding" },
+        "uploadBinding": { "$ref": "#/$defs/uploadBinding" },
+        "bundle": { "$ref": "#/$defs/bundle" }
+      },
+      "additionalProperties": false
+    },
+    "modelStableInput": {
+      "type": "object",
+      "required": ["model", "runtimeInputDigest", "dependencyLockDigest", "wheelhouseManifestDigest", "dependencyGraphDigest", "installedPathDigest", "runtimeInstalledPathDigest"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "runtimeInputDigest": { "$ref": "#/$defs/digest" },
+        "dependencyLockDigest": { "$ref": "#/$defs/digest" },
+        "wheelhouseManifestDigest": { "$ref": "#/$defs/digest" },
+        "dependencyGraphDigest": { "$ref": "#/$defs/digest" },
+        "installedPathDigest": { "$ref": "#/$defs/digest" },
+        "runtimeInstalledPathDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "stableInputs": {
+      "type": "object",
+      "required": ["agreementProtocol", "byteIdenticalAcrossReplicas", "sourceRevision", "sourceManifestDigest", "materializationDigest", "runnerDigest", "scientificPlanDigest", "structureManifestFileDigest", "models", "commitment"],
+      "properties": {
+        "agreementProtocol": { "const": "two-distinct-protected-main-runs-byte-identical-stable-input-roots/v1" },
+        "byteIdenticalAcrossReplicas": { "const": true },
+        "sourceRevision": { "const": "f861b3e30572f1db366554a2e330d5d6c78bdb56" },
+        "sourceManifestDigest": { "const": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1" },
+        "materializationDigest": { "const": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721" },
+        "runnerDigest": { "const": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4" },
+        "scientificPlanDigest": { "const": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2" },
+        "structureManifestFileDigest": { "const": "sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/modelStableInput" },
+            { "$ref": "#/$defs/modelStableInput" }
+          ],
+          "items": false
+        },
+        "commitment": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "tolerances": {
+      "type": "object",
+      "required": ["maxAbsEnergyEv", "maxForceVectorDifferenceEvPerAngstrom", "maxStressFrobeniusDifferenceEvPerAngstrom3"],
+      "properties": {
+        "maxAbsEnergyEv": { "const": 0.0001 },
+        "maxForceVectorDifferenceEvPerAngstrom": { "const": 0.0001 },
+        "maxStressFrobeniusDifferenceEvPerAngstrom3": { "const": 0.00001 }
+      },
+      "additionalProperties": false
+    },
+    "numericalModel": {
+      "type": "object",
+      "required": ["model", "recordsCompared", "physicalValuesByteIdentical", "withinFrozenTolerance", "maximumDifferences"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "recordsCompared": { "const": 10 },
+        "physicalValuesByteIdentical": { "type": "boolean" },
+        "withinFrozenTolerance": { "const": true },
+        "maximumDifferences": {
+          "type": "object",
+          "required": ["energyEv", "forceVectorEvPerAngstrom", "stressFrobeniusEvPerAngstrom3"],
+          "properties": {
+            "energyEv": { "type": "number", "minimum": 0 },
+            "forceVectorEvPerAngstrom": { "type": "number", "minimum": 0 },
+            "stressFrobeniusEvPerAngstrom3": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "numericalConsistency": {
+      "type": "object",
+      "required": ["protocol", "toleranceSourcePlanDigest", "tolerances", "models"],
+      "properties": {
+        "protocol": { "const": "bootstrap-cross-replica-physical-values-within-frozen-plan-invariance-thresholds/v1" },
+        "toleranceSourcePlanDigest": { "const": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2" },
+        "tolerances": { "$ref": "#/$defs/tolerances" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/numericalModel" },
+            { "$ref": "#/$defs/numericalModel" }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidateBundle": {
+      "type": "object",
+      "required": ["profile", "exactAllowlistRequired", "metricsPresent", "referenceLabelsPresent", "receiptPresent", "attestationPresent"],
+      "properties": {
+        "profile": { "const": "bootstrap-predictions-only" },
+        "exactAllowlistRequired": { "const": true },
+        "metricsPresent": { "const": false },
+        "referenceLabelsPresent": { "const": false },
+        "receiptPresent": { "const": false },
+        "attestationPresent": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "description": "Verifier observations only. The verifier may identify a later freeze candidate, but it cannot authorize Commit F or mutate the runtime-lock accepted-replica count. Authorization requires a separately verified external receipt attestation and a later repository-controlled commit.",
+      "required": ["verifierAcceptedReplicaCount", "runtimeLockAcceptedReplicaCountBeforeCommitF", "runtimeLockFreezeCandidate", "runtimeLockFreezeAuthorized", "externalReceiptAttestationRequired", "scientificPromotionEligible", "independentVerifierRequiredForScientificPromotion"],
+      "properties": {
+        "verifierAcceptedReplicaCount": { "const": 2, "description": "Two source runs passed this verifier; this is not the runtime-lock accepted count." },
+        "runtimeLockAcceptedReplicaCountBeforeCommitF": { "const": 0, "description": "The discovery lock remains unchanged until a later attestation-bound Commit F." },
+        "runtimeLockFreezeCandidate": { "const": true, "description": "A candidate observation, not authorization." },
+        "runtimeLockFreezeAuthorized": { "const": false, "description": "This receipt can never authorize its own application." },
+        "externalReceiptAttestationRequired": { "const": true, "description": "Commit F must independently verify an external attestation over these receipt bytes." },
+        "scientificPromotionEligible": { "const": false, "description": "Bootstrap evidence is not scientific promotion evidence." },
+        "independentVerifierRequiredForScientificPromotion": { "const": true, "description": "A later full scientific verifier remains mandatory." }
+      },
+      "additionalProperties": false
+    },
+    "runSpecificModelObservation": {
+      "type": "object",
+      "required": ["model", "dockerLocalConfigImageId", "runtimeUuid", "generatedAt", "timingDigest", "environmentDigest", "predictionDigest"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "dockerLocalConfigImageId": { "$ref": "#/$defs/digest" },
+        "runtimeUuid": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+        "generatedAt": { "type": "string", "minLength": 20, "maxLength": 40 },
+        "timingDigest": { "$ref": "#/$defs/digest" },
+        "environmentDigest": { "$ref": "#/$defs/digest" },
+        "predictionDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "runSpecificReplicaObservation": {
+      "type": "object",
+      "required": ["runId", "models"],
+      "properties": {
+        "runId": { "$ref": "#/$defs/safeInteger" },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/runSpecificModelObservation" },
+            { "$ref": "#/$defs/runSpecificModelObservation" }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "runSpecificObservations": {
+      "type": "object",
+      "required": ["semantics", "excludedFromStableInputs", "replicas"],
+      "properties": {
+        "semantics": { "const": "run-specific-observations-not-promotion-trust-roots/v1" },
+        "excludedFromStableInputs": {
+          "const": ["dockerLocalConfigImageId", "runtimeUuid", "generatedAt", "timingDigest", "environmentDigest", "predictionDigest"]
+        },
+        "replicas": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/runSpecificReplicaObservation" },
+            { "$ref": "#/$defs/runSpecificReplicaObservation" }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "object",
+      "required": ["evidenceClass", "promotionEligible", "promotionTrustRoot", "comparable", "reproduced"],
+      "properties": {
+        "evidenceClass": { "const": "bootstrap-replica-verified-not-reproduced" },
+        "promotionEligible": { "const": false },
+        "promotionTrustRoot": { "const": false },
+        "comparable": { "const": false },
+        "reproduced": { "const": false }
+      },
+      "additionalProperties": false
+    }
+  }
+}

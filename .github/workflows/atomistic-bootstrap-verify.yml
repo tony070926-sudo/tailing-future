@@ -1,0 +1,240 @@
+# Controlled verification of two pre-approved bootstrap-only prediction runs.
+#
+# The verify job has read-only authority and emits one canonical receipt whose
+# claims remain non-promotional. The separate attest job never checks out or
+# executes repository code; it only binds GitHub provenance to those exact
+# receipt bytes.
+name: Atomistic bootstrap replica verifier (non-promotional)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id_1:
+        description: First approved bootstrap workflow run ID
+        required: true
+        type: string
+      run_id_2:
+        description: Second approved bootstrap workflow run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: atomistic-bootstrap-verify-${{ inputs.run_id_1 }}-${{ inputs.run_id_2 }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify approved bootstrap replicas without promotion authority
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      receipt_artifact_name: ${{ steps.receipt.outputs.receipt_artifact_name }}
+      receipt_sha256: ${{ steps.receipt.outputs.receipt_sha256 }}
+      receipt_size_bytes: ${{ steps.receipt.outputs.receipt_size_bytes }}
+    steps:
+      - name: Check out the protected-main verifier without credentials
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install the pinned JavaScript runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24.16.0
+
+      - name: Refuse unapproved runs or a verifier outside protected main
+        shell: bash
+        env:
+          RUN_ID_1: ${{ inputs.run_id_1 }}
+          RUN_ID_2: ${{ inputs.run_id_2 }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          test "$GITHUB_REPOSITORY" = "tony070926-sudo/tailing-future"
+          test "$GITHUB_REPOSITORY_ID" = "1349498456"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_REF_PROTECTED" = "true"
+          test "$GITHUB_WORKFLOW_REF" = "$GITHUB_REPOSITORY/.github/workflows/atomistic-bootstrap-verify.yml@refs/heads/main"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git rev-parse --verify refs/remotes/origin/main^{commit} >/dev/null
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
+          test "$RUN_ID_1" = "33242996794"
+          test "$RUN_ID_2" = "33242999376"
+          test "$RUN_ID_1" != "$RUN_ID_2"
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+
+      - name: Install locked verifier dependencies without lifecycle scripts
+        shell: bash
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Verify both replicas and create one canonical bootstrap-only receipt
+        id: receipt
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RUN_ID_1: ${{ inputs.run_id_1 }}
+          RUN_ID_2: ${{ inputs.run_id_2 }}
+          RECEIPT_PATH: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-receipt/atomistic-bootstrap-replica-receipt.json
+          RECEIPT_ARTIFACT_NAME: tailing-atomistic-bootstrap-replica-receipt-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          MAX_RECEIPT_BYTES: "1048576"
+        run: |
+          set -euo pipefail
+          receipt_dir="$(dirname -- "$RECEIPT_PATH")"
+          test ! -e "$receipt_dir"
+          install -d -m 0700 -- "$receipt_dir"
+          test "$(realpath -- "$receipt_dir")" = "$receipt_dir"
+          node scripts/atomistic/verify-bootstrap-replicas.mjs \
+            --run-id-1 "$RUN_ID_1" \
+            --run-id-2 "$RUN_ID_2" \
+            --output "$RECEIPT_PATH"
+          test -f "$RECEIPT_PATH"
+          test ! -L "$RECEIPT_PATH"
+          test "$(realpath -- "$RECEIPT_PATH")" = "$RECEIPT_PATH"
+          test "$(stat -c '%h' -- "$RECEIPT_PATH")" = "1"
+          test "$(find "$receipt_dir" -mindepth 1 -maxdepth 1 -print | wc -l)" -eq 1
+          receipt_size_bytes="$(stat -c '%s' -- "$RECEIPT_PATH")"
+          test "$receipt_size_bytes" -gt 0
+          test "$receipt_size_bytes" -le "$MAX_RECEIPT_BYTES"
+          receipt_sha256="sha256:$(sha256sum -- "$RECEIPT_PATH" | cut -d ' ' -f 1)"
+          case "$receipt_sha256" in
+            sha256:[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*) ;;
+            *) exit 1 ;;
+          esac
+          test "${#receipt_sha256}" -eq 71
+          printf 'receipt_artifact_name=%s\n' "$RECEIPT_ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+          printf 'receipt_sha256=%s\n' "$receipt_sha256" >> "$GITHUB_OUTPUT"
+          printf 'receipt_size_bytes=%s\n' "$receipt_size_bytes" >> "$GITHUB_OUTPUT"
+
+      - name: Upload only the canonical bootstrap replica receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ steps.receipt.outputs.receipt_artifact_name }}
+          path: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-receipt/atomistic-bootstrap-replica-receipt.json
+          if-no-files-found: error
+          include-hidden-files: false
+          overwrite: false
+          retention-days: 7
+
+  attest:
+    name: Attest the verified receipt bytes without repository execution
+    needs: verify
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Create a clean receipt download directory
+        shell: bash
+        env:
+          RECEIPT_DIR: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          test "$GITHUB_REPOSITORY" = "tony070926-sudo/tailing-future"
+          test "$GITHUB_REPOSITORY_ID" = "1349498456"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test ! -e "$RECEIPT_DIR"
+          install -d -m 0700 -- "$RECEIPT_DIR"
+          test "$(realpath -- "$RECEIPT_DIR")" = "$RECEIPT_DIR"
+          test "$(find "$RECEIPT_DIR" -mindepth 1 -maxdepth 1 -print | wc -l)" -eq 0
+
+      - name: Download the exact receipt artifact from this verifier run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ${{ needs.verify.outputs.receipt_artifact_name }}
+          path: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
+
+      - name: Match the single downloaded receipt to the verify job bytes
+        shell: bash
+        env:
+          RECEIPT_DIR: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest
+          RECEIPT_PATH: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest/atomistic-bootstrap-replica-receipt.json
+          SOURCE_ARTIFACT_NAME: ${{ needs.verify.outputs.receipt_artifact_name }}
+          EXPECTED_RECEIPT_SHA256: ${{ needs.verify.outputs.receipt_sha256 }}
+          EXPECTED_RECEIPT_SIZE_BYTES: ${{ needs.verify.outputs.receipt_size_bytes }}
+          MAX_RECEIPT_BYTES: "1048576"
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import {
+            closeSync,
+            constants as fsConstants,
+            fstatSync,
+            lstatSync,
+            openSync,
+            readSync,
+            readdirSync,
+            realpathSync,
+          } from 'node:fs';
+
+          const receiptDirectory = process.env.RECEIPT_DIR;
+          const receiptPath = process.env.RECEIPT_PATH;
+          const expectedArtifactName = `tailing-atomistic-bootstrap-replica-receipt-${process.env.GITHUB_SHA}-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
+          const expectedDigest = process.env.EXPECTED_RECEIPT_SHA256;
+          const expectedSizeText = process.env.EXPECTED_RECEIPT_SIZE_BYTES;
+          const maximumBytes = Number(process.env.MAX_RECEIPT_BYTES);
+          if (process.env.SOURCE_ARTIFACT_NAME !== expectedArtifactName) throw new Error('Receipt artifact name differs from the reviewed run-bound name.');
+          if (!/^sha256:[0-9a-f]{64}$/.test(expectedDigest ?? '')) throw new Error('Verify job supplied a malformed receipt digest.');
+          if (!/^[1-9][0-9]*$/.test(expectedSizeText ?? '')) throw new Error('Verify job supplied a malformed receipt size.');
+          const expectedSize = Number(expectedSizeText);
+          if (!Number.isSafeInteger(expectedSize) || expectedSize > maximumBytes || maximumBytes !== 1048576) throw new Error('Receipt size is outside the reviewed bound.');
+          if (realpathSync(receiptDirectory) !== receiptDirectory) throw new Error('Receipt directory is not canonical.');
+          const entries = readdirSync(receiptDirectory, { withFileTypes: true });
+          if (entries.length !== 1 || entries[0].name !== 'atomistic-bootstrap-replica-receipt.json' || !entries[0].isFile()) {
+            throw new Error('Downloaded artifact must contain exactly the reviewed receipt file.');
+          }
+          if (realpathSync(receiptPath) !== receiptPath) throw new Error('Receipt path is not canonical.');
+          const pathStat = lstatSync(receiptPath, { bigint: true });
+          if (!pathStat.isFile() || pathStat.isSymbolicLink() || pathStat.nlink !== 1n || pathStat.size !== BigInt(expectedSize)) {
+            throw new Error('Downloaded receipt is not the expected single regular file.');
+          }
+          const descriptor = openSync(receiptPath, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+          try {
+            const before = fstatSync(descriptor, { bigint: true });
+            const bytes = Buffer.alloc(expectedSize);
+            let offset = 0;
+            while (offset < bytes.length) {
+              const count = readSync(descriptor, bytes, offset, bytes.length - offset, null);
+              if (count === 0) throw new Error('Receipt changed while being read.');
+              offset += count;
+            }
+            if (readSync(descriptor, Buffer.alloc(1), 0, 1, null) !== 0) throw new Error('Receipt exceeded the verified size.');
+            const after = fstatSync(descriptor, { bigint: true });
+            const afterPath = lstatSync(receiptPath, { bigint: true });
+            if (before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size
+                || before.mode !== after.mode || before.mtimeNs !== after.mtimeNs || before.ctimeNs !== after.ctimeNs
+                || afterPath.dev !== after.dev || afterPath.ino !== after.ino || afterPath.size !== after.size) {
+              throw new Error('Receipt changed during bounded verification.');
+            }
+            const actualDigest = `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+            if (actualDigest !== expectedDigest) throw new Error('Downloaded receipt digest differs from the verify job raw bytes.');
+          } finally {
+            closeSync(descriptor);
+          }
+          process.stdout.write(`Verified one bounded receipt: ${expectedDigest}\n`);
+          NODE
+
+      - name: Attest only the verified bootstrap replica receipt
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: ${{ runner.temp }}/tailing-atomistic-bootstrap-replica-attest/atomistic-bootstrap-replica-receipt.json
+          show-summary: false
+          github-token: ${{ github.token }}

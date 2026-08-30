@@ -16,6 +16,7 @@
     "test:python": "python3 -m unittest discover -s scripts/atomistic -p '*_test.py' && python3 scripts/safe_extract_zip_test.py",
     "test:watch": "vitest --config vitest.config.ts",
     "atomistic:validate": "node scripts/validate-atomistic-plan.mjs && node scripts/validate-atomistic-runtime-lock.mjs",
+    "atomistic:verify-bootstrap": "node scripts/atomistic/verify-bootstrap-replicas.mjs",
     "atomistic:fetch": "node scripts/atomistic/fetch-assets.mjs",
     "evaluate": "node scripts/evaluate.mjs",
     "release:manifest": "node scripts/release-artifact.mjs create",

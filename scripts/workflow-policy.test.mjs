@@ -25,6 +25,14 @@ import {
   ATOMISTIC_SOURCE_MANIFEST_DIGEST,
   ATOMISTIC_BOOTSTRAP_PYPI_INDEX,
   ATOMISTIC_BOOTSTRAP_PYTORCH_INDEX,
+  ATOMISTIC_BOOTSTRAP_VERIFY_ATTEST_ACTION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_DOWNLOAD_ACTION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS,
+  ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_UPLOAD_ACTION,
+  ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
   DOCKERIGNORE_ALLOWLIST,
   inspectAtomisticBootstrapQuarantineSource,
@@ -46,6 +54,10 @@ import {
 
 const atomisticBootstrapSource = readFileSync(
   new URL('../.github/workflows/atomistic-bootstrap.yml', import.meta.url),
+  'utf8',
+);
+const atomisticBootstrapVerifySource = readFileSync(
+  new URL('../.github/workflows/atomistic-bootstrap-verify.yml', import.meta.url),
   'utf8',
 );
 const atomisticBootstrapQuarantineSource = readFileSync(
@@ -115,6 +127,15 @@ function inspectMutatedBootstrap(mutator) {
   mutator(workflow);
   return inspectWorkflowSource(
     ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
+    dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+  );
+}
+
+function inspectMutatedBootstrapVerifier(mutator) {
+  const workflow = parseYaml(atomisticBootstrapVerifySource);
+  mutator(workflow);
+  return inspectWorkflowSource(
+    ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH,
     dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
   );
 }
@@ -272,6 +293,156 @@ describe('workflow source policy', () => {
     const AsyncFunction = Object.getPrototypeOf(async function noop() {}).constructor;
     for (const step of sentinelReportWorkflow.jobs.report.steps) {
       expect(() => new AsyncFunction('github', 'context', 'core', 'require', step.with.script)).not.toThrow();
+    }
+  });
+});
+
+describe('atomistic bootstrap replica verifier workflow policy', () => {
+  it('accepts the checked-in protected-main read-only verifier and isolated receipt attestation', () => {
+    expect(inspectWorkflowSource(
+      ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH,
+      atomisticBootstrapVerifySource,
+    )).toEqual([]);
+    const workflow = parseYaml(atomisticBootstrapVerifySource);
+    expect(workflow.on).toEqual({
+      workflow_dispatch: {
+        inputs: {
+          run_id_1: {
+            description: 'First approved bootstrap workflow run ID',
+            required: true,
+            type: 'string',
+          },
+          run_id_2: {
+            description: 'Second approved bootstrap workflow run ID',
+            required: true,
+            type: 'string',
+          },
+        },
+      },
+    });
+    expect(workflow.permissions).toEqual({ contents: 'read', actions: 'read' });
+    expect(workflow.jobs.verify.permissions).toEqual({ contents: 'read', actions: 'read' });
+    expect(workflow.jobs.attest.permissions).toEqual({
+      contents: 'read',
+      actions: 'read',
+      'id-token': 'write',
+      attestations: 'write',
+      'artifact-metadata': 'write',
+    });
+    expect(workflow.jobs.verify['runs-on']).toBe('ubuntu-24.04');
+    expect(workflow.jobs.attest['runs-on']).toBe('ubuntu-24.04');
+    expect(workflow.jobs.attest.needs).toBe('verify');
+    expect(workflow.jobs.attest.steps.some((step) => String(step.uses ?? '').startsWith('actions/checkout@'))).toBe(false);
+    expect(workflow.jobs.attest.steps.some((step) => String(step.uses ?? '').startsWith('./'))).toBe(false);
+    expect(workflow.jobs.attest.steps.some((step) => typeof step.run === 'string' && /(?:^|[\s"'])scripts\//m.test(step.run))).toBe(false);
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION).toBe('actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803');
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION).toBe('actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38');
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_UPLOAD_ACTION).toBe('actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02');
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_DOWNLOAD_ACTION).toBe('actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0');
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_ATTEST_ACTION).toBe('actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6');
+    expect(ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION).toBe('24.16.0');
+    for (const digest of Object.values(ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS)) {
+      expect(digest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    }
+  });
+
+  it('rejects trigger, required-input, runner, permission, and job-separation drift', () => {
+    const cases = [
+      ['push trigger', (workflow) => { workflow.on.push = null; }],
+      ['pull request trigger', (workflow) => { workflow.on.pull_request = null; }],
+      ['first input optional', (workflow) => { workflow.on.workflow_dispatch.inputs.run_id_1.required = false; }],
+      ['second input optional', (workflow) => { workflow.on.workflow_dispatch.inputs.run_id_2.required = false; }],
+      ['non-string input', (workflow) => { workflow.on.workflow_dispatch.inputs.run_id_1.type = 'number'; }],
+      ['verify runner drift', (workflow) => { workflow.jobs.verify['runs-on'] = 'ubuntu-latest'; }],
+      ['attest runner drift', (workflow) => { workflow.jobs.attest['runs-on'] = 'ubuntu-latest'; }],
+      ['workflow write expansion', (workflow) => { workflow.permissions.contents = 'write'; }],
+      ['OIDC in verify', (workflow) => { workflow.jobs.verify.permissions['id-token'] = 'write'; }],
+      ['attest contents write', (workflow) => { workflow.jobs.attest.permissions.contents = 'write'; }],
+      ['attest no longer needs verify', (workflow) => { delete workflow.jobs.attest.needs; }],
+      ['unreviewed sibling job', (workflow) => {
+        workflow.jobs.publish = { 'runs-on': 'ubuntu-24.04', permissions: { contents: 'write' }, steps: [] };
+      }],
+      ['attestation moved into verify', (workflow) => {
+        workflow.jobs.verify.steps.push(workflow.jobs.attest.steps.pop());
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrapVerifier(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects floating actions, checkout/ancestry drift, action order, and reviewed body changes', () => {
+    const cases = [
+      ['floating attest tag', (workflow) => { workflow.jobs.attest.steps[3].uses = 'actions/attest@v4'; }],
+      ['floating download tag', (workflow) => { workflow.jobs.attest.steps[1].uses = 'actions/download-artifact@v5'; }],
+      ['floating checkout tag', (workflow) => { workflow.jobs.verify.steps[0].uses = 'actions/checkout@v6'; }],
+      ['checkout revision drift', (workflow) => { workflow.jobs.verify.steps[0].with.ref = '${{ github.ref }}'; }],
+      ['shallow checkout', (workflow) => { workflow.jobs.verify.steps[0].with['fetch-depth'] = 1; }],
+      ['protected-ref guard removed', (workflow) => {
+        workflow.jobs.verify.steps[2].run = workflow.jobs.verify.steps[2].run.replace('test "$GITHUB_REF_PROTECTED" = "true"\n', '');
+      }],
+      ['main ancestry check removed', (workflow) => {
+        workflow.jobs.verify.steps[2].run = workflow.jobs.verify.steps[2].run.replace('git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main\n', '');
+      }],
+      ['approved run changed', (workflow) => {
+        workflow.jobs.verify.steps[2].run = workflow.jobs.verify.steps[2].run.replace('33242996794', '33242996795');
+      }],
+      ['lifecycle scripts enabled', (workflow) => {
+        workflow.jobs.verify.steps[3].run = workflow.jobs.verify.steps[3].run.replace(' --ignore-scripts', '');
+      }],
+      ['verifier invocation body drift', (workflow) => {
+        workflow.jobs.verify.steps[4].run = workflow.jobs.verify.steps[4].run.replace('--run-id-2 "$RUN_ID_2"', '--run-id-2 "33242996794"');
+      }],
+      ['attest validation body drift', (workflow) => {
+        workflow.jobs.attest.steps[2].run = workflow.jobs.attest.steps[2].run.replace('entries.length !== 1', 'entries.length < 2');
+      }],
+      ['attest action before byte validation', (workflow) => {
+        [workflow.jobs.attest.steps[2], workflow.jobs.attest.steps[3]] = [workflow.jobs.attest.steps[3], workflow.jobs.attest.steps[2]];
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrapVerifier(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects checkout or repository execution in the privileged attest job', () => {
+    const cases = [
+      ['checkout in attest', (workflow) => {
+        workflow.jobs.attest.steps.splice(3, 0, {
+          name: 'Check out repository in privileged job',
+          uses: ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION,
+          with: { 'persist-credentials': false, 'fetch-depth': 0 },
+        });
+      }],
+      ['repository script before attest', (workflow) => {
+        workflow.jobs.attest.steps.splice(3, 0, {
+          name: 'Execute repository code before attest',
+          shell: 'bash',
+          run: 'node scripts/atomistic/verify-bootstrap-replicas.mjs',
+        });
+      }],
+      ['local action before attest', (workflow) => {
+        workflow.jobs.attest.steps.splice(3, 0, { name: 'Local action', uses: './.github/actions/local' });
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrapVerifier(mutate).join('\n'), label).toMatch(/attest/);
+    }
+  });
+
+  it('rejects receipt artifact-name, path, digest, size, and current-run binding drift', () => {
+    const cases = [
+      ['upload artifact name', (workflow) => { workflow.jobs.verify.steps[5].with.name = 'unbound-receipt'; }],
+      ['receipt producer artifact name', (workflow) => { workflow.jobs.verify.steps[4].env.RECEIPT_ARTIFACT_NAME = 'unbound-receipt'; }],
+      ['download artifact name', (workflow) => { workflow.jobs.attest.steps[1].with.name = 'unbound-receipt'; }],
+      ['different source run download', (workflow) => { workflow.jobs.attest.steps[1].with['run-id'] = '33242996794'; }],
+      ['broader receipt upload path', (workflow) => { workflow.jobs.verify.steps[5].with.path = '${{ runner.temp }}'; }],
+      ['receipt size output forged', (workflow) => { workflow.jobs.verify.outputs.receipt_size_bytes = '1'; }],
+      ['receipt digest input forged', (workflow) => { workflow.jobs.attest.steps[2].env.EXPECTED_RECEIPT_SHA256 = `sha256:${'0'.repeat(64)}`; }],
+      ['attested path drift', (workflow) => { workflow.jobs.attest.steps[3].with['subject-path'] = '${{ runner.temp }}/other.json'; }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedBootstrapVerifier(mutate), label).not.toEqual([]);
     }
   });
 });
