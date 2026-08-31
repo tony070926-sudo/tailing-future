@@ -15,8 +15,27 @@ import {
   type PairInteraction,
   type Vector3,
 } from '@/lib/molecular/molecular-interactions';
+import {
+  deriveMolecularReferenceGeometry,
+  type CoordinationEdge,
+  type WaterDonorAcceptorAxisGuide,
+  type WaterValenceFrame,
+} from './molecular-visual-guides';
 
 export type MolecularCamera = Readonly<{ yaw: number; pitch: number; zoom: number }>;
+
+export type MolecularVisualLayers = Readonly<{
+  labels: boolean;
+  bonds: boolean;
+  unitCell: boolean;
+  interactions: boolean;
+  pairForces: boolean;
+  netForce: boolean;
+  valenceDirections: boolean;
+  hybridizationGuide: boolean;
+  bondAxisGuide: boolean;
+  donorAcceptorAxisGuide: boolean;
+}>;
 
 export const INITIAL_MOLECULAR_CAMERA: MolecularCamera = {
   yaw: -34 * Math.PI / 180,
@@ -38,9 +57,7 @@ export function MolecularCanvas({
   scene,
   camera,
   selectedAtomId,
-  showLabels,
-  showInteractions,
-  showForces,
+  layers,
   onCameraChange,
   onAtomSelect,
   onAnnouncement,
@@ -48,9 +65,7 @@ export function MolecularCanvas({
   scene: MolecularScene;
   camera: MolecularCamera;
   selectedAtomId: string;
-  showLabels: boolean;
-  showInteractions: boolean;
-  showForces: boolean;
+  layers: MolecularVisualLayers;
   onCameraChange: (camera: MolecularCamera) => void;
   onAtomSelect: (atomId: string) => void;
   onAnnouncement: (message: string) => void;
@@ -76,9 +91,9 @@ export function MolecularCanvas({
       scene,
       camera,
       selectedAtomId,
-      { showLabels, showInteractions, showForces },
+      layers,
     );
-  }, [camera, scene, selectedAtomId, showForces, showInteractions, showLabels]);
+  }, [camera, layers, scene, selectedAtomId]);
 
   useLayoutEffect(draw, [draw]);
 
@@ -196,7 +211,7 @@ function drawMolecularScene(
   scene: MolecularScene,
   camera: MolecularCamera,
   selectedAtomId: string,
-  layers: Readonly<{ showLabels: boolean; showInteractions: boolean; showForces: boolean }>,
+  layers: MolecularVisualLayers,
 ) {
   context.clearRect(0, 0, width, height);
   context.fillStyle = '#f2f7f3';
@@ -214,16 +229,33 @@ function drawMolecularScene(
     };
   }).sort((first, second) => second.point.depth - first.point.depth);
 
-  if (scene.unitCell) drawUnitCell(context, scene.unitCell.originAngstrom, scene.unitCell.edgeAngstrom, projection.project);
+  if (scene.unitCell && layers.unitCell) {
+    drawUnitCell(context, scene.unitCell.originAngstrom, scene.unitCell.edgeAngstrom, projection.project);
+  }
 
-  scene.bonds.forEach((bond) => {
-    const atomA = atomById.get(bond.atomAId);
-    const atomB = atomById.get(bond.atomBId);
-    if (!atomA || !atomB) return;
-    drawBondCylinder(context, projection.project(atomA.positionAngstrom), projection.project(atomB.positionAngstrom));
-  });
+  const referenceGeometry = deriveMolecularReferenceGeometry(scene);
+  const waterValenceFrames = referenceGeometry.waterValenceFrames;
+  if (layers.valenceDirections) drawWaterValenceDirections(context, waterValenceFrames, projection.project);
+  if (layers.hybridizationGuide) drawWaterHybridizationGuide(context, waterValenceFrames, projection.project);
+  if (layers.bondAxisGuide) drawWaterBondAxisGuide(context, scene, atomById, projection.project);
+  if (layers.donorAcceptorAxisGuide) {
+    drawWaterDonorAcceptorAxisGuide(context, referenceGeometry.waterDonorAcceptorAxis, projection.project);
+  }
 
-  if (layers.showInteractions) {
+  if (scene.kind === 'nacl-rocksalt' && layers.interactions) {
+    drawCoordinationPolyhedron(context, referenceGeometry.coordinationEdges, atomById, projection.project);
+  }
+
+  if (layers.bonds) {
+    scene.bonds.forEach((bond) => {
+      const atomA = atomById.get(bond.atomAId);
+      const atomB = atomById.get(bond.atomBId);
+      if (!atomA || !atomB) return;
+      drawBondCylinder(context, projection.project(atomA.positionAngstrom), projection.project(atomB.positionAngstrom));
+    });
+  }
+
+  if (layers.interactions) {
     scene.guides.forEach((guide) => {
       const atomA = atomById.get(guide.atomAId);
       const atomB = atomById.get(guide.atomBId);
@@ -244,11 +276,11 @@ function drawMolecularScene(
     });
   }
 
-  if (layers.showForces) {
+  if (layers.pairForces || layers.netForce) {
     const selected = atomById.get(selectedAtomId);
     if (selected) {
-      drawPairForceArrows(context, scene, selected, projection.project);
-      drawNetForceArrow(context, scene, selected, projection.project);
+      if (layers.pairForces) drawPairForceArrows(context, scene, selected, projection.project);
+      if (layers.netForce) drawNetForceArrow(context, scene, selected, projection.project);
     }
   }
 
@@ -261,7 +293,7 @@ function drawMolecularScene(
       point,
       radius,
       atom.id === selectedAtomId,
-      layers.showLabels && emphasized,
+      layers.labels && emphasized,
       emphasized ? 1 : 0.38,
     );
   });
@@ -379,6 +411,197 @@ function drawGuide(context: CanvasRenderingContext2D, start: ProjectedPoint, end
   context.strokeStyle = kind === 'hydrogen-bond-guide' ? 'rgba(8, 125, 152, .68)' : 'rgba(79, 95, 177, .44)';
   context.lineWidth = kind === 'hydrogen-bond-guide' ? 2 : 1.2;
   drawLine(context, start, end);
+  context.restore();
+}
+
+function drawWaterValenceDirections(
+  context: CanvasRenderingContext2D,
+  frames: ReadonlyArray<WaterValenceFrame>,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  frames.forEach((frame) => {
+    frame.bondDirections.forEach((direction) => drawReferenceAxis(
+      context,
+      project(frame.oxygenPositionAngstrom),
+      project(add(frame.oxygenPositionAngstrom, scale(direction, 0.88))),
+      'rgba(6, 122, 62, .72)',
+    ));
+    frame.lonePairDirections.forEach((direction) => drawReferenceAxis(
+      context,
+      project(frame.oxygenPositionAngstrom),
+      project(add(frame.oxygenPositionAngstrom, scale(direction, 0.92))),
+      'rgba(79, 95, 177, .72)',
+    ));
+  });
+}
+
+function drawWaterHybridizationGuide(
+  context: CanvasRenderingContext2D,
+  frames: ReadonlyArray<WaterValenceFrame>,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  frames.forEach((frame) => {
+    frame.bondDirections.forEach((direction) => drawWireLobe(
+      context,
+      project(frame.oxygenPositionAngstrom),
+      project(add(frame.oxygenPositionAngstrom, scale(direction, 0.72))),
+      'rgba(6, 122, 62, .74)',
+    ));
+    frame.lonePairDirections.forEach((direction) => drawWireLobe(
+      context,
+      project(frame.oxygenPositionAngstrom),
+      project(add(frame.oxygenPositionAngstrom, scale(direction, 0.84))),
+      'rgba(79, 95, 177, .76)',
+    ));
+  });
+}
+
+function drawWaterBondAxisGuide(
+  context: CanvasRenderingContext2D,
+  scene: MolecularScene,
+  atomById: ReadonlyMap<string, MolecularAtom>,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  if (scene.kind !== 'water-dimer') return;
+  scene.bonds.forEach((bond) => {
+    const atomA = atomById.get(bond.atomAId);
+    const atomB = atomById.get(bond.atomBId);
+    if (!atomA || !atomB) return;
+    drawWireOverlap(
+      context,
+      project(atomA.positionAngstrom),
+      project(atomB.positionAngstrom),
+      'rgba(8, 120, 145, .66)',
+      'rgba(79, 95, 177, .62)',
+    );
+  });
+}
+
+function drawWaterDonorAcceptorAxisGuide(
+  context: CanvasRenderingContext2D,
+  guide: WaterDonorAcceptorAxisGuide | null,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  if (!guide) return;
+  const acceptor = project(guide.acceptorPositionAngstrom);
+  const lonePairEnd = project(add(guide.acceptorPositionAngstrom, scale(guide.selectedLonePairDirection, 0.92)));
+  const contact = project(guide.donorHydrogenPositionAngstrom);
+  const donor = project(guide.donorOxygenPositionAngstrom);
+  const donorAxisEnd = project(add(guide.donorHydrogenPositionAngstrom, scale(guide.donorBondDirection, 0.55)));
+  context.save();
+  context.setLineDash([3, 6]);
+  context.strokeStyle = 'rgba(79, 95, 177, .82)';
+  context.lineWidth = 1.6;
+  drawLine(context, acceptor, lonePairEnd);
+  context.strokeStyle = 'rgba(79, 95, 177, .32)';
+  context.lineWidth = 1;
+  drawLine(context, acceptor, contact);
+  context.setLineDash([2, 4]);
+  context.strokeStyle = 'rgba(8, 120, 145, .7)';
+  drawLine(context, donor, donorAxisEnd);
+  const centerX = (acceptor.x + contact.x) / 2;
+  const centerY = (acceptor.y + contact.y) / 2;
+  context.setLineDash([]);
+  context.fillStyle = 'rgba(53, 70, 132, .94)';
+  context.font = '9px SFMono-Regular, monospace';
+  context.textAlign = 'center';
+  context.fillText(`LP / A···H AXIS OFFSET ${guide.lonePairToContactAngleDegrees.toFixed(1)}°`, centerX, centerY - 11);
+  context.fillText(
+    `D–H···A ${guide.donorHydrogenAcceptorAngleDegrees.toFixed(1)}° · ${guide.axesCollinearWithinFiveDegrees ? 'AXES COLLINEAR ≤5°' : 'CURRENT AXES NOT COLLINEAR'}`,
+    centerX,
+    centerY + 2,
+  );
+  context.restore();
+}
+
+function drawCoordinationPolyhedron(
+  context: CanvasRenderingContext2D,
+  edges: ReadonlyArray<CoordinationEdge>,
+  atomById: ReadonlyMap<string, MolecularAtom>,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  context.save();
+  context.setLineDash([4, 6]);
+  context.strokeStyle = 'rgba(8, 120, 145, .25)';
+  context.lineWidth = 1;
+  edges.forEach((edge) => {
+    const atomA = atomById.get(edge.atomAId);
+    const atomB = atomById.get(edge.atomBId);
+    if (atomA && atomB) drawLine(context, project(atomA.positionAngstrom), project(atomB.positionAngstrom));
+  });
+  context.restore();
+}
+
+function drawReferenceAxis(
+  context: CanvasRenderingContext2D,
+  start: ProjectedPoint,
+  end: ProjectedPoint,
+  color: string,
+) {
+  context.save();
+  context.setLineDash([3, 5]);
+  context.strokeStyle = color;
+  context.lineWidth = 1.2;
+  drawLine(context, start, end);
+  context.setLineDash([]);
+  context.beginPath();
+  context.arc(end.x, end.y, 3, 0, Math.PI * 2);
+  context.stroke();
+  context.restore();
+}
+
+function drawWireLobe(
+  context: CanvasRenderingContext2D,
+  start: ProjectedPoint,
+  end: ProjectedPoint,
+  color: string,
+) {
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+  const length = Math.hypot(deltaX, deltaY);
+  if (length < 2) return;
+  const angle = Math.atan2(deltaY, deltaX);
+  const width = Math.max(5, length * 0.2);
+  context.save();
+  context.translate(start.x, start.y);
+  context.rotate(angle);
+  context.strokeStyle = color;
+  context.lineWidth = 1.3;
+  context.setLineDash([4, 3]);
+  context.beginPath();
+  context.moveTo(0, 0);
+  context.bezierCurveTo(length * 0.3, -width, length * 0.82, -width * 0.55, length, 0);
+  context.bezierCurveTo(length * 0.82, width * 0.55, length * 0.3, width, 0, 0);
+  context.stroke();
+  context.restore();
+}
+
+function drawWireOverlap(
+  context: CanvasRenderingContext2D,
+  start: ProjectedPoint,
+  end: ProjectedPoint,
+  firstColor: string,
+  secondColor: string,
+) {
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+  const length = Math.hypot(deltaX, deltaY);
+  if (length < 4) return;
+  const angle = Math.atan2(deltaY, deltaX);
+  context.save();
+  context.translate(start.x, start.y);
+  context.rotate(angle);
+  context.setLineDash([4, 3]);
+  [
+    { center: length * 0.42, radiusX: length * 0.34, color: firstColor },
+    { center: length * 0.62, radiusX: length * 0.3, color: secondColor },
+  ].forEach(({ center, radiusX, color }) => {
+    context.strokeStyle = color;
+    context.lineWidth = 1.2;
+    context.beginPath();
+    context.ellipse(center, 0, radiusX, Math.max(5, length * 0.16), 0, 0, Math.PI * 2);
+    context.stroke();
+  });
   context.restore();
 }
 
