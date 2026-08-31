@@ -19,6 +19,7 @@ import {
   WORLD_DOMAIN,
   type ThermochemicalSnapshot,
 } from '@/lib/simulation/thermochemical-world';
+import { MolecularLab } from './components/molecular-lab';
 
 type View = 'lab' | 'architecture' | 'sentinel';
 type InspectorTab = 'state' | 'layers' | 'reference';
@@ -122,7 +123,7 @@ const SCALE_STEPS = [
 
 const ARCHITECTURE_LAYERS = [
   { id: 'L0', scale: '电子 / 量子', state: '电子密度 · 能带 · 势垒', anchor: 'DFT / Quantum ESPRESSO', ai: 'Hamiltonian / density surrogate', status: '规划' },
-  { id: 'L1', scale: '原子 / 分子', state: '坐标 · 速度 · A/B 内部标签', anchor: 'force-shifted LJ / Verlet', ai: 'MatterSim / MACE 10-frame smoke 已完成；693×2 未复现', status: '原型' },
+  { id: 'L1', scale: '原子 / 分子', state: '真实 x/y/z 分子与离子坐标 · 部分/形式电荷', anchor: 'OpenMM TIP3P / NBS NaCl；LJ/Verlet 保留为数值基线', ai: 'MatterSim / MACE 10-frame smoke 已完成；693×2 未复现', status: '原型' },
   { id: 'L2', scale: '介观 / 微结构', state: '相场 · 晶粒 · 缺陷 · 孔隙', anchor: 'PFHub / MOOSE / CALPHAD', ai: 'neural operator / closure', status: '规划' },
   { id: 'L3', scale: '连续体 / 部件', state: '温度场 · 通量 · 边界条件', anchor: 'periodic Fourier heat solver', ai: 'closure calibration / UQ', status: '原型' },
   { id: 'L4', scale: '反应器 / 设备', state: '动力学 · 传递 · RTD · 结垢', anchor: 'Cantera / CFD / PBM', ai: 'hybrid ROM / state model', status: '规划' },
@@ -161,7 +162,7 @@ export default function Home() {
   return (
     <main className="app-shell">
       <Header activeView={activeView} onViewChange={setActiveView} />
-      <SimulationLab active={activeView === 'lab'} />
+      <MolecularLab active={activeView === 'lab'} />
       {activeView === 'architecture' && <ArchitectureView />}
       {activeView === 'sentinel' && <SentinelView />}
     </main>
@@ -184,12 +185,12 @@ function Header({ activeView, onViewChange }: { activeView: View; onViewChange: 
       <nav className="view-nav" aria-label="产品视图">
         {items.map((item) => <button type="button" key={item.id} className={activeView === item.id ? 'active' : ''} onClick={() => onViewChange(item.id)}>{item.label}</button>)}
       </nav>
-      <div className="topbar-actions"><span className="pulse-dot" /><span className="evidence-state">R2 · 10-frame smoke 完成 / 693×2 未复现</span></div>
+      <div className="topbar-actions"><span className="pulse-dot" /><span className="evidence-state">R2 · CONDITIONAL · 10-frame smoke / 693×2 未复现</span></div>
     </header>
   );
 }
 
-function SimulationLab({ active }: { active: boolean }) {
+export function LegacyThermochemicalLab({ active }: { active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cameraGestureRef = useRef<CameraGesture | null>(null);
   const frameRef = useRef<number | null>(null);
