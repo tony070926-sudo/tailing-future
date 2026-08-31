@@ -1,11 +1,11 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.1-r7b1-evidence-boundary",
-  "generatedAt": "2026-08-31T14:09:21.073Z",
+  "generatedAt": "2026-08-31T16:43:56.935Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-29",
-  "artifactDigest": "sha256:de563ea627069b16d3922e6912d11abb5716233dd65e33ccc44327fdc3e6ff40",
-  "sourceFileCount": 155,
+  "artifactDigest": "sha256:c9212fba3ea7a3da0cf616cec90356439f8cf903603774cb773919ffe0443c9c",
+  "sourceFileCount": 157,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:26a8e9e4f39b65af50f61d73c6efc6e3306accba1e3d66a442ac6160b82fe674",
@@ -19,9 +19,11 @@
     ".gitignore": "sha256:db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28",
     ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
     "README.md": "sha256:cd50a248ae5f34c182fe77a053da98da0e2c340a859295cd11c2b3b891bb9deb",
-    "app/components/molecular-canvas.tsx": "sha256:cebe38417af167764b7a67b75b10371b88db9f0baa4bdac233f9ccc6b5c603b1",
-    "app/components/molecular-lab.tsx": "sha256:d97e4a8e95d452054e7e7f388a08688497ab4624a0f22eb61cfed3c9a528edaf",
-    "app/globals.css": "sha256:1452be8dd190a2e78cdb319eaaa07c90ebb715246580d6a031166b999afd2a33",
+    "app/components/molecular-canvas.tsx": "sha256:61d0dd62f44e60dc266b7f41e4b2b6d5bba947108bf7ee2c556deca8d0e09799",
+    "app/components/molecular-lab.tsx": "sha256:ca20151657d5c32dce57d63eef1ce7c1868b24a7a3a65156da9841c5cf63dfbb",
+    "app/components/molecular-visual-guides.test.ts": "sha256:0c45dd8fc690d4bbfa44d210c085d959a01718a60773220b7c6a925bab16186f",
+    "app/components/molecular-visual-guides.ts": "sha256:939babc3fb0eeacd99c8d041c6551d68a6010a77c4482dd89e88067cc80091a1",
+    "app/globals.css": "sha256:e4de3845df4d63229f417681d7855e1ae4ccdfbc3b55d5424237144bdc569b5a",
     "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
     "app/page.tsx": "sha256:4a628e70da95c6a5d6a39b4a7a2f8b3e4940dbc6e47c454e0fa4bed00eb0d0f9",
     "atomistic/containers/README.md": "sha256:fd21f13debde87f13e382c4111c241e629702db9681b20411ea3b5310cfdde24",
@@ -161,7 +163,7 @@
     "scripts/workflow-policy.test.mjs": "sha256:ee62dc58b7ac3bad2fead5e6b1697274f945e6b9c8e4620ca00045c828e571ea",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
-    "vitest.config.ts": "sha256:8fc9ce24c9e8dd840d0aa944448b58222dad58b3481a2dcb26140940dddd4661"
+    "vitest.config.ts": "sha256:febde2aad668a006bdb8f608b24d2d16804bcdd72d62307c4804d4db3cb6c8f0"
   },
   "runtime": {
     "node": "v24.16.0",
@@ -255,7 +257,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 75599.53
+    "elapsedMs": 107366.45
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
