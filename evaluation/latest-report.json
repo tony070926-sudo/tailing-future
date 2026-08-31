@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.1-r7b1-evidence-boundary",
-  "generatedAt": "2026-08-30T18:04:44.269Z",
+  "generatedAt": "2026-08-31T04:25:44.661Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-29",
-  "artifactDigest": "sha256:6a337893d3420afea6adff991d9ed3897b0a1a1d93f87e0d56f9eb1926c44186",
+  "artifactDigest": "sha256:234f166c6d5b82c7a6eef75c18c53e206b5be04859b9c167196d63f39917a6f1",
   "sourceFileCount": 149,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -19,9 +19,9 @@
     ".gitignore": "sha256:db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28",
     ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
     "README.md": "sha256:cd50a248ae5f34c182fe77a053da98da0e2c340a859295cd11c2b3b891bb9deb",
-    "app/globals.css": "sha256:0be2c001c75b93143652d02a6518af50e28c6a871ee1406c6205be07a70fd241",
+    "app/globals.css": "sha256:5642b2653089812418857b447ecd92e6232606f594a966b50d2afc702677177e",
     "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
-    "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
+    "app/page.tsx": "sha256:a00156b30ad2d2f6a7e3bc16104a7d6b88c1515dd982776145b47a3f8c97dcb6",
     "atomistic/containers/README.md": "sha256:fd21f13debde87f13e382c4111c241e629702db9681b20411ea3b5310cfdde24",
     "atomistic/containers/mace.Dockerfile": "sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f",
     "atomistic/containers/mattersim.Dockerfile": "sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455",
@@ -249,7 +249,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 76276.39
+    "elapsedMs": 74143.27
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -306,7 +306,7 @@
     "lib/simulation/lennard-jones.ts": "sha256:472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da",
     "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
     ".github/workflows/evaluate.yml": "sha256:a73ab8b54a76b3ad5b594e70b47ccb4d068dedbd73929cf4401a05fccc46477c",
-    "app/page.tsx": "sha256:b15392cb21abf3947eb78d52635c9dcf64188b4ebfe3139a91378773a1da78ae",
+    "app/page.tsx": "sha256:a00156b30ad2d2f6a7e3bc16104a7d6b88c1515dd982776145b47a3f8c97dcb6",
     "docs/SAFETY.md": "sha256:36e6f5fb4a8a29c6675dba7dc96ddbd9a49af9474d6681a1758bfe6d85ab7929",
     "evaluation/reviews/2026-08-28-r2-release-review.md": "sha256:48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346",
     "evaluation/reviews/2026-08-29-r3-protocol-review.md": "sha256:46f96227a04a7e4ae117154c4e5515f6534f663c0ecbffb1b416747f70a91370",
