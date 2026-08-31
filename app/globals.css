@@ -581,7 +581,58 @@ button { color: inherit; }
 }
 
 /* Molecular workbench: real xyz structures, explicit bonds and pair forces. */
-.molecular-workbench { grid-template-rows: auto minmax(760px, 1fr) auto; }
+.material-light-shell {
+  background: #f3f7f2;
+  color: #111a16;
+}
+.material-light-shell .topbar {
+  border-color: rgba(16, 109, 61, .16);
+  background: rgba(247, 250, 246, .93);
+  box-shadow: 0 10px 34px rgba(44, 95, 67, .06);
+}
+.material-light-shell .brand-name { color: #111a16; }
+.material-light-shell .brand-subtitle { color: #607168; }
+.material-light-shell .brand-mark { border-color: rgba(5, 142, 66, .28); border-radius: 50%; }
+.material-light-shell .brand-mark i { background: #08a84f; border-radius: 999px; }
+.material-light-shell .view-nav { border-color: rgba(16, 109, 61, .14); border-radius: 999px; background: rgba(230, 243, 234, .78); }
+.material-light-shell .view-nav button { border-radius: 999px; color: #52665b; }
+.material-light-shell .view-nav button:hover { color: #0b7d42; }
+.material-light-shell .view-nav button.active { color: #0a743d; background: #fff; box-shadow: 0 2px 12px rgba(37, 93, 62, .1); }
+.material-light-shell .pulse-dot { background: #0ab45a; box-shadow: 0 0 0 5px rgba(10, 180, 90, .11); }
+.material-light-shell .evidence-state { border-color: rgba(15, 114, 62, .18); border-radius: 999px; color: #4f6358; background: rgba(255, 255, 255, .68); }
+.molecular-workbench {
+  --lab-bg: #f3f7f2;
+  --lab-surface: #f8fbf7;
+  --lab-surface-raised: #edf5ef;
+  --lab-surface-hover: #e4f1e8;
+  --lab-border: rgba(24, 112, 65, .17);
+  --lab-text: #101914;
+  --lab-text-secondary: #52665b;
+  --lab-text-tertiary: #607268;
+  --lab-live: #067a3e;
+  --lab-derived: #087891;
+  --lab-reference: #4f5fb1;
+  --lab-warning: #94520d;
+  --lab-danger: #a63a42;
+  grid-template-rows: auto minmax(760px, 1fr) auto;
+  background: #f3f7f2;
+}
+.molecular-workbench .lab-context-bar { background: rgba(248, 251, 247, .96); }
+.molecular-workbench .context-badges span,
+.molecular-workbench .inspector-safety span { background: rgba(255, 255, 255, .72); border-radius: 999px; }
+.molecular-workbench .micro-stage {
+  background:
+    radial-gradient(circle at 64% 42%, rgba(40, 198, 107, .11), transparent 33%),
+    linear-gradient(145deg, rgba(253, 254, 251, .9), rgba(238, 247, 240, .78));
+}
+.molecular-workbench .micro-viewport { box-shadow: none; }
+.molecular-workbench .micro-viewport::after { box-shadow: inset 0 0 80px rgba(74, 138, 99, .08); }
+.molecular-workbench .lab-disclaimer { background: #eef6f0; }
+.molecular-workbench .scene-switcher button { background: rgba(255, 255, 255, .74); border-radius: 16px; }
+.molecular-workbench .scene-switcher button.active { border-color: rgba(7, 153, 74, .44); background: rgba(213, 244, 224, .72); box-shadow: inset 3px 0 #07994a; }
+.molecular-workbench .view-reset-button { border-color: rgba(8, 125, 152, .3); border-radius: 999px; background: rgba(255, 255, 255, .7); }
+.molecular-workbench .molecular-probe { border-color: rgba(8, 125, 152, .3); background: rgba(251, 253, 250, .92); box-shadow: 0 16px 40px rgba(35, 92, 59, .1); }
+.molecular-workbench .viewport-boundary { background: rgba(243, 248, 243, .94); }
 .molecular-stage-heading { margin-bottom: 10px; }
 .scene-switcher {
   margin-bottom: 10px;
@@ -624,7 +675,7 @@ button { color: inherit; }
 .molecular-legend i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid rgba(255,255,255,.38); box-shadow: 0 0 10px currentColor; }
 .molecular-legend .element-o { background: #e34d5a; color: #e34d5a; }
 .molecular-legend .element-h { background: #e8eef2; color: #e8eef2; }
-.molecular-legend .element-na { background: #8872ee; color: #8872ee; }
+.molecular-legend .element-na { background: #43bdd0; color: #43bdd0; }
 .molecular-legend .element-cl { background: #55c984; color: #55c984; }
 .molecular-probe {
   position: absolute;
@@ -751,11 +802,338 @@ button { color: inherit; }
   .molecular-viewport .state-stamp { top: 108px; }
   .molecular-legend { top: 161px; left: 20px; right: auto; justify-content: flex-start; }
   .molecular-probe { left: 14px; right: 14px; bottom: 133px; min-width: 0; }
-  .force-legend { left: 15px; right: 15px; bottom: 209px; max-width: none; }
+  .force-legend { top: 218px; left: 15px; right: 15px; bottom: auto; max-width: none; }
   .molecular-viewport .canvas-help { bottom: 93px; }
   .molecular-controls { grid-template-columns: 1fr; }
   .molecular-slider-stack label { grid-template-columns: 1fr 66px; }
   .molecular-slider-stack label span { grid-column: 1 / -1; }
   .molecular-layer-buttons { grid-template-columns: repeat(2, 1fr); }
   .atom-selector > div:last-child { grid-template-columns: 1fr; }
+}
+
+/* Comparator-inspired visual language, translated into Tailing Future's own material-state system. */
+.material-light-shell .brand-mark {
+  width: 38px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  grid-template-columns: repeat(3, 8px);
+  place-content: center;
+  gap: 5px;
+  position: relative;
+}
+.material-light-shell .brand-mark::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 15px;
+  height: 1px;
+  background: #08a84f;
+}
+.material-light-shell .brand-mark i,
+.material-light-shell .brand-mark i:nth-child(1),
+.material-light-shell .brand-mark i:nth-child(2),
+.material-light-shell .brand-mark i:nth-child(3) {
+  width: 8px;
+  height: 8px;
+  border: 2px solid #08a84f;
+  border-radius: 50%;
+  background: #f7faf6;
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
+.material-light-shell .brand-mark i:nth-child(2) { background: #08a84f; }
+.material-light-shell .topbar button:focus-visible,
+.molecular-workbench .source-list a:focus-visible {
+  outline: 3px solid #087d98;
+  outline-offset: 3px;
+}
+.molecular-workbench { grid-template-rows: auto minmax(900px, 1fr) auto; }
+.molecular-workbench .lab-context-bar {
+  min-height: 70px;
+  padding: 12px 22px;
+  border-color: rgba(24, 112, 65, .15);
+}
+.molecular-workbench .lab-context-bar > div:first-child span { color: #067a3e; }
+.molecular-workbench .lab-context-bar > div:first-child b { color: #101914; font-size: 13px; }
+.molecular-workbench .lab-context-bar > div:first-child small { color: var(--lab-text-tertiary); }
+.molecular-workbench .lab-grid { grid-template-columns: 78px minmax(0, 1fr) 360px; }
+.molecular-workbench .lab-scale-rail {
+  padding: 18px 9px;
+  border-color: rgba(24, 112, 65, .16);
+  background: #edf6ef;
+}
+.molecular-workbench .scale-rail-count {
+  min-height: 74px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(24, 112, 65, .14);
+}
+.molecular-workbench .scale-rail-count b { color: #067a3e; }
+.molecular-workbench .scale-rail-count span,
+.molecular-workbench .scale-rail-count small { color: var(--lab-text-tertiary); }
+.molecular-workbench .scale-rail-count em {
+  grid-column: 1 / -1;
+  margin-top: 5px;
+  color: #a63a42;
+  text-align: center;
+  font: normal 8px/1.2 var(--font-geist-mono), monospace;
+}
+.molecular-workbench .lab-scale-rail ol { position: relative; gap: 10px; }
+.molecular-workbench .lab-scale-rail ol::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  bottom: 26px;
+  width: 1px;
+  background: rgba(8, 125, 152, .22);
+}
+.molecular-workbench .lab-scale-rail li {
+  min-height: 62px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .66);
+  z-index: 1;
+}
+.molecular-workbench .lab-scale-rail li i { background: #a6b5ac; }
+.molecular-workbench .lab-scale-rail li.active {
+  border-color: rgba(6, 122, 62, .28);
+  background: #dff2e4;
+  box-shadow: 0 8px 22px rgba(40, 102, 62, .08);
+}
+.molecular-workbench .lab-scale-rail li.active i { box-shadow: 0 0 0 5px rgba(7, 153, 74, .1); }
+.molecular-workbench .micro-stage { padding: 28px clamp(18px, 2.2vw, 34px) 30px; }
+.molecular-workbench .molecular-stage-heading {
+  min-height: 132px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+.molecular-workbench .molecular-stage-heading h1 {
+  max-width: 830px;
+  color: #0e1712;
+  font-size: clamp(34px, 4vw, 62px);
+  line-height: .98;
+  letter-spacing: -.065em;
+  font-weight: 650;
+}
+.molecular-workbench .eyebrow { margin-bottom: 13px; color: #067a3e; font-size: 10px; }
+.stage-deck {
+  max-width: 720px;
+  margin: 14px 0 0;
+  color: #53675c;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.molecular-workbench .stage-readout span { color: #30483a; }
+.molecular-workbench .stage-readout small { color: var(--lab-text-tertiary); }
+.molecular-workbench .scene-switcher { gap: 10px; margin-bottom: 12px; }
+.molecular-workbench .scene-switcher button {
+  min-height: 74px;
+  padding: 11px 16px;
+  border-color: rgba(18, 85, 48, .18);
+  box-shadow: 0 8px 26px rgba(44, 95, 67, .045);
+}
+.molecular-workbench .scene-switcher button:hover { background: #e8f4eb; }
+.molecular-workbench .scene-switcher button.active { border-color: rgba(6, 122, 62, .42); }
+.molecular-workbench .scene-switcher span { color: var(--lab-derived); font-size: 15px; }
+.molecular-workbench .scene-switcher b { color: #101914; font-size: 13px; }
+.molecular-workbench .scene-switcher small { color: var(--lab-text-tertiary); font-size: 11px; }
+.material-state-flow {
+  margin-bottom: 12px;
+  padding: 14px 18px 11px;
+  border: 1px solid rgba(18, 85, 48, .18);
+  border-radius: 22px;
+  background: rgba(250, 253, 249, .78);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.material-state-flow::before {
+  content: "";
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, #08a84f, #12a3c5);
+}
+.material-state-flow > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 29px minmax(0, 1fr);
+  gap: 2px 9px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.material-state-flow > div > span {
+  grid-row: 1 / 3;
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #07994a;
+  border-radius: 50%;
+  background: #f9fcf8;
+  color: #067a3e;
+  font: 9px/1 var(--font-geist-mono), monospace;
+}
+.material-state-flow > div:nth-child(3) > span,
+.material-state-flow > div:nth-child(4) > span { border-color: #087891; color: #087891; }
+.material-state-flow b { color: #17221b; font: 600 10px/1.25 var(--font-geist-mono), monospace; letter-spacing: .05em; }
+.material-state-flow small { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--lab-text-tertiary, #607268); font-size: 9px; white-space: nowrap; }
+.material-state-flow > em {
+  grid-column: 1 / -1;
+  color: #94520d;
+  text-align: right;
+  font: normal 8px/1.3 var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+.molecular-workbench .molecular-viewport {
+  min-height: 520px;
+  border-color: rgba(15, 68, 39, .24);
+  border-radius: 26px;
+  background: #f2f7f3;
+  box-shadow: 0 22px 55px rgba(34, 87, 55, .08);
+}
+.molecular-workbench .molecular-viewport::after { border-radius: inherit; }
+.molecular-workbench .molecular-viewport .viewport-label span,
+.molecular-workbench .molecular-viewport .state-stamp { color: var(--lab-text-tertiary); }
+.molecular-workbench .molecular-viewport .viewport-label b { color: #31483b; }
+.molecular-workbench .molecular-viewport .state-stamp span { color: #067a3e; }
+.molecular-workbench .molecular-viewport .state-stamp small { color: var(--lab-text-tertiary); }
+.molecular-workbench .molecular-legend,
+.molecular-workbench .force-legend {
+  padding: 8px 10px;
+  border: 1px solid rgba(19, 86, 48, .14);
+  border-radius: 14px;
+  background: rgba(250, 253, 249, .84);
+  color: #50645a;
+  box-shadow: 0 10px 28px rgba(45, 94, 66, .06);
+}
+.molecular-workbench .molecular-legend i { border-color: rgba(18, 31, 22, .35); box-shadow: none; }
+.molecular-workbench .force-legend small { color: var(--lab-text-tertiary); }
+.molecular-workbench .canvas-help { color: var(--lab-text-tertiary); }
+.molecular-workbench .molecular-controls {
+  margin-top: 12px;
+  border-top: 1px solid var(--lab-border);
+  border-radius: 20px;
+  background: rgba(250, 253, 249, .88);
+  box-shadow: 0 12px 34px rgba(43, 92, 62, .055);
+}
+.molecular-workbench .molecular-slider-stack label { color: #4f6358; }
+.molecular-workbench .molecular-slider-stack input { accent-color: #067a3e; }
+.molecular-workbench .molecular-slider-stack b { color: #94520d; }
+.molecular-workbench .molecular-layer-buttons button {
+  border-color: rgba(20, 91, 51, .17);
+  border-radius: 999px;
+  background: #f4f9f4;
+  color: #5f7267;
+}
+.molecular-workbench .molecular-layer-buttons button:hover { border-color: rgba(8, 125, 152, .46); color: #101914; }
+.molecular-workbench .molecular-layer-buttons button.active { color: #067a3e; border-color: rgba(6, 122, 62, .34); background: #e0f2e5; }
+.molecular-workbench .molecular-inspector {
+  padding: 12px;
+  border-color: rgba(20, 91, 51, .16);
+  background: #eef6ef;
+}
+.molecular-workbench .inspector-safety {
+  margin-bottom: 9px;
+  padding: 9px;
+  border: 1px solid rgba(20, 91, 51, .15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .72);
+}
+.molecular-workbench .inspector-tabs {
+  border: 1px solid rgba(20, 91, 51, .15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .72);
+}
+.molecular-workbench .inspector-tabs button { border-radius: 12px; color: var(--lab-text-tertiary); }
+.molecular-workbench .inspector-tabs button.active { color: #075d31; background: #e1f1e5; box-shadow: inset 0 -2px #07994a; }
+.molecular-workbench .molecular-panel {
+  margin-top: 10px;
+  padding: 15px;
+  border: 1px solid rgba(20, 91, 51, .15);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .82);
+}
+.molecular-workbench .selected-atom-card,
+.molecular-workbench .model-summary-card {
+  border-color: rgba(8, 125, 152, .22);
+  border-radius: 15px;
+  background: rgba(218, 243, 247, .44);
+}
+.molecular-workbench .selected-atom-card > span,
+.molecular-workbench .model-summary-card > span,
+.molecular-workbench .net-force-card > b { color: var(--lab-derived); }
+.molecular-workbench .selected-atom-card h2,
+.molecular-workbench .model-summary-card h2 { color: #101914; }
+.molecular-workbench .molecular-parameter-list > div:not(.inspector-section-title),
+.molecular-workbench .source-list a,
+.molecular-workbench .boundary-list p,
+.molecular-workbench .pair-row { border-color: rgba(20, 91, 51, .13); }
+.molecular-workbench .atom-selector button,
+.molecular-workbench .molecular-energy-grid > div,
+.molecular-workbench .net-force-card,
+.molecular-workbench .formula-card {
+  border-radius: 14px;
+  background: #f8fbf8;
+}
+.molecular-workbench .atom-selector button.active { border-color: rgba(8, 125, 152, .45); background: #e2f3f5; }
+.molecular-workbench .atom-selector button.active span { color: #52665b; }
+.molecular-workbench .molecular-energy-grid > div.wide { border-color: rgba(6, 122, 62, .3); background: #e4f3e7; }
+.molecular-workbench .molecular-energy-grid b { color: #101914; }
+.molecular-workbench .molecular-energy-grid .wide b { color: #067a3e; }
+.molecular-workbench .molecular-energy-grid .not-modeled { border-color: rgba(148, 82, 13, .25); background: #fbf3e8; }
+.molecular-workbench .molecular-energy-grid .not-modeled b { color: #94520d; }
+.molecular-workbench .net-force-card { border-color: rgba(8, 125, 152, .24); }
+.molecular-workbench .formula-card { border-color: rgba(79, 95, 177, .24); background: rgba(229, 232, 249, .48); }
+.molecular-workbench .source-list a:hover b { color: var(--lab-derived); }
+.molecular-workbench .lab-disclaimer {
+  min-height: 54px;
+  border-color: rgba(20, 91, 51, .15);
+  background: #eaf4ec;
+}
+
+@media (min-width: 1181px) and (max-width: 1360px) {
+  .molecular-workbench .molecular-stage-heading { align-items: flex-start; flex-direction: column; }
+  .molecular-workbench .stage-readout { width: 100%; align-items: center; flex-direction: row; flex-wrap: wrap; text-align: left; }
+  .molecular-workbench .stage-readout .view-reset-button { margin-left: auto; }
+}
+
+@media (max-width: 1180px) {
+  .molecular-workbench { grid-template-rows: auto minmax(880px, auto) auto; }
+  .molecular-workbench .lab-grid { grid-template-columns: 68px minmax(0, 1fr); }
+  .molecular-workbench .molecular-inspector { padding: 16px; }
+}
+
+@media (max-width: 760px) {
+  .material-light-shell .topbar { padding: 0 13px; }
+  .material-light-shell .evidence-state { display: none; }
+  .molecular-workbench .lab-context-bar { padding: 12px 14px; }
+  .molecular-workbench .lab-scale-rail { grid-template-columns: 68px minmax(0, 1fr); }
+  .molecular-workbench .lab-scale-rail ol::before { display: none; }
+  .molecular-workbench .scale-rail-count em { display: none; }
+  .molecular-workbench .micro-stage { padding: 18px 12px 24px; }
+  .molecular-workbench .molecular-stage-heading { min-height: 0; }
+  .molecular-workbench .molecular-stage-heading h1 { font-size: clamp(36px, 12vw, 54px); }
+  .stage-deck { font-size: 12px; }
+  .material-state-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .material-state-flow::before { display: none; }
+  .material-state-flow > em { text-align: left; }
+  .molecular-workbench .molecular-viewport { min-height: 700px; border-radius: 20px; }
+  .molecular-workbench .molecular-inspector { padding: 12px; }
+}
+
+@media (max-width: 420px) {
+  .material-light-shell .brand-subtitle { display: none; }
+  .material-light-shell .view-nav button { padding-inline: 10px; }
+  .molecular-workbench .lab-scale-rail { grid-template-columns: 1fr; }
+  .molecular-workbench .lab-scale-rail ol { margin-top: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .material-state-flow { grid-template-columns: 1fr; }
+  .material-state-flow small { white-space: normal; }
 }

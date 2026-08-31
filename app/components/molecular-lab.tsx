@@ -108,23 +108,23 @@ export function MolecularLab({ active }: { active: boolean }) {
     <section className="lab-workbench molecular-workbench" hidden={!active}>
       <div className="lab-context-bar">
         <div>
-          <span>ACTIVE MICROSCOPIC MODEL</span>
-          <b>L1 real x/y/z structure ↔ explicit pair interactions</b>
-          <small>tf.molecular-scene/0.1 · deterministic, parameter-sourced classical model snapshot</small>
+          <span>TAILING FUTURE / ATOMIC STATE</span>
+          <b>One structure state → inspectable interactions and readouts</b>
+          <small>tf.molecular-scene/0.1 · deterministic, parameter-sourced classical snapshot</small>
         </div>
         <div className="context-badges" aria-label="模型适用边界">
           <span className="live">PARAMETER SOURCED</span>
           <span className="derived">EXPLICIT XYZ STATE</span>
-          <span>CLASSICAL</span>
+          <span>0 VALIDATED BRIDGES</span>
           <span>NO MD CLAIM</span>
         </div>
       </div>
 
       <div className="lab-grid">
         <aside className="lab-scale-rail" aria-label="L0 到 L5 多尺度层级">
-          <div className="scale-rail-count"><b>2</b><span>/ 6</span><small>LIVE</small></div>
+          <div className="scale-rail-count"><b>2</b><span>/ 6</span><small>STANDALONE</small><em>0 BRIDGES</em></div>
           <ol>{SCALE_STEPS.map((step) => (
-            <li key={step.id} className={step.status === 'active' ? 'active' : ''} title={`${step.id} ${step.label}`}>
+            <li key={step.id} className={step.status === 'active' ? 'active' : ''} title={`${step.id} ${step.label} · ${step.status === 'active' ? 'standalone prototype' : 'planned'}`}>
               <span>{step.id}</span><b>{step.label}</b><i aria-hidden="true" />
             </li>
           ))}</ol>
@@ -133,8 +133,9 @@ export function MolecularLab({ active }: { active: boolean }) {
         <section className="micro-stage">
           <div className="micro-stage-heading molecular-stage-heading">
             <div>
-              <p className="eyebrow">MOLECULAR STRUCTURE WORKBENCH / 三维分子结构工作台</p>
-              <h1>经典三维分子 / 离子结构，不是随机粒子云。</h1>
+              <p className="eyebrow">MATERIAL STATE / L1 ATOMIC VIEWER</p>
+              <h1>从真实三维结构，读取粒子之间的作用。</h1>
+              <p className="stage-deck">不是随机粒子云：每个原子或离子都有身份、x/y/z 坐标、连接关系与可检查的作用读出。</p>
             </div>
             <div className="stage-readout">
               <span className="active"><i aria-hidden="true" />{scene.name}</span>
@@ -150,6 +151,14 @@ export function MolecularLab({ active }: { active: boolean }) {
             <button type="button" className={sceneKind === 'nacl-rocksalt' ? 'active' : ''} aria-pressed={sceneKind === 'nacl-rocksalt'} onClick={() => changeScene('nacl-rocksalt')}>
               <span>Na⁺ / Cl⁻</span><b>岩盐离子晶格</b><small>Fm-3m · 4×4×4 片段</small>
             </button>
+          </div>
+
+          <div className="material-state-flow" role="list" aria-label="当前结构状态的操作和读取流程">
+            <div role="listitem"><span>01</span><b>STRUCTURE</b><small>parameter-sourced geometry</small></div>
+            <div role="listitem"><span>02</span><b>CONTROL</b><small>configuration coordinate</small></div>
+            <div role="listitem"><span>03</span><b>EVALUATE</b><small>pair energy + force</small></div>
+            <div role="listitem"><span>04</span><b>READOUT</b><small>inspect + export</small></div>
+            <em>STATIC CONFIGURATION · NOT TIME</em>
           </div>
 
           <div className="micro-viewport molecular-viewport">
