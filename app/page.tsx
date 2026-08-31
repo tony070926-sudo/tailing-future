@@ -58,7 +58,7 @@ const VISUAL_LAYER_META: ReadonlyArray<{
   { key: 'thermalMesh', category: 'LIVE', label: '6 × 4 热单元', detail: '与后台网格逐格对齐' },
   { key: 'particles', category: 'LIVE', label: 'LJ 粒子位置', detail: '二维周期位置' },
   { key: 'species', category: 'LIVE', label: 'A / B 内部标签', detail: '非元素、非真实物种' },
-  { key: 'velocity', category: 'DERIVED', label: '速度矢量', detail: 'vx / vy 方向真实 · 显示长度封顶 0.65σ' },
+  { key: 'velocity', category: 'DERIVED', label: '速度矢量', detail: 'vx / vy 直映 screen-y ↓ · 长度封顶 0.65σ' },
   { key: 'periodicImages', category: 'DERIVED', label: '周期边界映像', detail: '最小像边界的视觉副本' },
   { key: 'proximity', category: 'DERIVED', label: 'LJ 近邻范围', detail: '仅选中粒子 · r < 1.45σ · ≠ 键' },
 ];
@@ -80,6 +80,12 @@ const REFERENCE_NOTES: Record<ReferenceTopic, string> = {
   hybridization: '规范方向的教学投影；不从 A/B 标签或 LJ 配位数推断。',
   bonds: 'σ 头碰头与 π 侧向重叠的概念图；当前世界没有 bond-order payload。',
 };
+
+const INSPECTOR_TABS: ReadonlyArray<readonly [InspectorTab, string]> = [
+  ['state', '状态'],
+  ['layers', '叠层'],
+  ['reference', '概念参考'],
+];
 
 const SCALE_STEPS = [
   { id: 'L0', label: '电子', detail: '量子态', status: 'planned' },
@@ -175,6 +181,7 @@ function SimulationLab({ active }: { active: boolean }) {
   const [eventNote, setEventNote] = useState('共享热化学状态已创建');
   const [error, setError] = useState<string | null>(null);
   const [probe, setProbe] = useState<StateProbe | null>(null);
+  const [probeAnnouncement, setProbeAnnouncement] = useState('');
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>('state');
   const [visualLayers, setVisualLayers] = useState<VisualLayers>(INITIAL_VISUAL_LAYERS);
   const [referenceTopic, setReferenceTopic] = useState<ReferenceTopic>('orbitals');
@@ -197,6 +204,7 @@ function SimulationLab({ active }: { active: boolean }) {
     setBranchCount(0);
     setError(null);
     setProbe(null);
+    setProbeAnnouncement('状态探针已清除');
     setEventNote('已回到带完整账本的确定性初始状态');
   }, [present, temperature]);
 
@@ -258,11 +266,14 @@ function SimulationLab({ active }: { active: boolean }) {
     const y = (event.clientY - bounds.top - layout.offsetY) / layout.scale;
     if (x < 0 || y < 0 || x >= snapshot.box.width || y >= snapshot.box.height) {
       setProbe(null);
+      setProbeAnnouncement('状态探针已清除');
       return;
     }
     const cellX = Math.min(snapshot.field.width - 1, Math.floor(x / snapshot.box.width * snapshot.field.width));
     const cellY = Math.min(snapshot.field.height - 1, Math.floor(y / snapshot.box.height * snapshot.field.height));
-    setProbe(buildProbe(snapshot, cellX, cellY, nearestParticleIndex(snapshot, x, y, 0.7)));
+    const nextProbe = buildProbe(snapshot, cellX, cellY, nearestParticleIndex(snapshot, x, y, 0.7));
+    setProbe(nextProbe);
+    setProbeAnnouncement(describeProbe(nextProbe));
   };
 
   const probeWithKeyboard = (event: ReactKeyboardEvent<HTMLCanvasElement>) => {
@@ -280,17 +291,23 @@ function SimulationLab({ active }: { active: boolean }) {
       const cellY = (startY + direction[1] + snapshot.field.height) % snapshot.field.height;
       const x = (cellX + 0.5) * snapshot.box.width / snapshot.field.width;
       const y = (cellY + 0.5) * snapshot.box.height / snapshot.field.height;
-      setProbe(buildProbe(snapshot, cellX, cellY, nearestParticleIndex(snapshot, x, y, 0.9)));
+      const nextProbe = buildProbe(snapshot, cellX, cellY, nearestParticleIndex(snapshot, x, y, 0.9));
+      setProbe(nextProbe);
+      setProbeAnnouncement(describeProbe(nextProbe));
       return;
     }
     if (event.key === 'Enter' && probe) {
       event.preventDefault();
       if (probe.particleIndex !== null) {
-        setProbe(buildProbe(snapshot, probe.cellX, probe.cellY, null));
+        const nextProbe = buildProbe(snapshot, probe.cellX, probe.cellY, null);
+        setProbe(nextProbe);
+        setProbeAnnouncement(describeProbe(nextProbe));
       } else {
         const x = (probe.cellX + 0.5) * snapshot.box.width / snapshot.field.width;
         const y = (probe.cellY + 0.5) * snapshot.box.height / snapshot.field.height;
-        setProbe(buildProbe(snapshot, probe.cellX, probe.cellY, nearestParticleIndex(snapshot, x, y)));
+        const nextProbe = buildProbe(snapshot, probe.cellX, probe.cellY, nearestParticleIndex(snapshot, x, y));
+        setProbe(nextProbe);
+        setProbeAnnouncement(describeProbe(nextProbe));
       }
     }
   };
@@ -305,7 +322,29 @@ function SimulationLab({ active }: { active: boolean }) {
   };
 
   const toggleLayer = (key: VisualLayerKey) => {
-    setVisualLayers((current) => ({ ...current, [key]: !current[key] }));
+    setVisualLayers((current) => {
+      const next = { ...current, [key]: !current[key] };
+      if (key === 'particles' && !next.particles) {
+        next.species = false;
+        next.periodicImages = false;
+        next.proximity = false;
+      }
+      if ((key === 'species' || key === 'periodicImages' || key === 'proximity') && next[key]) next.particles = true;
+      return next;
+    });
+  };
+
+  const moveInspectorTab = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex = index;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % INSPECTOR_TABS.length;
+    else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + INSPECTOR_TABS.length) % INSPECTOR_TABS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = INSPECTOR_TABS.length - 1;
+    else return;
+    event.preventDefault();
+    const nextTab = INSPECTOR_TABS[nextIndex][0];
+    setInspectorTab(nextTab);
+    window.requestAnimationFrame(() => document.getElementById('inspector-tab-' + nextTab)?.focus());
   };
 
   const chooseReferenceTopic = (topic: ReferenceTopic) => {
@@ -436,12 +475,19 @@ function SimulationLab({ active }: { active: boolean }) {
               aria-label="二维 LJ 粒子、独立连续热场与 A/B 内部标签；点击或使用方向键读取状态探针"
               aria-describedby="micro-boundary"
             />
+            <p className="visually-hidden" aria-live="polite" aria-atomic="true">{probeAnnouncement}</p>
             <div className="viewport-label top-left"><span>COMMITTED SNAPSHOT</span><b>{snapshot.particles.length} LJ sites · {snapshot.field.width} × {snapshot.field.height} thermal cells</b></div>
             <div className="viewport-label top-right"><span>SYMMETRIC OPERATOR SPLIT</span><b>Δt {initialWorld.options.timeStep.toFixed(3)}τ · ≈ {timeStepFs.toFixed(2)} fs Argon mapping</b></div>
             <div className="state-stamp"><span>STATE</span>{snapshot.stateId}<small>{snapshot.stateDigest}</small></div>
             {visualLayers.heatField && <div className="heat-legend" aria-label="热场颜色图例"><span>{WORLD_DOMAIN.minimumResolvedTemperatureKelvin} K</span><i /><span>{WORLD_DOMAIN.maximumResolvedTemperatureKelvin} K</span></div>}
+            {visualLayers.particles && visualLayers.species && (
+              <div className="species-legend" aria-label="A 与 B 内部标签颜色图例">
+                <span><i className="species-a" />A internal</span>
+                <span><i className="species-b" />B internal</span>
+              </div>
+            )}
             {probe && (
-              <div className="state-probe" aria-live="polite">
+              <div className="state-probe">
                 <span>STATE PROBE · CELL {probe.cellX},{probe.cellY}</span>
                 <b>{probe.temperatureKelvin.toFixed(2)} K</b>
                 <small>{probe.particleIndex === null ? '该单元附近无已选粒子' : 'particle ' + probe.particleIndex + ' · internal label ' + probe.particleSpecies}</small>
@@ -449,7 +495,7 @@ function SimulationLab({ active }: { active: boolean }) {
               </div>
             )}
             <div className="canvas-help">CLICK / ARROWS · ENTER toggles nearest particle</div>
-            <div className="axis-glyph" aria-hidden="true"><i className="axis-x" /><i className="axis-y" /><em>x</em><strong>y</strong></div>
+            <div className="axis-glyph" aria-hidden="true"><i className="axis-x" /><i className="axis-y" /><em>x</em><strong>screen y ↓</strong></div>
             <div className="viewport-boundary" id="micro-boundary"><span>TOY WORLD</span>LJ 粒子 ≠ 原子结构 · A/B ≠ 真实物种 · LJ 邻域 ≠ 化学键</div>
           </div>
 
@@ -484,19 +530,17 @@ function SimulationLab({ active }: { active: boolean }) {
             <span>PARAMETERS · UNCALIBRATED</span>
           </div>
           <div className="inspector-tabs" role="tablist" aria-label="检查器页面">
-            {([
-              ['state', '状态'],
-              ['layers', '叠层'],
-              ['reference', '概念参考'],
-            ] as const).map(([id, label]) => (
+            {INSPECTOR_TABS.map(([id, label], index) => (
               <button
                 type="button"
                 role="tab"
                 id={'inspector-tab-' + id}
-                aria-controls={'inspector-panel-' + id}
+                aria-controls={inspectorTab === id ? 'inspector-panel-' + id : undefined}
                 aria-selected={inspectorTab === id}
+                tabIndex={inspectorTab === id ? 0 : -1}
                 className={inspectorTab === id ? 'active' : ''}
                 onClick={() => setInspectorTab(id)}
+                onKeyDown={(event) => moveInspectorTab(event, index)}
                 key={id}
               >{label}</button>
             ))}
@@ -673,6 +717,13 @@ function buildProbe(snapshot: ThermochemicalSnapshot, cellX: number, cellY: numb
     particleIndex: validParticleIndex,
     particleSpecies: validParticleIndex === null ? null : snapshot.particles[validParticleIndex].species,
   };
+}
+
+function describeProbe(probe: StateProbe) {
+  const particle = probe.particleIndex === null
+    ? '附近没有选中粒子'
+    : '粒子 ' + probe.particleIndex + '，内部标签 ' + probe.particleSpecies;
+  return '单元 ' + probe.cellX + ',' + probe.cellY + '，温度 ' + probe.temperatureKelvin.toFixed(2) + ' K，' + particle;
 }
 
 function refreshProbe(snapshot: ThermochemicalSnapshot, current: StateProbe) {
@@ -853,6 +904,18 @@ function drawMicroscopicSimulation(
     context.beginPath();
     context.arc(selectedPoint.x, selectedPoint.y, 1.45 * scale, 0, Math.PI * 2);
     context.stroke();
+    const ringXShifts = [0];
+    const ringYShifts = [0];
+    if (selected.x < 1.45) ringXShifts.push(snapshot.box.width);
+    if (selected.x > snapshot.box.width - 1.45) ringXShifts.push(-snapshot.box.width);
+    if (selected.y < 1.45) ringYShifts.push(snapshot.box.height);
+    if (selected.y > snapshot.box.height - 1.45) ringYShifts.push(-snapshot.box.height);
+    ringXShifts.forEach((shiftX) => ringYShifts.forEach((shiftY) => {
+      if (shiftX === 0 && shiftY === 0) return;
+      context.beginPath();
+      context.arc(selectedPoint.x + shiftX * scale, selectedPoint.y + shiftY * scale, 1.45 * scale, 0, Math.PI * 2);
+      context.stroke();
+    }));
     context.setLineDash([]);
     snapshot.particles.forEach((particle, index) => {
       if (index === selectedParticleIndex) return;
@@ -862,8 +925,18 @@ function drawMicroscopicSimulation(
       context.strokeStyle = 'rgba(119, 175, 255, 0.55)';
       context.beginPath();
       context.moveTo(selectedPoint.x, selectedPoint.y);
-      context.lineTo(selectedPoint.x + dx * scale, selectedPoint.y + dy * scale);
+      const endpointX = selected.x + dx;
+      const endpointY = selected.y + dy;
+      context.lineTo(offsetX + endpointX * scale, offsetY + endpointY * scale);
       context.stroke();
+      const wrapX = endpointX < 0 ? snapshot.box.width : endpointX >= snapshot.box.width ? -snapshot.box.width : 0;
+      const wrapY = endpointY < 0 ? snapshot.box.height : endpointY >= snapshot.box.height ? -snapshot.box.height : 0;
+      if (wrapX !== 0 || wrapY !== 0) {
+        context.beginPath();
+        context.moveTo(selectedPoint.x + wrapX * scale, selectedPoint.y + wrapY * scale);
+        context.lineTo(offsetX + (endpointX + wrapX) * scale, offsetY + (endpointY + wrapY) * scale);
+        context.stroke();
+      }
     });
   }
 
