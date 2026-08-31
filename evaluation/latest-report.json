@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.3.1-r7b1-evidence-boundary",
-  "generatedAt": "2026-08-31T16:43:56.935Z",
+  "generatedAt": "2026-08-31T17:12:42.104Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-08-29",
-  "artifactDigest": "sha256:c9212fba3ea7a3da0cf616cec90356439f8cf903603774cb773919ffe0443c9c",
+  "artifactDigest": "sha256:36b2278ddc6d7996e02ba677e4d6d72ebbf2c84079bccc6b5b992c78a271ff83",
   "sourceFileCount": 157,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -23,7 +23,7 @@
     "app/components/molecular-lab.tsx": "sha256:ca20151657d5c32dce57d63eef1ce7c1868b24a7a3a65156da9841c5cf63dfbb",
     "app/components/molecular-visual-guides.test.ts": "sha256:0c45dd8fc690d4bbfa44d210c085d959a01718a60773220b7c6a925bab16186f",
     "app/components/molecular-visual-guides.ts": "sha256:939babc3fb0eeacd99c8d041c6551d68a6010a77c4482dd89e88067cc80091a1",
-    "app/globals.css": "sha256:e4de3845df4d63229f417681d7855e1ae4ccdfbc3b55d5424237144bdc569b5a",
+    "app/globals.css": "sha256:c2d2c74f8eba869b38940fd0fa72fe8c6840e70c173db0b52239c10b1281a7f3",
     "app/layout.tsx": "sha256:b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932",
     "app/page.tsx": "sha256:4a628e70da95c6a5d6a39b4a7a2f8b3e4940dbc6e47c454e0fa4bed00eb0d0f9",
     "atomistic/containers/README.md": "sha256:fd21f13debde87f13e382c4111c241e629702db9681b20411ea3b5310cfdde24",
@@ -257,7 +257,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 107366.45
+    "elapsedMs": 73473.9
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",

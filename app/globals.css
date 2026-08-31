@@ -850,7 +850,7 @@ button { color: inherit; }
   outline: 3px solid #087d98;
   outline-offset: 3px;
 }
-.molecular-workbench { grid-template-rows: auto minmax(900px, 1fr) auto; }
+.molecular-workbench { display: block; grid-template-rows: auto minmax(900px, 1fr) auto; }
 .molecular-workbench .lab-context-bar {
   min-height: 70px;
   padding: 12px 22px;
