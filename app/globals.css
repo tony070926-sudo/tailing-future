@@ -1137,3 +1137,275 @@ button { color: inherit; }
   .material-state-flow { grid-template-columns: 1fr; }
   .material-state-flow small { white-space: normal; }
 }
+
+/* Molecular workbench v2: dominant 3D structure, persistent view rail, bounded reference layers. */
+.molecular-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 286px;
+  gap: 12px;
+  align-items: start;
+}
+.molecular-primary { min-width: 0; }
+.molecular-workbench .molecular-viewport {
+  height: min(66vh, 640px);
+  min-height: 540px;
+}
+.scan-state-badge {
+  position: absolute;
+  z-index: 4;
+  top: 18px;
+  right: 18px;
+  min-height: 30px;
+  padding: 7px 10px;
+  border: 1px solid rgba(20, 91, 51, .16);
+  border-radius: 999px;
+  background: rgba(250, 253, 249, .9);
+  color: #52665b;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: 8px/1.2 var(--font-geist-mono), monospace;
+  pointer-events: none;
+}
+.scan-state-badge i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9aa9a0;
+}
+.scan-state-badge i.running { background: #08a84f; box-shadow: 0 0 0 4px rgba(8, 168, 79, .12); }
+.camera-tools {
+  position: absolute;
+  z-index: 5;
+  top: 58px;
+  right: 18px;
+  display: grid;
+  gap: 5px;
+}
+.camera-tools button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(8, 125, 152, .24);
+  border-radius: 14px;
+  background: rgba(250, 253, 249, .9);
+  color: #087891;
+  cursor: pointer;
+  font-size: 17px;
+  box-shadow: 0 8px 20px rgba(35, 92, 59, .07);
+}
+.camera-tools button:hover,
+.camera-tools button:focus-visible { border-color: rgba(8, 125, 152, .56); background: #fff; }
+.molecular-workbench .molecular-viewport .viewport-boundary {
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  max-width: none;
+  border-radius: 13px;
+  pointer-events: none;
+}
+.reference-viewport-badge {
+  position: absolute;
+  z-index: 4;
+  left: 14px;
+  bottom: 76px;
+  max-width: min(430px, calc(100% - 28px));
+  padding: 8px 10px;
+  border: 1px solid rgba(79, 95, 177, .28);
+  border-radius: 12px;
+  background: rgba(242, 243, 251, .92);
+  display: grid;
+  gap: 3px;
+  pointer-events: none;
+}
+.reference-viewport-badge b { color: #4f5fb1; font: 600 8px/1.35 var(--font-geist-mono), monospace; letter-spacing: .04em; }
+.reference-viewport-badge small { color: #52665b; font-size: 8px; line-height: 1.4; }
+.configuration-transport {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--lab-border);
+  border-radius: 18px;
+  background: rgba(250, 253, 249, .9);
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) auto auto;
+  gap: 10px 14px;
+  align-items: center;
+  box-shadow: 0 10px 28px rgba(43, 92, 62, .05);
+}
+.configuration-transport-title { min-width: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; }
+.configuration-transport-title span { color: #067a3e; font: 600 10px/1.3 var(--font-geist-mono), monospace; letter-spacing: .07em; }
+.configuration-transport-title b { color: #94520d; font: 600 9px/1.3 var(--font-geist-mono), monospace; text-align: right; }
+.configuration-transport-title small { grid-column: 1 / -1; color: var(--lab-text-tertiary); font-size: 9px; line-height: 1.45; }
+.configuration-buttons,
+.scan-axis-buttons,
+.scan-speed-buttons { display: flex; gap: 5px; align-items: center; }
+.configuration-buttons button,
+.scan-axis-buttons button,
+.scan-speed-buttons button,
+.molecular-controls .snapshot-download {
+  min-height: 44px;
+  padding: 7px 10px;
+  border: 1px solid rgba(20, 91, 51, .18);
+  border-radius: 12px;
+  background: #f4f9f4;
+  color: #52665b;
+  cursor: pointer;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.configuration-buttons button:hover,
+.scan-axis-buttons button:hover,
+.scan-speed-buttons button:hover,
+.molecular-controls .snapshot-download:hover { border-color: rgba(8, 125, 152, .45); color: #101914; }
+.configuration-buttons button.active,
+.scan-axis-buttons button.active,
+.scan-speed-buttons button.active { border-color: rgba(6, 122, 62, .36); background: #dff2e4; color: #067a3e; }
+.configuration-buttons button:disabled { cursor: not-allowed; opacity: .48; }
+.configuration-buttons button[aria-disabled="true"] { opacity: .58; }
+.scan-speed-buttons button:disabled { cursor: not-allowed; opacity: .42; }
+.scan-speed-buttons { grid-column: 2 / -1; justify-content: flex-end; }
+.scan-speed-buttons small { max-width: 300px; color: #94520d; font-size: 8px; line-height: 1.4; }
+.molecular-workbench .molecular-controls {
+  min-height: 78px;
+  grid-template-columns: minmax(260px, 1fr) auto;
+}
+.molecular-workbench .molecular-slider-stack label { min-height: 52px; }
+.molecular-workbench .molecular-slider-stack input[type="range"] { min-height: 44px; margin: 0; }
+.molecular-controls .snapshot-download { color: #087891; }
+.molecular-view-rail {
+  min-width: 0;
+  max-height: 940px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid rgba(20, 91, 51, .16);
+  border-radius: 22px;
+  background: rgba(239, 247, 241, .94);
+  box-shadow: 0 18px 44px rgba(37, 87, 55, .07);
+}
+.view-rail-heading { display: grid; gap: 3px; padding: 3px 3px 11px; }
+.view-rail-heading span,
+.rail-section-title span { color: #067a3e; font: 600 9px/1.35 var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.view-rail-heading b { color: #101914; font-size: 16px; }
+.view-rail-heading small,
+.rail-section-title small { color: var(--lab-text-tertiary); font-size: 9px; line-height: 1.4; }
+.rail-state-card,
+.rail-probe,
+.reference-contract-card,
+.rail-legends {
+  margin-top: 7px;
+  padding: 10px;
+  border: 1px solid rgba(20, 91, 51, .14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .76);
+}
+.rail-state-card { display: grid; gap: 4px; }
+.rail-state-card span { color: #067a3e; font: 8px/1.3 var(--font-geist-mono), monospace; }
+.rail-state-card b,
+.rail-state-card small { overflow-wrap: anywhere; color: var(--lab-text-tertiary); font: 8px/1.45 var(--font-geist-mono), monospace; }
+.rail-probe { display: grid; gap: 4px; border-color: rgba(8, 125, 152, .22); background: rgba(226, 243, 245, .66); }
+.rail-probe > span { color: var(--lab-text-tertiary); font: 8px/1.35 var(--font-geist-mono), monospace; }
+.rail-probe > b { color: #101914; font-size: 18px; }
+.rail-probe > b em { color: #087891; font: normal 9px/1 var(--font-geist-mono), monospace; }
+.rail-probe > small { color: #52665b; font: 8px/1.45 var(--font-geist-mono), monospace; }
+.rail-layer-group { margin-top: 13px; }
+.rail-section-title { margin-bottom: 5px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.reference-layer-group .rail-section-title span { color: #4f5fb1; }
+.rail-layer-button {
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 7px;
+  border: 0;
+  border-top: 1px solid rgba(20, 91, 51, .13);
+  background: transparent;
+  color: #52665b;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+.rail-layer-button > span { min-width: 0; display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 7px; align-items: center; }
+.rail-layer-button i { width: 7px; height: 7px; border: 1px solid #91a198; border-radius: 50%; }
+.rail-layer-button b { color: #41544a; font-size: 10px; font-weight: 600; }
+.rail-layer-button em { color: #6a7d72; font: normal 7px/1.2 var(--font-geist-mono), monospace; letter-spacing: .04em; }
+.rail-layer-button small { padding-left: 15px; color: var(--lab-text-tertiary); font-size: 8px; line-height: 1.4; }
+.rail-layer-button:hover { background: rgba(225, 241, 229, .75); }
+.rail-layer-button.active i { border-color: #067a3e; background: #08a84f; box-shadow: 0 0 0 4px rgba(8, 168, 79, .1); }
+.rail-layer-button.active b,
+.rail-layer-button.active em { color: #067a3e; }
+.reference-layer-group .rail-layer-button.active i { border-color: #4f5fb1; background: #6575c7; box-shadow: 0 0 0 4px rgba(79, 95, 177, .1); }
+.reference-layer-group .rail-layer-button.active b,
+.reference-layer-group .rail-layer-button.active em { color: #4f5fb1; }
+.rail-layer-button:disabled { cursor: not-allowed; opacity: .5; background: rgba(238, 241, 238, .48); }
+.reference-contract-card { border-color: rgba(79, 95, 177, .22); background: rgba(235, 237, 249, .62); }
+.reference-contract-card b { display: block; color: #4f5fb1; font: 600 8px/1.4 var(--font-geist-mono), monospace; letter-spacing: .04em; }
+.reference-contract-card > small { display: block; margin-top: 5px; color: #6b749c; font: 7px/1.4 var(--font-geist-mono), monospace; overflow-wrap: anywhere; }
+.reference-contract-card p { margin: 7px 0 0; color: #52665b; font-size: 8px; line-height: 1.55; }
+.rail-legends { display: grid; gap: 8px; }
+.rail-legends > div { display: flex; flex-wrap: wrap; gap: 7px 10px; }
+.rail-legends span { display: inline-flex; align-items: center; gap: 5px; color: #52665b; font: 8px/1.35 var(--font-geist-mono), monospace; }
+.rail-legends i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(18, 31, 22, .28); }
+.rail-legends .element-o { background: #e96754; }
+.rail-legends .element-h { background: #e7ece7; }
+.rail-legends .element-na { background: #43bdd0; }
+.rail-legends .element-cl { background: #4bc173; }
+.rail-legends .pair-force,
+.rail-legends .net-force { width: 19px; height: 2px; border: 0; border-radius: 0; background: #94520d; }
+.rail-legends .net-force { height: 3px; background: #087891; }
+.rail-legends > small { color: var(--lab-text-tertiary); font: 7px/1.5 var(--font-geist-mono), monospace; }
+.evidence-state-flow { margin-top: 16px; padding: 12px; border: 1px solid rgba(20, 91, 51, .15); border-radius: 14px; background: #f8fbf8; }
+.evidence-state-flow ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+.evidence-state-flow li { min-height: 42px; display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: center; }
+.evidence-state-flow li > span { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(6, 122, 62, .32); border-radius: 50%; color: #067a3e; font: 8px/1 var(--font-geist-mono), monospace; }
+.evidence-state-flow li div { display: grid; gap: 2px; }
+.evidence-state-flow li b { color: #41544a; font: 600 9px/1.3 var(--font-geist-mono), monospace; }
+.evidence-state-flow li small { color: var(--lab-text-tertiary); font-size: 8px; }
+.evidence-state-flow > em { display: block; margin-top: 8px; color: #94520d; text-align: right; font: normal 8px/1.3 var(--font-geist-mono), monospace; }
+
+@media (max-width: 1450px) {
+  .molecular-workspace { grid-template-columns: minmax(0, 1fr) 250px; }
+  .configuration-transport { grid-template-columns: 1fr auto; }
+  .scan-axis-buttons { grid-column: 1; }
+  .scan-speed-buttons { grid-column: 2; }
+}
+
+@media (max-width: 900px) {
+  .molecular-workspace { grid-template-columns: 1fr; }
+  .molecular-view-rail { max-height: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+  .view-rail-heading,
+  .rail-state-card,
+  .rail-probe,
+  .reference-contract-card,
+  .rail-legends { grid-column: 1 / -1; }
+  .rail-layer-group { min-width: 0; }
+}
+
+@media (max-width: 760px) {
+  .molecular-workbench .molecular-viewport { height: clamp(420px, 62svh, 620px); min-height: 420px; }
+  .molecular-workbench .molecular-viewport .viewport-label { max-width: calc(100% - 82px); }
+  .scan-state-badge { top: 88px; left: 14px; right: auto; }
+  .reference-viewport-badge {
+    top: 130px;
+    bottom: auto;
+    max-width: calc(100% - 82px);
+  }
+  .camera-tools { top: 14px; right: 14px; }
+  .configuration-transport { grid-template-columns: 1fr; }
+  .configuration-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .configuration-buttons button { white-space: normal; }
+  .scan-axis-buttons,
+  .scan-speed-buttons { grid-column: 1; justify-content: flex-start; flex-wrap: wrap; }
+  .molecular-workbench .molecular-controls { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .molecular-view-rail { grid-template-columns: 1fr; }
+  .view-rail-heading,
+  .rail-state-card,
+  .rail-probe,
+  .reference-contract-card,
+  .rail-legends { grid-column: 1; }
+  .configuration-transport-title { grid-template-columns: 1fr; }
+  .configuration-transport-title b { text-align: left; }
+  .configuration-transport-title small { grid-column: 1; }
+  .molecular-slider-stack label { grid-template-columns: 1fr 64px; }
+  .molecular-slider-stack label span { grid-column: 1 / -1; }
+}
