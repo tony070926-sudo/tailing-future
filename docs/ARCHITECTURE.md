@@ -102,7 +102,18 @@ R2 currently remains a 2D reduced-unit thermochemical verification world. It is 
   verifier is still required;
 - a browser frame assembled from one immutable observation snapshot.
 
-The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The solver contains no electronic structure, true reactive potential, 3D geometry, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.
+The Lab also exposes a separate `tf.molecular-scene/0.1` structure viewer. Its
+default water-dimer scene uses explicit xyz coordinates, rigid OpenMM 8.5.1
+TIP3P monomer geometry, cross-molecule fixed-charge Coulomb terms and one O–O
+12–6 Lennard-Jones term. Its NaCl scene uses the NBS 26 °C rocksalt lattice and
+evaluates only the central Na⁺ first coordination shell as finite, vacuum point
+charges. The monomer parameters and crystal structure are sourced; the water
+dimer pose is a controlled coordinate scan, not an experimental or optimized
+equilibrium structure. The viewer is static and separate from the
+thermochemical world state: it is not molecular dynamics, periodic Ewald/PME,
+a bulk lattice energy, a reactive potential or an electronic-structure model.
+
+The heat field represents an independent carrier; it is not claimed to be a coarse graining of the same particle degrees of freedom. A/B are passive internal labels, not chemical species or bonds. No coefficient is calibrated to a real material. The thermochemical solver contains no electronic structure, true reactive potential, three-dimensional physical degrees of freedom, phase equilibrium, convection, turbulence, reactor or process equipment. Argon constants only provide an approximate interpretation of reduced time and temperature.
 
 ## System components
 

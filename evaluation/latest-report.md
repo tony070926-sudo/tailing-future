@@ -4,7 +4,7 @@
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-08-29**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:6c37dccfd64e61f9c1342e09f819482cb11e0213bd77eb91b232b86209bf9dde` across 149 source files
+- Artifact: `sha256:857973064a0c9f356f32d0f99364bd1420198601452a0a7e8548d6f4206fea5d` across 154 source files
 
 ## Hard gates
 
@@ -13,7 +13,7 @@
 ## Executable verification
 
 - Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
-- World/action schemas and negative mutation corpus: PASS; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 76136.9 ms.
+- World/action schemas and negative mutation corpus: PASS; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 77053.9 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps
