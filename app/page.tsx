@@ -35,8 +35,32 @@ type StateProbe = {
   particleIndex: number | null;
   particleSpecies: 'A' | 'B' | null;
 };
+type ViewCamera = { yaw: number; pitch: number; zoom: number };
+type CameraGesture = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  startCamera: ViewCamera;
+  moved: boolean;
+};
+type Vector3 = { x: number; y: number; z: number };
+type ProjectedPoint = { x: number; y: number; depth: number; scale: number };
+type ProjectionFrame = {
+  camera: Vector3;
+  right: Vector3;
+  up: Vector3;
+  forward: Vector3;
+  focal: number;
+  centerX: number;
+  centerY: number;
+};
 
 const BUILD_COMMIT = process.env.NEXT_PUBLIC_TAILING_COMMIT_SHA ?? 'local-build';
+const INITIAL_VIEW_CAMERA: ViewCamera = { yaw: -35 * Math.PI / 180, pitch: 52 * Math.PI / 180, zoom: 1 };
+const MIN_CAMERA_PITCH = 20 * Math.PI / 180;
+const MAX_CAMERA_PITCH = 75 * Math.PI / 180;
+const MIN_CAMERA_ZOOM = 0.72;
+const MAX_CAMERA_ZOOM = 1.55;
 
 const INITIAL_VISUAL_LAYERS: VisualLayers = {
   heatField: true,
@@ -58,7 +82,7 @@ const VISUAL_LAYER_META: ReadonlyArray<{
   { key: 'thermalMesh', category: 'LIVE', label: '6 × 4 热单元', detail: '与后台网格逐格对齐' },
   { key: 'particles', category: 'LIVE', label: 'LJ 粒子位置', detail: '二维周期位置' },
   { key: 'species', category: 'LIVE', label: 'A / B 内部标签', detail: '非元素、非真实物种' },
-  { key: 'velocity', category: 'DERIVED', label: '速度矢量', detail: 'vx / vy 直映 screen-y ↓ · 长度封顶 0.65σ' },
+  { key: 'velocity', category: 'DERIVED', label: '速度矢量', detail: 'vx / vy 投影到二维 x/y 状态平面 · 无 vz · 长度封顶 0.65σ' },
   { key: 'periodicImages', category: 'DERIVED', label: '周期边界映像', detail: '最小像边界的视觉副本' },
   { key: 'proximity', category: 'DERIVED', label: 'LJ 近邻范围', detail: '仅选中粒子 · r < 1.45σ · ≠ 键' },
 ];
@@ -167,6 +191,7 @@ function Header({ activeView, onViewChange }: { activeView: View; onViewChange: 
 
 function SimulationLab({ active }: { active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cameraGestureRef = useRef<CameraGesture | null>(null);
   const frameRef = useRef<number | null>(null);
   const lastPresentedAtRef = useRef(0);
   const lastWallTimeRef = useRef<number | null>(null);
@@ -182,6 +207,8 @@ function SimulationLab({ active }: { active: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [probe, setProbe] = useState<StateProbe | null>(null);
   const [probeAnnouncement, setProbeAnnouncement] = useState('');
+  const [camera, setCamera] = useState<ViewCamera>(INITIAL_VIEW_CAMERA);
+  const cameraRef = useRef(camera);
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>('state');
   const [visualLayers, setVisualLayers] = useState<VisualLayers>(INITIAL_VISUAL_LAYERS);
   const [referenceTopic, setReferenceTopic] = useState<ReferenceTopic>('orbitals');
@@ -257,14 +284,25 @@ function SimulationLab({ active }: { active: boolean }) {
     }
   };
 
-  const probeState = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+  const updateCamera = useCallback((next: ViewCamera) => {
+    cameraRef.current = next;
+    setCamera(next);
+  }, []);
+
+  const probeStateAtClientPoint = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const bounds = canvas.getBoundingClientRect();
-    const layout = simulationLayout(bounds.width, bounds.height, snapshot);
-    const x = (event.clientX - bounds.left - layout.offsetX) / layout.scale;
-    const y = (event.clientY - bounds.top - layout.offsetY) / layout.scale;
-    if (x < 0 || y < 0 || x >= snapshot.box.width || y >= snapshot.box.height) {
+    const frame = createProjectionFrame(bounds.width, bounds.height, snapshot, cameraRef.current);
+    const worldPoint = unprojectToStatePlane(clientX - bounds.left, clientY - bounds.top, frame);
+    if (!worldPoint) {
+      setProbe(null);
+      setProbeAnnouncement('状态探针已清除：当前射线未与二维状态平面相交。');
+      return;
+    }
+    const x = worldPoint.x + snapshot.box.width / 2;
+    const y = worldPoint.z + snapshot.box.height / 2;
+    if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || y < 0 || x >= snapshot.box.width || y >= snapshot.box.height) {
       setProbe(null);
       setProbeAnnouncement('状态探针已清除');
       return;
@@ -276,7 +314,91 @@ function SimulationLab({ active }: { active: boolean }) {
     setProbeAnnouncement(describeProbe(nextProbe));
   };
 
+  const beginCameraGesture = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (event.button !== 0 || cameraGestureRef.current) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    cameraGestureRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startCamera: cameraRef.current,
+      moved: false,
+    };
+  };
+
+  const moveCameraGesture = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const gesture = cameraGestureRef.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (!gesture.moved && Math.hypot(deltaX, deltaY) < 6) return;
+    gesture.moved = true;
+    updateCamera({
+      yaw: gesture.startCamera.yaw + deltaX * 0.008,
+      pitch: clamp(gesture.startCamera.pitch - deltaY * 0.006, MIN_CAMERA_PITCH, MAX_CAMERA_PITCH),
+      zoom: gesture.startCamera.zoom,
+    });
+  };
+
+  const endCameraGesture = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const gesture = cameraGestureRef.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    cameraGestureRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (gesture.moved) {
+      const current = cameraRef.current;
+      setProbeAnnouncement('三维视角已旋转；底层二维状态未改变。方位 ' + Math.round(current.yaw * 180 / Math.PI) + ' 度，俯角 ' + Math.round(current.pitch * 180 / Math.PI) + ' 度。');
+      return;
+    }
+    probeStateAtClientPoint(event.clientX, event.clientY);
+  };
+
+  const cancelCameraGesture = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (cameraGestureRef.current?.pointerId !== event.pointerId) return;
+    cameraGestureRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  };
+
+  const resetCamera = useCallback(() => {
+    updateCamera({ ...INITIAL_VIEW_CAMERA });
+    setProbeAnnouncement('三维视角已复位；底层二维状态未改变。');
+  }, [updateCamera]);
+
   const probeWithKeyboard = (event: ReactKeyboardEvent<HTMLCanvasElement>) => {
+    const cameraDirection = event.shiftKey ? {
+      ArrowLeft: [-0.12, 0],
+      ArrowRight: [0.12, 0],
+      ArrowUp: [0, 0.09],
+      ArrowDown: [0, -0.09],
+    }[event.key] : undefined;
+    if (cameraDirection) {
+      event.preventDefault();
+      const next = {
+        ...cameraRef.current,
+        yaw: cameraRef.current.yaw + cameraDirection[0],
+        pitch: clamp(cameraRef.current.pitch + cameraDirection[1], MIN_CAMERA_PITCH, MAX_CAMERA_PITCH),
+      };
+      updateCamera(next);
+      setProbeAnnouncement('三维视角已调整；底层二维状态未改变。');
+      return;
+    }
+    if (event.key === '0') {
+      event.preventDefault();
+      resetCamera();
+      return;
+    }
+    if (event.key === '+' || event.key === '=') {
+      event.preventDefault();
+      updateCamera({ ...cameraRef.current, zoom: clamp(cameraRef.current.zoom * 1.1, MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM) });
+      setProbeAnnouncement('三维视角已放大；底层二维状态未改变。');
+      return;
+    }
+    if (event.key === '-' || event.key === '_') {
+      event.preventDefault();
+      updateCamera({ ...cameraRef.current, zoom: clamp(cameraRef.current.zoom / 1.1, MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM) });
+      setProbeAnnouncement('三维视角已缩小；底层二维状态未改变。');
+      return;
+    }
     const direction = {
       ArrowLeft: [-1, 0],
       ArrowRight: [1, 0],
@@ -396,8 +518,22 @@ function SimulationLab({ active }: { active: boolean }) {
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
     sizeSimulationCanvas(canvas, context);
-    drawMicroscopicSimulation(context, snapshot, canvas.clientWidth, canvas.clientHeight, visualLayers, probe?.particleIndex ?? null);
-  }, [active, probe?.particleIndex, snapshot, visualLayers]);
+    drawMicroscopicSimulation(context, snapshot, canvas.clientWidth, canvas.clientHeight, visualLayers, probe?.particleIndex ?? null, camera);
+  }, [active, camera, probe?.particleIndex, snapshot, visualLayers]);
+
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    const viewport = canvas?.parentElement;
+    if (!canvas || !viewport) return;
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const nextZoom = clamp(cameraRef.current.zoom * Math.exp(-event.deltaY * 0.0012), MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM);
+      updateCamera({ ...cameraRef.current, zoom: nextZoom });
+    };
+    viewport.addEventListener('wheel', handleWheel, { capture: true, passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel, true);
+  }, [active, updateCamera]);
 
   useEffect(() => {
     if (!active) return;
@@ -406,7 +542,7 @@ function SimulationLab({ active }: { active: boolean }) {
     if (!canvas || !context) return;
     const redrawCommittedState = () => {
       sizeSimulationCanvas(canvas, context);
-      drawMicroscopicSimulation(context, committedSnapshotRef.current, canvas.clientWidth, canvas.clientHeight, visualLayers, probe?.particleIndex ?? null);
+      drawMicroscopicSimulation(context, committedSnapshotRef.current, canvas.clientWidth, canvas.clientHeight, visualLayers, probe?.particleIndex ?? null, cameraRef.current);
     };
     const observer = new ResizeObserver(redrawCommittedState);
     observer.observe(canvas);
@@ -432,10 +568,11 @@ function SimulationLab({ active }: { active: boolean }) {
         <div>
           <span>ACTIVE BRIDGE</span>
           <b>L1 LJ particles ↔ L3 independent heat carrier</b>
-          <small>tf.observation/0.3 · 2D reduced-unit demonstration</small>
+          <small>tf.observation/0.3 · 3D visual projection of a 2D reduced-unit demonstration</small>
         </div>
         <div className="context-badges" aria-label="模型适用边界">
           <span className={snapshot.validityDomain.status === 'in_domain' ? 'live' : 'danger'}>{validityLabel}</span>
+          <span className="derived">3D VIEW · 2D STATE</span>
           <span>TOY ONLY</span>
           <span>UNCALIBRATED</span>
         </div>
@@ -462,6 +599,7 @@ function SimulationLab({ active }: { active: boolean }) {
             <div className="stage-readout">
               <span className={error ? 'danger' : isAdvancing ? 'active' : ''} aria-live="polite"><i aria-hidden="true" />{simulationStatus}</span>
               <small>{activeLayerCount} layers · snapshot-derived</small>
+              <button type="button" className="view-reset-button" onClick={resetCamera} aria-label="复位三维观察视角">↺ 复位视角</button>
             </div>
           </div>
 
@@ -469,14 +607,17 @@ function SimulationLab({ active }: { active: boolean }) {
             <canvas
               ref={canvasRef}
               className="particle-canvas"
-              onPointerDown={probeState}
+              onPointerDown={beginCameraGesture}
+              onPointerMove={moveCameraGesture}
+              onPointerUp={endCameraGesture}
+              onPointerCancel={cancelCameraGesture}
               onKeyDown={probeWithKeyboard}
               tabIndex={0}
-              aria-label="二维 LJ 粒子、独立连续热场与 A/B 内部标签；点击或使用方向键读取状态探针"
+              aria-label="二维 LJ 粒子与独立二维热场的可旋转三维视图。拖动旋转，滚轮缩放，点击或方向键读取二维状态探针，Shift 加方向键调整视角，加减键缩放，数字零复位视角。"
               aria-describedby="micro-boundary"
             />
             <p className="visually-hidden" aria-live="polite" aria-atomic="true">{probeAnnouncement}</p>
-            <div className="viewport-label top-left"><span>COMMITTED SNAPSHOT</span><b>{snapshot.particles.length} LJ sites · {snapshot.field.width} × {snapshot.field.height} thermal cells</b></div>
+            <div className="viewport-label top-left"><span>3D VIEW OF 2D SOLVER</span><b>{snapshot.particles.length} LJ sites · {snapshot.field.width} × {snapshot.field.height} thermal cells</b></div>
             <div className="viewport-label top-right"><span>SYMMETRIC OPERATOR SPLIT</span><b>Δt {initialWorld.options.timeStep.toFixed(3)}τ · ≈ {timeStepFs.toFixed(2)} fs Argon mapping</b></div>
             <div className="state-stamp"><span>STATE</span>{snapshot.stateId}<small>{snapshot.stateDigest}</small></div>
             {visualLayers.heatField && <div className="heat-legend" aria-label="热场颜色图例"><span>{WORLD_DOMAIN.minimumResolvedTemperatureKelvin} K</span><i /><span>{WORLD_DOMAIN.maximumResolvedTemperatureKelvin} K</span></div>}
@@ -494,9 +635,9 @@ function SimulationLab({ active }: { active: boolean }) {
                 <small>{probe.stateDigest.slice(0, 30)}…</small>
               </div>
             )}
-            <div className="canvas-help">CLICK / ARROWS · ENTER toggles nearest particle</div>
-            <div className="axis-glyph" aria-hidden="true"><i className="axis-x" /><i className="axis-y" /><em>x</em><strong>screen y ↓</strong></div>
-            <div className="viewport-boundary" id="micro-boundary"><span>TOY WORLD</span>LJ 粒子 ≠ 原子结构 · A/B ≠ 真实物种 · LJ 邻域 ≠ 化学键</div>
+            <div className="canvas-help">DRAG rotate · WHEEL zoom · CLICK probe · SHIFT + ARROWS camera · 0 reset</div>
+            <div className="axis-glyph" aria-hidden="true"><em>x / y state plane</em><strong>z = display depth only</strong></div>
+            <div className="viewport-boundary" id="micro-boundary"><span>3D VIEW · 2D SOLVER</span>透视、球体与显示 z 不增加物理解自由度 · A/B ≠ 真实物种 · LJ 邻域 ≠ 化学键 · 不用于材料、工艺或安全决策</div>
           </div>
 
           <div className="micro-transport">
@@ -835,75 +976,92 @@ function drawMicroscopicSimulation(
   height: number,
   layers: VisualLayers,
   selectedParticleIndex: number | null,
+  camera: ViewCamera,
 ) {
   context.clearRect(0, 0, width, height);
   context.fillStyle = '#070b0e';
   context.fillRect(0, 0, width, height);
 
-  const ambient = context.createRadialGradient(width * 0.52, height * 0.45, 0, width * 0.52, height * 0.45, width * 0.7);
-  ambient.addColorStop(0, 'rgba(54, 101, 92, 0.12)');
-  ambient.addColorStop(0.58, 'rgba(13, 24, 25, 0.04)');
+  const ambient = context.createRadialGradient(width * 0.52, height * 0.52, 0, width * 0.52, height * 0.52, width * 0.74);
+  ambient.addColorStop(0, 'rgba(54, 101, 92, 0.17)');
+  ambient.addColorStop(0.58, 'rgba(13, 24, 25, 0.05)');
   ambient.addColorStop(1, 'rgba(7, 11, 14, 0)');
   context.fillStyle = ambient;
   context.fillRect(0, 0, width, height);
 
-  const { scale, offsetX, offsetY } = simulationLayout(width, height, snapshot);
-  const worldWidth = snapshot.box.width * scale;
-  const worldHeight = snapshot.box.height * scale;
-  const cellWidth = worldWidth / snapshot.field.width;
-  const cellHeight = worldHeight / snapshot.field.height;
+  drawPerspectiveBackdrop(context, width, height);
+  const frame = createProjectionFrame(width, height, snapshot, camera);
+  const statePoint = (x: number, y: number, displayZ = 0) => projectWorldPoint(
+    {
+      x: x - snapshot.box.width / 2,
+      y: displayZ,
+      z: y - snapshot.box.height / 2,
+    },
+    frame,
+  );
   const temperatureRange = WORLD_DOMAIN.maximumResolvedTemperatureKelvin - WORLD_DOMAIN.minimumResolvedTemperatureKelvin;
-  const point = (index: number) => ({
-    x: offsetX + snapshot.particles[index].x * scale,
-    y: offsetY + snapshot.particles[index].y * scale,
+  const topCorners = [
+    statePoint(0, 0),
+    statePoint(snapshot.box.width, 0),
+    statePoint(snapshot.box.width, snapshot.box.height),
+    statePoint(0, snapshot.box.height),
+  ];
+  const bottomCorners = [
+    statePoint(0, 0, -0.28),
+    statePoint(snapshot.box.width, 0, -0.28),
+    statePoint(snapshot.box.width, snapshot.box.height, -0.28),
+    statePoint(0, snapshot.box.height, -0.28),
+  ];
+
+  context.fillStyle = 'rgba(4, 8, 10, 0.68)';
+  drawProjectedPolygon(context, bottomCorners, true, false);
+  const slabFaces = topCorners.map((point, index) => [
+    point,
+    topCorners[(index + 1) % topCorners.length],
+    bottomCorners[(index + 1) % bottomCorners.length],
+    bottomCorners[index],
+  ]).sort((a, b) => averageDepth(b) - averageDepth(a));
+  slabFaces.forEach((face, index) => {
+    context.fillStyle = index % 2 === 0 ? 'rgba(28, 48, 49, 0.72)' : 'rgba(16, 31, 34, 0.78)';
+    context.strokeStyle = 'rgba(152, 190, 179, 0.16)';
+    context.lineWidth = 1;
+    drawProjectedPolygon(context, face, true, true);
   });
 
-  context.save();
-  context.beginPath();
-  context.rect(offsetX, offsetY, worldWidth, worldHeight);
-  context.clip();
+  const cellWidth = snapshot.box.width / snapshot.field.width;
+  const cellHeight = snapshot.box.height / snapshot.field.height;
+  const heatCells = snapshot.field.valuesKelvin.map((temperature, index) => {
+    const cellX = index % snapshot.field.width;
+    const cellY = Math.floor(index / snapshot.field.width);
+    const x0 = cellX * cellWidth;
+    const y0 = cellY * cellHeight;
+    const points = [
+      statePoint(x0, y0),
+      statePoint(x0 + cellWidth, y0),
+      statePoint(x0 + cellWidth, y0 + cellHeight),
+      statePoint(x0, y0 + cellHeight),
+    ];
+    return { cellX, cellY, points, temperature, depth: averageDepth(points) };
+  }).sort((a, b) => b.depth - a.depth || a.cellY - b.cellY || a.cellX - b.cellX);
 
-  if (layers.heatField) {
-    snapshot.field.valuesKelvin.forEach((temperature, index) => {
-      const cellX = index % snapshot.field.width;
-      const cellY = Math.floor(index / snapshot.field.width);
-      const normalized = Math.min(1, Math.max(0, (temperature - WORLD_DOMAIN.minimumResolvedTemperatureKelvin) / temperatureRange));
-      context.fillStyle = heatColor(normalized);
-      context.fillRect(offsetX + cellX * cellWidth, offsetY + cellY * cellHeight, cellWidth + 0.6, cellHeight + 0.6);
-    });
-  } else {
-    context.fillStyle = 'rgba(16, 25, 29, 0.72)';
-    context.fillRect(offsetX, offsetY, worldWidth, worldHeight);
-  }
-
-  if (layers.thermalMesh) {
-    context.strokeStyle = 'rgba(189, 212, 204, 0.13)';
+  heatCells.forEach((cell) => {
+    const normalized = clamp(
+      (cell.temperature - WORLD_DOMAIN.minimumResolvedTemperatureKelvin) / temperatureRange,
+      0,
+      1,
+    );
+    context.fillStyle = layers.heatField ? heatColor(normalized) : 'rgba(16, 25, 29, 0.84)';
+    context.strokeStyle = layers.thermalMesh ? 'rgba(196, 222, 213, 0.18)' : 'rgba(0, 0, 0, 0)';
     context.lineWidth = 1;
-    for (let column = 1; column < snapshot.field.width; column += 1) {
-      const x = offsetX + column * cellWidth;
-      context.beginPath();
-      context.moveTo(x, offsetY);
-      context.lineTo(x, offsetY + worldHeight);
-      context.stroke();
-    }
-    for (let row = 1; row < snapshot.field.height; row += 1) {
-      const y = offsetY + row * cellHeight;
-      context.beginPath();
-      context.moveTo(offsetX, y);
-      context.lineTo(offsetX + worldWidth, y);
-      context.stroke();
-    }
-  }
+    drawProjectedPolygon(context, cell.points, true, layers.thermalMesh);
+  });
 
   if (layers.proximity && selectedParticleIndex !== null && snapshot.particles[selectedParticleIndex]) {
     const selected = snapshot.particles[selectedParticleIndex];
-    const selectedPoint = point(selectedParticleIndex);
     context.strokeStyle = 'rgba(119, 175, 255, 0.42)';
     context.lineWidth = 1;
     context.setLineDash([4, 5]);
-    context.beginPath();
-    context.arc(selectedPoint.x, selectedPoint.y, 1.45 * scale, 0, Math.PI * 2);
-    context.stroke();
+    drawStatePlaneCircle(context, statePoint, selected.x, selected.y, 1.45);
     const ringXShifts = [0];
     const ringYShifts = [0];
     if (selected.x < 1.45) ringXShifts.push(snapshot.box.width);
@@ -912,9 +1070,7 @@ function drawMicroscopicSimulation(
     if (selected.y > snapshot.box.height - 1.45) ringYShifts.push(-snapshot.box.height);
     ringXShifts.forEach((shiftX) => ringYShifts.forEach((shiftY) => {
       if (shiftX === 0 && shiftY === 0) return;
-      context.beginPath();
-      context.arc(selectedPoint.x + shiftX * scale, selectedPoint.y + shiftY * scale, 1.45 * scale, 0, Math.PI * 2);
-      context.stroke();
+      drawStatePlaneCircle(context, statePoint, selected.x + shiftX, selected.y + shiftY, 1.45);
     }));
     context.setLineDash([]);
     snapshot.particles.forEach((particle, index) => {
@@ -924,51 +1080,57 @@ function drawMicroscopicSimulation(
       if (Math.hypot(dx, dy) >= 1.45) return;
       context.strokeStyle = 'rgba(119, 175, 255, 0.55)';
       context.beginPath();
-      context.moveTo(selectedPoint.x, selectedPoint.y);
       const endpointX = selected.x + dx;
       const endpointY = selected.y + dy;
-      context.lineTo(offsetX + endpointX * scale, offsetY + endpointY * scale);
+      const selectedPoint = statePoint(selected.x, selected.y, 0.015);
+      const endpoint = statePoint(endpointX, endpointY, 0.015);
+      context.moveTo(selectedPoint.x, selectedPoint.y);
+      context.lineTo(endpoint.x, endpoint.y);
       context.stroke();
       const wrapX = endpointX < 0 ? snapshot.box.width : endpointX >= snapshot.box.width ? -snapshot.box.width : 0;
       const wrapY = endpointY < 0 ? snapshot.box.height : endpointY >= snapshot.box.height ? -snapshot.box.height : 0;
       if (wrapX !== 0 || wrapY !== 0) {
+        const wrappedStart = statePoint(selected.x + wrapX, selected.y + wrapY, 0.015);
+        const wrappedEnd = statePoint(endpointX + wrapX, endpointY + wrapY, 0.015);
         context.beginPath();
-        context.moveTo(selectedPoint.x + wrapX * scale, selectedPoint.y + wrapY * scale);
-        context.lineTo(offsetX + (endpointX + wrapX) * scale, offsetY + (endpointY + wrapY) * scale);
+        context.moveTo(wrappedStart.x, wrappedStart.y);
+        context.lineTo(wrappedEnd.x, wrappedEnd.y);
         context.stroke();
       }
     });
   }
 
   if (layers.velocity) {
-    snapshot.particles.forEach((particle, index) => {
-      const origin = point(index);
-      const rawX = particle.vx * scale * 0.32;
-      const rawY = particle.vy * scale * 0.32;
+    snapshot.particles.forEach((particle) => {
+      const rawX = particle.vx * 0.32;
+      const rawY = particle.vy * 0.32;
       const rawLength = Math.hypot(rawX, rawY);
-      const clamp = rawLength > 0 ? Math.min(1, scale * 0.65 / rawLength) : 0;
-      const vectorX = rawX * clamp;
-      const vectorY = rawY * clamp;
-      context.strokeStyle = 'rgba(119, 175, 255, 0.7)';
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(origin.x, origin.y);
-      context.lineTo(origin.x + vectorX, origin.y + vectorY);
-      context.stroke();
+      const vectorScale = rawLength > 0 ? Math.min(1, 0.65 / rawLength) : 0;
+      const origin = statePoint(particle.x, particle.y, 0.025);
+      const end = statePoint(particle.x + rawX * vectorScale, particle.y + rawY * vectorScale, 0.025);
+      drawProjectedArrow(context, origin, end, 'rgba(119, 175, 255, 0.72)');
     });
   }
 
-  if (layers.particles) {
-    snapshot.particles.forEach((particle, index) => {
-      const position = point(index);
-      drawParticleGlyph(context, position.x, position.y, layers.species ? particle.species : null, index === selectedParticleIndex, 1);
+  const renderParticles: Array<{
+    index: number;
+    species: 'A' | 'B';
+    position: ProjectedPoint;
+    opacity: number;
+    periodic: boolean;
+  }> = [];
+  if (layers.particles) snapshot.particles.forEach((particle, index) => {
+    renderParticles.push({
+      index,
+      species: particle.species,
+      position: statePoint(particle.x, particle.y, 0.04),
+      opacity: 1,
+      periodic: false,
     });
-  }
-  context.restore();
-
+  });
   if (layers.periodicImages && layers.particles) {
     const edgeDistance = 0.8;
-    snapshot.particles.forEach((particle) => {
+    snapshot.particles.forEach((particle, index) => {
       const xShifts = [0];
       const yShifts = [0];
       if (particle.x < edgeDistance) xShifts.push(snapshot.box.width);
@@ -977,48 +1139,74 @@ function drawMicroscopicSimulation(
       if (particle.y > snapshot.box.height - edgeDistance) yShifts.push(-snapshot.box.height);
       xShifts.forEach((shiftX) => yShifts.forEach((shiftY) => {
         if (shiftX === 0 && shiftY === 0) return;
-        drawParticleGlyph(
-          context,
-          offsetX + (particle.x + shiftX) * scale,
-          offsetY + (particle.y + shiftY) * scale,
-          layers.species ? particle.species : null,
-          false,
-          0.34,
-        );
+        renderParticles.push({
+          index,
+          species: particle.species,
+          position: statePoint(particle.x + shiftX, particle.y + shiftY, 0.04),
+          opacity: 0.3,
+          periodic: true,
+        });
       }));
     });
   }
 
+  renderParticles
+    .sort((a, b) => b.position.depth - a.position.depth || Number(a.periodic) - Number(b.periodic) || a.index - b.index)
+    .forEach((particle) => drawParticleGlyph(
+      context,
+      particle.position,
+      layers.species ? particle.species : null,
+      !particle.periodic && particle.index === selectedParticleIndex,
+      particle.opacity,
+    ));
+
   context.strokeStyle = 'rgba(174, 205, 195, 0.34)';
   context.lineWidth = 1;
-  context.strokeRect(offsetX + 0.5, offsetY + 0.5, worldWidth - 1, worldHeight - 1);
+  drawProjectedPolygon(context, topCorners, false, true);
+  drawWorldAxes(context, statePoint, snapshot);
 }
 
 function drawParticleGlyph(
   context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
+  point: ProjectedPoint,
   species: 'A' | 'B' | null,
   selected: boolean,
   opacity: number,
 ) {
   const color = species === 'B' ? [242, 183, 107] : species === 'A' ? [109, 222, 198] : [199, 215, 210];
-  const halo = context.createRadialGradient(x, y, 0, x, y, 11);
+  const radius = clamp(point.scale * 0.22, 3.8, 10.5);
+  context.fillStyle = `rgba(0, 0, 0, ${0.34 * opacity})`;
+  context.beginPath();
+  context.ellipse(point.x + radius * 0.42, point.y + radius * 0.62, radius * 0.92, radius * 0.4, 0, 0, Math.PI * 2);
+  context.fill();
+  const halo = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius * 2.4);
   halo.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.34 * opacity})`);
   halo.addColorStop(1, `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0)`);
   context.fillStyle = halo;
   context.beginPath();
-  context.arc(x, y, 11, 0, Math.PI * 2);
+  context.arc(point.x, point.y, radius * 2.4, 0, Math.PI * 2);
   context.fill();
-  context.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.94 * opacity})`;
+  const sphere = context.createRadialGradient(
+    point.x - radius * 0.38,
+    point.y - radius * 0.42,
+    radius * 0.08,
+    point.x,
+    point.y,
+    radius,
+  );
+  sphere.addColorStop(0, `rgba(244, 255, 251, ${0.98 * opacity})`);
+  sphere.addColorStop(0.24, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.98 * opacity})`);
+  sphere.addColorStop(0.72, `rgba(${Math.round(color[0] * 0.55)}, ${Math.round(color[1] * 0.55)}, ${Math.round(color[2] * 0.55)}, ${0.96 * opacity})`);
+  sphere.addColorStop(1, `rgba(3, 8, 10, ${0.98 * opacity})`);
+  context.fillStyle = sphere;
   context.beginPath();
-  context.arc(x, y, 3.2, 0, Math.PI * 2);
+  context.arc(point.x, point.y, radius, 0, Math.PI * 2);
   context.fill();
   if (selected) {
     context.strokeStyle = 'rgba(237, 245, 242, 0.9)';
     context.lineWidth = 1.25;
     context.beginPath();
-    context.arc(x, y, 7.4, 0, Math.PI * 2);
+    context.arc(point.x, point.y, radius + 4.2, 0, Math.PI * 2);
     context.stroke();
   }
 }
@@ -1027,19 +1215,210 @@ function heatColor(value: number) {
   const cold = [25, 83, 96];
   const hot = [208, 118, 61];
   const channel = (index: number) => Math.round(cold[index] + (hot[index] - cold[index]) * value);
-  return `rgba(${channel(0)}, ${channel(1)}, ${channel(2)}, ${0.18 + value * 0.38})`;
+  return `rgba(${channel(0)}, ${channel(1)}, ${channel(2)}, ${0.48 + value * 0.34})`;
 }
 
 function minimumImage(delta: number, extent: number) { return delta - extent * Math.round(delta / extent); }
 
-function simulationLayout(width: number, height: number, snapshot: ThermochemicalSnapshot) {
-  const padding = Math.min(58, width * 0.08);
-  const scale = Math.min((width - padding * 2) / snapshot.box.width, (height - padding * 2) / snapshot.box.height);
-  return {
-    scale,
-    offsetX: (width - snapshot.box.width * scale) / 2,
-    offsetY: (height - snapshot.box.height * scale) / 2,
+function createProjectionFrame(
+  width: number,
+  height: number,
+  snapshot: ThermochemicalSnapshot,
+  cameraState: ViewCamera,
+): ProjectionFrame {
+  const maximumExtent = Math.max(snapshot.box.width, snapshot.box.height);
+  const distance = maximumExtent * 2.35;
+  const camera = {
+    x: Math.sin(cameraState.yaw) * Math.cos(cameraState.pitch) * distance,
+    y: Math.sin(cameraState.pitch) * distance,
+    z: Math.cos(cameraState.yaw) * Math.cos(cameraState.pitch) * distance,
   };
+  const forward = normalizeVector({ x: -camera.x, y: -camera.y, z: -camera.z });
+  const right = normalizeVector(crossVector(forward, { x: 0, y: 1, z: 0 }));
+  const up = normalizeVector(crossVector(right, forward));
+  const rawFrame: ProjectionFrame = { camera, forward, right, up, focal: 1, centerX: 0, centerY: 0 };
+  const rawCorners = [
+    { x: -snapshot.box.width / 2, y: 0, z: -snapshot.box.height / 2 },
+    { x: snapshot.box.width / 2, y: 0, z: -snapshot.box.height / 2 },
+    { x: snapshot.box.width / 2, y: 0, z: snapshot.box.height / 2 },
+    { x: -snapshot.box.width / 2, y: 0, z: snapshot.box.height / 2 },
+  ].map((point) => projectWorldPoint(point, rawFrame));
+  const minimumX = Math.min(...rawCorners.map((point) => point.x));
+  const maximumX = Math.max(...rawCorners.map((point) => point.x));
+  const minimumY = Math.min(...rawCorners.map((point) => point.y));
+  const maximumY = Math.max(...rawCorners.map((point) => point.y));
+  const availableWidth = Math.max(120, width - Math.min(84, width * 0.14));
+  const availableHeight = Math.max(150, height - Math.min(132, height * 0.28));
+  const fitFocal = Math.min(
+    availableWidth / Math.max(maximumX - minimumX, 1e-9),
+    availableHeight / Math.max(maximumY - minimumY, 1e-9),
+  );
+  const focal = fitFocal * cameraState.zoom;
+  return {
+    ...rawFrame,
+    focal,
+    centerX: width / 2 - (minimumX + maximumX) / 2 * focal,
+    centerY: height * (width < 600 ? 0.58 : 0.54) - (minimumY + maximumY) / 2 * focal,
+  };
+}
+
+function projectWorldPoint(point: Vector3, frame: ProjectionFrame): ProjectedPoint {
+  const relative = {
+    x: point.x - frame.camera.x,
+    y: point.y - frame.camera.y,
+    z: point.z - frame.camera.z,
+  };
+  const depth = Math.max(1e-6, dotVector(relative, frame.forward));
+  const scale = frame.focal / depth;
+  return {
+    x: frame.centerX + dotVector(relative, frame.right) * scale,
+    y: frame.centerY - dotVector(relative, frame.up) * scale,
+    depth,
+    scale,
+  };
+}
+
+function unprojectToStatePlane(screenX: number, screenY: number, frame: ProjectionFrame): Vector3 | null {
+  const viewX = (screenX - frame.centerX) / frame.focal;
+  const viewY = -(screenY - frame.centerY) / frame.focal;
+  const direction = normalizeVector({
+    x: frame.forward.x + frame.right.x * viewX + frame.up.x * viewY,
+    y: frame.forward.y + frame.right.y * viewX + frame.up.y * viewY,
+    z: frame.forward.z + frame.right.z * viewX + frame.up.z * viewY,
+  });
+  if (Math.abs(direction.y) < 1e-8) return null;
+  const distance = -frame.camera.y / direction.y;
+  if (distance <= 0) return null;
+  return {
+    x: frame.camera.x + direction.x * distance,
+    y: 0,
+    z: frame.camera.z + direction.z * distance,
+  };
+}
+
+function drawPerspectiveBackdrop(context: CanvasRenderingContext2D, width: number, height: number) {
+  context.save();
+  context.strokeStyle = 'rgba(109, 222, 198, 0.035)';
+  context.lineWidth = 1;
+  const spacing = Math.max(34, Math.min(58, width / 15));
+  for (let x = width % spacing; x < width; x += spacing) {
+    context.beginPath();
+    context.moveTo(x, 0);
+    context.lineTo(x, height);
+    context.stroke();
+  }
+  for (let y = height % spacing; y < height; y += spacing) {
+    context.beginPath();
+    context.moveTo(0, y);
+    context.lineTo(width, y);
+    context.stroke();
+  }
+  context.restore();
+}
+
+function drawProjectedPolygon(
+  context: CanvasRenderingContext2D,
+  points: ReadonlyArray<ProjectedPoint>,
+  fill: boolean,
+  stroke: boolean,
+) {
+  if (points.length === 0) return;
+  context.beginPath();
+  context.moveTo(points[0].x, points[0].y);
+  points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+  context.closePath();
+  if (fill) context.fill();
+  if (stroke) context.stroke();
+}
+
+function drawStatePlaneCircle(
+  context: CanvasRenderingContext2D,
+  statePoint: (x: number, y: number, displayZ?: number) => ProjectedPoint,
+  centerX: number,
+  centerY: number,
+  radius: number,
+) {
+  context.beginPath();
+  const segments = 48;
+  for (let index = 0; index <= segments; index += 1) {
+    const angle = index / segments * Math.PI * 2;
+    const point = statePoint(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius, 0.018);
+    if (index === 0) context.moveTo(point.x, point.y);
+    else context.lineTo(point.x, point.y);
+  }
+  context.stroke();
+}
+
+function drawProjectedArrow(
+  context: CanvasRenderingContext2D,
+  origin: ProjectedPoint,
+  end: ProjectedPoint,
+  color: string,
+) {
+  context.strokeStyle = color;
+  context.fillStyle = color;
+  context.lineWidth = 1;
+  context.beginPath();
+  context.moveTo(origin.x, origin.y);
+  context.lineTo(end.x, end.y);
+  context.stroke();
+  const angle = Math.atan2(end.y - origin.y, end.x - origin.x);
+  context.beginPath();
+  context.moveTo(end.x, end.y);
+  context.lineTo(end.x - Math.cos(angle - 0.55) * 4, end.y - Math.sin(angle - 0.55) * 4);
+  context.lineTo(end.x - Math.cos(angle + 0.55) * 4, end.y - Math.sin(angle + 0.55) * 4);
+  context.closePath();
+  context.fill();
+}
+
+function drawWorldAxes(
+  context: CanvasRenderingContext2D,
+  statePoint: (x: number, y: number, displayZ?: number) => ProjectedPoint,
+  snapshot: ThermochemicalSnapshot,
+) {
+  const axisLength = Math.min(snapshot.box.width, snapshot.box.height) * 0.12;
+  const originX = snapshot.box.width * 0.08;
+  const originY = snapshot.box.height * 0.08;
+  const origin = statePoint(originX, originY, 0.04);
+  const xEnd = statePoint(originX + axisLength, originY, 0.04);
+  const yEnd = statePoint(originX, originY + axisLength, 0.04);
+  const displayZEnd = statePoint(originX, originY, axisLength * 0.72);
+  drawProjectedArrow(context, origin, xEnd, 'rgba(242, 183, 107, 0.9)');
+  drawProjectedArrow(context, origin, yEnd, 'rgba(109, 222, 198, 0.9)');
+  drawProjectedArrow(context, origin, displayZEnd, 'rgba(119, 175, 255, 0.9)');
+  context.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+  context.fillStyle = 'rgba(242, 183, 107, 0.96)';
+  context.fillText('x', xEnd.x + 5, xEnd.y);
+  context.fillStyle = 'rgba(109, 222, 198, 0.96)';
+  context.fillText('y', yEnd.x + 5, yEnd.y);
+  context.fillStyle = 'rgba(119, 175, 255, 0.96)';
+  context.fillText('z display', displayZEnd.x + 5, displayZEnd.y);
+}
+
+function averageDepth(points: ReadonlyArray<ProjectedPoint>) {
+  return points.reduce((sum, point) => sum + point.depth, 0) / Math.max(1, points.length);
+}
+
+function dotVector(left: Vector3, right: Vector3) {
+  return left.x * right.x + left.y * right.y + left.z * right.z;
+}
+
+function crossVector(left: Vector3, right: Vector3): Vector3 {
+  return {
+    x: left.y * right.z - left.z * right.y,
+    y: left.z * right.x - left.x * right.z,
+    z: left.x * right.y - left.y * right.x,
+  };
+}
+
+function normalizeVector(vector: Vector3): Vector3 {
+  const length = Math.hypot(vector.x, vector.y, vector.z);
+  if (length === 0) return { x: 0, y: 0, z: 0 };
+  return { x: vector.x / length, y: vector.y / length, z: vector.z / length };
+}
+
+function clamp(value: number, minimum: number, maximum: number) {
+  return Math.min(maximum, Math.max(minimum, value));
 }
 
 function subscribeReducedMotion(callback: () => void) {
