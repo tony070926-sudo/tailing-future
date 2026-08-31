@@ -36,6 +36,19 @@ AI may supply a representation, prior, closure, surrogate, decoder or design pol
 
 The 2024 [AIDO perspective](https://arxiv.org/abs/2412.06993) describes a three-stage engineering path: independent modules, bottom-up connections and holistic alignment. The 2026 [AIDO Cell technical report](https://genbio.ai/research/AIDO%20Cell%20V1%20-%20Technical%20Report%20-%2018%20Aug%202026.pdf) describes a linked nucleotide/gene/transcript/cell state and the operational primitives `observe`, `perturb`, `simulate`, `branch/restore` and `design`; this is a coordinated system of models and references, not evidence of one monolithic checkpoint. The [AIDO Cell release](https://genbio.ai/aido-cell-simulator/) describes continuous interventions, branching and several readout families. Its public benchmark figures remain vendor-reported, the full system is a closed alpha, and the product page says further temporal and metabolic capabilities and novel wet-lab validation are still being developed.
 
+The Lab's visual system adapts observed principles from the official
+[AIDO Cell title graphic](https://genbio.ai/wp-content/uploads/2026/08/aido-cell-x-1600x900-1.jpg),
+[operation/readout diagram](https://genbio.ai/wp-content/uploads/2026/08/vc_abstract-1-1920x1225.png)
+and [perturbation atlas](https://genbio.ai/wp-content/uploads/2026/08/image-5-1-1920x763.jpg):
+a warm near-white field, high-contrast typography, restrained emerald/cyan
+accents, thin system connections and a clear state-to-readout hierarchy. No
+GenBio artwork, logo, copy, experimental label, trajectory or layout asset is
+included. In Tailing Future, decorative system lines stay outside the physical
+Canvas. Bonds, guides, pair contributions and force arrows inside the Canvas
+remain separately styled and are drawn only from the typed molecular scene;
+the operation rail is explicitly a static configuration workflow, not time,
+transport or molecular dynamics.
+
 Materials do not have one equivalent of the DNA → RNA → protein central dogma. The working causal graph is bidirectional:
 
 ```text

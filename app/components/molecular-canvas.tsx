@@ -199,7 +199,7 @@ function drawMolecularScene(
   layers: Readonly<{ showLabels: boolean; showInteractions: boolean; showForces: boolean }>,
 ) {
   context.clearRect(0, 0, width, height);
-  context.fillStyle = '#05090c';
+  context.fillStyle = '#f2f7f3';
   context.fillRect(0, 0, width, height);
   drawBackdrop(context, width, height);
 
@@ -262,7 +262,7 @@ function drawMolecularScene(
       radius,
       atom.id === selectedAtomId,
       layers.showLabels && emphasized,
-      emphasized ? 1 : 0.28,
+      emphasized ? 1 : 0.38,
     );
   });
 
@@ -311,13 +311,13 @@ function createProjection(scene: MolecularScene, width: number, height: number, 
 
 function drawBackdrop(context: CanvasRenderingContext2D, width: number, height: number) {
   const glow = context.createRadialGradient(width * 0.52, height * 0.46, 0, width * 0.52, height * 0.46, width * 0.72);
-  glow.addColorStop(0, 'rgba(52, 100, 105, .2)');
-  glow.addColorStop(0.52, 'rgba(16, 31, 37, .08)');
-  glow.addColorStop(1, 'rgba(5, 9, 12, 0)');
+  glow.addColorStop(0, 'rgba(70, 211, 128, .22)');
+  glow.addColorStop(0.48, 'rgba(82, 198, 218, .09)');
+  glow.addColorStop(1, 'rgba(242, 247, 243, 0)');
   context.fillStyle = glow;
   context.fillRect(0, 0, width, height);
   context.save();
-  context.strokeStyle = 'rgba(112, 151, 151, .06)';
+  context.strokeStyle = 'rgba(13, 154, 81, .08)';
   context.lineWidth = 1;
   for (let x = 0; x <= width; x += 48) {
     context.beginPath();
@@ -351,7 +351,7 @@ function drawUnitCell(
   const edges = [[0, 1], [0, 2], [1, 3], [2, 3], [4, 5], [4, 6], [5, 7], [6, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
   context.save();
   context.setLineDash([5, 6]);
-  context.strokeStyle = 'rgba(119, 175, 255, .34)';
+  context.strokeStyle = 'rgba(9, 139, 167, .42)';
   context.lineWidth = 1;
   edges.forEach(([start, end]) => drawLine(context, vertices[start], vertices[end]));
   context.restore();
@@ -360,13 +360,13 @@ function drawUnitCell(
 function drawBondCylinder(context: CanvasRenderingContext2D, start: ProjectedPoint, end: ProjectedPoint) {
   context.save();
   context.lineCap = 'round';
-  context.strokeStyle = 'rgba(2, 5, 7, .86)';
+  context.strokeStyle = 'rgba(14, 24, 18, .74)';
   context.lineWidth = Math.max(9, 13 * (start.scale + end.scale) / 2);
   drawLine(context, start, end);
   const gradient = context.createLinearGradient(start.x, start.y, end.x, end.y);
-  gradient.addColorStop(0, '#cbd4dc');
-  gradient.addColorStop(0.48, '#7e8f9b');
-  gradient.addColorStop(1, '#e7edf0');
+  gradient.addColorStop(0, '#f8fbf7');
+  gradient.addColorStop(0.48, '#728078');
+  gradient.addColorStop(1, '#dce5de');
   context.strokeStyle = gradient;
   context.lineWidth = Math.max(5, 8 * (start.scale + end.scale) / 2);
   drawLine(context, start, end);
@@ -376,7 +376,7 @@ function drawBondCylinder(context: CanvasRenderingContext2D, start: ProjectedPoi
 function drawGuide(context: CanvasRenderingContext2D, start: ProjectedPoint, end: ProjectedPoint, kind: string) {
   context.save();
   context.setLineDash(kind === 'hydrogen-bond-guide' ? [4, 7] : [3, 7]);
-  context.strokeStyle = kind === 'hydrogen-bond-guide' ? 'rgba(111, 220, 234, .62)' : 'rgba(173, 143, 255, .36)';
+  context.strokeStyle = kind === 'hydrogen-bond-guide' ? 'rgba(8, 125, 152, .68)' : 'rgba(79, 95, 177, .44)';
   context.lineWidth = kind === 'hydrogen-bond-guide' ? 2 : 1.2;
   drawLine(context, start, end);
   context.restore();
@@ -385,7 +385,7 @@ function drawGuide(context: CanvasRenderingContext2D, start: ProjectedPoint, end
 function drawPairInfluence(context: CanvasRenderingContext2D, start: ProjectedPoint, end: ProjectedPoint, interaction: PairInteraction) {
   context.save();
   context.setLineDash([2, 9]);
-  context.strokeStyle = interaction.coulombEnergyKjMol < 0 ? 'rgba(109, 222, 198, .4)' : 'rgba(255, 125, 131, .38)';
+  context.strokeStyle = interaction.coulombEnergyKjMol < 0 ? 'rgba(7, 153, 74, .52)' : 'rgba(166, 58, 66, .48)';
   context.lineWidth = 1.2;
   drawLine(context, start, end);
   context.restore();
@@ -403,7 +403,7 @@ function drawPairForceArrows(
     if (interaction.sourceAtomId === selected.id) force = scale(interaction.forceOnTargetKjMolAngstrom, -1);
     if (!force || magnitude(force) < 1e-10) return;
     const endWorld = add(selected.positionAngstrom, scale(normalize(force), scene.kind === 'water-dimer' ? 0.38 : 0.7));
-    drawArrow(context, project(selected.positionAngstrom), project(endWorld), 'rgba(242, 183, 107, .72)', 1.2, 5);
+    drawArrow(context, project(selected.positionAngstrom), project(endWorld), 'rgba(148, 82, 13, .82)', 1.2, 5);
   });
 }
 
@@ -416,7 +416,7 @@ function drawNetForceArrow(
   const force = scene.forceByAtomIdKjMolAngstrom[selected.id];
   if (!force || magnitude(force) < 1e-8) return;
   const endWorld = add(selected.positionAngstrom, scale(normalize(force), scene.kind === 'water-dimer' ? 0.9 : 1.25));
-  drawArrow(context, project(selected.positionAngstrom), project(endWorld), '#77afff', 3, 9);
+  drawArrow(context, project(selected.positionAngstrom), project(endWorld), '#087d98', 3, 9);
 }
 
 function drawArrow(
@@ -455,20 +455,20 @@ function drawAtomSurface(
   opacity: number,
 ) {
   const colors = {
-    H: ['#ffffff', '#aab6c0', '#46525d'],
-    O: ['#ffb4b9', '#e34d5a', '#6d1520'],
-    Na: ['#d3c9ff', '#8872ee', '#30276d'],
-    Cl: ['#c3f6d4', '#55c984', '#175b39'],
+    H: ['#ffffff', '#e7ece7', '#a8b4ab'],
+    O: ['#ffd6cd', '#e96754', '#9e2e25'],
+    Na: ['#d7f7fb', '#43bdd0', '#11758a'],
+    Cl: ['#d1f6d9', '#4bc173', '#167840'],
   }[atom.element];
   context.save();
   context.globalAlpha = opacity;
   if (selected) {
     context.beginPath();
     context.arc(point.x, point.y, radius + 9, 0, Math.PI * 2);
-    context.strokeStyle = '#77afff';
+    context.strokeStyle = '#087d98';
     context.lineWidth = 2;
-    context.shadowColor = '#77afff';
-    context.shadowBlur = 18;
+    context.shadowColor = '#087d98';
+    context.shadowBlur = 14;
     context.stroke();
   }
   const gradient = context.createRadialGradient(
@@ -484,19 +484,19 @@ function drawAtomSurface(
   gradient.addColorStop(1, colors[2]);
   context.fillStyle = gradient;
   context.shadowColor = colors[1];
-  context.shadowBlur = selected ? 16 : 8;
+  context.shadowBlur = selected ? 12 : 0;
   context.beginPath();
   context.arc(point.x, point.y, radius, 0, Math.PI * 2);
   context.fill();
   context.shadowBlur = 0;
-  context.strokeStyle = 'rgba(255, 255, 255, .26)';
+  context.strokeStyle = atom.element === 'H' ? 'rgba(18, 31, 22, .55)' : 'rgba(18, 31, 22, .34)';
   context.lineWidth = 1;
   context.stroke();
   if (showLabel && (selected || atom.element !== 'H' || radius > 12)) {
     context.font = `${Math.round(clamp(radius * 0.55, 9, 15))}px SFMono-Regular, monospace`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillStyle = atom.element === 'H' ? '#1d272e' : '#f8fbfa';
+    context.fillStyle = '#132219';
     context.fillText(atom.label, point.x, point.y + 1);
   }
   context.restore();

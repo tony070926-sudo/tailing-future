@@ -160,7 +160,7 @@ export default function Home() {
   const [activeView, setActiveView] = useState<View>('lab');
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${activeView === 'lab' ? 'material-light-shell' : ''}`}>
       <Header activeView={activeView} onViewChange={setActiveView} />
       <MolecularLab active={activeView === 'lab'} />
       {activeView === 'architecture' && <ArchitectureView />}
