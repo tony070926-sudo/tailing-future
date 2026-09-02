@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-02T18:49:14.794Z",
+  "generatedAt": "2026-09-02T20:12:31.333Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:3e91a7d9856cb927a8ee3bb75219c33857c783578387f16c683d65b102d21024",
+  "artifactDigest": "sha256:c23335fc8f28c1913cb1851036e90177daba7e55864ff65ec69605f5373136f8",
   "sourceFileCount": 375,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -363,10 +363,10 @@
     "scripts/github-release-policy.test.mjs": "sha256:c8a49539d3bab740a680dea1312e115fa8b3c88b86a4e2a8f392d8266c1e86cf",
     "scripts/release-artifact.mjs": "sha256:93e171f5ecfca397baa6d19ba4201ebb03680335a73941658f9b4214dadc310c",
     "scripts/release-artifact.test.mjs": "sha256:a3ee8f111c897a8f130ddaabdb49d31594207f07f7cc7094068925321b6801c6",
-    "scripts/release-cloudflare.mjs": "sha256:4ca3254ce970b8761e6aabe3bfcfc591f07e970a66429a08fd186e88f1225c9d",
+    "scripts/release-cloudflare.mjs": "sha256:83df33a6ae805ef7830286723991587bfdc4eb9f7504aaca03834f760cd71a9f",
     "scripts/release-cloudflare.test.mjs": "sha256:ac1818a3ccec2d6808b56645296520d63de517d5682f047393e8d159883e99ce",
-    "scripts/release-report.mjs": "sha256:67638c540bbf540503c80de0cba1479fd33a80df06c9aa22de1235f09d6cc935",
-    "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
+    "scripts/release-report.mjs": "sha256:66db07001dc6a4f87d33362af679ea236703692f763ffe0489f054bce378a00d",
+    "scripts/release-report.test.mjs": "sha256:56bbe63fc293246ce26cc2f9347af98e8bd1226ba8a2faea8f21cc0b31682fb3",
     "scripts/safe_extract_zip.py": "sha256:e6b1a46b1ba471c888402cd75987819b18097d0bc6d2f87f5d1469f3d6a7caa0",
     "scripts/safe_extract_zip_test.py": "sha256:9ce8308a8cbf23d45d34ff66ffbd2905328ce4dbd4eb88241ef5a2ed396e3a59",
     "scripts/source-scope.mjs": "sha256:1e533a10f810d5e80146d57d89a6a503ccdff70d233af670c84fa858f1459d6b",
@@ -741,7 +741,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 339159.77
+    "elapsedMs": 261952.54
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -837,8 +837,8 @@
     "scripts/evaluate.mjs": "sha256:494596fd49e25eeea09f6a8b03ab2f426060ef6a5250ff19825bc7e89079f260",
     "scripts/evaluate-worker.mjs": "sha256:3b02bd2bc6c58e102056a51d166278ff1b15f24c9c024514ea690ecfec2cc717",
     "scripts/evaluate-launcher.test.mjs": "sha256:427a7c7f8f62c6fad5ed77f9d750f63b3f3f78a005e0f4d7548103e349f8d36f",
-    "scripts/release-cloudflare.mjs": "sha256:4ca3254ce970b8761e6aabe3bfcfc591f07e970a66429a08fd186e88f1225c9d",
-    "scripts/release-report.test.mjs": "sha256:a6850c86b8033e5fdcdf8839b6b3a8800a11df5c3b92fb4d5d83a96e85d402af",
+    "scripts/release-cloudflare.mjs": "sha256:83df33a6ae805ef7830286723991587bfdc4eb9f7504aaca03834f760cd71a9f",
+    "scripts/release-report.test.mjs": "sha256:56bbe63fc293246ce26cc2f9347af98e8bd1226ba8a2faea8f21cc0b31682fb3",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d"
   },
   "weightedScore": 41,
