@@ -1,4 +1,4 @@
-import { digestValue, shortDigest } from '../simulation/digest';
+import { digestValue } from '../simulation/digest.ts';
 
 export type Vector3 = Readonly<{ x: number; y: number; z: number }>;
 export type MolecularSceneKind = 'water-dimer' | 'nacl-rocksalt';
@@ -48,7 +48,7 @@ export type PairInteraction = Readonly<{
 export type ModelSource = Readonly<{
   title: string;
   url: string;
-  role: 'primary-paper' | 'parameter-snapshot' | 'experimental-structure' | 'crystallographic-reference' | 'unit-definition';
+  role: 'primary-paper' | 'parameter-snapshot' | 'experimental-structure' | 'crystallographic-reference' | 'unit-definition' | 'numerical-method-reference';
 }>;
 
 export type MolecularScene = Readonly<{
@@ -172,7 +172,7 @@ export function createWaterDimerScene(options: Readonly<{
   for (const source of waterA) {
     for (const target of waterB) {
       const includeOxygenLennardJones = source.element === 'O' && target.element === 'O';
-      const interaction = createPairInteraction(source, target, includeOxygenLennardJones);
+      const interaction = evaluateClassicalPairInteraction(source, target, includeOxygenLennardJones);
       pairInteractions.push(interaction);
       forceByAtomIdKjMolAngstrom[target.id] = add(
         forceByAtomIdKjMolAngstrom[target.id],
@@ -200,6 +200,7 @@ export function createWaterDimerScene(options: Readonly<{
     energy: { coulombKjMol, lennardJonesKjMol, totalKjMol },
     sources: MODEL_SOURCES['water-dimer'],
   };
+  const stateDigest = molecularIdentityDigest(identityPayload);
 
   return {
     kind: 'water-dimer',
@@ -223,8 +224,8 @@ export function createWaterDimerScene(options: Readonly<{
       totalKjMol,
       label: '两分子之间的经典势能',
     },
-    stateId: `tf.molecular/water-dimer/${shortDigest(identityPayload)}`,
-    stateDigest: digestValue(identityPayload),
+    stateId: `tf.molecular/water-dimer/${stateDigest.slice('sha256:'.length, 'sha256:'.length + 16)}`,
+    stateDigest,
     defaultSelectedAtomId: 'water-b-o',
     selectableAtomIds: atoms.map((atom) => atom.id),
     parameters: [
@@ -300,7 +301,7 @@ export function createNaclRocksaltScene(options: Readonly<{
       z: selectedLatticeIndex.z + direction.z,
     };
     const neighbor = requireAtom(atomById, latticeAtomId(neighborIndex.x, neighborIndex.y, neighborIndex.z));
-    const interaction = createPairInteraction(neighbor, selectedAtom, false);
+    const interaction = evaluateClassicalPairInteraction(neighbor, selectedAtom, false);
     pairInteractions.push(interaction);
     forceByAtomIdKjMolAngstrom[selectedAtom.id] = add(
       forceByAtomIdKjMolAngstrom[selectedAtom.id] ?? { x: 0, y: 0, z: 0 },
@@ -328,6 +329,7 @@ export function createNaclRocksaltScene(options: Readonly<{
     selectedFirstShellCoulombKjMol: coulombKjMol,
     sources: MODEL_SOURCES['nacl-rocksalt'],
   };
+  const stateDigest = molecularIdentityDigest(identityPayload);
 
   return {
     kind: 'nacl-rocksalt',
@@ -345,8 +347,8 @@ export function createNaclRocksaltScene(options: Readonly<{
       totalKjMol: coulombKjMol,
       label: '中央 Na⁺ 的第一配位壳成对和（不是晶格能）',
     },
-    stateId: `tf.molecular/nacl-rocksalt/${shortDigest(identityPayload)}`,
-    stateDigest: digestValue(identityPayload),
+    stateId: `tf.molecular/nacl-rocksalt/${stateDigest.slice('sha256:'.length, 'sha256:'.length + 16)}`,
+    stateDigest,
     defaultSelectedAtomId: selectedAtomId,
     selectableAtomIds: [selectedAtomId],
     parameters: [
@@ -453,7 +455,11 @@ function createWaterBonds(atoms: ReadonlyArray<MolecularAtom>): MolecularBond[] 
   }));
 }
 
-function createPairInteraction(source: MolecularAtom, target: MolecularAtom, includeOxygenLennardJones: boolean): PairInteraction {
+export function evaluateClassicalPairInteraction(
+  source: MolecularAtom,
+  target: MolecularAtom,
+  includeOxygenLennardJones: boolean,
+): PairInteraction {
   const displacement = subtract(target.positionAngstrom, source.positionAngstrom);
   const distance = magnitude(displacement);
   if (!Number.isFinite(distance) || distance <= 0.2) throw new Error(`invalid pair distance for ${source.id} and ${target.id}`);
@@ -529,6 +535,32 @@ function assertRange(label: string, value: number, minimum: number, maximum: num
 
 function assertFiniteNumbers(label: string, values: ReadonlyArray<number>) {
   if (values.some((value) => !Number.isFinite(value))) throw new Error(`${label} produced a non-finite value`);
+}
+
+// Scene identities are rendered during SSR and recomputed during browser hydration.
+// Transcendental and inverse-distance kernels may differ by a few final IEEE-754
+// bits across JavaScript engines, so the public scene contract commits to 13
+// significant decimal digits and canonical key order. The simulation world keeps
+// its separate, exact runtime/state digests and conservation gates.
+function molecularIdentityDigest(value: unknown) {
+  return digestValue(canonicalizeMolecularIdentity(value));
+}
+
+function canonicalizeMolecularIdentity(value: unknown): unknown {
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new Error('molecular scene identity contains a non-finite number');
+    if (Object.is(value, -0) || value === 0) return 0;
+    return Number(value.toPrecision(13));
+  }
+  if (Array.isArray(value)) return value.map(canonicalizeMolecularIdentity);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
+        .map(([key, entry]) => [key, canonicalizeMolecularIdentity(entry)]),
+    );
+  }
+  return value;
 }
 
 function rotateX(vector: Vector3, degrees: number): Vector3 {

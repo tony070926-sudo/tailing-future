@@ -41,6 +41,8 @@ export function selectProjectSourceFiles(relativePaths) {
   if (!Array.isArray(relativePaths)) throw new TypeError('relativePaths must be an array');
   return [...new Set(relativePaths.filter(isProjectSourcePath))]
     .filter((relativePath) => relativePath !== 'evaluation/latest-report.json'
-      && relativePath !== 'evaluation/latest-report.md')
+      && relativePath !== 'evaluation/latest-report.md'
+      && relativePath !== 'evaluation/public-summary.json'
+      && relativePath !== 'evaluation/public-product-evaluation.json')
     .sort();
 }

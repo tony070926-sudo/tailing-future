@@ -70,6 +70,11 @@ describe('OpenMM 8.5.1 TIP3P water dimer scene', () => {
     const second = createWaterDimerScene({ oxygenSeparationAngstrom: 2.93, donorAngleDegrees: -12 });
     expect(first).toEqual(second);
     expect(first.stateDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.stateId.endsWith(first.stateDigest.slice(7, 23))).toBe(true);
+    expect(createWaterDimerScene({
+      oxygenSeparationAngstrom: 2.93 + Number.EPSILON,
+      donorAngleDegrees: -12,
+    }).stateDigest).toBe(first.stateDigest);
     expect(createWaterDimerScene({ oxygenSeparationAngstrom: 2.94, donorAngleDegrees: -12 }).stateId).not.toBe(first.stateId);
   });
 });

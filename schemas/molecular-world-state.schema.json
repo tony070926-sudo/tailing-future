@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/molecular-world-state/0.4",
+  "title": "Tailing Future Fixed-Orientation Molecular World State",
+  "type": "object",
+  "required": [
+    "schemaVersion", "worldId", "stateId", "stateDigest", "physicalDigest",
+    "parentStateId", "stateNamespace", "revision", "actionCount", "branchCount",
+    "step", "options", "topologyDigest", "topology", "bodies",
+    "initialTotalEnergyKjMol", "initialMomentumDaltonAngstromPerPicosecond",
+    "initialCenterOfMassAngstrom", "energyReferenceKjMol", "energyStatistics", "lastAction"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.molecular-world-state/0.4" },
+    "worldId": { "const": "tf.world/water-dimer-fixed-orientation-isolated-energy/v1" },
+    "stateId": { "type": "string", "minLength": 1 },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "physicalDigest": { "$ref": "#/$defs/digest" },
+    "parentStateId": { "type": ["string", "null"] },
+    "stateNamespace": { "type": "string", "pattern": "^tfmw-[0-9a-f]{16}(?:-b[0-9a-z]+)*$" },
+    "revision": { "type": "integer", "minimum": 0 },
+    "actionCount": { "type": "integer", "minimum": 0 },
+    "branchCount": { "type": "integer", "minimum": 0 },
+    "step": { "type": "integer", "minimum": 0, "maximum": 10000 },
+    "options": { "$ref": "#/$defs/options" },
+    "topologyDigest": { "$ref": "#/$defs/digest" },
+    "topology": { "$ref": "#/$defs/topology" },
+    "bodies": { "$ref": "#/$defs/bodies" },
+    "initialTotalEnergyKjMol": { "type": "number" },
+    "initialMomentumDaltonAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+    "initialCenterOfMassAngstrom": { "$ref": "#/$defs/vector3" },
+    "energyReferenceKjMol": { "type": "number", "exclusiveMinimum": 0 },
+    "energyStatistics": {
+      "type": "object",
+      "required": [
+        "sampleCount", "timeSumPicoseconds", "energySumKjMol",
+        "timeSquaredSumPicoseconds2", "timeEnergySumKjMolPicoseconds",
+        "maximumAbsoluteExcursionKjMol"
+      ],
+      "properties": {
+        "sampleCount": { "type": "integer", "minimum": 1, "maximum": 10001 },
+        "timeSumPicoseconds": { "type": "number", "minimum": 0 },
+        "energySumKjMol": { "type": "number" },
+        "timeSquaredSumPicoseconds2": { "type": "number", "minimum": 0 },
+        "timeEnergySumKjMolPicoseconds": { "type": "number" },
+        "maximumAbsoluteExcursionKjMol": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "lastAction": { "anyOf": [{ "$ref": "#/$defs/action" }, { "type": "null" }] }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "vector3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "scenario", "forceModel", "integrator", "constraint", "ensemble",
+        "boundary", "timeStepPicoseconds", "maximumSteps"
+      ],
+      "properties": {
+        "scenario": { "const": "water-dimer-2.9A-0deg-rest/v1" },
+        "forceModel": { "const": "tf-local-classical-tip3p-openmm-8.5.1-parameters-cross-only/v1" },
+        "integrator": { "const": "velocity-verlet-fixed-orientation/v1" },
+        "constraint": { "const": "fixed-body-frame-no-rotation" },
+        "ensemble": { "const": "isolated-constant-energy" },
+        "boundary": { "const": "vacuum" },
+        "timeStepPicoseconds": { "const": 0.0005 },
+        "maximumSteps": { "const": 10000 }
+      },
+      "additionalProperties": false
+    },
+    "atomTopology": {
+      "type": "object",
+      "required": [
+        "id", "bodyId", "label", "element", "chargeE", "massDalton",
+        "displayRadiusAngstrom", "fixedOffsetFromComAngstrom"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "bodyId": { "enum": ["water-a", "water-b"] },
+        "label": { "type": "string", "minLength": 1 },
+        "element": { "enum": ["H", "O"] },
+        "chargeE": { "type": "number" },
+        "massDalton": { "type": "number", "exclusiveMinimum": 0 },
+        "displayRadiusAngstrom": { "type": "number", "exclusiveMinimum": 0 },
+        "fixedOffsetFromComAngstrom": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "bond": {
+      "type": "object",
+      "required": ["id", "atomAId", "atomBId", "kind", "lengthAngstrom"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "atomAId": { "type": "string", "minLength": 1 },
+        "atomBId": { "type": "string", "minLength": 1 },
+        "kind": { "const": "rigid-covalent" },
+        "lengthAngstrom": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "topology": {
+      "type": "object",
+      "required": ["atoms", "bonds"],
+      "properties": {
+        "atoms": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/atomTopology" }
+        },
+        "bonds": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/bond" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "body": {
+      "type": "object",
+      "required": ["id", "centerOfMassAngstrom", "velocityAngstromPerPicosecond"],
+      "properties": {
+        "id": { "enum": ["water-a", "water-b"] },
+        "centerOfMassAngstrom": { "$ref": "#/$defs/vector3" },
+        "velocityAngstromPerPicosecond": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "bodies": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/body" }, { "type": "object", "properties": { "id": { "const": "water-a" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/body" }, { "type": "object", "properties": { "id": { "const": "water-b" } } }] }
+      ],
+      "items": false
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId",
+        "appliedAtStep", "parameters"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "tf.molecular-action/0.4" },
+        "actionId": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["step", "branch"] },
+        "parentStateId": { "type": "string", "minLength": 1 },
+        "resultingStateId": { "type": "string", "minLength": 1 },
+        "appliedAtStep": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "parameters": { "type": "object" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "const": "step" },
+            "parameters": {
+              "type": "object",
+              "required": ["substeps"],
+              "properties": { "substeps": { "type": "integer", "minimum": 1, "maximum": 1000 } },
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "branch" },
+            "parameters": {
+              "type": "object",
+              "required": ["fromStep", "branchOrdinal"],
+              "properties": {
+                "fromStep": { "type": "integer", "minimum": 0, "maximum": 10000 },
+                "branchOrdinal": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

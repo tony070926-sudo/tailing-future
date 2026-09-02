@@ -1,0 +1,17 @@
+**
+!atomistic/
+!atomistic/containers/
+!atomistic/containers/openmm-water.Dockerfile
+!atomistic/containers/openmm-water.Dockerfile.dockerignore
+!atomistic/locks/
+!atomistic/locks/openmm-water.requirements.lock
+!scripts/
+!scripts/atomistic/
+!scripts/atomistic/openmm/
+!scripts/atomistic/openmm/contract.py
+!scripts/atomistic/openmm/binary_codec.py
+!scripts/atomistic/openmm/engine.py
+!scripts/atomistic/openmm/worker.py
+!scripts/atomistic/openmm/diagnostics.py
+!scripts/atomistic/openmm/outcome.py
+!scripts/atomistic/openmm/producer.py

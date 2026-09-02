@@ -16,6 +16,13 @@ for (const specifier of ['ajv/dist/2020.js', 'js-yaml']) {
 }
 const projectSpecifiers = [
   '../lib/simulation/thermochemical-world.ts',
+  '../lib/simulation/molecular-world.ts',
+  '../lib/simulation/periodic-verification.ts',
+  '../lib/simulation/aqueous-foundation-verification.ts',
+  '../lib/simulation/aqueous-system-spec.ts',
+  '../lib/simulation/nacl-water-interface-system-v0410.ts',
+  '../lib/simulation/periodic-atomistic-world.ts',
+  '../lib/simulation/digest.ts',
   './atomistic/full-candidate-plan-policy.mjs',
   './workflow-policy.mjs',
   './comparator-evidence-policy.mjs',
@@ -32,6 +39,29 @@ for (const specifier of projectSpecifiers) {
 const [
   { default: Ajv2020 },
   { runThermochemicalVerification, ThermochemicalWorld },
+  { MolecularDynamicsWorld },
+  {
+    assertPeriodicAtomisticVerification,
+    PERIODIC_ATOMISTIC_VERIFICATION_GATE_NAMES,
+    runPeriodicAtomisticVerification,
+  },
+  {
+    AQUEOUS_FOUNDATION_GATE_NAMES,
+    assertAqueousFoundationVerification,
+    runAqueousFoundationVerification,
+  },
+  {
+    assertOpenMmTip3pControlPlanV044,
+    createOpenMmTip3pControlPlanV044,
+  },
+  {
+    assertNaClWaterInterfacePlanV0410,
+    createNaClWaterInterfaceActionV0410,
+    createNaClWaterInterfacePlanV0410,
+    observeNaClWaterInterfaceActionV0410,
+  },
+  { createPeriodicArgonCalibrationWorld },
+  { digestValue, shortDigest },
   {
     FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT,
     FULL_CANDIDATE_PLAN_RAW_DIGEST,
@@ -46,6 +76,13 @@ const [
 ] = await Promise.all([
   import('ajv/dist/2020.js'),
   import('../lib/simulation/thermochemical-world.ts'),
+  import('../lib/simulation/molecular-world.ts'),
+  import('../lib/simulation/periodic-verification.ts'),
+  import('../lib/simulation/aqueous-foundation-verification.ts'),
+  import('../lib/simulation/aqueous-system-spec.ts'),
+  import('../lib/simulation/nacl-water-interface-system-v0410.ts'),
+  import('../lib/simulation/periodic-atomistic-world.ts'),
+  import('../lib/simulation/digest.ts'),
   import('./atomistic/full-candidate-plan-policy.mjs'),
   import('./workflow-policy.mjs'),
   import('./comparator-evidence-policy.mjs'),
@@ -67,6 +104,22 @@ const scorecard = await readJson('evaluation/current-scorecard.json');
 const registry = await readJson('evaluation/baselines/registry.json');
 const worldSchema = await readJson('schemas/world-state.schema.json');
 const actionSchema = await readJson('schemas/action.schema.json');
+const molecularWorldSchema = await readJson('schemas/molecular-world-state.schema.json');
+const molecularActionSchema = await readJson('schemas/molecular-action.schema.json');
+const molecularObservationSchema = await readJson('schemas/molecular-observation.schema.json');
+const periodicAtomisticWorldSchema = await readJson('schemas/periodic-atomistic-world-state.schema.json');
+const periodicAtomisticActionSchema = await readJson('schemas/periodic-atomistic-action.schema.json');
+const periodicAtomisticObservationSchema = await readJson('schemas/periodic-atomistic-observation.schema.json');
+const aqueousSystemSpecSchema = await readJson('schemas/aqueous-system-spec.schema.json');
+const aqueousForceBackendManifestSchema = await readJson('schemas/aqueous-force-backend-manifest.schema.json');
+const naclWaterInterfaceSystemSchema = await readJson('schemas/nacl-water-interface-system.schema.json');
+const naclWaterInterfaceCoordinateSeedSchema = await readJson('schemas/nacl-water-interface-coordinate-seed.schema.json');
+const naclWaterInterfacePlanSchema = await readJson('schemas/nacl-water-interface-plan.schema.json');
+const naclWaterInterfaceActionSchema = await readJson('schemas/nacl-water-interface-action.schema.json');
+const naclWaterInterfaceObservationSchema = await readJson('schemas/nacl-water-interface-observation.schema.json');
+const naclWaterInterfaceImportReceiptSchema = await readJson(
+  'schemas/nacl-water-interface-import-receipt.schema.json',
+);
 const atomisticPlan = await readJson('evaluation/atomistic/reproduction-plan.json');
 const atomisticPlanSchema = await readJson('schemas/atomistic-reproduction.schema.json');
 const atomisticCandidatePlan = await readJson('evaluation/atomistic/full-candidate-plan.json');
@@ -177,11 +230,177 @@ try {
   hardGateFailures.push(`Thermochemical verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
 }
 
-let schemaVerification = { world: false, action: false, actionMutationCorpus: false, runtimeActionSemantics: false, atomisticPlan: false, datasetCatalog: false, workflowPolicy: false, comparatorReceipts: false };
+let molecularVerification = null;
+try {
+  const first = new MolecularDynamicsWorld();
+  const replay = new MolecularDynamicsWorld();
+  let maximumRelativeEnergyExcursion = 0;
+  let maximumMomentumResidual = 0;
+  let maximumCenterOfMassResidualAngstrom = 0;
+  let maximumInternalForceResidualKjMolAngstrom = 0;
+  for (let index = 0; index < 100; index += 1) {
+    const frame = first.advance(100);
+    replay.advance(100);
+    maximumRelativeEnergyExcursion = Math.max(maximumRelativeEnergyExcursion, frame.energy.maximumRelativeExcursion);
+    maximumMomentumResidual = Math.max(maximumMomentumResidual, frame.conservation.momentumResidual);
+    maximumCenterOfMassResidualAngstrom = Math.max(maximumCenterOfMassResidualAngstrom, frame.conservation.centerOfMassResidualAngstrom);
+    maximumInternalForceResidualKjMolAngstrom = Math.max(maximumInternalForceResidualKjMolAngstrom, frame.conservation.internalForceResidualKjMolAngstrom);
+  }
+  const finalFrame = first.observe();
+  const replayFrame = replay.observe();
+  const deterministicPhysicalReplay = finalFrame.physicalDigest === replayFrame.physicalDigest;
+  const deterministicFullStateReplay = JSON.stringify(first.serialize()) === JSON.stringify(replay.serialize());
+  const deterministicObservationReplay = JSON.stringify(finalFrame) === JSON.stringify(replayFrame);
+  molecularVerification = {
+    steps: finalFrame.step,
+    timePicoseconds: finalFrame.timePicoseconds,
+    maximumRelativeEnergyExcursion,
+    linearRelativeDriftRatePerPicosecond: finalFrame.energy.linearRelativeDriftRatePerPicosecond,
+    energyDriftSampleCount: finalFrame.energy.driftSampleCount,
+    maximumMomentumResidual,
+    maximumCenterOfMassResidualAngstrom,
+    maximumInternalForceResidualKjMolAngstrom,
+    maximumBondResidualAngstrom: finalFrame.conservation.maximumBondResidualAngstrom,
+    maximumAngleResidualDegrees: finalFrame.conservation.maximumAngleResidualDegrees,
+    deterministicPhysicalReplay,
+    deterministicFullStateReplay,
+    deterministicObservationReplay,
+    deterministicReplay: deterministicPhysicalReplay && deterministicFullStateReplay && deterministicObservationReplay,
+  };
+  const molecularChecks = [
+    ['Molecular 10,000-step horizon', molecularVerification.steps === 10_000, molecularVerification.steps],
+    ['Molecular energy envelope', molecularVerification.maximumRelativeEnergyExcursion <= 1e-4, molecularVerification.maximumRelativeEnergyExcursion],
+    ['Molecular energy sample count', molecularVerification.energyDriftSampleCount === 10_001, molecularVerification.energyDriftSampleCount],
+    ['Molecular momentum closure', molecularVerification.maximumMomentumResidual <= 1e-9, molecularVerification.maximumMomentumResidual],
+    ['Molecular COM closure', molecularVerification.maximumCenterOfMassResidualAngstrom <= 1e-9, molecularVerification.maximumCenterOfMassResidualAngstrom],
+    ['Molecular internal-force closure', molecularVerification.maximumInternalForceResidualKjMolAngstrom <= 1e-9, molecularVerification.maximumInternalForceResidualKjMolAngstrom],
+    ['Molecular rigid bond closure', molecularVerification.maximumBondResidualAngstrom <= 1e-12, molecularVerification.maximumBondResidualAngstrom],
+    ['Molecular rigid angle closure', molecularVerification.maximumAngleResidualDegrees <= 1e-10, molecularVerification.maximumAngleResidualDegrees],
+    ['Molecular deterministic physical replay', molecularVerification.deterministicPhysicalReplay === true, molecularVerification.deterministicPhysicalReplay],
+    ['Molecular deterministic full-state replay', molecularVerification.deterministicFullStateReplay === true, molecularVerification.deterministicFullStateReplay],
+    ['Molecular deterministic observation replay', molecularVerification.deterministicObservationReplay === true, molecularVerification.deterministicObservationReplay],
+  ];
+  for (const [label, passed, value] of molecularChecks) if (!passed) hardGateFailures.push(`${label} failed with ${String(value)}.`);
+} catch (error) {
+  hardGateFailures.push(`Molecular verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
+}
+
+let periodicAtomisticVerification = null;
+try {
+  periodicAtomisticVerification = runPeriodicAtomisticVerification();
+  const failedPeriodicGates = PERIODIC_ATOMISTIC_VERIFICATION_GATE_NAMES
+    .filter((gateName) => periodicAtomisticVerification[gateName] !== true);
+  for (const gateName of failedPeriodicGates) {
+    hardGateFailures.push(`Periodic atomistic ${gateName} hard gate failed.`);
+  }
+  try {
+    assertPeriodicAtomisticVerification(periodicAtomisticVerification);
+  } catch (error) {
+    hardGateFailures.push(`Periodic atomistic verification assertion failed: ${error instanceof Error ? error.message : String(error)}.`);
+  }
+} catch (error) {
+  hardGateFailures.push(`Periodic atomistic verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
+}
+
+let aqueousFoundationVerification = null;
+try {
+  aqueousFoundationVerification = runAqueousFoundationVerification();
+  const failedAqueousFoundationGates = AQUEOUS_FOUNDATION_GATE_NAMES
+    .filter((gateName) => aqueousFoundationVerification.gates[gateName] !== true);
+  for (const gateName of failedAqueousFoundationGates) {
+    hardGateFailures.push(`Aqueous foundation ${gateName} hard gate failed.`);
+  }
+  for (const boundaryName of [
+    'naclWaterTrajectory',
+    'pmeExecution',
+    'openmmExecution',
+    'intramolecularExclusions',
+    'virialOrStress',
+    'fullVelocityVerletRattleIntegrator',
+    'constraintImpulseEnergyAudit',
+    'licenseClearance',
+    'externalModelReproduction',
+    'scorePromotionEligible',
+  ]) {
+    if (aqueousFoundationVerification.boundaries[boundaryName] !== false) {
+      hardGateFailures.push(`Aqueous foundation unsupported boundary ${boundaryName} must remain false.`);
+    }
+  }
+  try {
+    assertAqueousFoundationVerification(aqueousFoundationVerification);
+  } catch (error) {
+    hardGateFailures.push(`Aqueous foundation verification assertion failed: ${error instanceof Error ? error.message : String(error)}.`);
+  }
+} catch (error) {
+  hardGateFailures.push(`Aqueous foundation verification crashed: ${error instanceof Error ? error.message : String(error)}.`);
+}
+
+let schemaVerification = {
+  world: false,
+  action: false,
+  actionMutationCorpus: false,
+  runtimeActionSemantics: false,
+  molecularWorld: false,
+  molecularAction: false,
+  molecularObservation: false,
+  molecularRuntimeSemantics: false,
+  periodicAtomisticWorld: false,
+  periodicAtomisticAction: false,
+  periodicAtomisticObservation: false,
+  aqueousSystemSpec: false,
+  aqueousForceBackends: false,
+  aqueousControlPlanSemantics: false,
+  naclWaterInterfaceContract: false,
+  naclWaterInterfaceImportContract: false,
+  atomisticPlan: false,
+  datasetCatalog: false,
+  workflowPolicy: false,
+  comparatorReceipts: false,
+};
 try {
   const ajv = new Ajv2020({ allErrors: true, allowUnionTypes: true });
   const validateWorld = ajv.compile(worldSchema);
   const validateAction = ajv.compile(actionSchema);
+  const validateMolecularWorld = ajv.compile(molecularWorldSchema);
+  const validateMolecularAction = ajv.compile(molecularActionSchema);
+  const validateMolecularObservation = ajv.compile(molecularObservationSchema);
+  const validatePeriodicAtomisticWorld = ajv.compile(periodicAtomisticWorldSchema);
+  const validatePeriodicAtomisticAction = ajv.compile(periodicAtomisticActionSchema);
+  const validatePeriodicAtomisticObservation = ajv.compile(periodicAtomisticObservationSchema);
+  const validateAqueousSystemSpec = ajv.compile(aqueousSystemSpecSchema);
+  const validateAqueousForceBackendManifest = ajv.compile(aqueousForceBackendManifestSchema);
+  const interfaceAjv = new Ajv2020({ allErrors: true, strict: true, strictNumbers: true });
+  for (const schema of [
+    naclWaterInterfaceSystemSchema,
+    naclWaterInterfaceCoordinateSeedSchema,
+    naclWaterInterfacePlanSchema,
+    naclWaterInterfaceActionSchema,
+    naclWaterInterfaceObservationSchema,
+    naclWaterInterfaceImportReceiptSchema,
+  ]) interfaceAjv.addSchema(schema);
+  const validateNaClWaterInterfaceSystem = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-system/0.4.10',
+  );
+  const validateNaClWaterInterfaceCoordinateSeed = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-coordinate-seed/0.4.10',
+  );
+  const validateNaClWaterInterfacePlan = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-plan/0.4.10',
+  );
+  const validateNaClWaterInterfaceAction = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-action/0.4.10',
+  );
+  const validateNaClWaterInterfaceObservation = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-observation/0.4.10',
+  );
+  const validateNaClWaterInterfaceImportReceipt = interfaceAjv.getSchema(
+    'https://tailing.future/schemas/nacl-water-interface-import-receipt/0.4.11',
+  );
+  if (!validateNaClWaterInterfaceSystem || !validateNaClWaterInterfaceCoordinateSeed
+    || !validateNaClWaterInterfacePlan || !validateNaClWaterInterfaceAction
+    || !validateNaClWaterInterfaceObservation) {
+    throw new Error('NaCl-water interface v0.4.10 schema registration is incomplete.');
+  }
   const validateAtomisticPlan = ajv.compile(atomisticPlanSchema);
   const validateAtomisticCandidatePlan = ajv.compile(atomisticCandidatePlanSchema);
   ajv.compile(atomisticCandidateReceiptSchema);
@@ -203,8 +422,205 @@ try {
   } catch (error) {
     runtimeActionSemantics = error instanceof Error && error.message.includes('step action does not match its state transition');
   }
+  const molecularSample = new MolecularDynamicsWorld();
+  const molecularInitialState = molecularSample.serialize();
+  const molecularInitialObservation = molecularSample.observe();
+  molecularSample.advance(3);
+  const molecularSteppedState = molecularSample.serialize();
+  const molecularSteppedObservation = molecularSample.observe();
+  const molecularActionValid = validateMolecularAction(molecularSteppedState.lastAction);
+  const molecularStepTamper = structuredClone(molecularSteppedState);
+  molecularStepTamper.lastAction.parameters = { substeps: 2 };
+  molecularStepTamper.lastAction.actionId = molecularActionId(molecularStepTamper);
+  molecularStepTamper.stateDigest = molecularSerializedDigest(molecularStepTamper);
+  let molecularStepMutationRejected = false;
+  try {
+    MolecularDynamicsWorld.fromSerialized(molecularStepTamper);
+  } catch (error) {
+    molecularStepMutationRejected = error instanceof Error && error.message.includes('step action does not match its state transition');
+  }
+  const molecularBranchTamper = structuredClone(molecularSample.clone(1).serialize());
+  molecularBranchTamper.lastAction.parameters = { fromStep: 2, branchOrdinal: 1 };
+  molecularBranchTamper.lastAction.actionId = molecularActionId(molecularBranchTamper);
+  molecularBranchTamper.stateDigest = molecularSerializedDigest(molecularBranchTamper);
+  let molecularBranchMutationRejected = false;
+  try {
+    MolecularDynamicsWorld.fromSerialized(molecularBranchTamper);
+  } catch (error) {
+    molecularBranchMutationRejected = error instanceof Error && error.message.includes('branch action does not match its state transition');
+  }
+  const molecularComTamper = structuredClone(molecularInitialState);
+  for (const body of molecularComTamper.bodies) body.centerOfMassAngstrom.x += 1;
+  molecularComTamper.physicalDigest = molecularPhysicalDigest(molecularComTamper);
+  molecularComTamper.stateId = molecularStateId(molecularComTamper);
+  molecularComTamper.stateDigest = molecularSerializedDigest(molecularComTamper);
+  let molecularComMutationRejected = false;
+  try {
+    MolecularDynamicsWorld.fromSerialized(molecularComTamper);
+  } catch (error) {
+    molecularComMutationRejected = error instanceof Error && error.message.includes('initial molecular state');
+  }
+  const periodicAtomisticSample = createPeriodicArgonCalibrationWorld();
+  const periodicAtomisticInitialState = periodicAtomisticSample.serialize();
+  const periodicAtomisticInitialObservation = periodicAtomisticSample.observe();
+  periodicAtomisticSample.advance(3);
+  const periodicAtomisticSteppedState = periodicAtomisticSample.serialize();
+  const periodicAtomisticSteppedObservation = periodicAtomisticSample.observe();
+  const aqueousControlPlan = createOpenMmTip3pControlPlanV044();
+  const validatedAqueousControlPlan = assertOpenMmTip3pControlPlanV044(aqueousControlPlan);
+  const aqueousSystemSpecValid = validateAqueousSystemSpec(validatedAqueousControlPlan.system);
+  const aqueousForceBackendsValid = validatedAqueousControlPlan.backends.every(
+    (backend) => validateAqueousForceBackendManifest(backend),
+  );
+  const aqueousControlPlanSemantics = validatedAqueousControlPlan.planDigest
+      === 'sha256:ad07bc923c991746bcc5c9e048dff9b4065981b50c940b13c3f1654e4ffd1177'
+    && validatedAqueousControlPlan.system.systemDigest
+      === 'sha256:e80bb9d1bd4bd8b774008b052b717cb758f16995e5164b36cda7102e2dbf6419'
+    && validatedAqueousControlPlan.backends[0].manifestDigest
+      === 'sha256:7f7104ea225819798c9c06eed382298c4d90ec19484f632fc6910832369882b9'
+    && validatedAqueousControlPlan.backends[1].manifestDigest
+      === 'sha256:8bea1d8a2f48897d34594fb416f791aa8d94c02807857182681c32c9d6e0424b'
+    && validatedAqueousControlPlan.status === 'planned-not-executed'
+    && validatedAqueousControlPlan.system.evidenceSemantics.externalOpenmmExecution === false
+    && validatedAqueousControlPlan.system.evidenceSemantics.externalPmeExecution === false
+    && validatedAqueousControlPlan.system.claimBoundaries.scorePromotionEligible === false
+    && validatedAqueousControlPlan.backends.every((backend) => (
+      backend.evidence.externalExecutionPerformed === false
+      && backend.evidence.pmeExecutionPerformed === false
+      && backend.license.licenseClearance === false
+      && backend.claimBoundaries.scorePromotionEligible === false
+    ));
+  const naclWaterInterfacePlan = assertNaClWaterInterfacePlanV0410(
+    createNaClWaterInterfacePlanV0410(),
+  );
+  const naclWaterInterfaceActions = [
+    'inspect-coordinate-seed',
+    'request-interface-preparation',
+    'request-mobile-interface-dynamics',
+  ].map((kind, index) => createNaClWaterInterfaceActionV0410(
+    kind,
+    `sentinel-interface-action-${index}`,
+    naclWaterInterfacePlan,
+  ));
+  const naclWaterInterfaceObservations = naclWaterInterfaceActions.map(
+    (action) => observeNaClWaterInterfaceActionV0410(action, naclWaterInterfacePlan),
+  );
+  const naclWaterInterfaceContract = validateNaClWaterInterfaceSystem(naclWaterInterfacePlan.system)
+    && validateNaClWaterInterfaceCoordinateSeed(naclWaterInterfacePlan.coordinateSeed)
+    && validateNaClWaterInterfacePlan(naclWaterInterfacePlan)
+    && naclWaterInterfaceActions.every((action) => validateNaClWaterInterfaceAction(action))
+    && naclWaterInterfaceObservations.every(
+      (observation) => validateNaClWaterInterfaceObservation(observation),
+    )
+    && naclWaterInterfacePlan.planDigest
+      === 'sha256:f6f271d255de31ab655e62b7539b65e58a4e85994870232b675ef7b40f2fd0b8'
+    && naclWaterInterfacePlan.system.systemDigest
+      === 'sha256:d47785bc641fd6483c58b8549bf7c0dc7e116a5892c0c13864c98e87c712133a'
+    && naclWaterInterfacePlan.coordinateSeed.seedDigest
+      === 'sha256:beb7f2c4f997e2e8b8158a05d6083a7d6569bd1f11457f922844646cac0cc426'
+    && naclWaterInterfacePlan.coordinateSeed.atoms.length === 6336
+    && naclWaterInterfacePlan.system.prerequisiteGates.length === 4
+    && naclWaterInterfacePlan.system.prerequisiteGates.every(
+      (gate) => gate.status === 'required-not-satisfied' && gate.receiptDigest === null,
+    )
+    && Object.values(naclWaterInterfacePlan.system.claimBoundaries).every(
+      (claim) => claim === false,
+    )
+    && naclWaterInterfaceObservations[0].outcome === 'accepted-read-only-inspection'
+    && naclWaterInterfaceObservations.slice(1).every((observation) => (
+      observation.outcome === 'blocked-prerequisite-gates-unsatisfied'
+      && observation.unmetGateIds.length === 4
+    ))
+    && naclWaterInterfaceObservations.every((observation) => (
+      observation.solverInvoked === false && observation.stateMutationPerformed === false
+    ));
+  const interfaceImporterSource = readSnapshotText(
+    'scripts/atomistic/openmm/nacl_water_interface_import_v0411.py',
+  );
+  const interfaceExporterSource = readSnapshotText(
+    'scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.mjs',
+  );
+  const interfaceVerifierSource = readSnapshotText(
+    'scripts/atomistic/openmm/verify-nacl-water-interface-import-v0411.mjs',
+  );
+  const expectedInterfaceImportGates = [
+    {
+      gateId: 'pure-water-openmm-control',
+      status: 'required-not-satisfied',
+      receiptDigest: null,
+    },
+    {
+      gateId: 'single-pair-low-salt-pme-control',
+      status: 'required-not-satisfied',
+      receiptDigest: null,
+    },
+    {
+      gateId: 'dry-nacl-100-slab-stability-control',
+      status: 'required-not-satisfied',
+      receiptDigest: null,
+    },
+    {
+      gateId: 'solid-water-interface-potential-domain-qualification',
+      status: 'required-not-satisfied',
+      receiptDigest: null,
+    },
+  ];
+  const expectedInterfaceImportExecution = {
+    openmmImported: false,
+    systemCompiled: false,
+    contextCreated: false,
+    solverInvoked: false,
+    minimized: false,
+    equilibrated: false,
+    executionEligible: false,
+  };
+  const expectedInterfaceImportClaims = {
+    sourceAuthenticityVerified: false,
+    potentialDomainQualified: false,
+    dynamicsExecuted: false,
+    scientificReproduction: false,
+    interfaceSimulated: false,
+    industrialPrediction: false,
+    promotionEligible: false,
+    publicReleaseEligible: false,
+  };
+  const naclWaterInterfaceImportContract = Boolean(validateNaClWaterInterfaceImportReceipt)
+    && naclWaterInterfaceImportReceiptSchema.properties.statusDomain.const
+      === 'semantic-import-integrity-only-not-solver-admission'
+    && naclWaterInterfaceImportReceiptSchema.properties.status.const === 'verified-pass'
+    && naclWaterInterfaceImportReceiptSchema.properties.subject.properties.byteCount.const === 5053426
+    && naclWaterInterfaceImportReceiptSchema.properties.subject.properties.rawSha256.const
+      === 'sha256:473eaab96bb5d90c8ee2f298860aaec624a7124ad7fa99ef362ef9213c7334bd'
+    && naclWaterInterfaceImportReceiptSchema.properties.normalizedArtifacts.properties
+      .semanticRoot.const
+      === 'sha256:8bd306fbb9cfcef6756bcfce682d63baf31482c8d39e65e974868cce5f39325f'
+    && JSON.stringify(naclWaterInterfaceImportReceiptSchema.properties.prerequisiteGates.const)
+      === JSON.stringify(expectedInterfaceImportGates)
+    && JSON.stringify(naclWaterInterfaceImportReceiptSchema.properties.execution.const)
+      === JSON.stringify(expectedInterfaceImportExecution)
+    && JSON.stringify(naclWaterInterfaceImportReceiptSchema.properties.claims.const)
+      === JSON.stringify(expectedInterfaceImportClaims)
+    && naclWaterInterfaceImportReceiptSchema.properties.digests.properties.expected
+      .$ref === '#/$defs/lockedDigests'
+    && sourceSnapshot.has('scripts/atomistic/openmm/nacl-water-interface-import-v0411.test.mjs')
+    && sourceSnapshot.has('scripts/atomistic/openmm/nacl_water_interface_import_v0411_test.py')
+    && sourceSnapshot.has('docs/NACL_WATER_INTERFACE_V0411_IMPORT_CONTRACT.md')
+    && interfaceImporterSource.includes('EXPECTED_PLAN_RAW_SHA256')
+    && interfaceImporterSource.includes('IMPORTER_SOURCE_SHA256 = _capture_importer_source_sha256()')
+    && interfaceImporterSource.includes('def _validate_digest_graph(')
+    && !/^\s*(?:from|import)\s+openmm\b/m.test(interfaceImporterSource)
+    && interfaceExporterSource.includes('EXPECTED_PLAN_RAW_SHA256')
+    && interfaceExporterSource.includes('solverImportPerformed: false')
+    && interfaceVerifierSource.includes('function assertArtifactBytes(')
+    && interfaceVerifierSource.includes('assertClosedBundleInventory(bundlePath);')
+    && interfaceVerifierSource.includes('solverInvoked: false');
   const workflowFiles = sourceFiles.filter((relativePath) => relativePath.startsWith('.github/workflows/') && /\.ya?ml$/.test(relativePath));
   const dockerfiles = sourceFiles.filter((relativePath) => relativePath.startsWith('atomistic/containers/') && /\.Dockerfile$/.test(relativePath));
+  const expectedDockerfiles = [
+    'atomistic/containers/mace.Dockerfile',
+    'atomistic/containers/mattersim.Dockerfile',
+    'atomistic/containers/openmm-water.Dockerfile',
+  ];
   const workflowFailures = [];
   for (const relativePath of workflowFiles) {
     workflowFailures.push(...inspectWorkflowSource(relativePath, readSnapshotText(relativePath)));
@@ -241,6 +657,20 @@ try {
     action: validateAction(serialized.lastAction),
     actionMutationCorpus: invalidActions.every((action) => !validateAction(action)),
     runtimeActionSemantics,
+    molecularWorld: validateMolecularWorld(molecularInitialState) && validateMolecularWorld(molecularSteppedState),
+    molecularAction: molecularActionValid,
+    molecularObservation: validateMolecularObservation(molecularInitialObservation) && validateMolecularObservation(molecularSteppedObservation),
+    molecularRuntimeSemantics: molecularStepMutationRejected && molecularBranchMutationRejected && molecularComMutationRejected,
+    periodicAtomisticWorld: validatePeriodicAtomisticWorld(periodicAtomisticInitialState)
+      && validatePeriodicAtomisticWorld(periodicAtomisticSteppedState),
+    periodicAtomisticAction: validatePeriodicAtomisticAction(periodicAtomisticSteppedState.lastAction),
+    periodicAtomisticObservation: validatePeriodicAtomisticObservation(periodicAtomisticInitialObservation)
+      && validatePeriodicAtomisticObservation(periodicAtomisticSteppedObservation),
+    aqueousSystemSpec: aqueousSystemSpecValid,
+    aqueousForceBackends: aqueousForceBackendsValid,
+    aqueousControlPlanSemantics,
+    naclWaterInterfaceContract,
+    naclWaterInterfaceImportContract,
     atomisticPlan: validateAtomisticPlan(atomisticPlan)
       && atomisticPlan.status === 'planned-not-reproduced'
       && atomisticPlan.models.length === 2
@@ -263,13 +693,35 @@ try {
       && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
       && datasetCatalog.datasets.length >= 4
       && datasetCatalog.datasets.every((dataset) => dataset.license && dataset.source?.startsWith('https://') && dataset.requiredProvenance?.length >= 4),
-    workflowPolicy: workflowFiles.length >= 2 && dockerfiles.length === 2 && workflowFailures.length === 0,
+    workflowPolicy: workflowFiles.length >= 2
+      && JSON.stringify(dockerfiles) === JSON.stringify(expectedDockerfiles)
+      && workflowFailures.length === 0,
     comparatorReceipts: comparatorReceiptFailures.length === 0,
   };
   if (!schemaVerification.world) hardGateFailures.push(`World-state schema validation failed: ${JSON.stringify(validateWorld.errors)}.`);
   if (!schemaVerification.action) hardGateFailures.push(`Action schema validation failed: ${JSON.stringify(validateAction.errors)}.`);
   if (!schemaVerification.actionMutationCorpus) hardGateFailures.push('Action schema accepted an invalid per-kind mutation.');
   if (!schemaVerification.runtimeActionSemantics) hardGateFailures.push('Runtime action semantics accepted or misclassified a cross-kind mutation.');
+  if (!schemaVerification.molecularWorld) hardGateFailures.push(`Molecular world-state schema validation failed: ${JSON.stringify(validateMolecularWorld.errors)}.`);
+  if (!schemaVerification.molecularAction) hardGateFailures.push(`Molecular action schema validation failed: ${JSON.stringify(validateMolecularAction.errors)}.`);
+  if (!schemaVerification.molecularObservation) hardGateFailures.push(`Molecular observation schema validation failed: ${JSON.stringify(validateMolecularObservation.errors)}.`);
+  if (!schemaVerification.molecularRuntimeSemantics) hardGateFailures.push('Molecular runtime semantics accepted a recomputed lineage or initial-state mutation.');
+  if (!schemaVerification.periodicAtomisticWorld) hardGateFailures.push(`Periodic atomistic world-state schema validation failed: ${JSON.stringify(validatePeriodicAtomisticWorld.errors)}.`);
+  if (!schemaVerification.periodicAtomisticAction) hardGateFailures.push(`Periodic atomistic action schema validation failed: ${JSON.stringify(validatePeriodicAtomisticAction.errors)}.`);
+  if (!schemaVerification.periodicAtomisticObservation) hardGateFailures.push(`Periodic atomistic observation schema validation failed: ${JSON.stringify(validatePeriodicAtomisticObservation.errors)}.`);
+  if (!schemaVerification.aqueousSystemSpec) hardGateFailures.push(`Aqueous v0.4.4 system-spec schema validation failed: ${JSON.stringify(validateAqueousSystemSpec.errors)}.`);
+  if (!schemaVerification.aqueousForceBackends) hardGateFailures.push(`Aqueous v0.4.4 force-backend schema validation failed: ${JSON.stringify(validateAqueousForceBackendManifest.errors)}.`);
+  if (!schemaVerification.aqueousControlPlanSemantics) hardGateFailures.push('Aqueous v0.4.4 exact plan digest or negative evidence semantics changed.');
+  if (!schemaVerification.naclWaterInterfaceContract) {
+    hardGateFailures.push(`NaCl-water interface v0.4.10 schema, locked identity or fail-closed semantics changed: ${JSON.stringify(
+      validateNaClWaterInterfacePlan.errors
+      ?? validateNaClWaterInterfaceCoordinateSeed.errors
+      ?? validateNaClWaterInterfaceSystem.errors,
+    )}.`);
+  }
+  if (!schemaVerification.naclWaterInterfaceImportContract) {
+    hardGateFailures.push('NaCl-water interface v0.4.11 cross-language semantic-import contract is incomplete.');
+  }
   if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors ?? validateAtomisticCandidatePlan.errors)}.`);
   if (!schemaVerification.datasetCatalog) hardGateFailures.push('Dataset provenance and license catalog validation failed.');
   if (!schemaVerification.workflowPolicy) hardGateFailures.push('Workflow and atomistic build policy coverage is incomplete.');
@@ -331,6 +783,9 @@ const report = {
   upstreamGates,
   verification: {
     physics: physicsVerification,
+    molecular: molecularVerification,
+    periodicAtomistic: periodicAtomisticVerification,
+    aqueousFoundation: aqueousFoundationVerification,
     schemas: schemaVerification,
     elapsedMs: Number(verificationElapsedMs.toFixed(2)),
   },
@@ -376,7 +831,16 @@ const markdown = [
   physicsVerification
     ? `- Fourier L2: ${physicsVerification.heatModeRelativeL2Error.toExponential(3)}; minimum 2D order: ${physicsVerification.fourierMinimumObservedOrder.toFixed(3)}; ${physicsVerification.ensemble.seeds.length}×${physicsVerification.ensemble.horizonSteps} p95/max energy tail: ${physicsVerification.ensemble.energyResidualTail.p95.toExponential(3)} / ${physicsVerification.ensemble.energyResidualTail.maximum.toExponential(3)}.`
     : '- Physics verification unavailable.',
-  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (candidate contract only; no full run)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
+  molecularVerification
+    ? `- Molecular isolated constant-energy trajectory: ${molecularVerification.steps} steps / ${molecularVerification.timePicoseconds.toFixed(3)} ps; maximum |ΔE|/max(|E₀|, 1 kJ mol⁻¹): ${molecularVerification.maximumRelativeEnergyExcursion.toExponential(3)}; OLS relative drift: ${molecularVerification.linearRelativeDriftRatePerPicosecond.toExponential(3)} ps⁻¹; deterministic replay: ${molecularVerification.deterministicReplay ? 'PASS' : 'FAIL'}.`
+    : '- Molecular verification unavailable.',
+  periodicAtomisticVerification
+    ? `- Periodic atomistic fixed-cell NVE calibration: ${periodicAtomisticVerification.fixture.stepsExecuted.toLocaleString('en-US')} primary + ${periodicAtomisticVerification.fixture.independentReplayStepsExecuted.toLocaleString('en-US')} independent replay steps; maximum relative energy excursion ${periodicAtomisticVerification.maximumResiduals.relativeEnergyExcursion.toExponential(3)}; momentum / internal-force / COM residuals ${periodicAtomisticVerification.maximumResiduals.momentumDaltonAngstromPerPicosecond.toExponential(3)} / ${periodicAtomisticVerification.maximumResiduals.internalForceKjMolAngstrom.toExponential(3)} / ${periodicAtomisticVerification.maximumResiduals.centerOfMassAngstrom.toExponential(3)}; physical, full-state, observation and trajectory/checkpoint digest replay ${periodicAtomisticVerification.deterministicPhysicalReplay && periodicAtomisticVerification.deterministicFullStateReplay && periodicAtomisticVerification.deterministicObservationReplay ? 'PASS' : 'FAIL'} (evidence ${periodicAtomisticVerification.digests.verificationEvidence}).`
+    : '- Periodic atomistic verification unavailable.',
+  aqueousFoundationVerification
+    ? `- Aqueous foundation references: ${AQUEOUS_FOUNDATION_GATE_NAMES.filter((gateName) => aqueousFoundationVerification.gates[gateName] === true).length}/${AQUEOUS_FOUNDATION_GATE_NAMES.length} direct-Ewald and rigid-constraint gates passed; NaCl point-charge Madelung |ΔE| ${aqueousFoundationVerification.naclPointChargeReference.absoluteEnergyErrorKjMol.toExponential(3)} kJ mol⁻¹; triclinic force finite-difference maximum ${aqueousFoundationVerification.triclinicForceCheck.maximumAbsoluteForceErrorKjMolAngstrom.toExponential(3)} kJ mol⁻¹ Å⁻¹; TIP3P position / velocity-derivative residuals ${aqueousFoundationVerification.tip3pConstraintFixture.maximumPositionResidualAngstrom.toExponential(3)} Å / ${aqueousFoundationVerification.tip3pConstraintFixture.maximumVelocityDerivativeResidualAngstrom2PerPicosecond.toExponential(3)} Å² ps⁻¹ (foundation only; no NaCl–water trajectory, PME or OpenMM execution; evidence ${aqueousFoundationVerification.verificationDigest}).`
+    : '- Aqueous foundation verification unavailable.',
+  `- World/action schemas and negative mutation corpus: ${schemaVerification.world && schemaVerification.action && schemaVerification.actionMutationCorpus && schemaVerification.runtimeActionSemantics ? 'PASS' : 'FAIL'}; molecular world/action/observation schemas and recomputed-tamper corpus: ${schemaVerification.molecularWorld && schemaVerification.molecularAction && schemaVerification.molecularObservation && schemaVerification.molecularRuntimeSemantics ? 'PASS' : 'FAIL'}; periodic atomistic world/action/observation schemas: ${schemaVerification.periodicAtomisticWorld && schemaVerification.periodicAtomisticAction && schemaVerification.periodicAtomisticObservation ? 'PASS' : 'FAIL'}; aqueous v0.4.4 system/backend schemas and exact negative-evidence plan: ${schemaVerification.aqueousSystemSpec && schemaVerification.aqueousForceBackends && schemaVerification.aqueousControlPlanSemantics ? 'PASS (declarative contract only; OpenMM not run)' : 'FAIL'}; NaCl-water v0.4.10 full-seed schemas, locked digests and fail-closed actions: ${schemaVerification.naclWaterInterfaceContract ? 'PASS (geometric contract only; no trajectory or solver)' : 'FAIL'}; v0.4.11 Python semantic import and independent byte verifier source contract: ${schemaVerification.naclWaterInterfaceImportContract ? 'PASS (portable input only; OpenMM not imported)' : 'FAIL'}; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: ${schemaVerification.atomisticPlan && schemaVerification.datasetCatalog && schemaVerification.comparatorReceipts ? 'PASS (candidate contract only; no full run)' : 'FAIL'}; evaluator runtime: ${verificationElapsedMs.toFixed(1)} ms.`,
   `- Industrial default exclusions: ${atomisticPlan.excludedDefaults.map((entry) => `${entry.id} (${entry.gating}; industrialDefaultAllowed=${entry.industrialDefaultAllowed})`).join(', ')}.`,
   '',
   '## Next iteration gaps',
@@ -427,4 +891,42 @@ async function readSnapshotControl(snapshotRoot) {
     throw new Error('Evaluator snapshot control manifest is inconsistent.');
   }
   return parsed;
+}
+
+function molecularActionId(state) {
+  const action = state.lastAction;
+  const fingerprint = shortDigest({
+    kind: action.kind,
+    parentStateId: action.parentStateId,
+    resultingStateId: action.resultingStateId,
+    appliedAtStep: action.appliedAtStep,
+    parameters: action.parameters,
+  });
+  return `${state.stateNamespace}-a${state.actionCount.toString(36).padStart(5, '0')}-${fingerprint}`;
+}
+
+function molecularPhysicalDigest(state) {
+  return digestValue({
+    schemaVersion: 'tf.molecular-physical-state/0.4',
+    step: state.step,
+    options: state.options,
+    topologyDigest: state.topologyDigest,
+    bodies: state.bodies,
+  });
+}
+
+function molecularStateId(state) {
+  const suffix = shortDigest({
+    digest: state.physicalDigest,
+    parentStateId: state.parentStateId,
+    revision: state.revision,
+    actionCount: state.actionCount,
+    branchCount: state.branchCount,
+  });
+  return `${state.stateNamespace}-s${state.step.toString(36).padStart(6, '0')}r${state.revision.toString(36).padStart(4, '0')}-${suffix}`;
+}
+
+function molecularSerializedDigest(state) {
+  const withoutDigest = Object.fromEntries(Object.entries(state).filter(([key]) => key !== 'stateDigest'));
+  return digestValue(withoutDigest);
 }

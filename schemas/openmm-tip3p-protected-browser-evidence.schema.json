@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/openmm-tip3p-protected-browser-evidence/0.4.9",
+  "title": "Tailing Future protected OpenMM TIP3P browser administrative evidence",
+  "description": "A sanitized aggregate of three protected-main Chromium mode receipts. It contains only administrative digests and bounded results; it is not an execution attestation, reproduction claim, host-runtime closure, release authority, or public scientific payload.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "statusDomain",
+    "sourceRevision",
+    "controlReceipt",
+    "source",
+    "browserRuntime",
+    "isolation",
+    "client",
+    "modeResults",
+    "crossMode",
+    "cleanup",
+    "publicationPolicy",
+    "claims",
+    "evidenceDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.openmm-tip3p-protected-browser-evidence/0.4.9" },
+    "profile": { "const": "protected-main-private-openmm-positions-three-mode-browser-evidence" },
+    "statusDomain": { "const": "protected-ci-browser-observation-not-execution-attestation-reproduction-or-release" },
+    "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+    "controlReceipt": { "$ref": "#/$defs/controlReceipt" },
+    "source": { "$ref": "#/$defs/source" },
+    "browserRuntime": { "$ref": "#/$defs/browserRuntime" },
+    "isolation": {
+      "const": {
+        "platform": "linux-x64",
+        "allCredentialIdsNonRoot": true,
+        "allCapabilitySetsEmpty": true,
+        "appArmorUserNamespaceProfileVerified": true,
+        "noNewPrivilegesVerified": true,
+        "noSupplementaryPrivilegeGroups": true,
+        "forbiddenEnvironmentAbsent": true,
+        "onlyLoopbackInterfacesVerified": true,
+        "onlyLoopbackRoutesVerified": true,
+        "readOnlySourceMountVerified": true,
+        "readOnlyRuntimeMountVerified": true,
+        "pidNamespaceKillBoundaryVerified": false,
+        "cgroupDrainVerified": false
+      }
+    },
+    "client": { "$ref": "#/$defs/client" },
+    "modeResults": {
+      "type": "array",
+      "prefixItems": [
+        { "$ref": "#/$defs/happyMode" },
+        { "$ref": "#/$defs/disposeMode" },
+        { "$ref": "#/$defs/contextLossMode" }
+      ],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "crossMode": {
+      "const": {
+        "sameSourceLineage": true,
+        "sameTrajectoryBinding": true,
+        "sameClientBytes": true,
+        "sameFrozenRuntimeTree": true,
+        "threeFreshCapabilities": true
+      }
+    },
+    "cleanup": {
+      "const": {
+        "allListenersClosed": true,
+        "allPacketsZeroized": true,
+        "allTokenVerifierBytesZeroized": true,
+        "allAssetsZeroized": true,
+        "securePhysicalErasureVerified": false
+      }
+    },
+    "publicationPolicy": {
+      "const": {
+        "artifactClass": "non-sensitive-administrative-browser-evidence-only",
+        "rawScientificPayloadPublished": false,
+        "runtimeInputsPublished": false,
+        "browserArtifactsPublished": false,
+        "publicDistributionEligible": false,
+        "cloudflareDistributionEligible": false,
+        "licenseClearance": false,
+        "attested": false
+      }
+    },
+    "claims": {
+      "const": {
+        "protectedWorkflowExecutionReported": true,
+        "realOpenMmProducerOutputConsumed": true,
+        "allThreeModesPassed": true,
+        "realBrowserDrawObserved": true,
+        "executionAuthenticated": false,
+        "reproduced": false,
+        "hostRuntimeClosureVerified": false,
+        "immutableRuntimeSnapshotVerified": false,
+        "promotionEligible": false,
+        "publicDistributionEligible": false,
+        "cloudflareDistributionEligible": false
+      }
+    },
+    "evidenceDigest": { "$ref": "#/$defs/digest" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:(?!0000000000000000000000000000000000000000000000000000000000000000$)[0-9a-f]{64}$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000000000000000000000000000$)[0-9a-f]{40}$"
+    },
+    "controlReceipt": {
+      "type": "object",
+      "required": [
+        "receiptDigest",
+        "systemDigest",
+        "planDigest",
+        "producerOutcomeDigest",
+        "artifactManifestDigest",
+        "payloadBundleRoot",
+        "verifierDigest",
+        "status",
+        "allPassed",
+        "scientificPass"
+      ],
+      "properties": {
+        "receiptDigest": { "$ref": "#/$defs/digest" },
+        "systemDigest": { "$ref": "#/$defs/digest" },
+        "planDigest": { "$ref": "#/$defs/digest" },
+        "producerOutcomeDigest": { "$ref": "#/$defs/digest" },
+        "artifactManifestDigest": { "$ref": "#/$defs/digest" },
+        "payloadBundleRoot": { "$ref": "#/$defs/digest" },
+        "verifierDigest": { "$ref": "#/$defs/digest" },
+        "status": { "const": "verified-pass" },
+        "allPassed": { "const": true },
+        "scientificPass": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "referenceARunReceiptDigest",
+        "referenceARunArtifactDigest",
+        "worldSessionDigest",
+        "trajectoryDigest",
+        "orderedFrameDigest",
+        "atomOrderDigest",
+        "cellDigest",
+        "topologyDigest",
+        "privateTrajectoryMetadataDigest",
+        "browserTrajectoryMetadataDigest",
+        "positionsF32TrajectoryDigest",
+        "orderedPositionFrameDigest",
+        "browserPacketDigest",
+        "frameCount",
+        "positionsOnly"
+      ],
+      "properties": {
+        "referenceARunReceiptDigest": { "$ref": "#/$defs/digest" },
+        "referenceARunArtifactDigest": { "$ref": "#/$defs/digest" },
+        "worldSessionDigest": { "$ref": "#/$defs/digest" },
+        "trajectoryDigest": { "$ref": "#/$defs/digest" },
+        "orderedFrameDigest": { "$ref": "#/$defs/digest" },
+        "atomOrderDigest": { "$ref": "#/$defs/digest" },
+        "cellDigest": { "$ref": "#/$defs/digest" },
+        "topologyDigest": { "$ref": "#/$defs/digest" },
+        "privateTrajectoryMetadataDigest": { "$ref": "#/$defs/digest" },
+        "browserTrajectoryMetadataDigest": { "$ref": "#/$defs/digest" },
+        "positionsF32TrajectoryDigest": { "$ref": "#/$defs/digest" },
+        "orderedPositionFrameDigest": { "$ref": "#/$defs/digest" },
+        "browserPacketDigest": { "$ref": "#/$defs/digest" },
+        "frameCount": { "const": 101 },
+        "positionsOnly": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "browserRuntime": {
+      "type": "object",
+      "required": [
+        "playwrightVersion",
+        "browserVersion",
+        "chromiumRevision",
+        "playwrightPackageTreeDigest",
+        "playwrightCorePackageTreeDigest",
+        "distributionTreeDigest",
+        "frozenRuntimeTreeDigest",
+        "allModePrePostCheckpointsMatched",
+        "hostRuntimeClosureVerified",
+        "immutableRuntimeSnapshotVerified"
+      ],
+      "properties": {
+        "playwrightVersion": { "const": "1.62.1" },
+        "browserVersion": { "const": "151.0.7922.34" },
+        "chromiumRevision": { "const": "1234" },
+        "playwrightPackageTreeDigest": { "const": "sha256:5981dbf5b0604778dfe94c03564da904f13ba2289340fd1f695211922de1dc3f" },
+        "playwrightCorePackageTreeDigest": { "const": "sha256:c3d1a9f4d8c8a2f5251c323aa3a4cb4202ba86f7ba4ff6330c1fa0e634f7c357" },
+        "distributionTreeDigest": { "const": "sha256:ef61b26dc6a3b390355d5a4c1ea60b9ae4839bb3add815fadb26c626e7fae658" },
+        "frozenRuntimeTreeDigest": { "const": "sha256:379be99b95a5b092c51dee46cc3053b08ec513618fe939a945df1f3a9a04adb3" },
+        "allModePrePostCheckpointsMatched": { "const": true },
+        "hostRuntimeClosureVerified": { "const": false },
+        "immutableRuntimeSnapshotVerified": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "client": {
+      "type": "object",
+      "required": ["byteLength", "sha256", "responseDigestVerifiedInAllModes"],
+      "properties": {
+        "byteLength": { "type": "integer", "minimum": 1, "maximum": 2097152 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "responseDigestVerifiedInAllModes": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "modeBase": {
+      "type": "object",
+      "required": [
+        "mode",
+        "status",
+        "observationDigest",
+        "terminalState",
+        "cleanupComplete",
+        "sourceOwnerRevoked",
+        "runtimeDisposed",
+        "threeDisposed",
+        "rendererDisposed",
+        "clientResponseDigestVerified",
+        "browserDrawObserved",
+        "trajectoryCompleted",
+        "frameCount",
+        "renderedFrameCount"
+      ],
+      "properties": {
+        "mode": { "enum": ["happy-path", "mid-playback-dispose", "context-loss"] },
+        "status": { "enum": [
+          "digest-locked-main-executable-private-trajectory-draw-observed",
+          "digest-locked-main-executable-private-trajectory-interruption-failed-closed"
+        ] },
+        "observationDigest": { "$ref": "#/$defs/digest" },
+        "terminalState": { "enum": ["disposed", "context-lost"] },
+        "cleanupComplete": { "const": true },
+        "sourceOwnerRevoked": { "const": true },
+        "runtimeDisposed": { "const": true },
+        "threeDisposed": { "const": true },
+        "rendererDisposed": { "const": true },
+        "clientResponseDigestVerified": { "const": true },
+        "browserDrawObserved": { "const": true },
+        "trajectoryCompleted": { "type": "boolean" },
+        "frameCount": {
+          "anyOf": [
+            { "type": "integer" },
+            { "type": "null" }
+          ]
+        },
+        "renderedFrameCount": { "type": "integer", "minimum": 1, "maximum": 101 }
+      },
+      "additionalProperties": false
+    },
+    "happyMode": {
+      "allOf": [
+        { "$ref": "#/$defs/modeBase" },
+        {
+          "type": "object",
+          "properties": {
+            "mode": { "const": "happy-path" },
+            "status": { "const": "digest-locked-main-executable-private-trajectory-draw-observed" },
+            "terminalState": { "const": "disposed" },
+            "browserDrawObserved": { "const": true },
+            "trajectoryCompleted": { "const": true },
+            "frameCount": { "const": 101 },
+            "renderedFrameCount": { "const": 101 }
+          }
+        }
+      ]
+    },
+    "disposeMode": {
+      "allOf": [
+        { "$ref": "#/$defs/modeBase" },
+        {
+          "type": "object",
+          "properties": {
+            "mode": { "const": "mid-playback-dispose" },
+            "status": { "const": "digest-locked-main-executable-private-trajectory-interruption-failed-closed" },
+            "terminalState": { "const": "disposed" },
+            "browserDrawObserved": { "const": true },
+            "trajectoryCompleted": { "const": false },
+            "frameCount": { "const": null },
+            "renderedFrameCount": { "const": 37 }
+          }
+        }
+      ]
+    },
+    "contextLossMode": {
+      "allOf": [
+        { "$ref": "#/$defs/modeBase" },
+        {
+          "type": "object",
+          "properties": {
+            "mode": { "const": "context-loss" },
+            "status": { "const": "digest-locked-main-executable-private-trajectory-interruption-failed-closed" },
+            "terminalState": { "const": "context-lost" },
+            "browserDrawObserved": { "const": true },
+            "trajectoryCompleted": { "const": false },
+            "frameCount": { "const": null },
+            "renderedFrameCount": { "const": 37 }
+          }
+        }
+      ]
+    }
+  }
+}

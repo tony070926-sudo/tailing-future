@@ -43,17 +43,37 @@
     },
     "verification": {
       "type": "object",
-      "required": ["physics", "schemas", "elapsedMs"],
+      "required": ["physics", "molecular", "periodicAtomistic", "aqueousFoundation", "schemas", "elapsedMs"],
       "properties": {
         "physics": { "type": ["object", "null"] },
+        "molecular": { "type": ["object", "null"] },
+        "periodicAtomistic": { "type": ["object", "null"] },
+        "aqueousFoundation": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/aqueousFoundationVerification" }
+          ]
+        },
         "schemas": {
           "type": "object",
-          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics", "atomisticPlan", "datasetCatalog", "workflowPolicy", "comparatorReceipts"],
+          "required": ["world", "action", "actionMutationCorpus", "runtimeActionSemantics", "molecularWorld", "molecularAction", "molecularObservation", "molecularRuntimeSemantics", "periodicAtomisticWorld", "periodicAtomisticAction", "periodicAtomisticObservation", "aqueousSystemSpec", "aqueousForceBackends", "aqueousControlPlanSemantics", "naclWaterInterfaceContract", "naclWaterInterfaceImportContract", "atomisticPlan", "datasetCatalog", "workflowPolicy", "comparatorReceipts"],
           "properties": {
             "world": { "type": "boolean" },
             "action": { "type": "boolean" },
             "actionMutationCorpus": { "type": "boolean" },
             "runtimeActionSemantics": { "type": "boolean" },
+            "molecularWorld": { "type": "boolean" },
+            "molecularAction": { "type": "boolean" },
+            "molecularObservation": { "type": "boolean" },
+            "molecularRuntimeSemantics": { "type": "boolean" },
+            "periodicAtomisticWorld": { "type": "boolean" },
+            "periodicAtomisticAction": { "type": "boolean" },
+            "periodicAtomisticObservation": { "type": "boolean" },
+            "aqueousSystemSpec": { "type": "boolean" },
+            "aqueousForceBackends": { "type": "boolean" },
+            "aqueousControlPlanSemantics": { "type": "boolean" },
+            "naclWaterInterfaceContract": { "type": "boolean" },
+            "naclWaterInterfaceImportContract": { "type": "boolean" },
             "atomisticPlan": { "type": "boolean" },
             "datasetCatalog": { "type": "boolean" },
             "workflowPolicy": { "type": "boolean" },
@@ -77,6 +97,234 @@
   "additionalProperties": false,
   "$defs": {
     "gateStatus": { "enum": ["success", "failure", "cancelled", "skipped", "not-reported-local"] },
+    "aqueousFoundationVerification": {
+      "type": "object",
+      "required": [
+        "schemaVersion", "status", "sourcePins", "gates", "naclPointChargeReference",
+        "triclinicForceCheck", "alphaCutoffCheck", "hugeImageGaugeCheck", "rejectionEvidence",
+        "tip3pConstraintFixture", "boundaries", "verificationDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "tf.aqueous-foundation-verification/0.4.2" },
+        "status": { "const": "foundation-only-not-reproduction" },
+        "sourcePins": {
+          "type": "object",
+          "required": ["openmmTip3p"],
+          "properties": {
+            "openmmTip3p": {
+              "type": "object",
+              "required": ["product", "version", "repository", "tag", "sourceCommit", "pinClass", "assets", "executionPerformed"],
+              "properties": {
+                "product": { "const": "OpenMM" },
+                "version": { "const": "8.5.1" },
+                "repository": { "const": "https://github.com/openmm/openmm" },
+                "tag": { "const": "8.5.1" },
+                "sourceCommit": { "const": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5" },
+                "pinClass": { "const": "immutable-git-commit-path-size-and-sha256-metadata" },
+                "assets": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "object",
+                      "required": ["role", "filePath", "sizeBytes", "sha256", "sourceUrl"],
+                      "properties": {
+                        "role": { "const": "bare-tip3p-xml" },
+                        "filePath": { "const": "wrappers/python/openmm/app/data/tip3p.xml" },
+                        "sizeBytes": { "const": 891 },
+                        "sha256": { "const": "sha256:607f0fc9566c3770db2d9eb579fed68c4157578445eed1ec0aa7dccc23d57a6c" },
+                        "sourceUrl": { "const": "https://github.com/openmm/openmm/blob/f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5/wrappers/python/openmm/app/data/tip3p.xml" }
+                      },
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "required": ["role", "filePath", "sizeBytes", "sha256", "sourceUrl"],
+                      "properties": {
+                        "role": { "const": "amber14-tip3p-xml" },
+                        "filePath": { "const": "wrappers/python/openmm/app/data/amber14/tip3p.xml" },
+                        "sizeBytes": { "const": 19070 },
+                        "sha256": { "const": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9" },
+                        "sourceUrl": { "const": "https://github.com/openmm/openmm/blob/f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5/wrappers/python/openmm/app/data/amber14/tip3p.xml" }
+                      },
+                      "additionalProperties": false
+                    }
+                  ],
+                  "items": false
+                },
+                "executionPerformed": { "const": false }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "gates": {
+          "type": "object",
+          "required": [
+            "naclRocksaltMadelung", "triclinicFiniteDifferenceForce", "alphaCutoffConsistency",
+            "ewaldNonNeutralRejected", "ewaldRelativePermittivityRejected", "ewaldWorkBudgetRejected",
+            "ewaldHugeImageGaugeInvariance", "tip3pPositionConstraints", "tip3pVelocityConstraints",
+            "tip3pCenterOfMassPosition", "tip3pCenterOfMassMomentum", "tip3pConsistentPeriodicLoop",
+            "tip3pInconsistentPeriodicLoopRejected", "tip3pHugeImageGaugeInvariance", "rigidWorkBudgetRejected"
+          ],
+          "properties": {
+            "naclRocksaltMadelung": { "const": true },
+            "triclinicFiniteDifferenceForce": { "const": true },
+            "alphaCutoffConsistency": { "const": true },
+            "ewaldNonNeutralRejected": { "const": true },
+            "ewaldRelativePermittivityRejected": { "const": true },
+            "ewaldWorkBudgetRejected": { "const": true },
+            "ewaldHugeImageGaugeInvariance": { "const": true },
+            "tip3pPositionConstraints": { "const": true },
+            "tip3pVelocityConstraints": { "const": true },
+            "tip3pCenterOfMassPosition": { "const": true },
+            "tip3pCenterOfMassMomentum": { "const": true },
+            "tip3pConsistentPeriodicLoop": { "const": true },
+            "tip3pInconsistentPeriodicLoopRejected": { "const": true },
+            "tip3pHugeImageGaugeInvariance": { "const": true },
+            "rigidWorkBudgetRejected": { "const": true }
+          },
+          "additionalProperties": false
+        },
+        "naclPointChargeReference": {
+          "type": "object",
+          "required": ["latticeAngstrom", "nearestNeighborAngstrom", "madelungConstant", "expectedCellEnergyKjMol", "observedCellEnergyKjMol", "absoluteEnergyErrorKjMol", "netForceKjMolAngstrom"],
+          "properties": {
+            "latticeAngstrom": { "const": 5.64 },
+            "nearestNeighborAngstrom": { "const": 2.82 },
+            "madelungConstant": { "const": 1.7475645946331822 },
+            "expectedCellEnergyKjMol": { "type": "number" },
+            "observedCellEnergyKjMol": { "type": "number" },
+            "absoluteEnergyErrorKjMol": { "type": "number", "minimum": 0 },
+            "netForceKjMolAngstrom": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "triclinicForceCheck": {
+          "type": "object",
+          "required": ["centralDifferenceStepAngstrom", "maximumAbsoluteForceErrorKjMolAngstrom", "netForceKjMolAngstrom"],
+          "properties": {
+            "centralDifferenceStepAngstrom": { "const": 0.00001 },
+            "maximumAbsoluteForceErrorKjMolAngstrom": { "type": "number", "minimum": 0 },
+            "netForceKjMolAngstrom": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "alphaCutoffCheck": {
+          "type": "object",
+          "required": ["referenceEnergyKjMol", "looseAbsoluteErrorKjMol", "mediumAbsoluteErrorKjMol", "tightAbsoluteErrorKjMol", "maximumAlphaAbsoluteErrorKjMol"],
+          "properties": {
+            "referenceEnergyKjMol": { "type": "number" },
+            "looseAbsoluteErrorKjMol": { "type": "number", "minimum": 0 },
+            "mediumAbsoluteErrorKjMol": { "type": "number", "minimum": 0 },
+            "tightAbsoluteErrorKjMol": { "type": "number", "minimum": 0 },
+            "maximumAlphaAbsoluteErrorKjMol": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "hugeImageGaugeCheck": {
+          "type": "object",
+          "required": ["ewald", "rigidTip3p"],
+          "properties": {
+            "ewald": { "$ref": "#/$defs/exactGaugeEvidence" },
+            "rigidTip3p": { "$ref": "#/$defs/exactGaugeEvidence" }
+          },
+          "additionalProperties": false
+        },
+        "rejectionEvidence": {
+          "type": "object",
+          "required": ["nonNeutral", "relativePermittivity", "ewaldRealWorkBudget", "ewaldReciprocalWorkBudget", "inconsistentPeriodicConstraintLoop", "rigidWorkBudget"],
+          "properties": {
+            "nonNeutral": { "type": "string", "minLength": 1 },
+            "relativePermittivity": { "type": "string", "minLength": 1 },
+            "ewaldRealWorkBudget": { "type": "string", "minLength": 1 },
+            "ewaldReciprocalWorkBudget": { "type": "string", "minLength": 1 },
+            "inconsistentPeriodicConstraintLoop": { "type": "string", "minLength": 1 },
+            "rigidWorkBudget": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "tip3pConstraintFixture": {
+          "type": "object",
+          "required": ["cellKind", "periodicFaceCrossing", "targetDistancesAngstrom", "maximumPositionResidualAngstrom", "maximumVelocityDerivativeResidualAngstrom2PerPicosecond", "maximumCenterOfMassPositionChangeAngstrom", "centerOfMassMomentumChangeDaltonAngstromPerPicosecond", "shakeIterations", "rattleIterations", "constraintOrder"],
+          "properties": {
+            "cellKind": { "const": "strongly-sheared-triclinic" },
+            "periodicFaceCrossing": { "const": true },
+            "targetDistancesAngstrom": {
+              "type": "object",
+              "required": ["oh1", "oh2", "hh"],
+              "properties": { "oh1": { "const": 0.9572 }, "oh2": { "const": 0.9572 }, "hh": { "const": 1.5139006545247014 } },
+              "additionalProperties": false
+            },
+            "maximumPositionResidualAngstrom": { "type": "number", "minimum": 0 },
+            "maximumVelocityDerivativeResidualAngstrom2PerPicosecond": { "type": "number", "minimum": 0 },
+            "maximumCenterOfMassPositionChangeAngstrom": { "type": "number", "minimum": 0 },
+            "centerOfMassMomentumChangeDaltonAngstromPerPicosecond": { "type": "number", "minimum": 0 },
+            "shakeIterations": { "type": "integer", "minimum": 0 },
+            "rattleIterations": { "type": "integer", "minimum": 0 },
+            "constraintOrder": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "string", "minLength": 1 } }
+          },
+          "additionalProperties": false
+        },
+        "boundaries": {
+          "type": "object",
+          "required": ["naclWaterTrajectory", "pmeExecution", "openmmExecution", "intramolecularExclusions", "virialOrStress", "fullVelocityVerletRattleIntegrator", "constraintImpulseEnergyAudit", "licenseClearance", "externalModelReproduction", "scorePromotionEligible", "statements"],
+          "properties": {
+            "naclWaterTrajectory": { "const": false },
+            "pmeExecution": { "const": false },
+            "openmmExecution": { "const": false },
+            "intramolecularExclusions": { "const": false },
+            "virialOrStress": { "const": false },
+            "fullVelocityVerletRattleIntegrator": { "const": false },
+            "constraintImpulseEnergyAudit": { "const": false },
+            "licenseClearance": { "const": false },
+            "externalModelReproduction": { "const": false },
+            "scorePromotionEligible": { "const": false },
+            "statements": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "prefixItems": [
+                { "const": "No NaCl-water trajectory, dissolution, hydration or crystallization simulation is executed." },
+                { "const": "No PME, mesh electrostatics or OpenMM runtime is executed; electrostatics evidence is the local direct Ewald reference only." },
+                { "const": "No intramolecular exclusions, virial/stress, complete constrained Velocity Verlet integrator or constraint-impulse energy audit is present." },
+                { "const": "The immutable OpenMM asset pins are source-integrity metadata, not runtime execution, license clearance or external-model reproduction." },
+                { "const": "This foundation-only verification cannot increase a scorecard or support industrial, force-field or current-SOTA claims." }
+              ],
+              "items": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "verificationDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "exactGaugeEvidence": {
+      "type": "object",
+      "required": ["commonImage"],
+      "properties": {
+        "commonImage": {
+          "type": "object",
+          "required": ["x", "y", "z"],
+          "properties": { "x": { "type": "integer" }, "y": { "type": "integer" }, "z": { "type": "integer" } },
+          "additionalProperties": false
+        },
+        "exactEvaluationEquality": { "const": true },
+        "referenceEvaluationDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "gaugedEvaluationDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "exactNormalizedResultEquality": { "const": true },
+        "referenceResultDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "normalizedGaugedResultDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      },
+      "anyOf": [
+        { "required": ["exactEvaluationEquality", "referenceEvaluationDigest", "gaugedEvaluationDigest"] },
+        { "required": ["exactNormalizedResultEquality", "referenceResultDigest", "normalizedGaugedResultDigest"] }
+      ],
+      "additionalProperties": false
+    },
     "dimension": {
       "type": "object",
       "required": ["id", "label", "displayLabel", "weight", "score", "promotionFloor", "summary", "evidence", "evidenceArtifacts", "nextAction", "acceptanceTest"],

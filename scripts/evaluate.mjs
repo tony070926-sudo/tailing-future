@@ -18,6 +18,56 @@ const MAX_SOURCE_FILE_BYTES = 32 * 1024 * 1024;
 const MAX_SOURCE_SNAPSHOT_BYTES = 128 * 1024 * 1024;
 const MAX_REPORT_JSON_BYTES = 16 * 1024 * 1024;
 const MAX_REPORT_MARKDOWN_BYTES = 2 * 1024 * 1024;
+const MAX_PUBLIC_SUMMARY_BYTES = 4 * 1024;
+const MAX_PUBLIC_PRODUCT_EVALUATION_BYTES = 32 * 1024;
+const PUBLIC_PRODUCT_EVALUATION_VERSION = 'tf.public-product-evaluation/0.1';
+const PUBLIC_SCORECARD_DIMENSION_IDS = Object.freeze([
+  'contract',
+  'data',
+  'atomistic',
+  'mesoscale',
+  'continuum',
+  'process',
+  'coupling',
+  'world_rollout',
+  'uq_ood',
+  'repro_cost',
+  'visual_truth',
+  'safety',
+]);
+const PUBLIC_COMPARATOR_IDS = Object.freeze([
+  'aido-cell-1.0',
+  'equiformerv3-dens-oam',
+  'tece-oam-rra-1.0',
+  'mattersim-1.0.0-5m',
+  'mace-mpa-0',
+  'openmm-8.5.1-tip3p-ions',
+  'openmm-8.6.0-tip3p-control',
+  'pfhub-benchmark-3',
+  'cantera-3.2-cstr',
+  'idaes-2.12',
+]);
+const PUBLIC_COMPARATOR_EVIDENCE_CLASSES = new Set([
+  'claim',
+  'auditable',
+  'reference',
+  'reproduced',
+]);
+const PUBLIC_GAP_DIMENSIONS = new Set([
+  'contract',
+  'data',
+  'atomistic',
+  'mesoscale',
+  'continuum',
+  'process',
+  'coupling',
+  'world_rollout',
+  'uq_ood',
+  'repro_cost',
+  'visual_truth',
+  'safety',
+]);
+const PUBLIC_GAP_SEVERITIES = new Set(['P0', 'P1', 'P2', 'P3']);
 const SNAPSHOT_PREFIX = '.tailing-sentinel-';
 const TRUSTED_GIT = '/usr/bin/git';
 const GIT_ENVIRONMENT = Object.freeze({
@@ -111,8 +161,20 @@ try {
 
   const reportJson = await readBoundedRegularFile(path.join(snapshotRoot, 'evaluation', 'latest-report.json'), MAX_REPORT_JSON_BYTES);
   const reportMarkdown = await readBoundedRegularFile(path.join(snapshotRoot, 'evaluation', 'latest-report.md'), MAX_REPORT_MARKDOWN_BYTES);
-  validateWorkerReport(reportJson, reportMarkdown, sourceFiles, sourceManifest, artifactDigest, worker.status);
-  await publishReports(root, reportJson, reportMarkdown);
+  const report = validateWorkerReport(reportJson, reportMarkdown, sourceFiles, sourceManifest, artifactDigest, worker.status);
+  const publicSummary = buildPublicSummary(report);
+  const publicProductEvaluation = buildPublicProductEvaluation(
+    report,
+    capturedJson(captured, 'evaluation/current-scorecard.json'),
+    capturedJson(captured, 'evaluation/baselines/registry.json'),
+  );
+  await publishReports(
+    root,
+    reportJson,
+    reportMarkdown,
+    publicSummary,
+    publicProductEvaluation,
+  );
   process.exitCode = worker.status ?? 1;
 } catch (error) {
   console.error(`HARD GATE: ${error instanceof Error ? error.message : String(error)}`);
@@ -249,7 +311,9 @@ function isSafeRepositoryPath(relativePath) {
 function selectProjectSourceFiles(relativePaths) {
   return [...new Set(relativePaths.filter(isProjectSourcePath))]
     .filter((relativePath) => relativePath !== 'evaluation/latest-report.json'
-      && relativePath !== 'evaluation/latest-report.md')
+      && relativePath !== 'evaluation/latest-report.md'
+      && relativePath !== 'evaluation/public-summary.json'
+      && relativePath !== 'evaluation/public-product-evaluation.json')
     .sort();
 }
 
@@ -402,11 +466,153 @@ function validateWorkerReport(reportJson, reportMarkdown, relativePaths, manifes
   if (!markdown.includes(`Verdict: **${report.verdict.toUpperCase()}**`) || !markdown.includes(report.artifactDigest)) {
     throw new Error('Evaluator Markdown is not bound to the JSON verdict and artifact.');
   }
+  return report;
 }
 
-async function publishReports(repositoryRoot, reportJson, reportMarkdown) {
+function buildPublicSummary(report) {
+  if (!Array.isArray(report.gaps) || report.gaps.length > 3) {
+    throw new Error('Evaluator report gaps cannot be projected into the bounded public summary.');
+  }
+  const gaps = report.gaps.map((gap) => {
+    if (!gap || typeof gap !== 'object'
+      || !PUBLIC_GAP_SEVERITIES.has(gap.severity)
+      || !PUBLIC_GAP_DIMENSIONS.has(gap.dimension)) {
+      throw new Error('Evaluator report contains an invalid public gap identifier.');
+    }
+    return { severity: gap.severity, dimension: gap.dimension };
+  });
+  if (new Set(gaps.map((gap) => gap.dimension)).size !== gaps.length) {
+    throw new Error('Evaluator report contains duplicate public gap identifiers.');
+  }
+  const summary = {
+    artifactDigest: report.artifactDigest,
+    verdict: report.verdict,
+    gaps,
+  };
+  const bytes = Buffer.from(`${JSON.stringify(summary, null, 2)}\n`, 'utf8');
+  if (bytes.length > MAX_PUBLIC_SUMMARY_BYTES) throw new Error('Evaluator public summary exceeds its size limit.');
+  return bytes;
+}
+
+function capturedJson(entries, relativePath) {
+  const entry = entries.get(relativePath);
+  if (!entry || !Buffer.isBuffer(entry.content)) {
+    throw new Error(`Evaluator public product projection source is missing: ${relativePath}.`);
+  }
+  try {
+    return JSON.parse(entry.content.toString('utf8'));
+  } catch {
+    throw new Error(`Evaluator public product projection source is malformed: ${relativePath}.`);
+  }
+}
+
+function buildPublicProductEvaluation(report, scorecard, registry) {
+  if (!report || typeof report !== 'object'
+    || !/^sha256:[0-9a-f]{64}$/.test(report.artifactDigest ?? '')) {
+    throw new Error('Evaluator public product projection lacks a bound source artifact digest.');
+  }
+  if (!scorecard || typeof scorecard !== 'object' || Array.isArray(scorecard)
+    || !isPublicIdentifier(scorecard.candidateVersion, 128)
+    || !Array.isArray(scorecard.dimensions)
+    || scorecard.dimensions.length !== PUBLIC_SCORECARD_DIMENSION_IDS.length) {
+    throw new Error('Evaluator scorecard cannot enter the public product projection.');
+  }
+  const dimensions = scorecard.dimensions.map((dimension, index) => {
+    const expectedId = PUBLIC_SCORECARD_DIMENSION_IDS[index];
+    if (!dimension || typeof dimension !== 'object' || Array.isArray(dimension)
+      || dimension.id !== expectedId
+      || !isPublicText(dimension.displayLabel, 96)
+      || !Number.isSafeInteger(dimension.weight)
+      || dimension.weight < 0
+      || dimension.weight > 100
+      || !Number.isSafeInteger(dimension.score)
+      || dimension.score < 0
+      || dimension.score > 4
+      || !isPublicText(dimension.summary, 256)) {
+      throw new Error(`Evaluator scorecard dimension cannot enter the public product projection: ${expectedId}.`);
+    }
+    return {
+      id: dimension.id,
+      displayLabel: dimension.displayLabel,
+      weight: dimension.weight,
+      score: dimension.score,
+      summary: dimension.summary,
+    };
+  });
+  if (dimensions.reduce((total, dimension) => total + dimension.weight, 0) !== 100) {
+    throw new Error('Evaluator public scorecard weights must total 100.');
+  }
+  if (!registry || typeof registry !== 'object' || Array.isArray(registry)
+    || !/^\d{4}-\d{2}-\d{2}$/.test(registry.snapshotDate ?? '')
+    || !Array.isArray(registry.comparators)
+    || registry.comparators.length !== PUBLIC_COMPARATOR_IDS.length) {
+    throw new Error('Evaluator comparator registry cannot enter the public product projection.');
+  }
+  const items = registry.comparators.map((comparator, index) => {
+    const expectedId = PUBLIC_COMPARATOR_IDS[index];
+    if (!comparator || typeof comparator !== 'object' || Array.isArray(comparator)
+      || comparator.id !== expectedId
+      || !isPublicText(comparator.name, 128)
+      || !isPublicText(comparator.scope, 256)
+      || !PUBLIC_COMPARATOR_EVIDENCE_CLASSES.has(comparator.evidenceClass)) {
+      throw new Error(`Evaluator comparator cannot enter the public product projection: ${expectedId}.`);
+    }
+    return {
+      id: comparator.id,
+      name: comparator.name,
+      scope: comparator.scope,
+      evidenceClass: comparator.evidenceClass,
+    };
+  });
+  const projection = {
+    schemaVersion: PUBLIC_PRODUCT_EVALUATION_VERSION,
+    sourceArtifactDigest: report.artifactDigest,
+    scorecard: {
+      candidateVersion: scorecard.candidateVersion,
+      dimensions,
+    },
+    comparators: {
+      snapshotDate: registry.snapshotDate,
+      items,
+    },
+  };
+  const bytes = Buffer.from(`${JSON.stringify(projection, null, 2)}\n`, 'utf8');
+  if (bytes.length < 2
+    || bytes.length > MAX_PUBLIC_PRODUCT_EVALUATION_BYTES
+    || bytes.includes(0)) {
+    throw new Error('Evaluator public product projection exceeds its byte contract.');
+  }
+  return bytes;
+}
+
+function isPublicIdentifier(value, maximumLength) {
+  return typeof value === 'string'
+    && value.length > 0
+    && value.length <= maximumLength
+    && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value);
+}
+
+function isPublicText(value, maximumLength) {
+  return typeof value === 'string'
+    && value.length > 0
+    && value.length <= maximumLength
+    && !/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/u.test(value);
+}
+
+async function publishReports(
+  repositoryRoot,
+  reportJson,
+  reportMarkdown,
+  publicSummary,
+  publicProductEvaluation,
+) {
   const evaluationDirectory = await safeEvaluationDirectory(repositoryRoot);
-  for (const name of ['latest-report.json', 'latest-report.md']) {
+  for (const name of [
+    'latest-report.json',
+    'latest-report.md',
+    'public-summary.json',
+    'public-product-evaluation.json',
+  ]) {
     const target = path.join(evaluationDirectory, name);
     try {
       const metadata = await lstat(target);
@@ -418,22 +624,41 @@ async function publishReports(repositoryRoot, reportJson, reportMarkdown) {
   const token = randomUUID();
   const jsonTemporary = path.join(evaluationDirectory, `.latest-report-${token}.json.tmp`);
   const markdownTemporary = path.join(evaluationDirectory, `.latest-report-${token}.md.tmp`);
+  const publicSummaryTemporary = path.join(evaluationDirectory, `.public-summary-${token}.json.tmp`);
+  const publicProductEvaluationTemporary = path.join(
+    evaluationDirectory,
+    `.public-product-evaluation-${token}.json.tmp`,
+  );
   try {
     await writeExclusive(jsonTemporary, reportJson, 0o600);
     await writeExclusive(markdownTemporary, reportMarkdown, 0o600);
+    await writeExclusive(publicSummaryTemporary, publicSummary, 0o600);
+    await writeExclusive(publicProductEvaluationTemporary, publicProductEvaluation, 0o600);
     await rename(markdownTemporary, path.join(evaluationDirectory, 'latest-report.md'));
     await rename(jsonTemporary, path.join(evaluationDirectory, 'latest-report.json'));
+    await rename(publicSummaryTemporary, path.join(evaluationDirectory, 'public-summary.json'));
+    await rename(
+      publicProductEvaluationTemporary,
+      path.join(evaluationDirectory, 'public-product-evaluation.json'),
+    );
   } finally {
     await Promise.all([
       rm(jsonTemporary, { force: true }),
       rm(markdownTemporary, { force: true }),
+      rm(publicSummaryTemporary, { force: true }),
+      rm(publicProductEvaluationTemporary, { force: true }),
     ]);
   }
 }
 
 async function clearPublishedReports(repositoryRoot) {
   const evaluationDirectory = await safeEvaluationDirectory(repositoryRoot);
-  for (const name of ['latest-report.json', 'latest-report.md']) {
+  for (const name of [
+    'latest-report.json',
+    'latest-report.md',
+    'public-summary.json',
+    'public-product-evaluation.json',
+  ]) {
     const target = path.join(evaluationDirectory, name);
     try {
       const metadata = await lstat(target);

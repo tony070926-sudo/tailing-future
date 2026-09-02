@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/periodic-atomistic-observation/0.4.1",
+  "title": "Tailing Future Periodic Atomistic Observation",
+  "type": "object",
+  "required": [
+    "schemaVersion", "worldId", "scenarioId", "stateId", "stateDigest", "physicalDigest",
+    "parentStateId", "step", "timePicoseconds", "configurationDigest", "topologyDigest",
+    "atoms", "bonds", "pairInteractions", "forceByAtomIdKjMolAngstrom", "energy", "cell",
+    "thermodynamics", "stressKjMolAngstrom3", "stressSignConvention", "conservation",
+    "neighborList", "events", "numericalValidity", "provenance", "boundaries"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.periodic-atomistic-observation/0.4.1" },
+    "worldId": { "$ref": "#/$defs/configurationToken" },
+    "scenarioId": { "$ref": "#/$defs/configurationToken" },
+    "stateId": { "$ref": "#/$defs/stateToken" },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "physicalDigest": { "$ref": "#/$defs/digest" },
+    "parentStateId": {
+      "oneOf": [{ "$ref": "#/$defs/stateToken" }, { "type": "null" }]
+    },
+    "step": { "$ref": "#/$defs/step" },
+    "timePicoseconds": { "type": "number", "minimum": 0, "maximum": 10000 },
+    "configurationDigest": { "$ref": "#/$defs/digest" },
+    "topologyDigest": { "$ref": "#/$defs/digest" },
+    "atoms": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 100000,
+      "items": { "$ref": "#/$defs/atomObservation" }
+    },
+    "bonds": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": { "$ref": "#/$defs/bond" }
+    },
+    "pairInteractions": {
+      "type": "array",
+      "maxItems": 5000000000,
+      "items": { "$ref": "#/$defs/pairInteraction" }
+    },
+    "forceByAtomIdKjMolAngstrom": { "$ref": "#/$defs/vectorMap" },
+    "energy": { "$ref": "#/$defs/energy" },
+    "cell": { "$ref": "#/$defs/observedCell" },
+    "thermodynamics": { "$ref": "#/$defs/thermodynamics" },
+    "stressKjMolAngstrom3": { "$ref": "#/$defs/tensor3" },
+    "stressSignConvention": { "const": "positive-tension" },
+    "conservation": { "$ref": "#/$defs/conservation" },
+    "neighborList": { "$ref": "#/$defs/neighborList" },
+    "events": { "$ref": "#/$defs/events" },
+    "numericalValidity": { "$ref": "#/$defs/numericalValidity" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "boundaries": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 7,
+      "items": { "type": "string", "minLength": 1, "maxLength": 512 }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "stableToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "configurationToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+    },
+    "stateToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+    },
+    "finiteNumber": {
+      "type": "number",
+      "minimum": -1e300,
+      "maximum": 1e300
+    },
+    "nonnegativeNumber": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1e300
+    },
+    "positiveNumber": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1e300
+    },
+    "nonnegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "step": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "vector3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "$ref": "#/$defs/finiteNumber" },
+        "y": { "$ref": "#/$defs/finiteNumber" },
+        "z": { "$ref": "#/$defs/finiteNumber" }
+      },
+      "additionalProperties": false
+    },
+    "originVector3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": -1000000000, "maximum": 1000000000 },
+        "y": { "type": "number", "minimum": -1000000000, "maximum": 1000000000 },
+        "z": { "type": "number", "minimum": -1000000000, "maximum": 1000000000 }
+      },
+      "additionalProperties": false
+    },
+    "cellVector3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+        "y": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+        "z": { "type": "number", "minimum": -1000000, "maximum": 1000000 }
+      },
+      "additionalProperties": false
+    },
+    "cellVectors3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "$ref": "#/$defs/cellVector3" },
+        { "$ref": "#/$defs/cellVector3" },
+        { "$ref": "#/$defs/cellVector3" }
+      ],
+      "items": false
+    },
+    "wrappedFractional": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
+        "y": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
+        "z": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "int3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 },
+        "y": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 },
+        "z": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 }
+      },
+      "additionalProperties": false
+    },
+    "tensor3": {
+      "type": "object",
+      "required": ["xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"],
+      "properties": {
+        "xx": { "$ref": "#/$defs/finiteNumber" },
+        "xy": { "$ref": "#/$defs/finiteNumber" },
+        "xz": { "$ref": "#/$defs/finiteNumber" },
+        "yx": { "$ref": "#/$defs/finiteNumber" },
+        "yy": { "$ref": "#/$defs/finiteNumber" },
+        "yz": { "$ref": "#/$defs/finiteNumber" },
+        "zx": { "$ref": "#/$defs/finiteNumber" },
+        "zy": { "$ref": "#/$defs/finiteNumber" },
+        "zz": { "$ref": "#/$defs/finiteNumber" }
+      },
+      "additionalProperties": false
+    },
+    "atomObservation": {
+      "type": "object",
+      "required": [
+        "id", "label", "element", "atomType", "massDalton", "chargeE",
+        "wrappedFractional", "image", "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom", "unwrappedPositionAngstrom", "forceKjMolAngstrom",
+        "localVirialKjMol"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableToken" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "element": { "type": "string", "minLength": 1, "maxLength": 8, "pattern": "^[A-Za-z][A-Za-z0-9+-]*$" },
+        "atomType": { "$ref": "#/$defs/stableToken" },
+        "massDalton": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000000 },
+        "chargeE": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+        "wrappedFractional": { "$ref": "#/$defs/wrappedFractional" },
+        "image": { "$ref": "#/$defs/int3" },
+        "velocityAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+        "wrappedPositionAngstrom": { "$ref": "#/$defs/vector3" },
+        "unwrappedPositionAngstrom": { "$ref": "#/$defs/vector3" },
+        "forceKjMolAngstrom": { "$ref": "#/$defs/vector3" },
+        "localVirialKjMol": { "$ref": "#/$defs/tensor3" }
+      },
+      "additionalProperties": false
+    },
+    "morsePotential": {
+      "type": "object",
+      "required": ["kind", "wellDepthKjMol", "widthInverseAngstrom", "equilibriumDistanceAngstrom", "energyZero"],
+      "properties": {
+        "kind": { "const": "morse" },
+        "wellDepthKjMol": { "$ref": "#/$defs/positiveNumber" },
+        "widthInverseAngstrom": { "$ref": "#/$defs/positiveNumber" },
+        "equilibriumDistanceAngstrom": { "$ref": "#/$defs/positiveNumber" },
+        "energyZero": { "const": "minimum" }
+      },
+      "additionalProperties": false
+    },
+    "harmonicBondPotential": {
+      "type": "object",
+      "required": ["kind", "forceConstantKjMolAngstrom2", "equilibriumDistanceAngstrom"],
+      "properties": {
+        "kind": { "const": "harmonic-bond" },
+        "forceConstantKjMolAngstrom2": { "$ref": "#/$defs/positiveNumber" },
+        "equilibriumDistanceAngstrom": { "$ref": "#/$defs/positiveNumber" }
+      },
+      "additionalProperties": false
+    },
+    "bondedPotential": {
+      "oneOf": [
+        { "$ref": "#/$defs/harmonicBondPotential" },
+        { "$ref": "#/$defs/morsePotential" }
+      ]
+    },
+    "bond": {
+      "type": "object",
+      "required": ["id", "atomAId", "atomBId", "imageShiftForB", "potential"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableToken" },
+        "atomAId": { "$ref": "#/$defs/stableToken" },
+        "atomBId": { "$ref": "#/$defs/stableToken" },
+        "imageShiftForB": { "$ref": "#/$defs/int3" },
+        "potential": { "$ref": "#/$defs/bondedPotential" }
+      },
+      "additionalProperties": false
+    },
+    "energyByKind": {
+      "type": "object",
+      "required": [
+        "coulomb-minimum-image-reference", "lennard-jones-12-6",
+        "buckingham-exp-6", "morse", "harmonic-bond"
+      ],
+      "properties": {
+        "coulomb-minimum-image-reference": { "$ref": "#/$defs/finiteNumber" },
+        "lennard-jones-12-6": { "$ref": "#/$defs/finiteNumber" },
+        "buckingham-exp-6": { "$ref": "#/$defs/finiteNumber" },
+        "morse": { "$ref": "#/$defs/finiteNumber" },
+        "harmonic-bond": { "$ref": "#/$defs/finiteNumber" }
+      },
+      "additionalProperties": false
+    },
+    "pairInteraction": {
+      "type": "object",
+      "required": [
+        "id", "role", "atomAId", "atomBId", "imageShiftForB", "displacementAngstrom",
+        "distanceAngstrom", "energyKjMol", "energyByKindKjMol", "forceOnBKjMolAngstrom",
+        "pairVirialKjMol"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$" },
+        "role": { "enum": ["nonbonded", "bonded"] },
+        "atomAId": { "$ref": "#/$defs/stableToken" },
+        "atomBId": { "$ref": "#/$defs/stableToken" },
+        "imageShiftForB": { "$ref": "#/$defs/int3" },
+        "displacementAngstrom": { "$ref": "#/$defs/vector3" },
+        "distanceAngstrom": { "$ref": "#/$defs/positiveNumber" },
+        "energyKjMol": { "$ref": "#/$defs/finiteNumber" },
+        "energyByKindKjMol": { "$ref": "#/$defs/energyByKind" },
+        "forceOnBKjMolAngstrom": { "$ref": "#/$defs/vector3" },
+        "pairVirialKjMol": { "$ref": "#/$defs/tensor3" }
+      },
+      "additionalProperties": false
+    },
+    "vectorMap": {
+      "type": "object",
+      "minProperties": 2,
+      "maxProperties": 100000,
+      "propertyNames": { "$ref": "#/$defs/stableToken" },
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "energy": {
+      "type": "object",
+      "required": [
+        "potentialKjMol", "kineticKjMol", "totalKjMol", "initialTotalKjMol",
+        "absoluteExcursionKjMol", "maximumAbsoluteExcursionKjMol", "maximumRelativeExcursion",
+        "linearDriftSlopeKjMolPerPicosecond", "linearRelativeDriftRatePerPicosecond", "sampleCount"
+      ],
+      "properties": {
+        "potentialKjMol": { "$ref": "#/$defs/finiteNumber" },
+        "kineticKjMol": { "$ref": "#/$defs/nonnegativeNumber" },
+        "totalKjMol": { "$ref": "#/$defs/finiteNumber" },
+        "initialTotalKjMol": { "$ref": "#/$defs/finiteNumber" },
+        "absoluteExcursionKjMol": { "$ref": "#/$defs/nonnegativeNumber" },
+        "maximumAbsoluteExcursionKjMol": { "$ref": "#/$defs/nonnegativeNumber" },
+        "maximumRelativeExcursion": { "type": "number", "minimum": 0, "maximum": 0.1 },
+        "linearDriftSlopeKjMolPerPicosecond": { "$ref": "#/$defs/finiteNumber" },
+        "linearRelativeDriftRatePerPicosecond": { "$ref": "#/$defs/finiteNumber" },
+        "sampleCount": { "type": "integer", "minimum": 1, "maximum": 1000001 }
+      },
+      "additionalProperties": false
+    },
+    "observedCell": {
+      "type": "object",
+      "required": ["originAngstrom", "vectorsAngstrom", "volumeAngstrom3", "shortestLatticeVectorAngstrom", "periodicAxes"],
+      "properties": {
+        "originAngstrom": { "$ref": "#/$defs/originVector3" },
+        "vectorsAngstrom": { "$ref": "#/$defs/cellVectors3" },
+        "volumeAngstrom3": { "$ref": "#/$defs/positiveNumber" },
+        "shortestLatticeVectorAngstrom": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000 },
+        "periodicAxes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [{ "const": true }, { "const": true }, { "const": true }],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "thermodynamics": {
+      "type": "object",
+      "required": ["ensemble", "temperatureKelvin", "pressureKjMolAngstrom3", "pressureSignConvention", "degreesOfFreedom", "kineticFrame", "status"],
+      "properties": {
+        "ensemble": { "const": "NVE" },
+        "temperatureKelvin": { "$ref": "#/$defs/nonnegativeNumber" },
+        "pressureKjMolAngstrom3": { "$ref": "#/$defs/finiteNumber" },
+        "pressureSignConvention": { "const": "positive-compression" },
+        "degreesOfFreedom": { "type": "integer", "minimum": 3, "maximum": 299997 },
+        "kineticFrame": { "const": "center-of-mass" },
+        "status": { "const": "instantaneous-fixed-cell-estimator" }
+      },
+      "additionalProperties": false
+    },
+    "conservation": {
+      "type": "object",
+      "required": [
+        "totalMassDalton", "massResidualDalton", "totalChargeE", "chargeResidualE",
+        "totalMomentumDaltonAngstromPerPicosecond", "momentumResidual",
+        "unwrappedCenterOfMassAngstrom", "centerOfMassResidualAngstrom",
+        "internalForceResidualKjMolAngstrom"
+      ],
+      "properties": {
+        "totalMassDalton": { "$ref": "#/$defs/positiveNumber" },
+        "massResidualDalton": { "$ref": "#/$defs/nonnegativeNumber" },
+        "totalChargeE": { "$ref": "#/$defs/finiteNumber" },
+        "chargeResidualE": { "$ref": "#/$defs/nonnegativeNumber" },
+        "totalMomentumDaltonAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+        "momentumResidual": { "$ref": "#/$defs/nonnegativeNumber" },
+        "unwrappedCenterOfMassAngstrom": { "$ref": "#/$defs/vector3" },
+        "centerOfMassResidualAngstrom": { "$ref": "#/$defs/nonnegativeNumber" },
+        "internalForceResidualKjMolAngstrom": { "$ref": "#/$defs/nonnegativeNumber" }
+      },
+      "additionalProperties": false
+    },
+    "neighborList": {
+      "type": "object",
+      "required": ["kind", "cutoffAngstrom", "skinAngstrom", "activePairCount", "cacheExcludedFromPhysicalDigest", "rebuildPolicy"],
+      "properties": {
+        "kind": { "const": "deterministic-verlet-half-list-o-n2-reference-build" },
+        "cutoffAngstrom": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000 },
+        "skinAngstrom": { "type": "number", "minimum": 0.0001, "maximum": 10 },
+        "activePairCount": { "$ref": "#/$defs/nonnegativeSafeInteger" },
+        "cacheExcludedFromPhysicalDigest": { "const": true },
+        "rebuildPolicy": { "const": "maximum-unwrapped-displacement-at-skin-half" }
+      },
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "object",
+      "required": ["faceCrossingCount"],
+      "properties": {
+        "faceCrossingCount": { "$ref": "#/$defs/nonnegativeSafeInteger" }
+      },
+      "additionalProperties": false
+    },
+    "numericalValidity": {
+      "type": "object",
+      "required": [
+        "status", "minimumPairDistanceAngstrom", "minimumAllowedPairDistanceAngstrom",
+        "maximumRelativeEnergyExcursionLimit", "momentumResidualLimit",
+        "internalForceResidualLimit", "centerOfMassResidualLimitAngstrom"
+      ],
+      "properties": {
+        "status": { "const": "pass" },
+        "minimumPairDistanceAngstrom": {
+          "oneOf": [{ "$ref": "#/$defs/positiveNumber" }, { "type": "null" }]
+        },
+        "minimumAllowedPairDistanceAngstrom": { "type": "number", "minimum": 0.0001, "maximum": 100 },
+        "maximumRelativeEnergyExcursionLimit": { "type": "number", "minimum": 1e-12, "maximum": 0.1 },
+        "momentumResidualLimit": { "type": "number", "minimum": 1e-15, "maximum": 1 },
+        "internalForceResidualLimit": { "type": "number", "minimum": 1e-15, "maximum": 1 },
+        "centerOfMassResidualLimitAngstrom": { "type": "number", "minimum": 1e-15, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "solver", "solverVersion", "parameterRole", "externalEngineExecuted",
+        "electronicStructureSolved", "modelName", "modelVersion", "forceModelRole",
+        "fidelity", "uncertaintyStatus"
+      ],
+      "properties": {
+        "solver": { "const": "tf-periodic-atomistic-vv" },
+        "solverVersion": { "const": "0.4.1" },
+        "parameterRole": { "const": "local-classical-reference" },
+        "externalEngineExecuted": { "const": false },
+        "electronicStructureSolved": { "const": false },
+        "modelName": { "$ref": "#/$defs/configurationToken" },
+        "modelVersion": { "$ref": "#/$defs/configurationToken" },
+        "forceModelRole": { "const": "solver" },
+        "fidelity": { "const": "local-fixed-cell-short-range-periodic-nve" },
+        "uncertaintyStatus": { "const": "not-quantified" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

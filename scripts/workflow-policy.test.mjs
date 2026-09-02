@@ -37,16 +37,21 @@ import {
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
   DOCKERIGNORE_ALLOWLIST,
   inspectAtomisticBootstrapQuarantineSource,
+  inspectOpenMmTip3pProtectedWorkflow,
   inspectDockerfileSource,
   inspectDockerignoreSource,
   inspectWorkflowSource,
   PINNED_DOCKERFILE_FRONTEND,
+  OPENMM_TIP3P_PROTECTED_RUN_DIGESTS,
+  OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH,
+  OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256,
   PYTHON_HOSTLIST_BUILD_LOCK_SHA256,
   PYTHON_HOSTLIST_BUILD_SCRIPT_SHA256,
   PYTHON_HOSTLIST_SDIST_SHA256,
   PYTHON_HOSTLIST_SDIST_URL,
   PYTHON_HOSTLIST_VERIFIER_SHA256,
   SENTINEL_EVALUATION_WORKFLOW_PATH,
+  SENTINEL_EVALUATION_WORKFLOW_SHA256,
   SENTINEL_REPORT_WORKFLOW_PATH,
   SETUPTOOLS_RUNTIME_WHEEL_FILENAME,
   SETUPTOOLS_RUNTIME_WHEEL_SHA256,
@@ -59,6 +64,10 @@ const atomisticBootstrapSource = readFileSync(
 );
 const atomisticBootstrapVerifySource = readFileSync(
   new URL('../.github/workflows/atomistic-bootstrap-verify.yml', import.meta.url),
+  'utf8',
+);
+const openMmTip3pProtectedSource = readFileSync(
+  new URL('../.github/workflows/openmm-tip3p-protected.yml', import.meta.url),
   'utf8',
 );
 const atomisticBootstrapQuarantineSource = readFileSync(
@@ -117,6 +126,10 @@ const maceDockerfileSource = readFileSync(
   new URL('../atomistic/containers/mace.Dockerfile', import.meta.url),
   'utf8',
 );
+const openMmWaterDockerfileSource = readFileSync(
+  new URL('../atomistic/containers/openmm-water.Dockerfile', import.meta.url),
+  'utf8',
+);
 const bootstrapOutcomeSource = readFileSync(
   new URL('./atomistic/write_bootstrap_outcome.py', import.meta.url),
 );
@@ -139,6 +152,22 @@ function inspectMutatedBootstrapVerifier(mutator) {
     ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH,
     dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
   );
+}
+
+function inspectMutatedOpenMmProtected(mutator, { semanticOnly = false } = {}) {
+  const workflow = parseYaml(openMmTip3pProtectedSource);
+  mutator(workflow);
+  if (semanticOnly) return inspectOpenMmTip3pProtectedWorkflow(workflow);
+  return inspectWorkflowSource(
+    OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH,
+    dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+  );
+}
+
+function protectedStep(workflow, jobName, name) {
+  const matches = workflow.jobs[jobName].steps.filter((step) => step.name === name);
+  if (matches.length !== 1) throw new Error(`expected one ${jobName} step named ${name}`);
+  return matches[0];
 }
 
 function namedStep(workflow, name) {
@@ -165,13 +194,23 @@ describe('workflow source policy', () => {
 
   it('keeps candidate evaluation read-only and moves PR writes to the default-branch workflow_run reporter', () => {
     expect(inspectWorkflowSource(SENTINEL_EVALUATION_WORKFLOW_PATH, sentinelEvaluationSource)).toEqual([]);
+    expect(createHash('sha256').update(sentinelEvaluationSource).digest('hex'))
+      .toBe(SENTINEL_EVALUATION_WORKFLOW_SHA256);
     expect(inspectWorkflowSource(SENTINEL_REPORT_WORKFLOW_PATH, sentinelReportSource)).toEqual([]);
     expect(sentinelEvaluationWorkflow.permissions).toEqual({ contents: 'read' });
     expect(Object.keys(sentinelEvaluationWorkflow.jobs)).toEqual(['evaluate']);
     expect(sentinelEvaluationWorkflow.jobs.evaluate.permissions).toEqual({ contents: 'read' });
     expect(sentinelEvaluationWorkflow.jobs.evaluate['runs-on']).toBe('ubuntu-24.04');
+    expect(sentinelEvaluationWorkflow.jobs.evaluate['timeout-minutes']).toBe(35);
     const evaluationCheckout = sentinelEvaluationWorkflow.jobs.evaluate.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
     expect(evaluationCheckout?.with).toEqual({ 'persist-credentials': false, 'fetch-depth': 0 });
+    const pythonSetup = sentinelEvaluationWorkflow.jobs.evaluate.steps.find(
+      (step) => step.uses?.startsWith('actions/setup-python@'),
+    );
+    expect(pythonSetup).toEqual({
+      uses: 'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+      with: { 'python-version': '3.12.11' },
+    });
     expect(sentinelReportWorkflow.on).toEqual({
       workflow_run: {
         workflows: ['Tailing Sentinel'],
@@ -215,6 +254,41 @@ describe('workflow source policy', () => {
       ['target-context trigger', (workflow) => { workflow.on = { pull_request_target: null }; }],
       ['shallow ancestor checkout', (workflow) => {
         workflow.jobs.evaluate.steps.find((step) => step.uses?.startsWith('actions/checkout@')).with['fetch-depth'] = 1;
+      }],
+      ['timeout shortened', (workflow) => { workflow.jobs.evaluate['timeout-minutes'] = 1; }],
+      ['Python runtime drift', (workflow) => {
+        workflow.jobs.evaluate.steps.find(
+          (step) => step.uses?.startsWith('actions/setup-python@'),
+        ).with['python-version'] = '3.13';
+      }],
+      ['lint bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'lint').run = 'true';
+      }],
+      ['typecheck bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'typecheck').run = 'true';
+      }],
+      ['full tests bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'test').run = 'true';
+      }],
+      ['build bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'build').run = 'true';
+      }],
+      ['audit bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'audit').run = 'true';
+      }],
+      ['release manifest bypassed', (workflow) => {
+        workflow.jobs.evaluate.steps.find((step) => step.id === 'release_manifest').run = 'true';
+      }],
+      ['Sentinel test status removed', (workflow) => {
+        delete workflow.jobs.evaluate.steps.find((step) => step.id === 'sentinel')
+          .env.TAILING_TEST_STATUS;
+      }],
+      ['final test status removed', (workflow) => {
+        delete workflow.jobs.evaluate.steps.at(-1).env.TEST_STATUS;
+      }],
+      ['gate steps reordered', (workflow) => {
+        const steps = workflow.jobs.evaluate.steps;
+        [steps[3], steps[4]] = [steps[4], steps[3]];
       }],
       ['atomistic runtime-lock gate removed', (workflow) => {
         const steps = workflow.jobs.evaluate.steps;
@@ -448,6 +522,310 @@ describe('atomistic bootstrap replica verifier workflow policy', () => {
   });
 });
 
+describe('protected OpenMM TIP3P workflow policy', () => {
+  it('accepts only the reviewed protected-main execution and isolated envelope attestation', () => {
+    expect(inspectWorkflowSource(
+      OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH,
+      openMmTip3pProtectedSource,
+    )).toEqual([]);
+    expect(createHash('sha256').update(openMmTip3pProtectedSource).digest('hex'))
+      .toBe(OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256);
+    const workflow = parseYaml(openMmTip3pProtectedSource);
+    expect(Object.keys(workflow.jobs)).toEqual(['execute', 'attest']);
+    expect(workflow.jobs.execute['timeout-minutes']).toBe(350);
+    expect(workflow.jobs.attest.needs).toBe('execute');
+    expect(workflow.jobs.attest.steps.some(
+      (step) => String(step.uses ?? '').startsWith('actions/checkout@'),
+    )).toBe(false);
+    const upload = protectedStep(
+      workflow, 'execute', 'Upload only the allowlisted protected-CI evidence',
+    );
+    expect(upload.with.path.trim().split('\n')).toHaveLength(9);
+    expect(upload.with.path).toContain('openmm-tip3p-protected-browser-evidence.json');
+    expect(upload.with.path).not.toMatch(/PRODUCER_OUTPUT|INPUT_ROOT|WHEELHOUSE|\.pdb|\.xml|arrays\//);
+    for (const digest of Object.values(OPENMM_TIP3P_PROTECTED_RUN_DIGESTS)) {
+      expect(digest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    }
+  });
+
+  it('rejects security, science gate, publication, provenance, and privilege drift semantically', () => {
+    const cases = [
+      ['automatic push trigger', (workflow) => { workflow.on.push = null; }],
+      ['root write authority', (workflow) => { workflow.permissions.contents = 'write'; }],
+      ['shortened execution bound', (workflow) => { workflow.jobs.execute['timeout-minutes'] = 30; }],
+      ['base index substitution', (workflow) => {
+        workflow.jobs.execute.env.BASE_IMAGE_INDEX_DIGEST = `sha256:${'0'.repeat(64)}`;
+      }],
+      ['protected-ref guard removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Refuse dispatch outside protected main Linux x86_64');
+        step.run = step.run.replace('test "$GITHUB_REF_PROTECTED" = "true"\n', '');
+      }],
+      ['first-attempt guard removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Refuse dispatch outside protected main Linux x86_64');
+        step.run = step.run.replace('test "$GITHUB_RUN_ATTEMPT" = "1"\n', '');
+      }],
+      ['Chromium acquisition substitution', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Acquire the exact locked private Chromium archive');
+        step.run = step.run.replace('fetch-private-chromium-v049.mjs', 'unlocked-fetch.mjs');
+      }],
+      ['Chromium safe extraction removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Safely extract the exact locked private Chromium runtime');
+        step.run = step.run.replace('safe_extract_private_chromium_v049.py', 'unzip');
+      }],
+      ['Chromium freeze removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Freeze and verify the exact locked private Chromium runtime');
+        step.run = step.run.replace('freeze-private-chromium-runtime-v049.py', 'true');
+      }],
+      ['Rolldown binding digest drift', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute', 'Freeze the exact Node and Rolldown browser runtime dependencies',
+        );
+        step.run = step.run.replace(
+          'ae16856655924ebc41f231393c7f8b89566430a845d1f073fd9d6abf219db04b',
+          '0'.repeat(64),
+        );
+      }],
+      ['index-child verification removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Prefetch the pinned base image and record the Docker toolchain');
+        step.run = step.run.replace('docker buildx imagetools inspect "$BASE_IMAGE_INDEX" --raw', 'true');
+      }],
+      ['networked image build', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Build the OpenMM image with build-step network disabled');
+        step.run = step.run.replace('--network none', '--network default');
+      }],
+      ['container capability expansion', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Create the hardened offline producer container');
+        step.run = step.run.replace('--cap-drop ALL', '--cap-add SYS_ADMIN');
+      }],
+      ['independent verifier removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Independently verify the complete private producer output');
+        step.run = step.run.replace('verify-control-cli.mjs', 'producer.py');
+      }],
+      ['verified-pass gate removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Require the exact independently verified-pass receipt');
+        step.run = step.run.replace("receipt.status !== 'verified-pass'", 'false');
+      }],
+      ['browser source freeze removal', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute',
+          'Freeze the verified OpenMM source and control receipt for private browser modes',
+        );
+        step.run = step.run.replace('sudo chmod 0555 -- "$BROWSER_CONTROL_ROOT"', 'true');
+      }],
+      ['AppArmor userns canary removal', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute', 'Load and canary the exact Chromium AppArmor userns profile',
+        );
+        step.run = step.run.replace(
+          '/usr/bin/unshare --user --map-root-user /bin/true', '/bin/true',
+        );
+      }],
+      ['AppArmor global restriction disabled', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute', 'Load and canary the exact Chromium AppArmor userns profile',
+        );
+        step.run += '\necho 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns\n';
+      }],
+      ['AppArmor any-mode collision detection removal', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute', 'Load and canary the exact Chromium AppArmor userns profile',
+        );
+        step.run = step.run.replace(
+          'grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\\\([^)]*\\\\)$"',
+          'grep -Fqx -- "$BROWSER_APPARMOR_PROFILE (unconfined)"',
+        );
+      }],
+      ['cross-mode world-session identity drift', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Run the three protected private browser modes');
+        step.run = step.run.replace(
+          '--session-id "v049-openmm-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"',
+          '--session-id "v049-happy-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"',
+        );
+      }],
+      ['browser context-loss mode removal', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Run the three protected private browser modes');
+        step.run = step.run.replace('--mode context-loss', '--mode happy-path');
+      }],
+      ['browser composer substitution', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Compose the sanitized protected browser evidence');
+        step.run = step.run.replace('compose-protected-browser-evidence-v049.mjs', 'unlocked-compose.mjs');
+      }],
+      ['browser cleanup no longer always runs', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute',
+          'Unload AppArmor profile and remove every private browser execution root',
+        );
+        delete step.if;
+      }],
+      ['browser cleanup root removal omitted', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute',
+          'Unload AppArmor profile and remove every private browser execution root',
+        );
+        step.run = step.run.replace('"$BROWSER_ROLLDOWN_ROOT"; do', '"$BROWSER_RECEIPT_ROOT"; do');
+      }],
+      ['browser cleanup temporary profile source removal omitted', (workflow) => {
+        const step = protectedStep(
+          workflow, 'execute',
+          'Unload AppArmor profile and remove every private browser execution root',
+        );
+        step.run = step.run.replace('sudo rm -f -- "$profile_source"', 'true');
+      }],
+      ['raw producer output upload', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Upload only the allowlisted protected-CI evidence');
+        step.with.path += '${{ env.PRODUCER_OUTPUT }}\n';
+      }],
+      ['unbounded retention', (workflow) => {
+        const step = protectedStep(workflow, 'execute', 'Upload only the allowlisted protected-CI evidence');
+        step.with['retention-days'] = 90;
+      }],
+      ['OIDC in producer job', (workflow) => {
+        workflow.jobs.execute.permissions['id-token'] = 'write';
+      }],
+      ['repository checkout in attest', (workflow) => {
+        workflow.jobs.attest.steps.splice(4, 0, {
+          name: 'Checkout before attestation',
+          uses: ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION,
+          with: { 'persist-credentials': false, 'fetch-depth': 0 },
+        });
+      }],
+      ['cross-run artifact download', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Download the exact allowlisted evidence artifact from this run');
+        step.with['run-id'] = '123';
+      }],
+      ['metadata byte-bound removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace('metadataSize > maximumMetadataBytes', 'false');
+      }],
+      ['metadata identity encoding request removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace("    'accept-encoding': 'identity',\n", '');
+      }],
+      ['compressed metadata response acceptance', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          "contentEncoding.trim().toLowerCase() !== 'identity'",
+          'false',
+        );
+      }],
+      ['browser canonical check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace('browserBytes.equals(canonicalJsonBytes(browser))', 'true');
+      }],
+      ['browser self-digest check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'browserEvidenceDigest !== sha256(canonicalJsonBytes(browserPreimage))',
+          'false',
+        );
+      }],
+      ['browser source-revision binding removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace('browser.sourceRevision !== process.env.GITHUB_SHA', 'false');
+      }],
+      ['outer control digest checks removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace('outerControlDigestKeys.some', '[].some');
+      }],
+      ['browser complete runtime lock check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(browser.browserRuntime) !== canonicalJson(expectedBrowserRuntime)',
+          'false',
+        );
+      }],
+      ['browser client byte binding check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(Object.keys(browser.client).sort())',
+          'canonicalJson(browserClientKeys)',
+        );
+      }],
+      ['browser conservative claims check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(browser.claims) !== canonicalJson(expectedBrowserClaims)',
+          'false',
+        );
+      }],
+      ['browser exact mode-result check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'browser.modeResults.length !== expectedBrowserModes.length',
+          'false',
+        );
+      }],
+      ['browser exact interruption-frame check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'mode.renderedFrameCount !== expected.renderedFrameCount',
+          'false',
+        );
+      }],
+      ['browser draw-observation check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'mode.browserDrawObserved !== expected.browserDrawObserved',
+          'false',
+        );
+      }],
+      ['browser trajectory-completion check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'mode.trajectoryCompleted !== expected.trajectoryCompleted',
+          'false',
+        );
+      }],
+      ['browser isolation receipt check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(browser.isolation) !== canonicalJson(expectedBrowserIsolation)',
+          'false',
+        );
+      }],
+      ['browser cross-mode binding check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(browser.crossMode) !== canonicalJson(expectedBrowserCrossMode)',
+          'false',
+        );
+      }],
+      ['browser aggregate cleanup check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(browser.cleanup) !== canonicalJson(expectedBrowserCleanup)',
+          'false',
+        );
+      }],
+      ['browser outer projection check removal', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Verify every downloaded evidence file and envelope binding');
+        step.run = step.run.replace(
+          'canonicalJson(envelope.browserEvidence)',
+          'canonicalJson(expectedBrowserProjection)',
+        );
+      }],
+      ['raw receipt attestation', (workflow) => {
+        const step = protectedStep(workflow, 'attest', 'Attest only the verified sanitized evidence envelope');
+        step.with['subject-path'] = '${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-control-receipt.json';
+      }],
+      ['unreviewed sibling job', (workflow) => {
+        workflow.jobs.publish = { 'runs-on': 'ubuntu-24.04', steps: [] };
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedOpenMmProtected(mutate, { semanticOnly: true }), label)
+        .not.toEqual([]);
+    }
+  });
+
+  it('binds even comments and whitespace to the reviewed source bytes', () => {
+    expect(inspectWorkflowSource(
+      OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH,
+      `${openMmTip3pProtectedSource}# unreviewed drift\n`,
+    ).join('\n')).toMatch(/complete reviewed workflow bytes drifted/);
+  });
+});
+
 describe('Dockerfile source policy', () => {
   it('accepts the pinned frontend, required base argument and named wheelhouse context', () => {
     const source = `# syntax=${PINNED_DOCKERFILE_FRONTEND}\nARG BASE_IMAGE\nFROM \${BASE_IMAGE} AS builder\nCOPY --from=wheelhouse / /wheelhouse/\nFROM \${BASE_IMAGE} AS runtime\nCOPY --from=builder /opt/venv /opt/venv\n`;
@@ -484,6 +862,17 @@ describe('Dockerfile source policy', () => {
       ).not.toEqual([]);
       expect(ATOMISTIC_DOCKERFILE_DIGESTS[relativePath]).toMatch(/^sha256:[0-9a-f]{64}$/);
     }
+  });
+
+  it('accepts only the reviewed OpenMM control image with its in-source base digest', () => {
+    const relativePath = 'atomistic/containers/openmm-water.Dockerfile';
+    expect(inspectDockerfileSource(relativePath, openMmWaterDockerfileSource)).toEqual([]);
+    expect(ATOMISTIC_DOCKERFILE_DIGESTS[relativePath])
+      .toBe(`sha256:${createHash('sha256').update(openMmWaterDockerfileSource).digest('hex')}`);
+    expect(inspectDockerfileSource(
+      relativePath,
+      openMmWaterDockerfileSource.replace('\nFROM --platform', '\nARG BASE_IMAGE\nFROM --platform'),
+    ).join('\n')).toMatch(/reviewed Dockerfile bytes drifted|no BASE_IMAGE argument/);
   });
 });
 

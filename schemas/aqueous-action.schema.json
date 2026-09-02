@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-action/0.4.2",
+  "title": "Tailing Future Aqueous Action Contract",
+  "type": "object",
+  "required": ["schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId", "appliedAtStep", "parameters"],
+  "properties": {
+    "schemaVersion": { "const": "tf.aqueous-action/0.4.2" },
+    "actionId": { "$ref": "#/$defs/digest" },
+    "kind": { "enum": ["advance", "observe", "checkpoint", "restore", "branch"] },
+    "parentStateId": { "$ref": "#/$defs/token" },
+    "resultingStateId": { "$ref": "#/$defs/token" },
+    "appliedAtStep": { "$ref": "#/$defs/step" },
+    "parameters": {
+      "oneOf": [
+        { "$ref": "#/$defs/advanceParameters" },
+        { "$ref": "#/$defs/observeParameters" },
+        { "$ref": "#/$defs/checkpointParameters" },
+        { "$ref": "#/$defs/restoreParameters" },
+        { "$ref": "#/$defs/branchParameters" }
+      ]
+    }
+  },
+  "oneOf": [
+    { "properties": { "kind": { "const": "advance" }, "parameters": { "$ref": "#/$defs/advanceParameters" } }, "required": ["kind", "parameters"] },
+    { "properties": { "kind": { "const": "observe" }, "parameters": { "$ref": "#/$defs/observeParameters" } }, "required": ["kind", "parameters"] },
+    { "properties": { "kind": { "const": "checkpoint" }, "parameters": { "$ref": "#/$defs/checkpointParameters" } }, "required": ["kind", "parameters"] },
+    { "properties": { "kind": { "const": "restore" }, "parameters": { "$ref": "#/$defs/restoreParameters" } }, "required": ["kind", "parameters"] },
+    { "properties": { "kind": { "const": "branch" }, "parameters": { "$ref": "#/$defs/branchParameters" } }, "required": ["kind", "parameters"] }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "token": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "step": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "budget": {
+      "type": "object",
+      "required": ["requestedWorkUnits", "maximumWorkUnits", "withinBudget"],
+      "properties": {
+        "requestedWorkUnits": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "maximumWorkUnits": { "const": 1000000 },
+        "withinBudget": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "advanceParameters": {
+      "type": "object",
+      "required": ["kind", "substeps", "budget"],
+      "properties": {
+        "kind": { "const": "advance" },
+        "substeps": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "budget": { "$ref": "#/$defs/budget" }
+      },
+      "additionalProperties": false
+    },
+    "observeParameters": {
+      "type": "object",
+      "required": ["kind", "includePerAtomForces", "budget"],
+      "properties": {
+        "kind": { "const": "observe" },
+        "includePerAtomForces": { "type": "boolean" },
+        "budget": { "$ref": "#/$defs/budget" }
+      },
+      "additionalProperties": false
+    },
+    "checkpointParameters": {
+      "type": "object",
+      "required": ["kind", "checkpointId", "budget"],
+      "properties": {
+        "kind": { "const": "checkpoint" },
+        "checkpointId": { "$ref": "#/$defs/token" },
+        "budget": { "$ref": "#/$defs/budget" }
+      },
+      "additionalProperties": false
+    },
+    "restoreParameters": {
+      "type": "object",
+      "required": ["kind", "checkpointId", "expectedStateDigest", "budget"],
+      "properties": {
+        "kind": { "const": "restore" },
+        "checkpointId": { "$ref": "#/$defs/token" },
+        "expectedStateDigest": { "$ref": "#/$defs/digest" },
+        "budget": { "$ref": "#/$defs/budget" }
+      },
+      "additionalProperties": false
+    },
+    "branchParameters": {
+      "type": "object",
+      "required": ["kind", "fromStep", "branchOrdinal", "budget"],
+      "properties": {
+        "kind": { "const": "branch" },
+        "fromStep": { "$ref": "#/$defs/step" },
+        "branchOrdinal": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "budget": { "$ref": "#/$defs/budget" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

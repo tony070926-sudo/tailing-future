@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/nacl-water-interface-plan/0.4.10",
+  "title": "Tailing Future NaCl{100}-Water Interface Plan v0.4.10",
+  "description": "Closed binding between the exact interface system and its full coordinate seed.",
+  "type": "object",
+  "required": ["system", "coordinateSeed", "planDigest"],
+  "properties": {
+    "system": { "$ref": "https://tailing.future/schemas/nacl-water-interface-system/0.4.10" },
+    "coordinateSeed": { "$ref": "https://tailing.future/schemas/nacl-water-interface-coordinate-seed/0.4.10" },
+    "planDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:f6f271d255de31ab655e62b7539b65e58a4e85994870232b675ef7b40f2fd0b8"
+    }
+  },
+  "additionalProperties": false
+}

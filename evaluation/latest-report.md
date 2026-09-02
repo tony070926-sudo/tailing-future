@@ -1,10 +1,10 @@
-# Tailing Sentinel — 0.3.1-r7b1-evidence-boundary
+# Tailing Sentinel — 0.4.11-nacl-water-semantic-import
 
 - Verdict: **CONDITIONAL**
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
-- Comparator snapshot: **2026-08-29**
+- Comparator snapshot: **2026-09-02**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:36b2278ddc6d7996e02ba677e4d6d72ebbf2c84079bccc6b5b992c78a271ff83` across 157 source files
+- Artifact: `sha256:3e91a7d9856cb927a8ee3bb75219c33857c783578387f16c683d65b102d21024` across 375 source files
 
 ## Hard gates
 
@@ -13,13 +13,16 @@
 ## Executable verification
 
 - Fourier L2: 1.701e-4; minimum 2D order: 1.913; 8×5000 p95/max energy tail: 5.187e-5 / 5.369e-5.
-- World/action schemas and negative mutation corpus: PASS; atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 73473.9 ms.
+- Molecular isolated constant-energy trajectory: 10000 steps / 5.000 ps; maximum |ΔE|/max(|E₀|, 1 kJ mol⁻¹): 1.263e-5; OLS relative drift: 7.448e-8 ps⁻¹; deterministic replay: PASS.
+- Periodic atomistic fixed-cell NVE calibration: 10,000 primary + 10,000 independent replay steps; maximum relative energy excursion 6.086e-9; momentum / internal-force / COM residuals 2.729e-12 / 6.476e-15 / 7.857e-15; physical, full-state, observation and trajectory/checkpoint digest replay PASS (evidence sha256:c19d04cfd1ebae74ea1ea8c71e99bb092aedff44cb164ad971af3f7fb36707e9).
+- Aqueous foundation references: 15/15 direct-Ewald and rigid-constraint gates passed; NaCl point-charge Madelung |ΔE| 2.274e-12 kJ mol⁻¹; triclinic force finite-difference maximum 3.782e-9 kJ mol⁻¹ Å⁻¹; TIP3P position / velocity-derivative residuals 6.772e-13 Å / 6.722e-13 Å² ps⁻¹ (foundation only; no NaCl–water trajectory, PME or OpenMM execution; evidence sha256:7a015b6879c2bdbe8c39a6bbe5f0c2f4384cd0a7ad527616e57edcab4ee3f78a).
+- World/action schemas and negative mutation corpus: PASS; molecular world/action/observation schemas and recomputed-tamper corpus: PASS; periodic atomistic world/action/observation schemas: PASS; aqueous v0.4.4 system/backend schemas and exact negative-evidence plan: PASS (declarative contract only; OpenMM not run); NaCl-water v0.4.10 full-seed schemas, locked digests and fail-closed actions: PASS (geometric contract only; no trajectory or solver); v0.4.11 Python semantic import and independent byte verifier source contract: PASS (portable input only; OpenMM not imported); atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 339159.8 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps
 
 1. **P1 · atomistic** — Complete the authenticated provenance/archive adapter and private handoff, then execute both frozen runtimes on all 693 Random-TP records with an independent scientific verifier.
-   - Evidence: Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests remain unchanged. The authenticated S replicas each contain ten finite label-free outputs per model. MACE physical predictions agree across the two runs; MatterSim differs only below the frozen bootstrap numerical tolerances. Commit F freezes the stable runtime inputs at 2/2 but these remain smoke observations without labels or accuracy metrics, not a scientific reproduction, model comparison or score increase.
+   - Evidence: Force finite-difference, cutoff continuity and exact pair momentum tests remain unchanged. R8 adds a local two-fixed-orientation rigid-TIP3P water-body Velocity Verlet trajectory with a 10,000-step maximum relative energy-excursion gate, OLS drift diagnostic, momentum/center-of-mass/internal-force/rigid-geometry closure and deterministic replay. v0.4.10 adds a complete deterministic 6,336-site NaCl{100}–TIP3P geometric seed with exact system/coordinate/topology identity, structural schemas and fail-closed actions. v0.4.11 independently reconstructs the six-digest graph, crystal/water geometry, topology, charge/mass and periodic cell in standard-library Python, writes ten digest-bound normalized artifacts, and has Node decode every value back against the locked TypeScript plan. All four solver-admission receipts remain absent; OpenMM import, system compilation, PME, minimization, trajectory, hydration, dissolution and phase-equilibrium evidence remain false. The authenticated S replicas each contain ten finite label-free outputs per learned model; the full 693-by-two benchmark remains not run. No scientific reproduction, learned-potential comparison or score increase is claimed.
    - Acceptance: Authenticated inputs produce two 693/693 receipts; energy, force, stress, stability, OOD and cost metrics are recomputed with checkpoint, runner, source-tree and outcome digests.
 2. **P1 · mesoscale** — Implement the pinned NIST PFHub Benchmark 3 coupled phase/heat case.
    - Evidence: No executable evidence in the current candidate.

@@ -8,6 +8,17 @@ import { afterEach, describe, expect, it } from 'vitest';
 const execFileAsync = promisify(execFile);
 const temporaryRoots = [];
 const launcherBytes = await readFile(new URL('./evaluate.mjs', import.meta.url));
+const publicDimensionIds = [
+  'contract', 'data', 'atomistic', 'mesoscale', 'continuum', 'process',
+  'coupling', 'world_rollout', 'uq_ood', 'repro_cost', 'visual_truth', 'safety',
+];
+const publicDimensionWeights = [8, 8, 12, 8, 10, 10, 14, 8, 8, 6, 4, 4];
+const publicComparatorIds = [
+  'aido-cell-1.0', 'equiformerv3-dens-oam', 'tece-oam-rra-1.0',
+  'mattersim-1.0.0-5m', 'mace-mpa-0', 'openmm-8.5.1-tip3p-ions',
+  'openmm-8.6.0-tip3p-control', 'pfhub-benchmark-3', 'cantera-3.2-cstr',
+  'idaes-2.12',
+];
 const fakeWorker = `
 import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -31,7 +42,9 @@ if (behavior === 'report-symlink') {
     sourceRevision: process.env.GITHUB_SHA ?? null,
     hardGateFailures: [],
     verdict: 'conditional',
+    gaps: [{ severity: 'P1', dimension: 'atomistic', recommendedChange: 'private worker text' }],
   };
+  if (behavior === 'public-gap-forgery') report.gaps = [{ severity: 'P1', dimension: '../../../private', recommendedChange: 'private worker text' }];
   await writeFile(path.join(root, 'evaluation', 'latest-report.json'), JSON.stringify(report));
   await writeFile(path.join(root, 'evaluation', 'latest-report.md'), '# report\\n\\n- Verdict: **CONDITIONAL**\\n- Artifact: ' + control.artifactDigest + '\\n');
 }
@@ -45,10 +58,18 @@ async function fixture() {
   const root = await mkdtemp(path.join(tmpdir(), 'tailing-evaluate-launcher-'));
   temporaryRoots.push(root);
   await mkdir(path.join(root, 'scripts'), { recursive: true });
-  await mkdir(path.join(root, 'evaluation'), { recursive: true });
+  await mkdir(path.join(root, 'evaluation', 'baselines'), { recursive: true });
   await writeFile(path.join(root, 'scripts', 'evaluate.mjs'), launcherBytes);
   await writeFile(path.join(root, 'scripts', 'evaluate-worker.mjs'), fakeWorker);
   await writeFile(path.join(root, 'evaluation', 'input.json'), '{}\n');
+  await writeFile(
+    path.join(root, 'evaluation', 'current-scorecard.json'),
+    `${JSON.stringify(scorecardFixture(), null, 2)}\n`,
+  );
+  await writeFile(
+    path.join(root, 'evaluation', 'baselines', 'registry.json'),
+    `${JSON.stringify(registryFixture(), null, 2)}\n`,
+  );
   await writeFile(path.join(root, 'README.md'), 'original\n');
   await execFileAsync('git', ['init', '--quiet'], { cwd: root });
   return root;
@@ -79,12 +100,76 @@ describe('two-stage evaluator launcher', () => {
     const root = await fixture();
     const result = await runLauncher(root);
     const report = JSON.parse(await readFile(path.join(root, 'evaluation', 'latest-report.json'), 'utf8'));
+    const publicSummary = JSON.parse(await readFile(path.join(root, 'evaluation', 'public-summary.json'), 'utf8'));
+    const publicProduct = JSON.parse(await readFile(
+      path.join(root, 'evaluation', 'public-product-evaluation.json'),
+      'utf8',
+    ));
 
     expect(result.code).toBe(0);
     expect(report.sourceFileCount).toBe(Object.keys(report.sourceManifest).length);
     expect(report.sourceManifest['scripts/evaluate.mjs']).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(report.sourceManifest['scripts/evaluate-worker.mjs']).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(report.artifactDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(report.sourceManifest['evaluation/public-summary.json']).toBeUndefined();
+    expect(report.sourceManifest['evaluation/public-product-evaluation.json']).toBeUndefined();
+    expect(publicSummary).toEqual({
+      artifactDigest: report.artifactDigest,
+      verdict: report.verdict,
+      gaps: [{ severity: 'P1', dimension: 'atomistic' }],
+    });
+    expect(JSON.stringify(publicSummary)).not.toContain('private worker text');
+    expect(Object.keys(publicProduct)).toEqual([
+      'schemaVersion', 'sourceArtifactDigest', 'scorecard', 'comparators',
+    ]);
+    expect(publicProduct.sourceArtifactDigest).toBe(report.artifactDigest);
+    expect(Object.keys(publicProduct.scorecard)).toEqual(['candidateVersion', 'dimensions']);
+    expect(publicProduct.scorecard.dimensions).toHaveLength(12);
+    expect(Object.keys(publicProduct.scorecard.dimensions[0])).toEqual([
+      'id', 'displayLabel', 'weight', 'score', 'summary',
+    ]);
+    expect(Object.keys(publicProduct.comparators)).toEqual(['snapshotDate', 'items']);
+    expect(publicProduct.comparators.items).toHaveLength(10);
+    expect(Object.keys(publicProduct.comparators.items[0])).toEqual([
+      'id', 'name', 'scope', 'evidenceClass',
+    ]);
+    for (const forbidden of [
+      'private scorecard evidence',
+      'private/evidence/path',
+      'private next action',
+      'private acceptance test',
+      'https://private.invalid/source',
+      'private comparator reason',
+      'checkpointDigest',
+      'claimOwner',
+    ]) expect(JSON.stringify(publicProduct)).not.toContain(forbidden);
+  });
+
+  it('rejects a report gap that cannot enter the allowlisted public projection', async () => {
+    const root = await fixture();
+    const result = await runLauncher(root, { behavior: 'public-gap-forgery' });
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toMatch(/invalid public gap identifier/);
+    await expect(lstat(path.join(root, 'evaluation', 'latest-report.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-summary.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-product-evaluation.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('rejects scorecard values outside the strict public product allowlist', async () => {
+    const root = await fixture();
+    const scorecardPath = path.join(root, 'evaluation', 'current-scorecard.json');
+    const scorecard = JSON.parse(await readFile(scorecardPath, 'utf8'));
+    scorecard.dimensions[0].score = 5;
+    await writeFile(scorecardPath, `${JSON.stringify(scorecard, null, 2)}\n`);
+
+    const result = await runLauncher(root);
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toMatch(/scorecard dimension cannot enter the public product projection/);
+    await expect(lstat(path.join(root, 'evaluation', 'latest-report.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-summary.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-product-evaluation.json'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('rejects active-tree drift and does not publish the frozen success report', async () => {
@@ -109,12 +194,16 @@ describe('two-stage evaluator launcher', () => {
     const root = await fixture();
     await writeFile(path.join(root, 'evaluation', 'latest-report.json'), '{"stale":true}\n');
     await writeFile(path.join(root, 'evaluation', 'latest-report.md'), '# stale\n');
+    await writeFile(path.join(root, 'evaluation', 'public-summary.json'), '{"stale":true}\n');
+    await writeFile(path.join(root, 'evaluation', 'public-product-evaluation.json'), '{"stale":true}\n');
     const result = await runLauncher(root, { behavior: 'report-symlink' });
 
     expect(result.code).toBe(1);
     expect(result.stderr).toMatch(/missing, unsafe or outside its size limit/);
     await expect(lstat(path.join(root, 'evaluation', 'latest-report.json'))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(lstat(path.join(root, 'evaluation', 'latest-report.md'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-summary.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(lstat(path.join(root, 'evaluation', 'public-product-evaluation.json'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('rejects symlink and hard-link source entries before spawning a worker', async () => {
@@ -220,3 +309,45 @@ describe('two-stage evaluator launcher', () => {
     expect(added.stderr).toMatch(/source path set is not bound/);
   });
 });
+
+function scorecardFixture() {
+  return {
+    schemaVersion: 'tf.scorecard/test',
+    candidateVersion: 'test-candidate-1',
+    baselineSnapshotDate: '2026-08-29',
+    hardGateFailures: [],
+    dimensions: publicDimensionIds.map((id, index) => ({
+      id,
+      label: `private label ${id}`,
+      displayLabel: `Public ${id}`,
+      weight: publicDimensionWeights[index],
+      score: index % 5,
+      promotionFloor: 0,
+      summary: `Public summary ${id}`,
+      evidence: ['private scorecard evidence'],
+      evidenceArtifacts: ['private/evidence/path'],
+      nextAction: 'private next action',
+      acceptanceTest: 'private acceptance test',
+    })),
+  };
+}
+
+function registryFixture() {
+  return {
+    schemaVersion: 'tf.comparators/test',
+    snapshotDate: '2026-08-29',
+    policy: 'private registry policy',
+    comparators: publicComparatorIds.map((id, index) => ({
+      id,
+      name: `Public comparator ${index + 1}`,
+      scope: `Public scope ${index + 1}`,
+      source: 'https://private.invalid/source',
+      revision: 'private revision',
+      evidenceClass: index === 0 ? 'claim' : index < 5 ? 'auditable' : 'reference',
+      claimOwner: 'private owner',
+      comparable: false,
+      checkpointDigest: `sha256:${String(index + 1).repeat(64).slice(0, 64)}`,
+      reason: 'private comparator reason',
+    })),
+  };
+}

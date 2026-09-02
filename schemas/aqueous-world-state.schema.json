@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-world-state/0.4.2",
+  "title": "Tailing Future Aqueous World State Contract",
+  "type": "object",
+  "required": ["schemaVersion", "status", "worldId", "stateId", "stateDigest", "topologyDigest", "parentStateId", "revision", "step", "timePicoseconds", "periodicCell", "topology", "atoms", "checkpointIds", "lastAction"],
+  "properties": {
+    "schemaVersion": { "const": "tf.aqueous-world-state/0.4.2" },
+    "status": { "const": "contract-only-no-dynamics" },
+    "worldId": { "$ref": "#/$defs/token" },
+    "stateId": { "$ref": "#/$defs/token" },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "topologyDigest": { "$ref": "#/$defs/digest" },
+    "parentStateId": { "oneOf": [{ "$ref": "#/$defs/token" }, { "type": "null" }] },
+    "revision": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "step": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "timePicoseconds": { "type": "number", "minimum": 0, "maximum": 1000000000000 },
+    "periodicCell": { "$ref": "#/$defs/periodicCell" },
+    "topology": { "$ref": "#/$defs/topology" },
+    "atoms": { "type": "array", "minItems": 2, "maxItems": 512, "items": { "$ref": "#/$defs/atomState" } },
+    "checkpointIds": { "type": "array", "maxItems": 100000, "uniqueItems": true, "items": { "$ref": "#/$defs/token" } },
+    "lastAction": { "oneOf": [{ "$ref": "https://tailing.future/schemas/aqueous-action/0.4.2" }, { "type": "null" }] }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "token": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "finite": { "type": "number", "minimum": -1000000000000, "maximum": 1000000000000 },
+    "positive": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000000000 },
+    "vector": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": { "x": { "$ref": "#/$defs/finite" }, "y": { "$ref": "#/$defs/finite" }, "z": { "$ref": "#/$defs/finite" } },
+      "additionalProperties": false
+    },
+    "fractionalVector": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
+        "y": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
+        "z": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "imageVector": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 },
+        "y": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 },
+        "z": { "type": "integer", "minimum": -1000000000, "maximum": 1000000000 }
+      },
+      "additionalProperties": false
+    },
+    "wrappedPosition": {
+      "type": "object",
+      "required": ["wrappedFractional", "image"],
+      "properties": { "wrappedFractional": { "$ref": "#/$defs/fractionalVector" }, "image": { "$ref": "#/$defs/imageVector" } },
+      "additionalProperties": false
+    },
+    "periodicCell": {
+      "type": "object",
+      "required": ["kind", "originGauge", "boundary", "aAngstrom", "bAngstrom", "cAngstrom", "volumeAngstrom3"],
+      "properties": {
+        "kind": { "const": "triclinic-periodic-cell" },
+        "originGauge": { "const": "wrapped-fractional-plus-integer-image" },
+        "boundary": {
+          "type": "object",
+          "required": ["x", "y", "z"],
+          "properties": { "x": { "const": "periodic" }, "y": { "const": "periodic" }, "z": { "const": "periodic" } },
+          "additionalProperties": false
+        },
+        "aAngstrom": { "$ref": "#/$defs/vector" },
+        "bAngstrom": { "$ref": "#/$defs/vector" },
+        "cAngstrom": { "$ref": "#/$defs/vector" },
+        "volumeAngstrom3": { "type": "number", "exclusiveMinimum": 0, "maximum": 1e36 }
+      },
+      "additionalProperties": false
+    },
+    "atomState": {
+      "type": "object",
+      "required": ["id", "position", "velocityAngstromPerPicosecond"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "position": { "$ref": "#/$defs/wrappedPosition" }, "velocityAngstromPerPicosecond": { "$ref": "#/$defs/vector" } },
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "required": ["moleculeId", "residueId", "residueName", "siteName", "siteIndex"],
+      "properties": {
+        "moleculeId": { "$ref": "#/$defs/token" }, "residueId": { "$ref": "#/$defs/token" },
+        "residueName": { "$ref": "#/$defs/token" }, "siteName": { "$ref": "#/$defs/token" },
+        "siteIndex": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+      },
+      "additionalProperties": false
+    },
+    "atomTopology": {
+      "type": "object",
+      "required": ["id", "element", "massDalton", "chargeE", "lennardJones", "identity"],
+      "properties": {
+        "id": { "$ref": "#/$defs/token" },
+        "element": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z][a-z]{0,2}$" },
+        "massDalton": { "$ref": "#/$defs/positive" },
+        "chargeE": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+        "lennardJones": {
+          "type": "object", "required": ["sigmaAngstrom", "epsilonKjMol"],
+          "properties": { "sigmaAngstrom": { "$ref": "#/$defs/positive" }, "epsilonKjMol": { "type": "number", "minimum": 0, "maximum": 1000000000 } },
+          "additionalProperties": false
+        },
+        "identity": { "$ref": "#/$defs/identity" }
+      },
+      "additionalProperties": false
+    },
+    "memberIds": { "type": "array", "minItems": 1, "maxItems": 100000, "uniqueItems": true, "items": { "$ref": "#/$defs/token" } },
+    "molecule": {
+      "type": "object", "required": ["id", "kind", "residueIds", "atomIds"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "kind": { "enum": ["rigid-tip3p-water", "monatomic-ion"] }, "residueIds": { "$ref": "#/$defs/memberIds" }, "atomIds": { "$ref": "#/$defs/memberIds" } },
+      "additionalProperties": false
+    },
+    "residue": {
+      "type": "object", "required": ["id", "moleculeId", "name", "atomIds"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "moleculeId": { "$ref": "#/$defs/token" }, "name": { "$ref": "#/$defs/token" }, "atomIds": { "$ref": "#/$defs/memberIds" } },
+      "additionalProperties": false
+    },
+    "atomPair": {
+      "type": "object", "required": ["id", "atomAId", "atomBId"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "atomAId": { "$ref": "#/$defs/token" }, "atomBId": { "$ref": "#/$defs/token" } },
+      "additionalProperties": false
+    },
+    "constraint": {
+      "type": "object", "required": ["id", "atomAId", "atomBId", "distanceAngstrom"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "atomAId": { "$ref": "#/$defs/token" }, "atomBId": { "$ref": "#/$defs/token" }, "distanceAngstrom": { "$ref": "#/$defs/positive" } },
+      "additionalProperties": false
+    },
+    "energeticBond": {
+      "type": "object", "required": ["id", "atomAId", "atomBId", "potential"],
+      "properties": {
+        "id": { "$ref": "#/$defs/token" }, "atomAId": { "$ref": "#/$defs/token" }, "atomBId": { "$ref": "#/$defs/token" },
+        "potential": {
+          "type": "object", "required": ["kind", "equilibriumDistanceAngstrom", "forceConstantKjMolAngstrom2"],
+          "properties": { "kind": { "const": "harmonic" }, "equilibriumDistanceAngstrom": { "$ref": "#/$defs/positive" }, "forceConstantKjMolAngstrom2": { "$ref": "#/$defs/positive" } },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "exceptionRule": {
+      "oneOf": [
+        { "type": "object", "required": ["mode"], "properties": { "mode": { "const": "exclude" } }, "additionalProperties": false },
+        { "type": "object", "required": ["mode", "scale"], "properties": { "mode": { "const": "scale" }, "scale": { "type": "number", "minimum": 0, "maximum": 1 } }, "additionalProperties": false }
+      ]
+    },
+    "exception": {
+      "type": "object", "required": ["id", "atomAId", "atomBId", "coulomb", "lennardJones"],
+      "properties": { "id": { "$ref": "#/$defs/token" }, "atomAId": { "$ref": "#/$defs/token" }, "atomBId": { "$ref": "#/$defs/token" }, "coulomb": { "$ref": "#/$defs/exceptionRule" }, "lennardJones": { "$ref": "#/$defs/exceptionRule" } },
+      "additionalProperties": false
+    },
+    "ewaldSettings": {
+      "type": "object",
+      "required": ["method", "alphaInverseAngstrom", "realSpaceCutoffAngstrom", "reciprocalCutoffInverseAngstrom", "relativePermittivity", "neutralityToleranceE", "electrostaticConstantKjMolAngstromE2", "maximumRealSpaceWorkUnits", "maximumReciprocalSpaceWorkUnits"],
+      "properties": {
+        "method": { "const": "direct-ewald-explicit-real-and-reciprocal-sums" },
+        "alphaInverseAngstrom": { "type": "number", "minimum": 0.000001, "maximum": 100 },
+        "realSpaceCutoffAngstrom": { "type": "number", "minimum": 0.000001, "maximum": 100000 },
+        "reciprocalCutoffInverseAngstrom": { "type": "number", "minimum": 0.000001, "maximum": 100000 },
+        "relativePermittivity": { "const": 1 },
+        "neutralityToleranceE": { "type": "number", "minimum": 1e-16, "maximum": 1e-8 },
+        "electrostaticConstantKjMolAngstromE2": { "const": 1389.35458 },
+        "maximumRealSpaceWorkUnits": { "type": "integer", "minimum": 1, "maximum": 10000000 },
+        "maximumReciprocalSpaceWorkUnits": { "type": "integer", "minimum": 1, "maximum": 10000000 }
+      },
+      "additionalProperties": false
+    },
+    "shortRangeNonbonded": {
+      "type": "object",
+      "required": ["method", "mixingRule", "cutoffAngstrom", "switchingPolicy", "energyShift", "dispersionCorrection", "maximumPairWorkUnits"],
+      "properties": {
+        "method": { "const": "lennard-jones-12-6" }, "mixingRule": { "const": "lorentz-berthelot" },
+        "cutoffAngstrom": { "$ref": "#/$defs/positive" }, "switchingPolicy": { "const": "none" },
+        "energyShift": { "const": false }, "dispersionCorrection": { "const": false },
+        "maximumPairWorkUnits": { "type": "integer", "minimum": 1, "maximum": 1000000000 }
+      },
+      "additionalProperties": false
+    },
+    "parameterReceipt": {
+      "type": "object",
+      "required": ["schemaVersion", "familyId", "source", "units", "combiningRule", "sites", "rigidWaterGeometry", "xmlScales", "rigidWaterIntramolecularPolicy", "claimBoundaries"],
+      "properties": {
+        "schemaVersion": { "const": "tf.amber14-tip3p-parameter-receipt/0.4.2" },
+        "familyId": { "const": "openmm-amber14-tip3p-joung-cheatham-explicit-solvent" },
+        "source": {
+          "type": "object",
+          "required": ["evidenceClass", "owner", "repository", "sourceCommit", "filePath", "rawUrl", "sizeBytes", "sha256", "executionPerformed", "reproductionPerformed", "licenseClearance", "extractionDigest"],
+          "properties": {
+            "evidenceClass": { "const": "primary-source-parameter-extraction-not-execution" }, "owner": { "const": "OpenMM" },
+            "repository": { "const": "https://github.com/openmm/openmm" }, "sourceCommit": { "const": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5" },
+            "filePath": { "const": "wrappers/python/openmm/app/data/amber14/tip3p.xml" },
+            "rawUrl": { "const": "https://raw.githubusercontent.com/openmm/openmm/f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5/wrappers/python/openmm/app/data/amber14/tip3p.xml" },
+            "sizeBytes": { "const": 19070 }, "sha256": { "const": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9" },
+            "executionPerformed": { "const": false }, "reproductionPerformed": { "const": false }, "licenseClearance": { "const": false },
+            "extractionDigest": { "$ref": "#/$defs/digest" }
+          },
+          "additionalProperties": false
+        },
+        "units": {
+          "type": "object", "required": ["sourceLength", "runtimeLength", "nanometerToAngstrom", "energy", "charge", "mass"],
+          "properties": { "sourceLength": { "const": "nanometer" }, "runtimeLength": { "const": "angstrom" }, "nanometerToAngstrom": { "const": 10 }, "energy": { "const": "kilojoule-per-mole" }, "charge": { "const": "elementary-charge" }, "mass": { "const": "dalton" } },
+          "additionalProperties": false
+        },
+        "combiningRule": {
+          "type": "object", "required": ["name", "sigma", "epsilon"],
+          "properties": { "name": { "const": "lorentz-berthelot" }, "sigma": { "const": "arithmetic-mean" }, "epsilon": { "const": "geometric-mean" } },
+          "additionalProperties": false
+        },
+        "sites": {
+          "type": "object", "required": ["waterOxygen", "waterHydrogen", "sodiumIon", "chlorideIon"],
+          "properties": {
+            "waterOxygen": { "$ref": "#/$defs/waterOxygenSite" }, "waterHydrogen": { "$ref": "#/$defs/waterHydrogenSite" },
+            "sodiumIon": { "$ref": "#/$defs/sodiumIonSite" }, "chlorideIon": { "$ref": "#/$defs/chlorideIonSite" }
+          },
+          "additionalProperties": false
+        },
+        "rigidWaterGeometry": {
+          "type": "object", "required": ["oxygenHydrogenDistanceNanometer", "oxygenHydrogenDistanceAngstrom", "hydrogenOxygenHydrogenAngleRadian", "hydrogenHydrogenDistanceAngstrom", "hydrogenHydrogenDerivation", "angleLiteralProvenance", "independentDistanceConstraints"],
+          "properties": { "oxygenHydrogenDistanceNanometer": { "const": 0.09572 }, "oxygenHydrogenDistanceAngstrom": { "const": 0.9572 }, "hydrogenOxygenHydrogenAngleRadian": { "const": 1.82421813418 }, "hydrogenHydrogenDistanceAngstrom": { "const": 1.5139006545247014 }, "hydrogenHydrogenDerivation": { "const": "sqrt(l1*l1+l2*l2-2*l1*l2*cos(theta))" }, "angleLiteralProvenance": { "const": "derived-from-rounded-xml-radian-literal" }, "independentDistanceConstraints": { "const": 3 } },
+          "additionalProperties": false
+        },
+        "xmlScales": {
+          "type": "object", "required": ["coulomb14Scale", "lennardJones14Scale"],
+          "properties": { "coulomb14Scale": { "const": 0.8333333333333334 }, "lennardJones14Scale": { "const": 0.5 } },
+          "additionalProperties": false
+        },
+        "rigidWaterIntramolecularPolicy": {
+          "type": "object", "required": ["energeticBondTerms", "energeticAngleTerms", "requiredDistanceConstraints", "requiredCoulombExclusions", "requiredLennardJonesExclusions"],
+          "properties": {
+            "energeticBondTerms": { "const": 0 }, "energeticAngleTerms": { "const": 0 },
+            "requiredDistanceConstraints": { "const": ["O-H1", "O-H2", "H1-H2"] },
+            "requiredCoulombExclusions": { "const": ["O-H1", "O-H2", "H1-H2"] },
+            "requiredLennardJonesExclusions": { "const": ["O-H1", "O-H2", "H1-H2"] }
+          },
+          "additionalProperties": false
+        },
+        "claimBoundaries": {
+          "type": "object", "required": ["sourceValuesExtracted", "openmmExecuted", "openmmReproduced", "trajectoryProduced", "bulkWaterValidated", "licenseClearance"],
+          "properties": { "sourceValuesExtracted": { "const": true }, "openmmExecuted": { "const": false }, "openmmReproduced": { "const": false }, "trajectoryProduced": { "const": false }, "bulkWaterValidated": { "const": false }, "licenseClearance": { "const": false } },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "waterOxygenSite": { "const": { "siteType": "water-oxygen", "element": "O", "massDalton": 15.99943, "chargeE": -0.834, "sourceSigmaNanometer": 0.31507524065751241, "sigmaAngstrom": 3.150752406575124, "epsilonKjMol": 0.635968 } },
+    "waterHydrogenSite": { "const": { "siteType": "water-hydrogen", "element": "H", "massDalton": 1.007947, "chargeE": 0.417, "sourceSigmaNanometer": 1, "sigmaAngstrom": 10, "epsilonKjMol": 0 } },
+    "sodiumIonSite": { "const": { "siteType": "sodium-ion", "element": "Na", "massDalton": 22.99, "chargeE": 1, "sourceSigmaNanometer": 0.2439280690268249, "sigmaAngstrom": 2.439280690268249, "epsilonKjMol": 0.3658460312 } },
+    "chlorideIonSite": { "const": { "siteType": "chloride-ion", "element": "Cl", "massDalton": 35.45, "chargeE": -1, "sourceSigmaNanometer": 0.4477656957373345, "sigmaAngstrom": 4.477656957373345, "epsilonKjMol": 0.14891274399999999 } },
+    "sourcePin": {
+      "type": "object",
+      "required": ["id", "owner", "repository", "sourceCommit", "filePath", "sizeBytes", "sha256", "executionPerformed", "licenseClearance"],
+      "properties": {
+        "id": { "const": "openmm-tip3p-amber14" }, "owner": { "const": "OpenMM" },
+        "repository": { "const": "https://github.com/openmm/openmm" },
+        "sourceCommit": { "const": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5" },
+        "filePath": { "const": "wrappers/python/openmm/app/data/amber14/tip3p.xml" },
+        "sizeBytes": { "const": 19070 }, "sha256": { "const": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9" },
+        "executionPerformed": { "const": false }, "licenseClearance": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object", "required": ["evidenceClass", "modelExecution", "dynamicsExecution", "canonicalization"],
+      "properties": { "evidenceClass": { "const": "contract-only" }, "modelExecution": { "const": false }, "dynamicsExecution": { "const": false }, "canonicalization": { "const": "stable-ascii-id-order" } },
+      "additionalProperties": false
+    },
+    "claimBoundaries": {
+      "type": "object", "required": ["naclWaterTrajectory", "forceFieldReproduction", "pmeOrOpenmmExecution", "industrialPrediction", "licenseClearance"],
+      "properties": { "naclWaterTrajectory": { "const": false }, "forceFieldReproduction": { "const": false }, "pmeOrOpenmmExecution": { "const": false }, "industrialPrediction": { "const": false }, "licenseClearance": { "const": false } },
+      "additionalProperties": false
+    },
+    "topology": {
+      "type": "object",
+      "required": ["schemaVersion", "topologyId", "topologyDigest", "atoms", "molecules", "residues", "energeticBonds", "constraints", "nonbondedExceptions", "shortRangeNonbonded", "electrostatics", "parameterReceipt", "sourcePins", "provenance", "claimBoundaries"],
+      "properties": {
+        "schemaVersion": { "const": "tf.aqueous-topology/0.4.2" }, "topologyId": { "$ref": "#/$defs/token" }, "topologyDigest": { "$ref": "#/$defs/digest" },
+        "atoms": { "type": "array", "minItems": 2, "maxItems": 512, "items": { "$ref": "#/$defs/atomTopology" } },
+        "molecules": { "type": "array", "minItems": 1, "maxItems": 512, "items": { "$ref": "#/$defs/molecule" } },
+        "residues": { "type": "array", "minItems": 1, "maxItems": 512, "items": { "$ref": "#/$defs/residue" } },
+        "energeticBonds": { "type": "array", "maxItems": 1000000, "items": { "$ref": "#/$defs/energeticBond" } },
+        "constraints": { "type": "array", "maxItems": 1000000, "items": { "$ref": "#/$defs/constraint" } },
+        "nonbondedExceptions": { "type": "array", "maxItems": 1000000, "items": { "$ref": "#/$defs/exception" } },
+        "shortRangeNonbonded": { "$ref": "#/$defs/shortRangeNonbonded" },
+        "electrostatics": { "$ref": "#/$defs/ewaldSettings" },
+        "parameterReceipt": { "$ref": "#/$defs/parameterReceipt" },
+        "sourcePins": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/sourcePin" } },
+        "provenance": { "$ref": "#/$defs/provenance" }, "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

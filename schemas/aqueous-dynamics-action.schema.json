@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-dynamics-action/0.4.2",
+  "title": "Tailing Future Aqueous Dynamics Advance Request",
+  "type": "object",
+  "required": ["kind", "substeps"],
+  "properties": {
+    "kind": { "const": "advance" },
+    "substeps": { "const": 1 }
+  },
+  "additionalProperties": false
+}

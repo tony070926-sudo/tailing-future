@@ -1,0 +1,3199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-dynamics-observation/0.4.2",
+  "title": "Tailing Future Solver-Driven Aqueous Dynamics Observation",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "status",
+    "observationDigest",
+    "worldId",
+    "stateId",
+    "stateDigest",
+    "physicalDigest",
+    "parentStateId",
+    "step",
+    "timePicoseconds",
+    "configurationDigest",
+    "topologyDigest",
+    "topology",
+    "cell",
+    "atoms",
+    "forceField",
+    "energy",
+    "energyStatistics",
+    "constraints",
+    "integration",
+    "thermodynamics",
+    "mechanicalObservables",
+    "conservation",
+    "periodicGeometry",
+    "numericalValidity",
+    "provenance",
+    "boundaries"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "tf.aqueous-dynamics-observation/0.4.2"
+    },
+    "status": {
+      "const": "solver-driven-finite-size-integration-calibration"
+    },
+    "observationDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "worldId": {
+      "const": "nacl-tip3p-finite-size-calibration"
+    },
+    "stateId": {
+      "$ref": "#/$defs/token"
+    },
+    "stateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "physicalDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "parentStateId": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/token"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "step": {
+      "$ref": "#/$defs/nonnegativeSafeInteger"
+    },
+    "timePicoseconds": {
+      "$ref": "#/$defs/nonnegativeFinite"
+    },
+    "configurationDigest": {
+      "const": "sha256:37dc2a135bb5c7d76be2166d5967cafe7819c65663358754e487b21564e8187b"
+    },
+    "topologyDigest": {
+      "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+    },
+    "topology": {
+      "$ref": "#/$defs/fixedTopology"
+    },
+    "cell": {
+      "$ref": "#/$defs/cell"
+    },
+    "atoms": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/observedAtomChloride"
+        },
+        {
+          "$ref": "#/$defs/observedAtomSodium"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterAH1"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterAH2"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterAO"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterBH1"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterBH2"
+        },
+        {
+          "$ref": "#/$defs/observedAtomWaterBO"
+        }
+      ],
+      "items": false
+    },
+    "forceField": {
+      "$ref": "#/$defs/forceField"
+    },
+    "energy": {
+      "$ref": "#/$defs/energy"
+    },
+    "energyStatistics": {
+      "$ref": "#/$defs/energyStatistics"
+    },
+    "constraints": {
+      "$ref": "#/$defs/constraints"
+    },
+    "integration": {
+      "$ref": "#/$defs/integration"
+    },
+    "thermodynamics": {
+      "$ref": "#/$defs/thermodynamics"
+    },
+    "mechanicalObservables": {
+      "$ref": "#/$defs/mechanicalObservables"
+    },
+    "conservation": {
+      "$ref": "#/$defs/conservation"
+    },
+    "periodicGeometry": {
+      "$ref": "#/$defs/periodicGeometry"
+    },
+    "numericalValidity": {
+      "$ref": "#/$defs/numericalValidity"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "const": [
+        "This is an eight-atom NaCl-TIP3P finite-size integration calibration, not a bulk, dilute, thermodynamic-limit, or chemical-reaction claim.",
+        "Forces are produced only by the local direct-Ewald, selected intramolecular correction, and plain-cutoff Lorentz-Berthelot reference composer.",
+        "The fixed 0.001 ps NVE step uses the local discrete constrained Velocity Verlet/RATTLE kernel; no thermostat or barostat is present.",
+        "No OpenMM, PME, SPME, PPPM, AMBER engine, electronic-structure solver, or external checkpoint has been executed or reproduced.",
+        "Complete Ewald virial is unavailable, so pressure and stress remain null rather than being inferred from incomplete components.",
+        "The initial state must already satisfy all position and velocity constraints; the world never silently repairs it.",
+        "Constraint rank is evaluated from the numerical 6 x 24 Jacobian of g_ij=|minimum-image(r_j-r_i)|^2-d_ij^2 by deterministic scaled partial pivoting.",
+        "SHA-256 digests bind deterministic local payloads; they are not signatures, authenticity evidence, or license clearance."
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "finite": {
+      "type": "number",
+      "minimum": -1e+300,
+      "maximum": 1e+300
+    },
+    "nonnegativeFinite": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1e+300
+    },
+    "positiveFinite": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1e+300
+    },
+    "vector": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "$ref": "#/$defs/finite"
+        },
+        "y": {
+          "$ref": "#/$defs/finite"
+        },
+        "z": {
+          "$ref": "#/$defs/finite"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cellVectors": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/vector"
+      }
+    },
+    "cell": {
+      "type": "object",
+      "required": [
+        "vectorsAngstrom",
+        "volumeAngstrom3",
+        "periodicAxes"
+      ],
+      "properties": {
+        "vectorsAngstrom": {
+          "$ref": "#/$defs/cellVectors"
+        },
+        "volumeAngstrom3": {
+          "$ref": "#/$defs/positiveFinite"
+        },
+        "periodicAxes": {
+          "const": [
+            true,
+            true,
+            true
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtom": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/token"
+        },
+        "element": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z][a-z]{0,2}$"
+        },
+        "massDalton": {
+          "$ref": "#/$defs/positiveFinite"
+        },
+        "chargeE": {
+          "type": "number",
+          "minimum": -2,
+          "maximum": 2
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "virialTensor": {
+      "type": "object",
+      "required": [
+        "xx",
+        "xy",
+        "xz",
+        "yx",
+        "yy",
+        "yz",
+        "zx",
+        "zy",
+        "zz"
+      ],
+      "properties": {
+        "xx": {
+          "$ref": "#/$defs/finite"
+        },
+        "xy": {
+          "$ref": "#/$defs/finite"
+        },
+        "xz": {
+          "$ref": "#/$defs/finite"
+        },
+        "yx": {
+          "$ref": "#/$defs/finite"
+        },
+        "yy": {
+          "$ref": "#/$defs/finite"
+        },
+        "yz": {
+          "$ref": "#/$defs/finite"
+        },
+        "zx": {
+          "$ref": "#/$defs/finite"
+        },
+        "zy": {
+          "$ref": "#/$defs/finite"
+        },
+        "zz": {
+          "$ref": "#/$defs/finite"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceComponent": {
+      "type": "object",
+      "required": [
+        "ewaldRealSpace",
+        "ewaldReciprocalSpace",
+        "ewaldSelfCorrection",
+        "coulombExceptionCorrection",
+        "lennardJonesFinal",
+        "total"
+      ],
+      "properties": {
+        "ewaldRealSpace": {
+          "$ref": "#/$defs/vector"
+        },
+        "ewaldReciprocalSpace": {
+          "$ref": "#/$defs/vector"
+        },
+        "ewaldSelfCorrection": {
+          "$ref": "#/$defs/vector"
+        },
+        "coulombExceptionCorrection": {
+          "$ref": "#/$defs/vector"
+        },
+        "lennardJonesFinal": {
+          "$ref": "#/$defs/vector"
+        },
+        "total": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "vectorByAtomId": {
+      "type": "object",
+      "required": [
+        "chloride-cl",
+        "sodium-na",
+        "water-a-h1",
+        "water-a-h2",
+        "water-a-o",
+        "water-b-h1",
+        "water-b-h2",
+        "water-b-o"
+      ],
+      "properties": {
+        "chloride-cl": {
+          "$ref": "#/$defs/vector"
+        },
+        "sodium-na": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-a-h1": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-a-h2": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-a-o": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-b-h1": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-b-h2": {
+          "$ref": "#/$defs/vector"
+        },
+        "water-b-o": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceComponentByAtomId": {
+      "type": "object",
+      "required": [
+        "chloride-cl",
+        "sodium-na",
+        "water-a-h1",
+        "water-a-h2",
+        "water-a-o",
+        "water-b-h1",
+        "water-b-h2",
+        "water-b-o"
+      ],
+      "properties": {
+        "chloride-cl": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "sodium-na": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-a-h1": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-a-h2": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-a-o": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-b-h1": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-b-h2": {
+          "$ref": "#/$defs/forceComponent"
+        },
+        "water-b-o": {
+          "$ref": "#/$defs/forceComponent"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtom": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/token"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScale": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/token"
+        },
+        "atomAId": {
+          "$ref": "#/$defs/token"
+        },
+        "atomBId": {
+          "$ref": "#/$defs/token"
+        },
+        "coulombScale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "lennardJonesScale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "lennardJonesInteraction": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "distanceAngstrom",
+        "displacementAngstrom",
+        "mixedSigmaAngstrom",
+        "mixedEpsilonKjMol",
+        "lennardJonesScale",
+        "evaluation",
+        "energyKjMol",
+        "forceOnBKjMolAngstrom",
+        "virialKjMol"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "lj:chloride-cl:sodium-na",
+            "lj:chloride-cl:water-a-h1",
+            "lj:chloride-cl:water-a-h2",
+            "lj:chloride-cl:water-a-o",
+            "lj:chloride-cl:water-b-h1",
+            "lj:chloride-cl:water-b-h2",
+            "lj:chloride-cl:water-b-o",
+            "lj:sodium-na:water-a-h1",
+            "lj:sodium-na:water-a-h2",
+            "lj:sodium-na:water-a-o",
+            "lj:sodium-na:water-b-h1",
+            "lj:sodium-na:water-b-h2",
+            "lj:sodium-na:water-b-o",
+            "lj:water-a-h1:water-a-h2",
+            "lj:water-a-h1:water-a-o",
+            "lj:water-a-h1:water-b-h1",
+            "lj:water-a-h1:water-b-h2",
+            "lj:water-a-h1:water-b-o",
+            "lj:water-a-h2:water-a-o",
+            "lj:water-a-h2:water-b-h1",
+            "lj:water-a-h2:water-b-h2",
+            "lj:water-a-h2:water-b-o",
+            "lj:water-a-o:water-b-h1",
+            "lj:water-a-o:water-b-h2",
+            "lj:water-a-o:water-b-o",
+            "lj:water-b-h1:water-b-h2",
+            "lj:water-b-h1:water-b-o",
+            "lj:water-b-h2:water-b-o"
+          ],
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "atomAId": {
+          "type": "string",
+          "enum": [
+            "chloride-cl",
+            "sodium-na",
+            "water-a-h1",
+            "water-a-h2",
+            "water-a-o",
+            "water-b-h1",
+            "water-b-h2",
+            "water-b-o"
+          ],
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "atomBId": {
+          "type": "string",
+          "enum": [
+            "chloride-cl",
+            "sodium-na",
+            "water-a-h1",
+            "water-a-h2",
+            "water-a-o",
+            "water-b-h1",
+            "water-b-h2",
+            "water-b-o"
+          ],
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "distanceAngstrom": {
+          "$ref": "#/$defs/positiveFinite"
+        },
+        "displacementAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "mixedSigmaAngstrom": {
+          "$ref": "#/$defs/positiveFinite"
+        },
+        "mixedEpsilonKjMol": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "lennardJonesScale": {
+          "type": "number",
+          "enum": [
+            0,
+            1
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evaluation": {
+          "enum": [
+            "evaluated-plain-cutoff",
+            "epsilon-zero-exact-short-circuit",
+            "exception-zero-exact-short-circuit"
+          ]
+        },
+        "energyKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "forceOnBKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "virialKjMol": {
+          "$ref": "#/$defs/virialTensor"
+        }
+      },
+      "additionalProperties": false
+    },
+    "electrostaticsParameters": {
+      "type": "object",
+      "required": [
+        "method",
+        "alphaInverseAngstrom",
+        "realSpaceCutoffAngstrom",
+        "reciprocalCutoffInverseAngstrom",
+        "relativePermittivity",
+        "neutralityToleranceE",
+        "electrostaticConstantKjMolAngstromE2",
+        "maximumRealSpaceWorkUnits",
+        "maximumReciprocalSpaceWorkUnits"
+      ],
+      "properties": {
+        "method": {
+          "const": "direct-ewald-explicit-real-and-reciprocal-sums"
+        },
+        "alphaInverseAngstrom": {
+          "const": 0.4
+        },
+        "realSpaceCutoffAngstrom": {
+          "const": 9
+        },
+        "reciprocalCutoffInverseAngstrom": {
+          "const": 3
+        },
+        "relativePermittivity": {
+          "const": 1
+        },
+        "neutralityToleranceE": {
+          "const": 1e-12
+        },
+        "electrostaticConstantKjMolAngstromE2": {
+          "const": 1389.35458
+        },
+        "maximumRealSpaceWorkUnits": {
+          "const": 100000
+        },
+        "maximumReciprocalSpaceWorkUnits": {
+          "const": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "directEwaldParameters": {
+      "type": "object",
+      "required": [
+        "alphaInverseAngstrom",
+        "realSpaceCutoffAngstrom",
+        "reciprocalCutoffInverseAngstrom",
+        "relativePermittivity",
+        "neutralityToleranceE",
+        "electrostaticConstantKjMolAngstromE2",
+        "maximumRealSpaceCandidates",
+        "maximumReciprocalCandidates"
+      ],
+      "properties": {
+        "alphaInverseAngstrom": {
+          "const": 0.4
+        },
+        "realSpaceCutoffAngstrom": {
+          "const": 9
+        },
+        "reciprocalCutoffInverseAngstrom": {
+          "const": 3
+        },
+        "relativePermittivity": {
+          "const": 1
+        },
+        "neutralityToleranceE": {
+          "const": 1e-12
+        },
+        "electrostaticConstantKjMolAngstromE2": {
+          "const": 1389.35458
+        },
+        "maximumRealSpaceCandidates": {
+          "const": 100000
+        },
+        "maximumReciprocalCandidates": {
+          "const": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "coulombExceptionParameters": {
+      "type": "object",
+      "required": [
+        "relativePermittivity",
+        "neutralityToleranceE",
+        "electrostaticConstantKjMolAngstromE2",
+        "maximumExceptions"
+      ],
+      "properties": {
+        "relativePermittivity": {
+          "const": 1
+        },
+        "neutralityToleranceE": {
+          "const": 1e-12
+        },
+        "electrostaticConstantKjMolAngstromE2": {
+          "const": 1389.35458
+        },
+        "maximumExceptions": {
+          "const": 6
+        }
+      },
+      "additionalProperties": false
+    },
+    "shortRangeParameters": {
+      "type": "object",
+      "required": [
+        "method",
+        "mixingRule",
+        "cutoffAngstrom",
+        "switchingPolicy",
+        "energyShift",
+        "dispersionCorrection",
+        "maximumPairWorkUnits"
+      ],
+      "properties": {
+        "method": {
+          "const": "lennard-jones-12-6"
+        },
+        "mixingRule": {
+          "const": "lorentz-berthelot"
+        },
+        "cutoffAngstrom": {
+          "const": 10
+        },
+        "switchingPolicy": {
+          "const": "none"
+        },
+        "energyShift": {
+          "const": false
+        },
+        "dispersionCorrection": {
+          "const": false
+        },
+        "maximumPairWorkUnits": {
+          "const": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceField": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "method",
+        "topologyId",
+        "topologyDigest",
+        "evaluationDigest",
+        "atomOrder",
+        "atoms",
+        "cell",
+        "energyKjMol",
+        "forceComponentsByAtomIdKjMolAngstrom",
+        "forceByAtomIdKjMolAngstrom",
+        "netForceKjMolAngstrom",
+        "nonbondedExceptionScales",
+        "lennardJonesInteractions",
+        "mechanicalObservables",
+        "parameters",
+        "workReceipt",
+        "provenance",
+        "boundaries"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "tf.aqueous-force-field-evaluation/0.4.2"
+        },
+        "method": {
+          "const": "direct-ewald-plus-selected-coulomb-correction-plus-plain-cutoff-lb-lj"
+        },
+        "topologyId": {
+          "const": "nacl-tip3p-two-water-finite-size-calibration"
+        },
+        "topologyDigest": {
+          "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+        },
+        "evaluationDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "atomOrder": {
+          "const": [
+            "chloride-cl",
+            "sodium-na",
+            "water-a-h1",
+            "water-a-h2",
+            "water-a-o",
+            "water-b-h1",
+            "water-b-h2",
+            "water-b-o"
+          ]
+        },
+        "atoms": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/forceFieldAtomChloride"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomSodium"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterAH1"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterAH2"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterAO"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterBH1"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterBH2"
+            },
+            {
+              "$ref": "#/$defs/forceFieldAtomWaterBO"
+            }
+          ],
+          "items": false
+        },
+        "cell": {
+          "type": "object",
+          "required": [
+            "vectorsAngstrom",
+            "volumeAngstrom3",
+            "originGauge"
+          ],
+          "properties": {
+            "vectorsAngstrom": {
+              "$ref": "#/$defs/cellVectors"
+            },
+            "volumeAngstrom3": {
+              "$ref": "#/$defs/positiveFinite"
+            },
+            "originGauge": {
+              "const": "omitted-origin-is-not-physical"
+            }
+          },
+          "additionalProperties": false
+        },
+        "energyKjMol": {
+          "type": "object",
+          "required": [
+            "ewaldRealSpace",
+            "ewaldReciprocalSpace",
+            "ewaldSelfCorrection",
+            "coulombExceptionCorrection",
+            "lennardJonesFinal",
+            "total",
+            "componentOrder"
+          ],
+          "properties": {
+            "ewaldRealSpace": {
+              "$ref": "#/$defs/finite"
+            },
+            "ewaldReciprocalSpace": {
+              "$ref": "#/$defs/finite"
+            },
+            "ewaldSelfCorrection": {
+              "$ref": "#/$defs/finite"
+            },
+            "coulombExceptionCorrection": {
+              "$ref": "#/$defs/finite"
+            },
+            "lennardJonesFinal": {
+              "$ref": "#/$defs/finite"
+            },
+            "total": {
+              "$ref": "#/$defs/finite"
+            },
+            "componentOrder": {
+              "const": [
+                "ewaldRealSpace",
+                "ewaldReciprocalSpace",
+                "ewaldSelfCorrection",
+                "coulombExceptionCorrection",
+                "lennardJonesFinal"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "forceComponentsByAtomIdKjMolAngstrom": {
+          "$ref": "#/$defs/forceComponentByAtomId"
+        },
+        "forceByAtomIdKjMolAngstrom": {
+          "$ref": "#/$defs/vectorByAtomId"
+        },
+        "netForceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "nonbondedExceptionScales": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterAHH"
+            },
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterAOH1"
+            },
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterAOH2"
+            },
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterBHH"
+            },
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterBOH1"
+            },
+            {
+              "$ref": "#/$defs/nonbondedExceptionScaleWaterBOH2"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "lennardJonesInteractions": {
+          "type": "array",
+          "minItems": 28,
+          "maxItems": 28,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/lennardJonesInteraction"
+          },
+          "$comment": "Semantic-validator scope: require every allowed LJ pair ID exactly once and require each ID to match atomAId/atomBId. uniqueItems only rejects duplicate complete interaction objects."
+        },
+        "mechanicalObservables": {
+          "type": "object",
+          "required": [
+            "lennardJonesPairVirialKjMol",
+            "coulombExceptionPairVirialKjMol",
+            "availablePairVirialKjMol",
+            "ewaldRealSpaceVirialKjMol",
+            "ewaldReciprocalSpaceVirialKjMol",
+            "totalVirialKjMol",
+            "pressureBar",
+            "totalStressKjMolAngstrom3",
+            "boundary"
+          ],
+          "properties": {
+            "lennardJonesPairVirialKjMol": {
+              "$ref": "#/$defs/virialTensor"
+            },
+            "coulombExceptionPairVirialKjMol": {
+              "$ref": "#/$defs/virialTensor"
+            },
+            "availablePairVirialKjMol": {
+              "$ref": "#/$defs/virialTensor"
+            },
+            "ewaldRealSpaceVirialKjMol": {
+              "type": "null"
+            },
+            "ewaldReciprocalSpaceVirialKjMol": {
+              "type": "null"
+            },
+            "totalVirialKjMol": {
+              "type": "null"
+            },
+            "pressureBar": {
+              "type": "null"
+            },
+            "totalStressKjMolAngstrom3": {
+              "type": "null"
+            },
+            "boundary": {
+              "const": "unavailable-complete-ewald-virial-not-implemented"
+            }
+          },
+          "additionalProperties": false
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "electrostatics",
+            "directEwald",
+            "coulombException",
+            "shortRangeNonbonded"
+          ],
+          "properties": {
+            "electrostatics": {
+              "$ref": "#/$defs/electrostaticsParameters"
+            },
+            "directEwald": {
+              "$ref": "#/$defs/directEwaldParameters"
+            },
+            "coulombException": {
+              "$ref": "#/$defs/coulombExceptionParameters"
+            },
+            "shortRangeNonbonded": {
+              "$ref": "#/$defs/shortRangeParameters"
+            }
+          },
+          "additionalProperties": false
+        },
+        "workReceipt": {
+          "type": "object",
+          "required": [
+            "allPairCount",
+            "allPairBudget",
+            "allPairBudgetPassed",
+            "lennardJonesPairsInsideCutoff",
+            "lennardJonesPairsEvaluated",
+            "lennardJonesEpsilonZeroShortCircuits",
+            "lennardJonesExceptionZeroShortCircuits",
+            "coulombExceptions",
+            "coulombExceptionWorkUnitsConsumed",
+            "ewaldRealSpaceWorkUnitsConsumed",
+            "ewaldReciprocalSpaceWorkUnitsConsumed",
+            "totalWorkUnitsConsumed",
+            "deterministicOrder"
+          ],
+          "properties": {
+            "allPairCount": {
+              "const": 28
+            },
+            "allPairBudget": {
+              "const": 1000
+            },
+            "allPairBudgetPassed": {
+              "const": true
+            },
+            "lennardJonesPairsInsideCutoff": {
+              "const": 28
+            },
+            "lennardJonesPairsEvaluated": {
+              "const": 6
+            },
+            "lennardJonesEpsilonZeroShortCircuits": {
+              "const": 16
+            },
+            "lennardJonesExceptionZeroShortCircuits": {
+              "const": 6
+            },
+            "coulombExceptions": {
+              "const": 6
+            },
+            "coulombExceptionWorkUnitsConsumed": {
+              "const": 6
+            },
+            "ewaldRealSpaceWorkUnitsConsumed": {
+              "const": 57
+            },
+            "ewaldReciprocalSpaceWorkUnitsConsumed": {
+              "const": 108691
+            },
+            "totalWorkUnitsConsumed": {
+              "const": 108782
+            },
+            "deterministicOrder": {
+              "const": "stable-atom-id-then-stable-pair-id"
+            }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "required": [
+            "composer",
+            "composerVersion",
+            "topologyRecanonicalized",
+            "topologyDigestVerified",
+            "meshUsed",
+            "pme",
+            "openmmExecution",
+            "authenticity"
+          ],
+          "properties": {
+            "composer": {
+              "const": "tf-aqueous-force-field-reference"
+            },
+            "composerVersion": {
+              "const": "0.4.2"
+            },
+            "topologyRecanonicalized": {
+              "const": true
+            },
+            "topologyDigestVerified": {
+              "const": true
+            },
+            "meshUsed": {
+              "const": false
+            },
+            "pme": {
+              "const": false
+            },
+            "openmmExecution": {
+              "const": false
+            },
+            "authenticity": {
+              "const": "not-provided"
+            }
+          },
+          "additionalProperties": false
+        },
+        "boundaries": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "const": [
+            "This is a pure small-system reference composer; it is not an OpenMM, AMBER, PME, SPME, PPPM, or production-MD reproduction.",
+            "The topology is fully re-canonicalized and its supplied digest must match before any force evaluation is accepted.",
+            "Direct Ewald options are copied exactly from the validated topology; no composer-side electrostatic defaults are introduced.",
+            "Lennard-Jones uses topology-locked Lorentz-Berthelot mixing and a plain strict cutoff with no switch, shift, or dispersion correction.",
+            "Every unordered atom pair consumes the all-pair budget, including excluded, outside-cutoff, and epsilon-zero pairs.",
+            "Epsilon-zero and exception-zero LJ pairs take exact zero short-circuits and do not evaluate inverse-power terms.",
+            "Constraint projection is not a potential-energy component and energetic bonds are not evaluated by this composer.",
+            "No per-atom potential-energy partition is claimed; only global energy components and per-atom force components are reported.",
+            "Only LJ and selected Coulomb-exception pair virials are available; complete Ewald virial, total virial, pressure, and stress are null.",
+            "The evaluation digest is deterministic evidence binding, not a signature, authenticity proof, license clearance, or trajectory reproduction."
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "energy": {
+      "type": "object",
+      "required": [
+        "ewaldRealSpaceKjMol",
+        "ewaldReciprocalSpaceKjMol",
+        "ewaldSelfCorrectionKjMol",
+        "coulombExceptionCorrectionKjMol",
+        "lennardJonesKjMol",
+        "constraintEnergyKjMol",
+        "kineticKjMol",
+        "potentialKjMol",
+        "totalKjMol",
+        "initialTotalKjMol",
+        "absoluteExcursionKjMol",
+        "relativeExcursion"
+      ],
+      "properties": {
+        "ewaldRealSpaceKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "ewaldReciprocalSpaceKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "ewaldSelfCorrectionKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "coulombExceptionCorrectionKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "lennardJonesKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "constraintEnergyKjMol": {
+          "type": "null"
+        },
+        "kineticKjMol": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "potentialKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "totalKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "initialTotalKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "absoluteExcursionKjMol": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "relativeExcursion": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        }
+      },
+      "additionalProperties": false
+    },
+    "constraints": {
+      "type": "object",
+      "required": [
+        "count",
+        "jacobianRank",
+        "rankMethod",
+        "rankRelativePivotTolerance",
+        "rankWorkUnitsConsumed",
+        "maximumPositionResidualAngstrom",
+        "maximumVelocityDerivativeResidualAngstrom2PerPicosecond",
+        "energyBoundary"
+      ],
+      "properties": {
+        "count": {
+          "const": 6
+        },
+        "jacobianRank": {
+          "const": 6
+        },
+        "rankMethod": {
+          "const": "numeric-minimum-image-g2-scaled-partial-pivot-v1"
+        },
+        "rankRelativePivotTolerance": {
+          "const": 1e-12
+        },
+        "rankWorkUnitsConsumed": {
+          "const": 651
+        },
+        "maximumPositionResidualAngstrom": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1e-10
+        },
+        "maximumVelocityDerivativeResidualAngstrom2PerPicosecond": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1e-10
+        },
+        "energyBoundary": {
+          "const": "holonomic-constraint-is-not-a-potential-energy-term"
+        }
+      },
+      "additionalProperties": false
+    },
+    "integration": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "ensemble",
+        "fixedTimeStepPicoseconds",
+        "lastStepResultDigest",
+        "lastStepSolverWorkUnitsConsumed",
+        "lastStepComposerEndpointRankAuditWorkUnitsConsumed",
+        "lastStepWorkUnitsConsumed",
+        "lastStepWorkUnitsLimit",
+        "lastStepConstraintImpulseResidual",
+        "lastIntegrationReceipt"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "constrained-velocity-verlet-rattle"
+        },
+        "ensemble": {
+          "const": "NVE"
+        },
+        "fixedTimeStepPicoseconds": {
+          "const": 0.001
+        },
+        "lastStepResultDigest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lastStepSolverWorkUnitsConsumed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1098000
+        },
+        "lastStepComposerEndpointRankAuditWorkUnitsConsumed": {
+          "type": "integer",
+          "enum": [
+            0,
+            1302
+          ],
+          "minimum": 0,
+          "maximum": 1302
+        },
+        "lastStepWorkUnitsConsumed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1100000
+        },
+        "lastStepWorkUnitsLimit": {
+          "const": 1100000
+        },
+        "lastStepConstraintImpulseResidual": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1e-8
+        },
+        "lastIntegrationReceipt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/integrationReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "thermodynamics": {
+      "type": "object",
+      "required": [
+        "atomCount",
+        "cartesianCoordinateCount",
+        "constraintDegreesOfFreedom",
+        "centerOfMassRemovedDegreesOfFreedom",
+        "temperatureDegreesOfFreedom",
+        "kineticFrame",
+        "temperatureKelvin"
+      ],
+      "properties": {
+        "atomCount": {
+          "const": 8
+        },
+        "cartesianCoordinateCount": {
+          "const": 24
+        },
+        "constraintDegreesOfFreedom": {
+          "const": 6
+        },
+        "centerOfMassRemovedDegreesOfFreedom": {
+          "const": 3
+        },
+        "temperatureDegreesOfFreedom": {
+          "const": 15
+        },
+        "kineticFrame": {
+          "const": "center-of-mass"
+        },
+        "temperatureKelvin": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mechanicalObservables": {
+      "type": "object",
+      "required": [
+        "pressureBar",
+        "totalStressKjMolAngstrom3",
+        "boundary"
+      ],
+      "properties": {
+        "pressureBar": {
+          "type": "null"
+        },
+        "totalStressKjMolAngstrom3": {
+          "type": "null"
+        },
+        "boundary": {
+          "const": "unavailable-complete-ewald-virial-not-implemented"
+        }
+      },
+      "additionalProperties": false
+    },
+    "conservation": {
+      "type": "object",
+      "required": [
+        "totalMassDalton",
+        "massResidualDalton",
+        "totalChargeE",
+        "chargeResidualE",
+        "totalMomentumDaltonAngstromPerPicosecond",
+        "momentumResidual",
+        "internalForceResidualKjMolAngstrom"
+      ],
+      "properties": {
+        "totalMassDalton": {
+          "$ref": "#/$defs/positiveFinite"
+        },
+        "massResidualDalton": {
+          "const": 0
+        },
+        "totalChargeE": {
+          "const": 0
+        },
+        "chargeResidualE": {
+          "const": 0
+        },
+        "totalMomentumDaltonAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "momentumResidual": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2e-8
+        },
+        "internalForceResidualKjMolAngstrom": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1e-10
+        }
+      },
+      "additionalProperties": false
+    },
+    "periodicGeometry": {
+      "type": "object",
+      "required": [
+        "rigidWaterCount",
+        "waterMoleculesStraddlingBoundary",
+        "minimumNonexcludedPairDistanceAngstrom"
+      ],
+      "properties": {
+        "rigidWaterCount": {
+          "const": 2
+        },
+        "waterMoleculesStraddlingBoundary": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "minimumNonexcludedPairDistanceAngstrom": {
+          "type": "number",
+          "minimum": 1.25,
+          "maximum": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "numericalValidity": {
+      "type": "object",
+      "required": [
+        "status",
+        "positionConstraintToleranceAngstrom",
+        "velocityConstraintToleranceAngstrom2PerPicosecond",
+        "minimumNonexcludedDistanceAngstrom",
+        "maximumRelativeEnergyExcursion",
+        "momentumResidualLimit",
+        "internalForceResidualLimit",
+        "forceWorkUnitsConsumed",
+        "forceWorkUnitsLimit"
+      ],
+      "properties": {
+        "status": {
+          "const": "pass"
+        },
+        "positionConstraintToleranceAngstrom": {
+          "const": 1e-10
+        },
+        "velocityConstraintToleranceAngstrom2PerPicosecond": {
+          "const": 1e-10
+        },
+        "minimumNonexcludedDistanceAngstrom": {
+          "const": 1.25
+        },
+        "maximumRelativeEnergyExcursion": {
+          "const": 0.001
+        },
+        "momentumResidualLimit": {
+          "const": 2e-8
+        },
+        "internalForceResidualLimit": {
+          "const": 1e-10
+        },
+        "forceWorkUnitsConsumed": {
+          "const": 108782
+        },
+        "forceWorkUnitsLimit": {
+          "const": 500000
+        }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "solver",
+        "solverVersion",
+        "evidenceRole",
+        "externalEngineExecuted",
+        "openmmReproduction",
+        "bulkOrDiluteClaim",
+        "chemicalReactionClaim"
+      ],
+      "properties": {
+        "solver": {
+          "const": "tf-aqueous-dynamics-world"
+        },
+        "solverVersion": {
+          "const": "0.4.2"
+        },
+        "evidenceRole": {
+          "const": "local-finite-size-integration-calibration"
+        },
+        "externalEngineExecuted": {
+          "const": false
+        },
+        "openmmReproduction": {
+          "const": false
+        },
+        "bulkOrDiluteClaim": {
+          "const": false
+        },
+        "chemicalReactionClaim": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "digest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "nonnegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "fractionalVector": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "z": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "image": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": -1000000000,
+          "maximum": 1000000000
+        },
+        "y": {
+          "type": "integer",
+          "minimum": -1000000000,
+          "maximum": 1000000000
+        },
+        "z": {
+          "type": "integer",
+          "minimum": -1000000000,
+          "maximum": 1000000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "wrappedPosition": {
+      "type": "object",
+      "required": [
+        "wrappedFractional",
+        "image"
+      ],
+      "properties": {
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "image": {
+          "$ref": "#/$defs/image"
+        }
+      },
+      "additionalProperties": false
+    },
+    "energyStatistics": {
+      "type": "object",
+      "required": [
+        "sampleCount",
+        "timeSumPicoseconds",
+        "energySumKjMol",
+        "timeSquaredSumPicoseconds2",
+        "timeEnergySumKjMolPicoseconds",
+        "maximumAbsoluteExcursionKjMol",
+        "maximumAbsoluteExcursionStep",
+        "maximumRelativeExcursion",
+        "maximumRelativeExcursionStep",
+        "linearDriftSlopeKjMolPerPicosecond",
+        "linearRelativeDriftRatePerPicosecond"
+      ],
+      "properties": {
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000001
+        },
+        "timeSumPicoseconds": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "energySumKjMol": {
+          "$ref": "#/$defs/finite"
+        },
+        "timeSquaredSumPicoseconds2": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "timeEnergySumKjMolPicoseconds": {
+          "$ref": "#/$defs/finite"
+        },
+        "maximumAbsoluteExcursionKjMol": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "maximumAbsoluteExcursionStep": {
+          "$ref": "#/$defs/nonnegativeSafeInteger"
+        },
+        "maximumRelativeExcursion": {
+          "$ref": "#/$defs/nonnegativeFinite"
+        },
+        "maximumRelativeExcursionStep": {
+          "$ref": "#/$defs/nonnegativeSafeInteger"
+        },
+        "linearDriftSlopeKjMolPerPicosecond": {
+          "$ref": "#/$defs/finite"
+        },
+        "linearRelativeDriftRatePerPicosecond": {
+          "$ref": "#/$defs/finite"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rankReceipt": {
+      "type": "object",
+      "required": [
+        "constraintDefinition",
+        "matrixRows",
+        "matrixColumns",
+        "method",
+        "relativePivotTolerance",
+        "rank",
+        "workUnitsConsumed",
+        "workUnitModel"
+      ],
+      "properties": {
+        "constraintDefinition": {
+          "const": "g=minimum-image-distance-squared-minus-target-distance-squared"
+        },
+        "matrixRows": {
+          "const": 6
+        },
+        "matrixColumns": {
+          "const": 24
+        },
+        "method": {
+          "const": "numeric-minimum-image-g2-scaled-partial-pivot-v1"
+        },
+        "relativePivotTolerance": {
+          "const": 1e-12
+        },
+        "rank": {
+          "const": 6
+        },
+        "workUnitsConsumed": {
+          "const": 651
+        },
+        "workUnitModel": {
+          "const": "scalar-matrix-write-inspection-and-elimination-v1"
+        }
+      },
+      "additionalProperties": false
+    },
+    "composerEvaluationReceipt": {
+      "type": "object",
+      "required": [
+        "stage",
+        "evaluationOrdinal",
+        "canonicalPositionDigest",
+        "topologyDigest",
+        "configurationDigest",
+        "evaluationDigest",
+        "forceNamespaceDigest",
+        "energyNamespaceDigest",
+        "workUnitsConsumed",
+        "workReceiptDigest",
+        "constraintJacobianRankReceipt"
+      ],
+      "properties": {
+        "stage": {
+          "enum": [
+            "initial",
+            "final"
+          ]
+        },
+        "evaluationOrdinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "canonicalPositionDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "topologyDigest": {
+          "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+        },
+        "configurationDigest": {
+          "const": "sha256:37dc2a135bb5c7d76be2166d5967cafe7819c65663358754e487b21564e8187b"
+        },
+        "evaluationDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "forceNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "energyNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "workUnitsConsumed": {
+          "const": 108782
+        },
+        "workReceiptDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "constraintJacobianRankReceipt": {
+          "$ref": "#/$defs/rankReceipt"
+        }
+      },
+      "additionalProperties": false
+    },
+    "initialComposerEvaluationReceipt": {
+      "type": "object",
+      "required": [
+        "stage",
+        "evaluationOrdinal",
+        "canonicalPositionDigest",
+        "topologyDigest",
+        "configurationDigest",
+        "evaluationDigest",
+        "forceNamespaceDigest",
+        "energyNamespaceDigest",
+        "workUnitsConsumed",
+        "workReceiptDigest",
+        "constraintJacobianRankReceipt"
+      ],
+      "properties": {
+        "stage": {
+          "const": "initial"
+        },
+        "evaluationOrdinal": {
+          "const": 1
+        },
+        "canonicalPositionDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "topologyDigest": {
+          "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+        },
+        "configurationDigest": {
+          "const": "sha256:37dc2a135bb5c7d76be2166d5967cafe7819c65663358754e487b21564e8187b"
+        },
+        "evaluationDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "forceNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "energyNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "workUnitsConsumed": {
+          "const": 108782
+        },
+        "workReceiptDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "constraintJacobianRankReceipt": {
+          "$ref": "#/$defs/rankReceipt"
+        }
+      },
+      "additionalProperties": false
+    },
+    "finalComposerEvaluationReceipt": {
+      "type": "object",
+      "required": [
+        "stage",
+        "evaluationOrdinal",
+        "canonicalPositionDigest",
+        "topologyDigest",
+        "configurationDigest",
+        "evaluationDigest",
+        "forceNamespaceDigest",
+        "energyNamespaceDigest",
+        "workUnitsConsumed",
+        "workReceiptDigest",
+        "constraintJacobianRankReceipt"
+      ],
+      "properties": {
+        "stage": {
+          "const": "final"
+        },
+        "evaluationOrdinal": {
+          "const": 2
+        },
+        "canonicalPositionDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "topologyDigest": {
+          "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+        },
+        "configurationDigest": {
+          "const": "sha256:37dc2a135bb5c7d76be2166d5967cafe7819c65663358754e487b21564e8187b"
+        },
+        "evaluationDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "forceNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "energyNamespaceDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "workUnitsConsumed": {
+          "const": 108782
+        },
+        "workReceiptDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "constraintJacobianRankReceipt": {
+          "$ref": "#/$defs/rankReceipt"
+        }
+      },
+      "additionalProperties": false
+    },
+    "integrationWorkReceipt": {
+      "type": "object",
+      "required": [
+        "solverIntegratorWorkUnits",
+        "composerEndpointRankAuditWorkUnits",
+        "totalIntegrationWorkUnits",
+        "maximumIntegrationWorkUnits",
+        "withinBudget",
+        "boundary"
+      ],
+      "properties": {
+        "solverIntegratorWorkUnits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1098000
+        },
+        "composerEndpointRankAuditWorkUnits": {
+          "const": 1302
+        },
+        "totalIntegrationWorkUnits": {
+          "type": "integer",
+          "minimum": 1302,
+          "maximum": 1100000
+        },
+        "maximumIntegrationWorkUnits": {
+          "const": 1100000
+        },
+        "withinBudget": {
+          "const": true
+        },
+        "boundary": {
+          "const": "covers-integrator-and-two-composer-endpoint-rank-audits; observation-recomputation-is-receipted-separately"
+        }
+      },
+      "additionalProperties": false
+    },
+    "integrationReceipt": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "fromStep",
+        "toStep",
+        "topologyDigest",
+        "configurationDigest",
+        "integratorResultDigest",
+        "initialEvaluation",
+        "finalEvaluation",
+        "workReceipt",
+        "receiptDigest"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "tf.aqueous-dynamics-integration-receipt/0.4.2"
+        },
+        "fromStep": {
+          "$ref": "#/$defs/nonnegativeSafeInteger"
+        },
+        "toStep": {
+          "$ref": "#/$defs/nonnegativeSafeInteger"
+        },
+        "topologyDigest": {
+          "const": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+        },
+        "configurationDigest": {
+          "const": "sha256:37dc2a135bb5c7d76be2166d5967cafe7819c65663358754e487b21564e8187b"
+        },
+        "integratorResultDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "initialEvaluation": {
+          "$ref": "#/$defs/initialComposerEvaluationReceipt"
+        },
+        "finalEvaluation": {
+          "$ref": "#/$defs/finalComposerEvaluationReceipt"
+        },
+        "workReceipt": {
+          "$ref": "#/$defs/integrationWorkReceipt"
+        },
+        "receiptDigest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fixedTopology": {
+      "const": {
+        "schemaVersion": "tf.aqueous-topology/0.4.2",
+        "topologyId": "nacl-tip3p-two-water-finite-size-calibration",
+        "atoms": [
+          {
+            "id": "chloride-cl",
+            "element": "Cl",
+            "massDalton": 35.45,
+            "chargeE": -1,
+            "lennardJones": {
+              "sigmaAngstrom": 4.477656957373345,
+              "epsilonKjMol": 0.14891274399999999
+            },
+            "identity": {
+              "moleculeId": "chloride",
+              "residueId": "residue-chloride",
+              "residueName": "CL",
+              "siteName": "Cl",
+              "siteIndex": 0
+            }
+          },
+          {
+            "id": "sodium-na",
+            "element": "Na",
+            "massDalton": 22.99,
+            "chargeE": 1,
+            "lennardJones": {
+              "sigmaAngstrom": 2.439280690268249,
+              "epsilonKjMol": 0.3658460312
+            },
+            "identity": {
+              "moleculeId": "sodium",
+              "residueId": "residue-sodium",
+              "residueName": "NA",
+              "siteName": "Na",
+              "siteIndex": 0
+            }
+          },
+          {
+            "id": "water-a-h1",
+            "element": "H",
+            "massDalton": 1.007947,
+            "chargeE": 0.417,
+            "lennardJones": {
+              "sigmaAngstrom": 10,
+              "epsilonKjMol": 0
+            },
+            "identity": {
+              "moleculeId": "water-a",
+              "residueId": "residue-water-a",
+              "residueName": "HOH",
+              "siteName": "H1",
+              "siteIndex": 1
+            }
+          },
+          {
+            "id": "water-a-h2",
+            "element": "H",
+            "massDalton": 1.007947,
+            "chargeE": 0.417,
+            "lennardJones": {
+              "sigmaAngstrom": 10,
+              "epsilonKjMol": 0
+            },
+            "identity": {
+              "moleculeId": "water-a",
+              "residueId": "residue-water-a",
+              "residueName": "HOH",
+              "siteName": "H2",
+              "siteIndex": 2
+            }
+          },
+          {
+            "id": "water-a-o",
+            "element": "O",
+            "massDalton": 15.99943,
+            "chargeE": -0.834,
+            "lennardJones": {
+              "sigmaAngstrom": 3.150752406575124,
+              "epsilonKjMol": 0.635968
+            },
+            "identity": {
+              "moleculeId": "water-a",
+              "residueId": "residue-water-a",
+              "residueName": "HOH",
+              "siteName": "O",
+              "siteIndex": 0
+            }
+          },
+          {
+            "id": "water-b-h1",
+            "element": "H",
+            "massDalton": 1.007947,
+            "chargeE": 0.417,
+            "lennardJones": {
+              "sigmaAngstrom": 10,
+              "epsilonKjMol": 0
+            },
+            "identity": {
+              "moleculeId": "water-b",
+              "residueId": "residue-water-b",
+              "residueName": "HOH",
+              "siteName": "H1",
+              "siteIndex": 1
+            }
+          },
+          {
+            "id": "water-b-h2",
+            "element": "H",
+            "massDalton": 1.007947,
+            "chargeE": 0.417,
+            "lennardJones": {
+              "sigmaAngstrom": 10,
+              "epsilonKjMol": 0
+            },
+            "identity": {
+              "moleculeId": "water-b",
+              "residueId": "residue-water-b",
+              "residueName": "HOH",
+              "siteName": "H2",
+              "siteIndex": 2
+            }
+          },
+          {
+            "id": "water-b-o",
+            "element": "O",
+            "massDalton": 15.99943,
+            "chargeE": -0.834,
+            "lennardJones": {
+              "sigmaAngstrom": 3.150752406575124,
+              "epsilonKjMol": 0.635968
+            },
+            "identity": {
+              "moleculeId": "water-b",
+              "residueId": "residue-water-b",
+              "residueName": "HOH",
+              "siteName": "O",
+              "siteIndex": 0
+            }
+          }
+        ],
+        "molecules": [
+          {
+            "id": "chloride",
+            "kind": "monatomic-ion",
+            "residueIds": [
+              "residue-chloride"
+            ],
+            "atomIds": [
+              "chloride-cl"
+            ]
+          },
+          {
+            "id": "sodium",
+            "kind": "monatomic-ion",
+            "residueIds": [
+              "residue-sodium"
+            ],
+            "atomIds": [
+              "sodium-na"
+            ]
+          },
+          {
+            "id": "water-a",
+            "kind": "rigid-tip3p-water",
+            "residueIds": [
+              "residue-water-a"
+            ],
+            "atomIds": [
+              "water-a-h1",
+              "water-a-h2",
+              "water-a-o"
+            ]
+          },
+          {
+            "id": "water-b",
+            "kind": "rigid-tip3p-water",
+            "residueIds": [
+              "residue-water-b"
+            ],
+            "atomIds": [
+              "water-b-h1",
+              "water-b-h2",
+              "water-b-o"
+            ]
+          }
+        ],
+        "residues": [
+          {
+            "id": "residue-chloride",
+            "moleculeId": "chloride",
+            "name": "CL",
+            "atomIds": [
+              "chloride-cl"
+            ]
+          },
+          {
+            "id": "residue-sodium",
+            "moleculeId": "sodium",
+            "name": "NA",
+            "atomIds": [
+              "sodium-na"
+            ]
+          },
+          {
+            "id": "residue-water-a",
+            "moleculeId": "water-a",
+            "name": "HOH",
+            "atomIds": [
+              "water-a-h1",
+              "water-a-h2",
+              "water-a-o"
+            ]
+          },
+          {
+            "id": "residue-water-b",
+            "moleculeId": "water-b",
+            "name": "HOH",
+            "atomIds": [
+              "water-b-h1",
+              "water-b-h2",
+              "water-b-o"
+            ]
+          }
+        ],
+        "energeticBonds": [],
+        "constraints": [
+          {
+            "id": "water-a-constraint-hh",
+            "atomAId": "water-a-h1",
+            "atomBId": "water-a-h2",
+            "distanceAngstrom": 1.5139006545247014
+          },
+          {
+            "id": "water-a-constraint-oh1",
+            "atomAId": "water-a-h1",
+            "atomBId": "water-a-o",
+            "distanceAngstrom": 0.9572
+          },
+          {
+            "id": "water-a-constraint-oh2",
+            "atomAId": "water-a-h2",
+            "atomBId": "water-a-o",
+            "distanceAngstrom": 0.9572
+          },
+          {
+            "id": "water-b-constraint-hh",
+            "atomAId": "water-b-h1",
+            "atomBId": "water-b-h2",
+            "distanceAngstrom": 1.5139006545247014
+          },
+          {
+            "id": "water-b-constraint-oh1",
+            "atomAId": "water-b-h1",
+            "atomBId": "water-b-o",
+            "distanceAngstrom": 0.9572
+          },
+          {
+            "id": "water-b-constraint-oh2",
+            "atomAId": "water-b-h2",
+            "atomBId": "water-b-o",
+            "distanceAngstrom": 0.9572
+          }
+        ],
+        "nonbondedExceptions": [
+          {
+            "id": "water-a-exception-hh",
+            "atomAId": "water-a-h1",
+            "atomBId": "water-a-h2",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          },
+          {
+            "id": "water-a-exception-oh1",
+            "atomAId": "water-a-h1",
+            "atomBId": "water-a-o",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          },
+          {
+            "id": "water-a-exception-oh2",
+            "atomAId": "water-a-h2",
+            "atomBId": "water-a-o",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          },
+          {
+            "id": "water-b-exception-hh",
+            "atomAId": "water-b-h1",
+            "atomBId": "water-b-h2",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          },
+          {
+            "id": "water-b-exception-oh1",
+            "atomAId": "water-b-h1",
+            "atomBId": "water-b-o",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          },
+          {
+            "id": "water-b-exception-oh2",
+            "atomAId": "water-b-h2",
+            "atomBId": "water-b-o",
+            "coulomb": {
+              "mode": "exclude"
+            },
+            "lennardJones": {
+              "mode": "exclude"
+            }
+          }
+        ],
+        "shortRangeNonbonded": {
+          "method": "lennard-jones-12-6",
+          "mixingRule": "lorentz-berthelot",
+          "cutoffAngstrom": 10,
+          "switchingPolicy": "none",
+          "energyShift": false,
+          "dispersionCorrection": false,
+          "maximumPairWorkUnits": 1000
+        },
+        "electrostatics": {
+          "method": "direct-ewald-explicit-real-and-reciprocal-sums",
+          "alphaInverseAngstrom": 0.4,
+          "realSpaceCutoffAngstrom": 9,
+          "reciprocalCutoffInverseAngstrom": 3,
+          "relativePermittivity": 1,
+          "neutralityToleranceE": 1e-12,
+          "electrostaticConstantKjMolAngstromE2": 1389.35458,
+          "maximumRealSpaceWorkUnits": 100000,
+          "maximumReciprocalSpaceWorkUnits": 1000000
+        },
+        "parameterReceipt": {
+          "schemaVersion": "tf.amber14-tip3p-parameter-receipt/0.4.2",
+          "familyId": "openmm-amber14-tip3p-joung-cheatham-explicit-solvent",
+          "source": {
+            "evidenceClass": "primary-source-parameter-extraction-not-execution",
+            "owner": "OpenMM",
+            "repository": "https://github.com/openmm/openmm",
+            "sourceCommit": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5",
+            "filePath": "wrappers/python/openmm/app/data/amber14/tip3p.xml",
+            "rawUrl": "https://raw.githubusercontent.com/openmm/openmm/f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5/wrappers/python/openmm/app/data/amber14/tip3p.xml",
+            "sizeBytes": 19070,
+            "sha256": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9",
+            "executionPerformed": false,
+            "reproductionPerformed": false,
+            "licenseClearance": false,
+            "extractionDigest": "sha256:bcd25281e8b496ef1ff048a0c650b4bef10320ed4f2cfc92f78a8f37ba652aed"
+          },
+          "units": {
+            "sourceLength": "nanometer",
+            "runtimeLength": "angstrom",
+            "nanometerToAngstrom": 10,
+            "energy": "kilojoule-per-mole",
+            "charge": "elementary-charge",
+            "mass": "dalton"
+          },
+          "combiningRule": {
+            "name": "lorentz-berthelot",
+            "sigma": "arithmetic-mean",
+            "epsilon": "geometric-mean"
+          },
+          "sites": {
+            "waterOxygen": {
+              "siteType": "water-oxygen",
+              "element": "O",
+              "massDalton": 15.99943,
+              "chargeE": -0.834,
+              "sourceSigmaNanometer": 0.3150752406575124,
+              "sigmaAngstrom": 3.150752406575124,
+              "epsilonKjMol": 0.635968
+            },
+            "waterHydrogen": {
+              "siteType": "water-hydrogen",
+              "element": "H",
+              "massDalton": 1.007947,
+              "chargeE": 0.417,
+              "sourceSigmaNanometer": 1,
+              "sigmaAngstrom": 10,
+              "epsilonKjMol": 0
+            },
+            "sodiumIon": {
+              "siteType": "sodium-ion",
+              "element": "Na",
+              "massDalton": 22.99,
+              "chargeE": 1,
+              "sourceSigmaNanometer": 0.2439280690268249,
+              "sigmaAngstrom": 2.439280690268249,
+              "epsilonKjMol": 0.3658460312
+            },
+            "chlorideIon": {
+              "siteType": "chloride-ion",
+              "element": "Cl",
+              "massDalton": 35.45,
+              "chargeE": -1,
+              "sourceSigmaNanometer": 0.4477656957373345,
+              "sigmaAngstrom": 4.477656957373345,
+              "epsilonKjMol": 0.14891274399999999
+            }
+          },
+          "rigidWaterGeometry": {
+            "oxygenHydrogenDistanceNanometer": 0.09572,
+            "oxygenHydrogenDistanceAngstrom": 0.9572,
+            "hydrogenOxygenHydrogenAngleRadian": 1.82421813418,
+            "hydrogenHydrogenDistanceAngstrom": 1.5139006545247014,
+            "hydrogenHydrogenDerivation": "sqrt(l1*l1+l2*l2-2*l1*l2*cos(theta))",
+            "angleLiteralProvenance": "derived-from-rounded-xml-radian-literal",
+            "independentDistanceConstraints": 3
+          },
+          "xmlScales": {
+            "coulomb14Scale": 0.8333333333333334,
+            "lennardJones14Scale": 0.5
+          },
+          "rigidWaterIntramolecularPolicy": {
+            "energeticBondTerms": 0,
+            "energeticAngleTerms": 0,
+            "requiredDistanceConstraints": [
+              "O-H1",
+              "O-H2",
+              "H1-H2"
+            ],
+            "requiredCoulombExclusions": [
+              "O-H1",
+              "O-H2",
+              "H1-H2"
+            ],
+            "requiredLennardJonesExclusions": [
+              "O-H1",
+              "O-H2",
+              "H1-H2"
+            ]
+          },
+          "claimBoundaries": {
+            "sourceValuesExtracted": true,
+            "openmmExecuted": false,
+            "openmmReproduced": false,
+            "trajectoryProduced": false,
+            "bulkWaterValidated": false,
+            "licenseClearance": false
+          }
+        },
+        "sourcePins": [
+          {
+            "id": "openmm-tip3p-amber14",
+            "owner": "OpenMM",
+            "repository": "https://github.com/openmm/openmm",
+            "sourceCommit": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5",
+            "filePath": "wrappers/python/openmm/app/data/amber14/tip3p.xml",
+            "sizeBytes": 19070,
+            "sha256": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9",
+            "executionPerformed": false,
+            "licenseClearance": false
+          }
+        ],
+        "provenance": {
+          "evidenceClass": "contract-only",
+          "modelExecution": false,
+          "dynamicsExecution": false,
+          "canonicalization": "stable-ascii-id-order"
+        },
+        "claimBoundaries": {
+          "naclWaterTrajectory": false,
+          "forceFieldReproduction": false,
+          "pmeOrOpenmmExecution": false,
+          "industrialPrediction": false,
+          "licenseClearance": false
+        },
+        "topologyDigest": "sha256:53efaac1f1e0bf643f0ab99bec32c02d9dfdf9a0eb32fafc8b9d371d45fda667"
+      }
+    },
+    "observedAtomChloride": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "chloride-cl"
+        },
+        "element": {
+          "const": "Cl"
+        },
+        "massDalton": {
+          "const": 35.45
+        },
+        "chargeE": {
+          "const": -1
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomChloride": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "chloride-cl"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomSodium": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "sodium-na"
+        },
+        "element": {
+          "const": "Na"
+        },
+        "massDalton": {
+          "const": 22.99
+        },
+        "chargeE": {
+          "const": 1
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomSodium": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "sodium-na"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterAH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-h1"
+        },
+        "element": {
+          "const": "H"
+        },
+        "massDalton": {
+          "const": 1.007947
+        },
+        "chargeE": {
+          "const": 0.417
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterAH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-h1"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterAH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-h2"
+        },
+        "element": {
+          "const": "H"
+        },
+        "massDalton": {
+          "const": 1.007947
+        },
+        "chargeE": {
+          "const": 0.417
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterAH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-h2"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterAO": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-o"
+        },
+        "element": {
+          "const": "O"
+        },
+        "massDalton": {
+          "const": 15.99943
+        },
+        "chargeE": {
+          "const": -0.834
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterAO": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-o"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterBH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-h1"
+        },
+        "element": {
+          "const": "H"
+        },
+        "massDalton": {
+          "const": 1.007947
+        },
+        "chargeE": {
+          "const": 0.417
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterBH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-h1"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterBH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-h2"
+        },
+        "element": {
+          "const": "H"
+        },
+        "massDalton": {
+          "const": 1.007947
+        },
+        "chargeE": {
+          "const": 0.417
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterBH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-h2"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observedAtomWaterBO": {
+      "type": "object",
+      "required": [
+        "id",
+        "element",
+        "massDalton",
+        "chargeE",
+        "position",
+        "velocityAngstromPerPicosecond",
+        "wrappedPositionAngstrom",
+        "unwrappedPositionAngstrom",
+        "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-o"
+        },
+        "element": {
+          "const": "O"
+        },
+        "massDalton": {
+          "const": 15.99943
+        },
+        "chargeE": {
+          "const": -0.834
+        },
+        "position": {
+          "$ref": "#/$defs/wrappedPosition"
+        },
+        "velocityAngstromPerPicosecond": {
+          "$ref": "#/$defs/vector"
+        },
+        "wrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "unwrappedPositionAngstrom": {
+          "$ref": "#/$defs/vector"
+        },
+        "forceKjMolAngstrom": {
+          "$ref": "#/$defs/vector"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceFieldAtomWaterBO": {
+      "type": "object",
+      "required": [
+        "id",
+        "wrappedFractional",
+        "imageGauge"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-o"
+        },
+        "wrappedFractional": {
+          "$ref": "#/$defs/fractionalVector"
+        },
+        "imageGauge": {
+          "const": "omitted-nonphysical-lattice-gauge"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterAHH": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-exception-hh"
+        },
+        "atomAId": {
+          "const": "water-a-h1"
+        },
+        "atomBId": {
+          "const": "water-a-h2"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterAOH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-exception-oh1"
+        },
+        "atomAId": {
+          "const": "water-a-h1"
+        },
+        "atomBId": {
+          "const": "water-a-o"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterAOH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-a-exception-oh2"
+        },
+        "atomAId": {
+          "const": "water-a-h2"
+        },
+        "atomBId": {
+          "const": "water-a-o"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterBHH": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-exception-hh"
+        },
+        "atomAId": {
+          "const": "water-b-h1"
+        },
+        "atomBId": {
+          "const": "water-b-h2"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterBOH1": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-exception-oh1"
+        },
+        "atomAId": {
+          "const": "water-b-h1"
+        },
+        "atomBId": {
+          "const": "water-b-o"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonbondedExceptionScaleWaterBOH2": {
+      "type": "object",
+      "required": [
+        "id",
+        "atomAId",
+        "atomBId",
+        "coulombScale",
+        "lennardJonesScale"
+      ],
+      "properties": {
+        "id": {
+          "const": "water-b-exception-oh2"
+        },
+        "atomAId": {
+          "const": "water-b-h2"
+        },
+        "atomBId": {
+          "const": "water-b-o"
+        },
+        "coulombScale": {
+          "const": 0
+        },
+        "lennardJonesScale": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$comment": "Semantic-validator scope: verify SHA-256 digest binding and equality; step/time and receipt progression; state/configuration/topology identity links; LJ pair-ID uniqueness and ID-to-endpoint membership; force-map equivalence; energy component sums; and all work-receipt arithmetic.",
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "required": [
+          "step"
+        ],
+        "properties": {
+          "step": {
+            "const": 0
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "parentStateId": {
+            "type": "null"
+          },
+          "timePicoseconds": {
+            "const": 0
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "lastStepResultDigest": {
+                "type": "null"
+              },
+              "lastStepSolverWorkUnitsConsumed": {
+                "const": 0
+              },
+              "lastStepComposerEndpointRankAuditWorkUnitsConsumed": {
+                "const": 0
+              },
+              "lastStepWorkUnitsConsumed": {
+                "const": 0
+              },
+              "lastStepConstraintImpulseResidual": {
+                "const": 0
+              },
+              "lastIntegrationReceipt": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000000
+          },
+          "parentStateId": {
+            "$ref": "#/$defs/token"
+          },
+          "timePicoseconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1e+300
+          },
+          "integration": {
+            "type": "object",
+            "properties": {
+              "lastStepResultDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "lastStepSolverWorkUnitsConsumed": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1098000
+              },
+              "lastStepComposerEndpointRankAuditWorkUnitsConsumed": {
+                "const": 1302
+              },
+              "lastStepWorkUnitsConsumed": {
+                "type": "integer",
+                "minimum": 1303,
+                "maximum": 1100000
+              },
+              "lastIntegrationReceipt": {
+                "$ref": "#/$defs/integrationReceipt"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

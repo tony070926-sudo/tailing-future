@@ -1,0 +1,1203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-system-spec/0.4.4",
+  "title": "Tailing Future Aqueous System Specification v0.4.4",
+  "description": "Closed declarative specification for the pinned 895-water OpenMM PME control plan. It does not represent an executed simulation.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "systemId",
+    "systemDigest",
+    "status",
+    "identity",
+    "composition",
+    "cell",
+    "inputs",
+    "forceModel",
+    "preparationPlan",
+    "dynamicsPlan",
+    "backendPlan",
+    "acceptancePlan",
+    "evidenceSemantics",
+    "claimBoundaries"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "tf.aqueous-system-spec/0.4.4" },
+    "systemId": { "type": "string", "const": "openmm-8.6-tip3p-895-water-pme-control" },
+    "systemDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:e80bb9d1bd4bd8b774008b052b717cb758f16995e5164b36cda7102e2dbf6419"
+    },
+    "status": { "type": "string", "const": "declarative-system-spec-not-execution" },
+    "identity": { "$ref": "#/$defs/identity" },
+    "composition": { "$ref": "#/$defs/composition" },
+    "cell": { "$ref": "#/$defs/cell" },
+    "inputs": { "$ref": "#/$defs/inputs" },
+    "forceModel": { "$ref": "#/$defs/forceModel" },
+    "preparationPlan": { "$ref": "#/$defs/preparationPlan" },
+    "dynamicsPlan": { "$ref": "#/$defs/dynamicsPlan" },
+    "backendPlan": { "$ref": "#/$defs/backendPlan" },
+    "acceptancePlan": { "$ref": "#/$defs/acceptancePlan" },
+    "evidenceSemantics": { "$ref": "#/$defs/evidenceSemantics" },
+    "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "scientificRole",
+        "chemistry",
+        "parameterFamilyId",
+        "parameterBytesEqualToCurrent851Receipt",
+        "parameterByteEqualityImpliesExecution"
+      ],
+      "properties": {
+        "scientificRole": {
+          "type": "string",
+          "const": "cold-start-periodic-pure-water-engine-control-candidate"
+        },
+        "chemistry": { "type": "string", "const": "rigid-tip3p-water" },
+        "parameterFamilyId": {
+          "type": "string",
+          "const": "openmm-amber14-tip3p-joung-cheatham-explicit-solvent"
+        },
+        "parameterBytesEqualToCurrent851Receipt": { "type": "boolean", "const": true },
+        "parameterByteEqualityImpliesExecution": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "composition": {
+      "type": "object",
+      "required": [
+        "waterMoleculeCount",
+        "sodiumIonCount",
+        "chlorideIonCount",
+        "residueCount",
+        "particleCount",
+        "topologyBondCount",
+        "rigidDistanceConstraintCount",
+        "intramolecularNonbondedExceptionCount",
+        "totalMassDalton",
+        "totalChargeE",
+        "nominalDensityKgM3"
+      ],
+      "properties": {
+        "waterMoleculeCount": { "type": "integer", "minimum": 895, "maximum": 895, "const": 895 },
+        "sodiumIonCount": { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+        "chlorideIonCount": { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+        "residueCount": { "type": "integer", "minimum": 895, "maximum": 895, "const": 895 },
+        "particleCount": { "type": "integer", "minimum": 2685, "maximum": 2685, "const": 2685 },
+        "topologyBondCount": { "type": "integer", "minimum": 1790, "maximum": 1790, "const": 1790 },
+        "rigidDistanceConstraintCount": { "type": "integer", "minimum": 2685, "maximum": 2685, "const": 2685 },
+        "intramolecularNonbondedExceptionCount": { "type": "integer", "minimum": 2685, "maximum": 2685, "const": 2685 },
+        "totalMassDalton": {
+          "type": "number",
+          "minimum": 16123.71498,
+          "maximum": 16123.71498,
+          "const": 16123.71498
+        },
+        "totalChargeE": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 },
+        "nominalDensityKgM3": {
+          "type": "number",
+          "minimum": 991.6318008523569,
+          "maximum": 991.6318008523569,
+          "const": 991.6318008523569
+        }
+      },
+      "additionalProperties": false
+    },
+    "cell": {
+      "type": "object",
+      "required": [
+        "kind",
+        "vectorsNanometer",
+        "volumeNanometer3",
+        "periodicAxes",
+        "originGauge",
+        "cellDigest"
+      ],
+      "properties": {
+        "kind": { "type": "string", "const": "orthorhombic-periodic-cell" },
+        "vectorsNanometer": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "$ref": "#/$defs/cellVectorA" },
+            { "$ref": "#/$defs/cellVectorB" },
+            { "$ref": "#/$defs/cellVectorC" }
+          ],
+          "items": false
+        },
+        "volumeNanometer3": { "type": "number", "minimum": 27, "maximum": 27, "const": 27 },
+        "periodicAxes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "type": "boolean", "const": true },
+            { "type": "boolean", "const": true },
+            { "type": "boolean", "const": true }
+          ],
+          "items": false
+        },
+        "originGauge": {
+          "type": "string",
+          "const": "pdb-cryst1-origin-omitted-as-nonphysical"
+        },
+        "cellDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:f136d08ebff520542682222b0d6beb499e4710c854cb7dba842496d2817e5b84"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cellVectorA": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 3, "maximum": 3, "const": 3 },
+        "y": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 },
+        "z": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 }
+      },
+      "additionalProperties": false
+    },
+    "cellVectorB": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 },
+        "y": { "type": "number", "minimum": 3, "maximum": 3, "const": 3 },
+        "z": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 }
+      },
+      "additionalProperties": false
+    },
+    "cellVectorC": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 },
+        "y": { "type": "number", "minimum": 0, "maximum": 0, "const": 0 },
+        "z": { "type": "number", "minimum": 3, "maximum": 3, "const": 3 }
+      },
+      "additionalProperties": false
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "sourcePins",
+        "authoritativeAtomOrder",
+        "coordinatePolicy",
+        "expectedResidueName",
+        "expectedSiteOrderPerResidue",
+        "expectedRigidWaterGeometryNanometer",
+        "topologyCompilation",
+        "compiledTopologyDigest",
+        "serializedSystemDigest"
+      ],
+      "properties": {
+        "sourcePins": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "prefixItems": [
+            { "$ref": "#/$defs/licenseSourcePin" },
+            { "$ref": "#/$defs/parameterSourcePin" },
+            { "$ref": "#/$defs/coordinateSourcePin" }
+          ],
+          "items": false
+        },
+        "authoritativeAtomOrder": { "type": "string", "const": "pdb-record-order" },
+        "coordinatePolicy": {
+          "type": "string",
+          "const": "raw-pdb-coordinates-no-prewrap-or-reorder"
+        },
+        "expectedResidueName": { "type": "string", "const": "HOH" },
+        "expectedSiteOrderPerResidue": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "type": "string", "const": "O" },
+            { "type": "string", "const": "H1" },
+            { "type": "string", "const": "H2" }
+          ],
+          "items": false
+        },
+        "expectedRigidWaterGeometryNanometer": {
+          "$ref": "#/$defs/expectedRigidWaterGeometryNanometer"
+        },
+        "topologyCompilation": {
+          "type": "string",
+          "const": "openmm-pdb-and-forcefield-loader-required"
+        },
+        "compiledTopologyDigest": { "type": "null" },
+        "serializedSystemDigest": { "type": "null" }
+      },
+      "additionalProperties": false
+    },
+    "expectedRigidWaterGeometryNanometer": {
+      "type": "object",
+      "required": ["oxygenHydrogen", "hydrogenHydrogen"],
+      "properties": {
+        "oxygenHydrogen": {
+          "type": "number",
+          "minimum": 0.09572,
+          "maximum": 0.09572,
+          "const": 0.09572
+        },
+        "hydrogenHydrogen": {
+          "type": "number",
+          "minimum": 0.15139006545247014,
+          "maximum": 0.15139006545247014,
+          "const": 0.15139006545247014
+        }
+      },
+      "additionalProperties": false
+    },
+    "licenseSourcePin": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "owner",
+        "repository",
+        "release",
+        "commit",
+        "path",
+        "rawUrl",
+        "byteCount",
+        "sha256",
+        "evidenceStatus",
+        "artifactFetchReceiptDigest",
+        "redistributionCleared"
+      ],
+      "properties": {
+        "id": { "type": "string", "const": "openmm-8.6-licenses" },
+        "role": { "type": "string", "const": "license-notices" },
+        "owner": { "type": "string", "const": "OpenMM" },
+        "repository": { "type": "string", "const": "https://github.com/openmm/openmm" },
+        "release": { "type": "string", "const": "8.6.0" },
+        "commit": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "const": "c6173db6e8edd705eb59172bd21e9ce69c572405"
+        },
+        "path": { "type": "string", "const": "docs-source/licenses/Licenses.txt" },
+        "rawUrl": {
+          "type": "string",
+          "const": "https://raw.githubusercontent.com/openmm/openmm/c6173db6e8edd705eb59172bd21e9ce69c572405/docs-source/licenses/Licenses.txt"
+        },
+        "byteCount": { "type": "integer", "minimum": 9305, "maximum": 9305, "const": 9305 },
+        "sha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:437b7168cc997abea3b5f2a9e0fb6894f96de77b9c69be428ccfcfe9bed58293"
+        },
+        "evidenceStatus": {
+          "type": "string",
+          "const": "pinned-expected-input-not-bundled"
+        },
+        "artifactFetchReceiptDigest": { "type": "null" },
+        "redistributionCleared": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "parameterSourcePin": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "owner",
+        "repository",
+        "release",
+        "commit",
+        "path",
+        "rawUrl",
+        "byteCount",
+        "sha256",
+        "evidenceStatus",
+        "artifactFetchReceiptDigest",
+        "redistributionCleared"
+      ],
+      "properties": {
+        "id": { "type": "string", "const": "openmm-8.6-tip3p-parameters" },
+        "role": { "type": "string", "const": "parameter-input" },
+        "owner": { "type": "string", "const": "OpenMM" },
+        "repository": { "type": "string", "const": "https://github.com/openmm/openmm" },
+        "release": { "type": "string", "const": "8.6.0" },
+        "commit": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "const": "c6173db6e8edd705eb59172bd21e9ce69c572405"
+        },
+        "path": {
+          "type": "string",
+          "const": "wrappers/python/openmm/app/data/amber14/tip3p.xml"
+        },
+        "rawUrl": {
+          "type": "string",
+          "const": "https://raw.githubusercontent.com/openmm/openmm/c6173db6e8edd705eb59172bd21e9ce69c572405/wrappers/python/openmm/app/data/amber14/tip3p.xml"
+        },
+        "byteCount": { "type": "integer", "minimum": 19070, "maximum": 19070, "const": 19070 },
+        "sha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9"
+        },
+        "evidenceStatus": {
+          "type": "string",
+          "const": "pinned-expected-input-not-bundled"
+        },
+        "artifactFetchReceiptDigest": { "type": "null" },
+        "redistributionCleared": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "coordinateSourcePin": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "owner",
+        "repository",
+        "release",
+        "commit",
+        "path",
+        "rawUrl",
+        "byteCount",
+        "sha256",
+        "evidenceStatus",
+        "artifactFetchReceiptDigest",
+        "redistributionCleared"
+      ],
+      "properties": {
+        "id": { "type": "string", "const": "openmm-8.6-tip3p-water-box" },
+        "role": { "type": "string", "const": "coordinate-input" },
+        "owner": { "type": "string", "const": "OpenMM" },
+        "repository": { "type": "string", "const": "https://github.com/openmm/openmm" },
+        "release": { "type": "string", "const": "8.6.0" },
+        "commit": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "const": "c6173db6e8edd705eb59172bd21e9ce69c572405"
+        },
+        "path": { "type": "string", "const": "wrappers/python/openmm/app/data/tip3p.pdb" },
+        "rawUrl": {
+          "type": "string",
+          "const": "https://raw.githubusercontent.com/openmm/openmm/c6173db6e8edd705eb59172bd21e9ce69c572405/wrappers/python/openmm/app/data/tip3p.pdb"
+        },
+        "byteCount": { "type": "integer", "minimum": 179998, "maximum": 179998, "const": 179998 },
+        "sha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:14fd37900d627c0e258d6086a14c6084e4bec1422e9d20fccfc83c3f814fd7ee"
+        },
+        "evidenceStatus": {
+          "type": "string",
+          "const": "pinned-expected-input-not-bundled"
+        },
+        "artifactFetchReceiptDigest": { "type": "null" },
+        "redistributionCleared": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "forceModel": {
+      "type": "object",
+      "required": [
+        "nonbondedMethod",
+        "cutoffNanometer",
+        "constraints",
+        "rigidWater",
+        "flexibleConstraints",
+        "removeCenterOfMassMotion",
+        "switchingFunction",
+        "switchDistanceNanometer",
+        "dispersionCorrection",
+        "ljpme",
+        "exceptionsUsePeriodicBoundaryConditions",
+        "pme",
+        "forceGroups",
+        "zeroTermForceGroups"
+      ],
+      "properties": {
+        "nonbondedMethod": { "type": "string", "const": "PME" },
+        "cutoffNanometer": { "type": "number", "minimum": 1, "maximum": 1, "const": 1 },
+        "constraints": { "type": "string", "const": "HBonds" },
+        "rigidWater": { "type": "boolean", "const": true },
+        "flexibleConstraints": { "type": "boolean", "const": false },
+        "removeCenterOfMassMotion": { "type": "boolean", "const": false },
+        "switchingFunction": { "type": "boolean", "const": false },
+        "switchDistanceNanometer": { "type": "null" },
+        "dispersionCorrection": { "type": "boolean", "const": true },
+        "ljpme": { "type": "boolean", "const": false },
+        "exceptionsUsePeriodicBoundaryConditions": { "type": "boolean", "const": false },
+        "pme": { "$ref": "#/$defs/pme" },
+        "forceGroups": { "$ref": "#/$defs/forceGroups" },
+        "zeroTermForceGroups": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+            { "type": "integer", "minimum": 1, "maximum": 1, "const": 1 }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "pme": {
+      "type": "object",
+      "required": [
+        "parameterApplicationMode",
+        "designErrorTolerance",
+        "designErrorToleranceUsedByEngine",
+        "requestedAlphaInverseNanometer",
+        "requestedGrid",
+        "contextReadbackRequiredForEachLane",
+        "contextValuesMayDifferFromRequestDueToPlatformRestrictions",
+        "sameLaneFreshProcessReadbacksMustMatch",
+        "cpuWarmupBeforeContextReadbackRequired",
+        "cpuWarmupOperation"
+      ],
+      "properties": {
+        "parameterApplicationMode": {
+          "type": "string",
+          "const": "explicit-setPMEParameters-with-nonzero-alpha"
+        },
+        "designErrorTolerance": {
+          "type": "number",
+          "minimum": 0.0001,
+          "maximum": 0.0001,
+          "const": 0.0001
+        },
+        "designErrorToleranceUsedByEngine": { "type": "boolean", "const": false },
+        "requestedAlphaInverseNanometer": {
+          "type": "number",
+          "minimum": 2.918423065872431,
+          "maximum": 2.918423065872431,
+          "const": 2.918423065872431
+        },
+        "requestedGrid": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "type": "integer", "minimum": 90, "maximum": 90, "const": 90 },
+            { "type": "integer", "minimum": 90, "maximum": 90, "const": 90 },
+            { "type": "integer", "minimum": 90, "maximum": 90, "const": 90 }
+          ],
+          "items": false
+        },
+        "contextReadbackRequiredForEachLane": { "type": "boolean", "const": true },
+        "contextValuesMayDifferFromRequestDueToPlatformRestrictions": {
+          "type": "boolean",
+          "const": true
+        },
+        "sameLaneFreshProcessReadbacksMustMatch": { "type": "boolean", "const": true },
+        "cpuWarmupBeforeContextReadbackRequired": { "type": "boolean", "const": true },
+        "cpuWarmupOperation": {
+          "type": "string",
+          "const": "getState-getEnergy-true-after-setPositions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceGroups": {
+      "type": "object",
+      "required": [
+        "harmonicBond",
+        "harmonicAngle",
+        "nonbondedDirectAndLennardJones",
+        "nonbondedReciprocal"
+      ],
+      "properties": {
+        "harmonicBond": { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+        "harmonicAngle": { "type": "integer", "minimum": 1, "maximum": 1, "const": 1 },
+        "nonbondedDirectAndLennardJones": { "type": "integer", "minimum": 2, "maximum": 2, "const": 2 },
+        "nonbondedReciprocal": { "type": "integer", "minimum": 3, "maximum": 3, "const": 3 }
+      },
+      "additionalProperties": false
+    },
+    "preparationPlan": {
+      "type": "object",
+      "required": [
+        "canonicalPlatform",
+        "constraintTolerance",
+        "minimization",
+        "velocityInitialization",
+        "portableProductionStartStateRequired",
+        "productionStartStateDigest",
+        "repairPolicy"
+      ],
+      "properties": {
+        "canonicalPlatform": { "type": "string", "const": "Reference" },
+        "constraintTolerance": { "type": "number", "minimum": 1e-8, "maximum": 1e-8, "const": 1e-8 },
+        "minimization": { "$ref": "#/$defs/minimization" },
+        "velocityInitialization": { "$ref": "#/$defs/velocityInitialization" },
+        "portableProductionStartStateRequired": { "type": "boolean", "const": true },
+        "productionStartStateDigest": { "type": "null" },
+        "repairPolicy": {
+          "type": "string",
+          "const": "external-prepare-receipt-required-no-silent-local-repair"
+        }
+      },
+      "additionalProperties": false
+    },
+    "minimization": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "toleranceKjMolNanometer",
+        "maximumIterationsArgument",
+        "iterationSemantics",
+        "reporter",
+        "postconditions"
+      ],
+      "properties": {
+        "algorithm": { "type": "string", "const": "OpenMM-LocalEnergyMinimizer-LBFGS" },
+        "toleranceKjMolNanometer": { "type": "number", "minimum": 1, "maximum": 1, "const": 1 },
+        "maximumIterationsArgument": { "type": "integer", "minimum": 5000, "maximum": 5000, "const": 5000 },
+        "iterationSemantics": {
+          "type": "string",
+          "const": "OpenMM-maxIterations-argument-does-not-bound-total-reporter-callbacks-across-constraint-restarts"
+        },
+        "reporter": { "$ref": "#/$defs/minimizationReporter" },
+        "postconditions": { "$ref": "#/$defs/minimizationPostconditions" }
+      },
+      "additionalProperties": false
+    },
+    "minimizationReporter": {
+      "type": "object",
+      "required": [
+        "required",
+        "api",
+        "globalCallbackOrdinalRequired",
+        "iterationIndexSemantics",
+        "maximumReporterCallbacks",
+        "maximumConstraintRestarts",
+        "wallClockTimeoutSeconds",
+        "budgetExhaustionOutcome"
+      ],
+      "properties": {
+        "required": { "type": "boolean", "const": true },
+        "api": { "type": "string", "const": "OpenMM-MinimizationReporter" },
+        "globalCallbackOrdinalRequired": { "type": "boolean", "const": true },
+        "iterationIndexSemantics": {
+          "type": "string",
+          "const": "optimizer-local-index-may-reset-after-constraint-restart"
+        },
+        "maximumReporterCallbacks": { "type": "integer", "minimum": 20000, "maximum": 20000, "const": 20000 },
+        "maximumConstraintRestarts": { "type": "integer", "minimum": 3, "maximum": 3, "const": 3 },
+        "wallClockTimeoutSeconds": { "type": "integer", "minimum": 1800, "maximum": 1800, "const": 1800 },
+        "budgetExhaustionOutcome": {
+          "type": "string",
+          "const": "incomplete-no-production-start-state"
+        }
+      },
+      "additionalProperties": false
+    },
+    "minimizationPostconditions": {
+      "type": "object",
+      "required": [
+        "termination",
+        "finiteStateRequired",
+        "finalReporterObjectiveGradientRmsMaximumKjMolNanometer",
+        "postMinimizationApplyConstraintsRequired",
+        "maximumConstraintRelativeResidual"
+      ],
+      "properties": {
+        "termination": {
+          "type": "string",
+          "const": "converged-postconditions-required-not-max-iterations-alone"
+        },
+        "finiteStateRequired": { "type": "boolean", "const": true },
+        "finalReporterObjectiveGradientRmsMaximumKjMolNanometer": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1,
+          "const": 1
+        },
+        "postMinimizationApplyConstraintsRequired": { "type": "boolean", "const": true },
+        "maximumConstraintRelativeResidual": {
+          "type": "number",
+          "minimum": 1e-8,
+          "maximum": 1e-8,
+          "const": 1e-8
+        }
+      },
+      "additionalProperties": false
+    },
+    "velocityInitialization": {
+      "type": "object",
+      "required": [
+        "method",
+        "temperatureKelvin",
+        "randomSeed",
+        "operationOrder",
+        "setVelocitiesToTemperatureInternalConstraintTolerance",
+        "removeMassWeightedCenterOfMassVelocity",
+        "applyVelocityConstraintsAfterCenterOfMassRemoval",
+        "explicitVelocityConstraintTolerance",
+        "centerOfMassVelocityFormula",
+        "maximumCenterOfMassSpeedNanometerPerPicosecond",
+        "velocityConstraintResidualFormula",
+        "maximumVelocityConstraintRelativeResidual",
+        "postconditionEvaluationPoint",
+        "seedAloneIsReplayInput"
+      ],
+      "properties": {
+        "method": { "type": "string", "const": "OpenMM-setVelocitiesToTemperature" },
+        "temperatureKelvin": { "type": "number", "minimum": 300, "maximum": 300, "const": 300 },
+        "randomSeed": { "type": "integer", "minimum": 20260901, "maximum": 20260901, "const": 20260901 },
+        "operationOrder": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "type": "string", "const": "setVelocitiesToTemperature" },
+            { "type": "string", "const": "removeMassWeightedCenterOfMassVelocity" },
+            { "type": "string", "const": "applyVelocityConstraints" }
+          ],
+          "items": false
+        },
+        "setVelocitiesToTemperatureInternalConstraintTolerance": {
+          "type": "number",
+          "minimum": 1e-5,
+          "maximum": 1e-5,
+          "const": 1e-5
+        },
+        "removeMassWeightedCenterOfMassVelocity": { "type": "boolean", "const": true },
+        "applyVelocityConstraintsAfterCenterOfMassRemoval": { "type": "boolean", "const": true },
+        "explicitVelocityConstraintTolerance": {
+          "type": "number",
+          "minimum": 1e-8,
+          "maximum": 1e-8,
+          "const": 1e-8
+        },
+        "centerOfMassVelocityFormula": {
+          "type": "string",
+          "const": "norm(sum(m_i*v_i))/sum(m_i)"
+        },
+        "maximumCenterOfMassSpeedNanometerPerPicosecond": {
+          "type": "number",
+          "minimum": 1e-12,
+          "maximum": 1e-12,
+          "const": 1e-12
+        },
+        "velocityConstraintResidualFormula": {
+          "type": "string",
+          "const": "max(abs(dot(r_ij,v_j-v_i))/max(norm(r_ij)*norm(v_j-v_i),1e-12-nm2-ps))"
+        },
+        "maximumVelocityConstraintRelativeResidual": {
+          "type": "number",
+          "minimum": 1e-8,
+          "maximum": 1e-8,
+          "const": 1e-8
+        },
+        "postconditionEvaluationPoint": {
+          "type": "string",
+          "const": "after-explicit-applyVelocityConstraints"
+        },
+        "seedAloneIsReplayInput": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "dynamicsPlan": {
+      "type": "object",
+      "required": [
+        "evidenceStatus",
+        "ensemble",
+        "integrator",
+        "fixedTimeStepPicoseconds",
+        "constraintTolerance",
+        "thermostat",
+        "barostat",
+        "fixedCell",
+        "integratedSteps",
+        "sampleStepSemantics",
+        "sampleStrideSteps",
+        "expectedSampleCount",
+        "finalTimePicoseconds",
+        "velocityReadbackSemantics"
+      ],
+      "properties": {
+        "evidenceStatus": { "type": "string", "const": "planned-not-executed" },
+        "ensemble": { "type": "string", "const": "NVE" },
+        "integrator": { "type": "string", "const": "OpenMM-VerletIntegrator" },
+        "fixedTimeStepPicoseconds": { "type": "number", "minimum": 0.001, "maximum": 0.001, "const": 0.001 },
+        "constraintTolerance": { "type": "number", "minimum": 1e-8, "maximum": 1e-8, "const": 1e-8 },
+        "thermostat": { "type": "null" },
+        "barostat": { "type": "null" },
+        "fixedCell": { "type": "boolean", "const": true },
+        "integratedSteps": { "type": "integer", "minimum": 1000, "maximum": 1000, "const": 1000 },
+        "sampleStepSemantics": {
+          "type": "string",
+          "const": "integrated-steps-from-portable-start-state-step-0"
+        },
+        "sampleStrideSteps": { "type": "integer", "minimum": 10, "maximum": 10, "const": 10 },
+        "expectedSampleCount": { "type": "integer", "minimum": 101, "maximum": 101, "const": 101 },
+        "finalTimePicoseconds": { "type": "number", "minimum": 1, "maximum": 1, "const": 1 },
+        "velocityReadbackSemantics": {
+          "type": "string",
+          "const": "prepared-step-0-then-raw-OpenMM-Verlet-half-step-velocities-no-resynchronization"
+        }
+      },
+      "additionalProperties": false
+    },
+    "backendPlan": {
+      "type": "object",
+      "required": [
+        "canonicalManifestDigest",
+        "comparisonManifestDigest",
+        "platformOrder",
+        "fallbackPolicy",
+        "sharedPortableStartStateRequired",
+        "referenceReplay",
+        "cpuExecution",
+        "crossPlatformComparison"
+      ],
+      "properties": {
+        "canonicalManifestDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:7f7104ea225819798c9c06eed382298c4d90ec19484f632fc6910832369882b9"
+        },
+        "comparisonManifestDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:8bea1d8a2f48897d34594fb416f791aa8d94c02807857182681c32c9d6e0424b"
+        },
+        "platformOrder": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "type": "string", "const": "Reference" },
+            { "type": "string", "const": "CPU" }
+          ],
+          "items": false
+        },
+        "fallbackPolicy": { "type": "string", "const": "reject" },
+        "sharedPortableStartStateRequired": { "type": "boolean", "const": true },
+        "referenceReplay": {
+          "type": "string",
+          "const": "two-same-host-same-container-fresh-processes-exact-101-frame-digest-required"
+        },
+        "cpuExecution": {
+          "type": "string",
+          "const": "five-fixed-coordinate-evaluations-only-zero-integrated-steps"
+        },
+        "crossPlatformComparison": {
+          "type": "string",
+          "const": "fixed-coordinate-energy-force-only"
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptancePlan": {
+      "type": "object",
+      "required": [
+        "maximumRelativeEnergyExcursion",
+        "maximumConstraintRelativeResidual",
+        "maximumRelativePotentialEnergyDifference",
+        "maximumMedianPerParticleRelativeForceError",
+        "maximumGlobalRelativeForceL2Error",
+        "forceGroupEnergySumMustClose",
+        "forceGroupForceSumMustClose",
+        "referenceSameHostSameContainerExactReplayRequired",
+        "cpuExactReplayRequired",
+        "freeTrajectoryCrossPlatformEqualityRequired",
+        "metricDefinitions"
+      ],
+      "properties": {
+        "maximumRelativeEnergyExcursion": { "type": "number", "minimum": 0.001, "maximum": 0.001, "const": 0.001 },
+        "maximumConstraintRelativeResidual": { "type": "number", "minimum": 0.000001, "maximum": 0.000001, "const": 0.000001 },
+        "maximumRelativePotentialEnergyDifference": { "type": "number", "minimum": 0.00001, "maximum": 0.00001, "const": 0.00001 },
+        "maximumMedianPerParticleRelativeForceError": { "type": "number", "minimum": 0.0001, "maximum": 0.0001, "const": 0.0001 },
+        "maximumGlobalRelativeForceL2Error": { "type": "number", "minimum": 0.0001, "maximum": 0.0001, "const": 0.0001 },
+        "forceGroupEnergySumMustClose": { "type": "boolean", "const": true },
+        "forceGroupForceSumMustClose": { "type": "boolean", "const": true },
+        "referenceSameHostSameContainerExactReplayRequired": { "type": "boolean", "const": true },
+        "cpuExactReplayRequired": { "type": "boolean", "const": false },
+        "freeTrajectoryCrossPlatformEqualityRequired": { "type": "boolean", "const": false },
+        "metricDefinitions": { "$ref": "#/$defs/metricDefinitions" }
+      },
+      "additionalProperties": false
+    },
+    "metricDefinitions": {
+      "type": "object",
+      "required": [
+        "energyExcursion",
+        "constraintRelativeResidual",
+        "cpuReferenceForceComparison",
+        "cpuReferencePotentialEnergyComparison",
+        "forceGroupEnergyClosure",
+        "forceGroupForceClosure"
+      ],
+      "properties": {
+        "energyExcursion": { "$ref": "#/$defs/energyExcursionMetric" },
+        "constraintRelativeResidual": { "$ref": "#/$defs/constraintRelativeResidualMetric" },
+        "cpuReferenceForceComparison": { "$ref": "#/$defs/cpuReferenceForceComparisonMetric" },
+        "cpuReferencePotentialEnergyComparison": { "$ref": "#/$defs/cpuReferencePotentialEnergyComparisonMetric" },
+        "forceGroupEnergyClosure": { "$ref": "#/$defs/forceGroupEnergyClosureMetric" },
+        "forceGroupForceClosure": { "$ref": "#/$defs/forceGroupForceClosureMetric" }
+      },
+      "additionalProperties": false
+    },
+    "energyExcursionMetric": {
+      "type": "object",
+      "required": ["lane", "sampleDomain", "energyQuantity", "formula", "denominatorFloorKjMol"],
+      "properties": {
+        "lane": { "type": "string", "const": "Reference" },
+        "sampleDomain": { "type": "string", "const": "all-101-authoritative-samples" },
+        "energyQuantity": { "type": "string", "const": "potential-plus-kinetic-energy-kj-mol" },
+        "formula": {
+          "type": "string",
+          "const": "max(abs(totalEnergy_i-totalEnergy_0))/max(abs(totalEnergy_0),1-kj-mol)"
+        },
+        "denominatorFloorKjMol": { "type": "number", "minimum": 1, "maximum": 1, "const": 1 }
+      },
+      "additionalProperties": false
+    },
+    "constraintRelativeResidualMetric": {
+      "type": "object",
+      "required": ["lane", "sampleDomain", "distanceGauge", "formula"],
+      "properties": {
+        "lane": { "type": "string", "const": "Reference" },
+        "sampleDomain": {
+          "type": "string",
+          "const": "all-101-authoritative-samples-and-all-rigid-water-constraints"
+        },
+        "distanceGauge": {
+          "type": "string",
+          "const": "minimum-image-distance-from-authoritative-periodic-cell"
+        },
+        "formula": {
+          "type": "string",
+          "const": "max(abs(actualDistance-targetDistance)/targetDistance)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cpuReferenceForceComparisonMetric": {
+      "type": "object",
+      "required": [
+        "coordinateSteps",
+        "coordinateIdentity",
+        "particleDomain",
+        "vectorNorm",
+        "perParticleFormula",
+        "globalFormula",
+        "denominatorFloorKjMolNanometer",
+        "medianConvention",
+        "medianAggregation",
+        "globalAggregation"
+      ],
+      "properties": {
+        "coordinateSteps": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+            { "type": "integer", "minimum": 10, "maximum": 10, "const": 10 },
+            { "type": "integer", "minimum": 100, "maximum": 100, "const": 100 },
+            { "type": "integer", "minimum": 500, "maximum": 500, "const": 500 },
+            { "type": "integer", "minimum": 1000, "maximum": 1000, "const": 1000 }
+          ],
+          "items": false
+        },
+        "coordinateIdentity": {
+          "type": "string",
+          "const": "same-physical-coordinate-digest-atom-order-and-lane-prepare-receipts"
+        },
+        "particleDomain": { "type": "string", "const": "all-2685-particles" },
+        "vectorNorm": { "type": "string", "const": "euclidean-l2" },
+        "perParticleFormula": {
+          "type": "string",
+          "const": "norm(cpu-reference)/max(norm(reference),1e-12-kj-mol-nm)"
+        },
+        "globalFormula": {
+          "type": "string",
+          "const": "sqrt(sum(norm(cpu-reference)^2))/max(sqrt(sum(norm(reference)^2)),1e-12-kj-mol-nm)"
+        },
+        "denominatorFloorKjMolNanometer": {
+          "type": "number",
+          "minimum": 1e-12,
+          "maximum": 1e-12,
+          "const": 1e-12
+        },
+        "medianConvention": {
+          "type": "string",
+          "const": "sorted-middle-or-mean-of-two-middle-values"
+        },
+        "medianAggregation": {
+          "type": "string",
+          "const": "maximum-of-per-step-particle-medians"
+        },
+        "globalAggregation": {
+          "type": "string",
+          "const": "maximum-over-coordinate-steps"
+        }
+      },
+      "additionalProperties": false
+    },
+    "comparisonCoordinateSteps": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "prefixItems": [
+        { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+        { "type": "integer", "minimum": 10, "maximum": 10, "const": 10 },
+        { "type": "integer", "minimum": 100, "maximum": 100, "const": 100 },
+        { "type": "integer", "minimum": 500, "maximum": 500, "const": 500 },
+        { "type": "integer", "minimum": 1000, "maximum": 1000, "const": 1000 }
+      ],
+      "items": false
+    },
+    "cpuReferencePotentialEnergyComparisonMetric": {
+      "type": "object",
+      "required": [
+        "coordinateSteps",
+        "coordinateIdentity",
+        "energyQuantity",
+        "perStepFormula",
+        "denominatorFloorKjMol",
+        "aggregation"
+      ],
+      "properties": {
+        "coordinateSteps": { "$ref": "#/$defs/comparisonCoordinateSteps" },
+        "coordinateIdentity": {
+          "type": "string",
+          "const": "same-physical-coordinate-digest-atom-order-and-lane-prepare-receipts"
+        },
+        "energyQuantity": { "type": "string", "const": "potential-energy-kj-mol" },
+        "perStepFormula": {
+          "type": "string",
+          "const": "abs(cpu-reference)/max(abs(reference),1-kj-mol)"
+        },
+        "denominatorFloorKjMol": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1,
+          "const": 1
+        },
+        "aggregation": { "type": "string", "const": "maximum-over-coordinate-steps" }
+      },
+      "additionalProperties": false
+    },
+    "forceGroupLanes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "type": "string", "const": "Reference" },
+        { "type": "string", "const": "CPU" }
+      ],
+      "items": false
+    },
+    "forceGroupIds": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+        { "type": "integer", "minimum": 1, "maximum": 1, "const": 1 },
+        { "type": "integer", "minimum": 2, "maximum": 2, "const": 2 },
+        { "type": "integer", "minimum": 3, "maximum": 3, "const": 3 }
+      ],
+      "items": false
+    },
+    "forceGroupEnergyClosureMetric": {
+      "type": "object",
+      "required": [
+        "lanes",
+        "coordinateSteps",
+        "coordinateIdentity",
+        "groups",
+        "formula",
+        "sumOrder",
+        "aggregation",
+        "maximumRelativeResidual"
+      ],
+      "properties": {
+        "lanes": { "$ref": "#/$defs/forceGroupLanes" },
+        "coordinateSteps": { "$ref": "#/$defs/comparisonCoordinateSteps" },
+        "coordinateIdentity": {
+          "type": "string",
+          "const": "each-result-bound-to-lane-prepare-receipt-and-shared-physical-coordinate-digest"
+        },
+        "groups": { "$ref": "#/$defs/forceGroupIds" },
+        "formula": {
+          "type": "string",
+          "const": "abs(total-sum(groups))/max(abs(total),1-kj-mol)"
+        },
+        "sumOrder": { "type": "string", "const": "ascending-force-group-0-1-2-3" },
+        "aggregation": {
+          "type": "string",
+          "const": "maximum-over-two-lanes-five-steps"
+        },
+        "maximumRelativeResidual": {
+          "type": "number",
+          "minimum": 1e-8,
+          "maximum": 1e-8,
+          "const": 1e-8
+        }
+      },
+      "additionalProperties": false
+    },
+    "forceGroupForceClosureMetric": {
+      "type": "object",
+      "required": [
+        "lanes",
+        "coordinateSteps",
+        "coordinateIdentity",
+        "groups",
+        "zeroTermGroups",
+        "sumOrder",
+        "referenceCriterion",
+        "cpuCriterion"
+      ],
+      "properties": {
+        "lanes": { "$ref": "#/$defs/forceGroupLanes" },
+        "coordinateSteps": { "$ref": "#/$defs/comparisonCoordinateSteps" },
+        "coordinateIdentity": {
+          "type": "string",
+          "const": "each-result-bound-to-lane-prepare-receipt-and-shared-physical-coordinate-digest"
+        },
+        "groups": { "$ref": "#/$defs/forceGroupIds" },
+        "zeroTermGroups": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "type": "integer", "minimum": 0, "maximum": 0, "const": 0 },
+            { "type": "integer", "minimum": 1, "maximum": 1, "const": 1 }
+          ],
+          "items": false
+        },
+        "sumOrder": { "type": "string", "const": "ascending-force-group-0-1-2-3" },
+        "referenceCriterion": { "$ref": "#/$defs/referenceForceGroupClosureCriterion" },
+        "cpuCriterion": { "$ref": "#/$defs/cpuForceGroupClosureCriterion" }
+      },
+      "additionalProperties": false
+    },
+    "referenceForceGroupClosureCriterion": {
+      "type": "object",
+      "required": ["componentArithmetic", "formula", "maximumRelativeResidual"],
+      "properties": {
+        "componentArithmetic": { "type": "string", "const": "binary64-left-associated" },
+        "formula": {
+          "type": "string",
+          "const": "max-component-abs(total-sum(groups))/max(max-component-abs(total),1-kj-mol-nm)"
+        },
+        "maximumRelativeResidual": {
+          "type": "number",
+          "minimum": 1e-8,
+          "maximum": 1e-8,
+          "const": 1e-8
+        }
+      },
+      "additionalProperties": false
+    },
+    "cpuForceGroupClosureCriterion": {
+      "type": "object",
+      "required": ["componentArithmetic", "formula", "maximumUlpDistance"],
+      "properties": {
+        "componentArithmetic": {
+          "type": "string",
+          "const": "round-each-input-and-left-associated-sum-to-ieee754-binary32"
+        },
+        "formula": {
+          "type": "string",
+          "const": "max-ulp-distance(float32(total),float32-left-associated-sum(groups))"
+        },
+        "maximumUlpDistance": { "type": "integer", "minimum": 2, "maximum": 2, "const": 2 }
+      },
+      "additionalProperties": false
+    },
+    "evidenceSemantics": {
+      "type": "object",
+      "required": [
+        "localTypeScriptDirectEwaldExecution",
+        "externalOpenmmExecution",
+        "externalPmeExecution",
+        "minimizationExecution",
+        "trajectoryExecution",
+        "selfDigestAuthenticityProof",
+        "protectedMainArtifact"
+      ],
+      "properties": {
+        "localTypeScriptDirectEwaldExecution": { "type": "boolean", "const": false },
+        "externalOpenmmExecution": { "type": "boolean", "const": false },
+        "externalPmeExecution": { "type": "boolean", "const": false },
+        "minimizationExecution": { "type": "boolean", "const": false },
+        "trajectoryExecution": { "type": "boolean", "const": false },
+        "selfDigestAuthenticityProof": { "type": "boolean", "const": false },
+        "protectedMainArtifact": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "claimBoundaries": {
+      "type": "object",
+      "required": [
+        "coldStartEngineControlProduced",
+        "equilibratedBulkWater",
+        "bulkWaterValidated",
+        "densityConverged",
+        "rdfOrDiffusionComputed",
+        "lowSaltValidated",
+        "naclInterfaceSimulated",
+        "dissolutionOrCrystallizationClaim",
+        "electronicStructureComputed",
+        "industrialPrediction",
+        "licenseClearance",
+        "scorePromotionEligible"
+      ],
+      "properties": {
+        "coldStartEngineControlProduced": { "type": "boolean", "const": false },
+        "equilibratedBulkWater": { "type": "boolean", "const": false },
+        "bulkWaterValidated": { "type": "boolean", "const": false },
+        "densityConverged": { "type": "boolean", "const": false },
+        "rdfOrDiffusionComputed": { "type": "boolean", "const": false },
+        "lowSaltValidated": { "type": "boolean", "const": false },
+        "naclInterfaceSimulated": { "type": "boolean", "const": false },
+        "dissolutionOrCrystallizationClaim": { "type": "boolean", "const": false },
+        "electronicStructureComputed": { "type": "boolean", "const": false },
+        "industrialPrediction": { "type": "boolean", "const": false },
+        "licenseClearance": { "type": "boolean", "const": false },
+        "scorePromotionEligible": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/openmm-tip3p-control-receipt/0.4.5",
+  "title": "Tailing Future Independent TIP3P Scientific Assessment Receipt",
+  "description": "A deterministic receipt produced only after an independent verifier has read the complete raw producer payload and recomputed the locked metrics. It records a producer-reported OpenMM run but does not authenticate execution, release provenance, or license clearance.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "statusDomain",
+    "status",
+    "systemDigest",
+    "planDigest",
+    "sourceRevision",
+    "producerOutcomeDigest",
+    "artifactManifestDigest",
+    "payloadBundleRoot",
+    "runtimeBindings",
+    "verification",
+    "metrics",
+    "thresholds",
+    "gates",
+    "publicationPolicy",
+    "claims",
+    "receiptDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.openmm-tip3p-control-receipt/0.4.5" },
+    "profile": { "const": "openmm-tip3p-independent-control-verification" },
+    "statusDomain": { "const": "independent-scientific-assessment-not-release-provenance" },
+    "status": { "enum": ["verified-pass", "verified-fail"] },
+    "systemDigest": { "$ref": "#/$defs/digest" },
+    "planDigest": { "$ref": "#/$defs/digest" },
+    "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+    "producerOutcomeDigest": { "$ref": "#/$defs/digest" },
+    "artifactManifestDigest": { "$ref": "#/$defs/digest" },
+    "payloadBundleRoot": { "$ref": "#/$defs/digest" },
+    "runtimeBindings": {
+      "type": "object",
+      "required": [
+        "baseImageIndexDigest",
+        "baseImagePlatformDigest",
+        "derivedContainerImageDigest",
+        "pythonVersion",
+        "numpyVersion",
+        "openmmDistributionVersion",
+        "openmmFullVersion",
+        "openmmGitRevision",
+        "openmmReleaseFlag",
+        "referencePlatform",
+        "cpuPlatform"
+      ],
+      "properties": {
+        "baseImageIndexDigest": { "$ref": "#/$defs/digest" },
+        "baseImagePlatformDigest": { "$ref": "#/$defs/digest" },
+        "derivedContainerImageDigest": { "type": "null" },
+        "pythonVersion": { "const": "3.12.11" },
+        "numpyVersion": { "const": "2.2.6" },
+        "openmmDistributionVersion": { "const": "8.6.0" },
+        "openmmFullVersion": { "const": "8.6.0.dev-c6173db" },
+        "openmmGitRevision": { "const": "c6173db6e8edd705eb59172bd21e9ce69c572405" },
+        "openmmReleaseFlag": { "const": false },
+        "referencePlatform": { "$ref": "#/$defs/platformReceipt" },
+        "cpuPlatform": { "$ref": "#/$defs/platformReceipt" }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "verifierDigest",
+        "metricSource",
+        "producerMetricsTrusted",
+        "referenceReplayComparedAsRawBytes",
+        "cpuComparedAtReferenceCoordinatesOnly",
+        "authoritativeVelocityTimeGauge",
+        "forceSemantics",
+        "stateEnergyTemporalAlignment",
+        "rawHalfStepVelocitiesSufficientToRecomputeStateKineticEnergy",
+        "executionAuthenticityVerified",
+        "verifierRuntime"
+      ],
+      "properties": {
+        "verifierDigest": { "$ref": "#/$defs/digest" },
+        "metricSource": { "const": "independently-recomputed-from-complete-raw-arrays" },
+        "producerMetricsTrusted": { "const": false },
+        "referenceReplayComparedAsRawBytes": { "const": true },
+        "cpuComparedAtReferenceCoordinatesOnly": { "const": true },
+        "authoritativeVelocityTimeGauge": { "const": "openmm-verlet-raw-velocity-at-t-minus-dt-over-2" },
+        "forceSemantics": { "const": "potential-force-excluding-constraint-impulses" },
+        "stateEnergyTemporalAlignment": { "const": "openmm-state-potential-and-integrator-adjusted-kinetic-at-position-time" },
+        "rawHalfStepVelocitiesSufficientToRecomputeStateKineticEnergy": { "const": false },
+        "executionAuthenticityVerified": { "const": false },
+        "verifierRuntime": {
+          "type": "object",
+          "required": ["nodeVersion", "platform", "architecture"],
+          "properties": {
+            "nodeVersion": { "const": "v24.16.0" },
+            "platform": { "enum": ["linux", "darwin"] },
+            "architecture": { "enum": ["x64", "arm64"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "metrics": { "$ref": "#/$defs/metrics" },
+    "thresholds": { "$ref": "#/$defs/thresholds" },
+    "gates": { "$ref": "#/$defs/gates" },
+    "publicationPolicy": {
+      "const": {
+        "licenseClearance": false,
+        "rawPayloadPublic": false,
+        "cloudflareDistributionEligible": false,
+        "protectedMainArtifact": false,
+        "attestedArtifact": false,
+        "promotionEligible": false
+      }
+    },
+    "claims": {
+      "type": "object",
+      "required": [
+        "openmmExecutionReportedByProducer",
+        "openmmExecutionAuthenticated",
+        "scientificPass",
+        "reproduced",
+        "bulkWaterValidated",
+        "interfaceSimulated",
+        "industrialPrediction",
+        "scorePromotionEligible"
+      ],
+      "properties": {
+        "openmmExecutionReportedByProducer": { "const": true },
+        "openmmExecutionAuthenticated": { "const": false },
+        "scientificPass": { "type": "boolean" },
+        "reproduced": { "const": false },
+        "bulkWaterValidated": { "const": false },
+        "interfaceSimulated": { "const": false },
+        "industrialPrediction": { "const": false },
+        "scorePromotionEligible": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "receiptDigest": { "$ref": "#/$defs/digest" }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "verified-pass" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "claims": { "type": "object", "properties": { "scientificPass": { "const": true } } },
+          "gates": {
+            "type": "object",
+            "properties": {
+              "referenceExactReplay": { "const": true },
+              "referenceEnergyExcursion": { "const": true },
+              "referenceConstraintResidual": { "const": true },
+              "cpuReferencePotentialEnergy": { "const": true },
+              "cpuReferenceMedianParticleForce": { "const": true },
+              "cpuReferenceGlobalForce": { "const": true },
+              "referenceEnergyGroupClosure": { "const": true },
+              "referenceForceGroupClosure": { "const": true },
+              "cpuEnergyGroupClosure": { "const": true },
+              "cpuForceGroupClosure": { "const": true },
+              "productionStartCenterOfMass": { "const": true },
+              "productionStartVelocityConstraints": { "const": true },
+              "allPassed": { "const": true }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "relativeEnergyExcursion": { "type": "number", "maximum": 0.001 },
+              "maximumConstraintRelativeResidual": { "type": "number", "maximum": 0.000001 },
+              "maximumRelativePotentialEnergyDifference": { "type": "number", "maximum": 0.00001 },
+              "maximumMedianPerParticleRelativeForceError": { "type": "number", "maximum": 0.0001 },
+              "maximumGlobalRelativeForceL2Error": { "type": "number", "maximum": 0.0001 },
+              "referenceMaximumEnergyGroupRelativeResidual": { "type": "number", "maximum": 1e-8 },
+              "referenceMaximumForceGroupRelativeResidual": { "type": "number", "maximum": 1e-8 },
+              "cpuMaximumEnergyGroupRelativeResidual": { "type": "number", "maximum": 1e-8 },
+              "cpuMaximumForceGroupUlpDistanceFloat32": { "type": "integer", "maximum": 2 },
+              "productionStartCenterOfMassSpeedNanometerPerPicosecond": { "type": "number", "maximum": 1e-12 },
+              "productionStartMaximumVelocityConstraintRelativeResidual": { "type": "number", "maximum": 1e-8 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "verified-fail" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "claims": { "type": "object", "properties": { "scientificPass": { "const": false } } },
+          "gates": { "type": "object", "properties": { "allPassed": { "const": false } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000000000000000000000000000$)[0-9a-f]{40}$"
+    },
+    "finiteNumber": { "type": "number" },
+    "platformReceipt": {
+      "type": "object",
+      "required": ["name", "pmeAlphaInverseNanometer", "pmeGrid", "pluginLoadFailures", "properties"],
+      "properties": {
+        "name": { "enum": ["Reference", "CPU"] },
+        "pmeAlphaInverseNanometer": { "type": "number", "exclusiveMinimum": 0 },
+        "pmeGrid": {
+          "type": "array",
+          "prefixItems": [{ "const": 90 }, { "const": 90 }, { "const": 90 }],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "pluginLoadFailures": { "type": "array", "maxItems": 0 },
+        "properties": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "referenceExactReplay",
+        "relativeEnergyExcursion",
+        "absoluteEnergyExcursionPerWaterKjMol",
+        "energyDriftSlopeKjMolPicosecond",
+        "maximumConstraintRelativeResidual",
+        "maximumRelativePotentialEnergyDifference",
+        "maximumMedianPerParticleRelativeForceError",
+        "maximumGlobalRelativeForceL2Error",
+        "referenceMaximumEnergyGroupRelativeResidual",
+        "referenceMaximumForceGroupRelativeResidual",
+        "cpuMaximumEnergyGroupRelativeResidual",
+        "cpuMaximumForceGroupUlpDistanceFloat32",
+        "productionStartCenterOfMassSpeedNanometerPerPicosecond",
+        "productionStartMassWeightedMomentumRelativeResidual",
+        "productionStartMaximumVelocityConstraintRelativeResidual",
+        "productionStartKineticTemperatureKelvin"
+      ],
+      "properties": {
+        "referenceExactReplay": { "const": true },
+        "relativeEnergyExcursion": { "$ref": "#/$defs/finiteNumber" },
+        "absoluteEnergyExcursionPerWaterKjMol": { "$ref": "#/$defs/finiteNumber" },
+        "energyDriftSlopeKjMolPicosecond": { "$ref": "#/$defs/finiteNumber" },
+        "maximumConstraintRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "maximumRelativePotentialEnergyDifference": { "$ref": "#/$defs/finiteNumber" },
+        "maximumMedianPerParticleRelativeForceError": { "$ref": "#/$defs/finiteNumber" },
+        "maximumGlobalRelativeForceL2Error": { "$ref": "#/$defs/finiteNumber" },
+        "referenceMaximumEnergyGroupRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "referenceMaximumForceGroupRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "cpuMaximumEnergyGroupRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "cpuMaximumForceGroupUlpDistanceFloat32": { "type": "integer", "minimum": 0 },
+        "productionStartCenterOfMassSpeedNanometerPerPicosecond": { "$ref": "#/$defs/finiteNumber" },
+        "productionStartMassWeightedMomentumRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "productionStartMaximumVelocityConstraintRelativeResidual": { "$ref": "#/$defs/finiteNumber" },
+        "productionStartKineticTemperatureKelvin": { "$ref": "#/$defs/finiteNumber" }
+      },
+      "additionalProperties": false
+    },
+    "thresholds": {
+      "const": {
+        "maximumRelativeEnergyExcursion": 0.001,
+        "maximumConstraintRelativeResidual": 0.000001,
+        "maximumRelativePotentialEnergyDifference": 0.00001,
+        "maximumMedianPerParticleRelativeForceError": 0.0001,
+        "maximumGlobalRelativeForceL2Error": 0.0001,
+        "referenceEnergyGroupMaximumRelativeResidual": 1e-8,
+        "referenceForceGroupMaximumRelativeResidual": 1e-8,
+        "cpuEnergyGroupMaximumRelativeResidual": 1e-8,
+        "cpuForceGroupMaximumUlpDistanceFloat32": 2,
+        "maximumProductionStartCenterOfMassSpeedNanometerPerPicosecond": 1e-12,
+        "maximumProductionStartVelocityConstraintRelativeResidual": 1e-8
+      }
+    },
+    "gates": {
+      "type": "object",
+      "required": [
+        "referenceExactReplay",
+        "referenceEnergyExcursion",
+        "referenceConstraintResidual",
+        "cpuReferencePotentialEnergy",
+        "cpuReferenceMedianParticleForce",
+        "cpuReferenceGlobalForce",
+        "referenceEnergyGroupClosure",
+        "referenceForceGroupClosure",
+        "cpuEnergyGroupClosure",
+        "cpuForceGroupClosure",
+        "productionStartCenterOfMass",
+        "productionStartVelocityConstraints",
+        "allPassed"
+      ],
+      "properties": {
+        "referenceExactReplay": { "type": "boolean" },
+        "referenceEnergyExcursion": { "type": "boolean" },
+        "referenceConstraintResidual": { "type": "boolean" },
+        "cpuReferencePotentialEnergy": { "type": "boolean" },
+        "cpuReferenceMedianParticleForce": { "type": "boolean" },
+        "cpuReferenceGlobalForce": { "type": "boolean" },
+        "referenceEnergyGroupClosure": { "type": "boolean" },
+        "referenceForceGroupClosure": { "type": "boolean" },
+        "cpuEnergyGroupClosure": { "type": "boolean" },
+        "cpuForceGroupClosure": { "type": "boolean" },
+        "productionStartCenterOfMass": { "type": "boolean" },
+        "productionStartVelocityConstraints": { "type": "boolean" },
+        "allPassed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-observation/0.4.2",
+  "title": "Tailing Future Aqueous Observation Contract",
+  "type": "object",
+  "required": ["schemaVersion", "status", "observationDigest", "worldId", "stateId", "stateDigest", "topologyDigest", "step", "timePicoseconds", "periodicCell", "atoms", "energy", "forceComponentsByAtomId", "electrostatics", "thermodynamics", "mechanicalObservables", "provenance", "uncertainty", "claimBoundaries"],
+  "properties": {
+    "schemaVersion": { "const": "tf.aqueous-observation/0.4.2" },
+    "status": { "const": "contract-only-no-dynamics" },
+    "observationDigest": { "$ref": "#/$defs/digest" },
+    "worldId": { "$ref": "#/$defs/token" },
+    "stateId": { "$ref": "#/$defs/token" },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "topologyDigest": { "$ref": "#/$defs/digest" },
+    "step": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "timePicoseconds": { "type": "number", "minimum": 0, "maximum": 1000000000000 },
+    "periodicCell": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/periodicCell" },
+    "atoms": { "type": "array", "minItems": 2, "maxItems": 512, "items": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/atomState" } },
+    "energy": { "$ref": "#/$defs/energy" },
+    "forceComponentsByAtomId": {
+      "type": "object", "minProperties": 2, "maxProperties": 512,
+      "patternProperties": { "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$": { "$ref": "#/$defs/forceComponents" } },
+      "additionalProperties": false
+    },
+    "electrostatics": {
+      "type": "object", "required": ["settings", "netChargeE", "directEwaldExecuted"],
+      "properties": {
+        "settings": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/ewaldSettings" },
+        "netChargeE": { "type": "number", "minimum": -1000000, "maximum": 1000000 },
+        "directEwaldExecuted": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "thermodynamics": { "$ref": "#/$defs/thermodynamics" },
+    "mechanicalObservables": { "$ref": "#/$defs/mechanicalObservables" },
+    "provenance": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/provenance" },
+    "uncertainty": { "$ref": "#/$defs/uncertainty" },
+    "claimBoundaries": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/claimBoundaries" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "token": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "energyValue": { "type": "number", "minimum": -1000000000000000, "maximum": 1000000000000000 },
+    "energy": {
+      "type": "object",
+      "required": ["shortRangeKjMol", "ewaldRealSpaceKjMol", "ewaldReciprocalSpaceKjMol", "ewaldSelfKjMol", "nonbondedExceptionKjMol", "constraintEnergyKjMol", "constraintEnergyBoundary", "kineticKjMol", "totalKjMol"],
+      "properties": {
+        "shortRangeKjMol": { "$ref": "#/$defs/energyValue" }, "ewaldRealSpaceKjMol": { "$ref": "#/$defs/energyValue" },
+        "ewaldReciprocalSpaceKjMol": { "$ref": "#/$defs/energyValue" }, "ewaldSelfKjMol": { "$ref": "#/$defs/energyValue" },
+        "nonbondedExceptionKjMol": { "$ref": "#/$defs/energyValue" }, "constraintEnergyKjMol": { "type": "null" },
+        "constraintEnergyBoundary": { "const": "holonomic-constraint-is-not-a-potential-energy-term" },
+        "kineticKjMol": { "$ref": "#/$defs/energyValue" }, "totalKjMol": { "$ref": "#/$defs/energyValue" }
+      },
+      "additionalProperties": false
+    },
+    "forceComponents": {
+      "type": "object",
+      "required": ["shortRangeKjMolAngstrom", "ewaldRealSpaceKjMolAngstrom", "ewaldReciprocalSpaceKjMolAngstrom", "ewaldSelfKjMolAngstrom", "nonbondedExceptionKjMolAngstrom", "constraintKjMolAngstrom", "totalKjMolAngstrom"],
+      "properties": {
+        "shortRangeKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "ewaldRealSpaceKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "ewaldReciprocalSpaceKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "ewaldSelfKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "nonbondedExceptionKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "constraintKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" },
+        "totalKjMolAngstrom": { "$ref": "https://tailing.future/schemas/aqueous-world-state/0.4.2#/$defs/vector" }
+      },
+      "additionalProperties": false
+    },
+    "thermodynamics": {
+      "type": "object",
+      "required": ["atomCount", "coordinateDegreesOfFreedom", "constraintDegreesOfFreedom", "centerOfMassRemovedDegreesOfFreedom", "temperatureDegreesOfFreedom", "kineticFrame", "temperatureKelvin"],
+      "properties": {
+        "atomCount": { "type": "integer", "minimum": 2, "maximum": 512 },
+        "coordinateDegreesOfFreedom": { "type": "integer", "minimum": 1, "maximum": 1536 },
+        "constraintDegreesOfFreedom": { "type": "integer", "minimum": 0, "maximum": 1536 },
+        "centerOfMassRemovedDegreesOfFreedom": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "temperatureDegreesOfFreedom": { "type": "integer", "minimum": 0, "maximum": 1536 },
+        "kineticFrame": { "const": "center-of-mass" }, "temperatureKelvin": { "type": "null" }
+      },
+      "additionalProperties": false
+    },
+    "mechanicalObservables": {
+      "type": "object", "required": ["pressureBar", "totalStressKjMolAngstrom3", "boundary"],
+      "properties": {
+        "pressureBar": { "type": "null" }, "totalStressKjMolAngstrom3": { "type": "null" },
+        "boundary": { "const": "unavailable-reciprocal-virial-not-implemented" }
+      },
+      "additionalProperties": false
+    },
+    "uncertainty": {
+      "type": "object", "required": ["status", "aleatoric", "epistemic", "coverage"],
+      "properties": {
+        "status": { "const": "not-quantified-contract-only" }, "aleatoric": { "type": "null" },
+        "epistemic": { "type": "null" }, "coverage": { "const": "schema-and-contract-only" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

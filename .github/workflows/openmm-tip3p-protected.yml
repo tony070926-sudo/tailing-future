@@ -1,0 +1,1301 @@
+# Protected-main OpenMM control execution.
+#
+# Raw coordinates, parameters, wheels, trajectories, and arrays remain private
+# to the execute job.  The second job receives only the nine explicitly
+# allowlisted administrative evidence files and attests only the sanitized
+# envelope after independently matching every referenced byte string.
+name: OpenMM TIP3P protected control
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: openmm-tip3p-protected-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    name: Produce and independently verify private OpenMM evidence
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      artifact_name: ${{ steps.bind.outputs.artifact_name }}
+      artifact_id: ${{ steps.bind.outputs.artifact_id }}
+      artifact_digest: ${{ steps.bind.outputs.artifact_digest }}
+      envelope_sha256: ${{ steps.stage.outputs.envelope_sha256 }}
+      envelope_size_bytes: ${{ steps.stage.outputs.envelope_size_bytes }}
+    env:
+      BASE_IMAGE_INDEX: python:3.12.11-slim-bookworm@sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7
+      BASE_IMAGE_INDEX_DIGEST: sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7
+      BASE_IMAGE: python:3.12.11-slim-bookworm@sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49
+      BASE_IMAGE_PLATFORM_DIGEST: sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49
+      BASE_REPOSITORY_DIGEST: python@sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49
+      DOCKERFILE_FRONTEND: docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+      DOCKERFILE_FRONTEND_DIGEST: sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+      IMAGE_TAG: tailing/openmm-tip3p:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+      CONTAINER_NAME: tailing-openmm-tip3p-${{ github.run_id }}-${{ github.run_attempt }}
+      CHROMIUM_ACQUISITION_ROOT: /opt/tailing-private-chromium-acquisition-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_RUNTIME_ROOT: /opt/tailing-private-chromium-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_SOURCE_ROOT: /opt/tailing-private-openmm-source-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_CONTROL_ROOT: /opt/tailing-private-openmm-control-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_RECEIPT_ROOT: /opt/tailing-private-browser-receipts-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_NODE_ROOT: /opt/tailing-private-node-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_ROLLDOWN_ROOT: /opt/tailing-private-rolldown-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_APPARMOR_PROFILE: tailing-future-chromium-${{ github.run_id }}-${{ github.run_attempt }}
+      BROWSER_APPARMOR_PROFILE_PATH: /etc/apparmor.d/tailing-future-chromium-${{ github.run_id }}-${{ github.run_attempt }}
+
+    steps:
+      - name: Check out the protected-main source without credentials
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install the pinned JavaScript runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24.16.0
+
+      - name: Bind runner-scoped private paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$RUNNER_TEMP" in
+            /*) ;;
+            *) exit 1 ;;
+          esac
+          test -d "$RUNNER_TEMP"
+          test ! -L "$RUNNER_TEMP"
+          test "$(realpath -- "$RUNNER_TEMP")" = "$RUNNER_TEMP"
+          test -f "$GITHUB_ENV"
+          test ! -L "$GITHUB_ENV"
+          {
+            printf 'PRIVATE_ROOT=%s/tailing-openmm-tip3p-private\n' "$RUNNER_TEMP"
+            printf 'INPUT_ROOT=%s/tailing-openmm-tip3p-private/inputs\n' "$RUNNER_TEMP"
+            printf 'WHEELHOUSE=%s/tailing-openmm-tip3p-private/wheelhouse\n' "$RUNNER_TEMP"
+            printf 'PRODUCER_OUTPUT=%s/tailing-openmm-tip3p-private/producer-output\n' "$RUNNER_TEMP"
+            printf 'EVIDENCE_ROOT=%s/tailing-openmm-tip3p-private/administrative-evidence\n' "$RUNNER_TEMP"
+            printf 'PUBLISH_ROOT=%s/tailing-openmm-tip3p-private/sanitized-envelope\n' "$RUNNER_TEMP"
+            printf 'ENVELOPE_PATH=%s/tailing-openmm-tip3p-private/sanitized-envelope/openmm-tip3p-protected-ci-evidence.json\n' "$RUNNER_TEMP"
+            printf 'ARTIFACT_ROOT=%s/tailing-openmm-tip3p-public-evidence\n' "$RUNNER_TEMP"
+          } >> "$GITHUB_ENV"
+
+      - name: Refuse dispatch outside protected main Linux x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          test "$GITHUB_REPOSITORY" = "tony070926-sudo/tailing-future"
+          test "$GITHUB_REPOSITORY_ID" = "1349498456"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_REF_PROTECTED" = "true"
+          test "$GITHUB_WORKFLOW_REF" = "$GITHUB_REPOSITORY/.github/workflows/openmm-tip3p-protected.yml@refs/heads/main"
+          test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git rev-parse --verify refs/remotes/origin/main^{commit} >/dev/null
+          test "$(git rev-parse refs/remotes/origin/main^{commit})" = "$GITHUB_SHA"
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+
+      - name: Install locked verifier dependencies without lifecycle scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Create isolated private acquisition and execution roots
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test ! -e "$PRIVATE_ROOT"
+          test ! -e "$ARTIFACT_ROOT"
+          install -d -m 0700 -- "$PRIVATE_ROOT"
+          install -d -m 0755 -- "$INPUT_ROOT" "$WHEELHOUSE"
+          install -d -m 0700 -- "$EVIDENCE_ROOT" "$PUBLISH_ROOT" "$ARTIFACT_ROOT"
+          sudo install -d -m 0755 -o 65532 -g 65532 -- "$PRODUCER_OUTPUT"
+          for directory in \
+            "$INPUT_ROOT" "$WHEELHOUSE" "$PRODUCER_OUTPUT" \
+            "$EVIDENCE_ROOT" "$PUBLISH_ROOT" "$ARTIFACT_ROOT"; do
+            test -d "$directory"
+            test ! -L "$directory"
+            test "$(realpath -- "$directory")" = "$directory"
+            test -z "$(find "$directory" -mindepth 1 -maxdepth 1 -print -quit)"
+          done
+          test "$(find "$PRIVATE_ROOT" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 5
+          test -z "$(find "$PRIVATE_ROOT" -mindepth 1 -maxdepth 1 ! -type d -print -quit)"
+
+      - name: Acquire the five locked OpenMM inputs and wheels
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/atomistic/openmm/fetch-ci-assets.mjs \
+            --input-root "$INPUT_ROOT" \
+            --wheelhouse "$WHEELHOUSE" \
+            --manifest "$EVIDENCE_ROOT/openmm-ci-acquisition-manifest.json"
+
+      - name: Acquire the exact locked private Chromium archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          node_executable="$(realpath -- "$(command -v node)")"
+          test "$node_executable" = "/opt/hostedtoolcache/node/24.16.0/x64/bin/node"
+          test "$("$node_executable" --version)" = "v24.16.0"
+          test ! -e "$CHROMIUM_ACQUISITION_ROOT"
+          test ! -e "$BROWSER_RUNTIME_ROOT"
+          sudo install -d -m 0700 -o root -g root -- "$CHROMIUM_ACQUISITION_ROOT"
+          sudo "$node_executable" \
+            "$GITHUB_WORKSPACE/scripts/atomistic/openmm/private-browser-harness/fetch-private-chromium-v049.mjs" \
+            --output-directory "$CHROMIUM_ACQUISITION_ROOT" \
+            > "$PRIVATE_ROOT/chromium-acquisition-audit.json"
+          test "$(sudo stat -c '%u:%g:%a' -- "$CHROMIUM_ACQUISITION_ROOT")" = "0:0:700"
+          test "$(sudo stat -c '%u:%g:%a:%h:%s' -- "$CHROMIUM_ACQUISITION_ROOT/chrome-linux64-v049.zip")" \
+            = "0:0:400:1:193282658"
+
+      - name: Safely extract the exact locked private Chromium runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test ! -e "$BROWSER_RUNTIME_ROOT"
+          sudo install -d -m 0700 -o root -g root -- "$BROWSER_RUNTIME_ROOT"
+          sudo /usr/bin/python3 \
+            "$GITHUB_WORKSPACE/scripts/atomistic/openmm/private-browser-harness/safe_extract_private_chromium_v049.py" \
+            --archive "$CHROMIUM_ACQUISITION_ROOT/chrome-linux64-v049.zip" \
+            --output "$BROWSER_RUNTIME_ROOT" \
+            > "$PRIVATE_ROOT/chromium-extraction-audit.json"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_RUNTIME_ROOT")" = "0:0:700"
+          sudo test -x "$BROWSER_RUNTIME_ROOT/chrome-linux64/chrome"
+
+      - name: Freeze and verify the exact locked private Chromium runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          sudo /usr/bin/python3 \
+            "$GITHUB_WORKSPACE/scripts/atomistic/openmm/private-browser-harness/freeze-private-chromium-runtime-v049.py" \
+            --runtime-root "$BROWSER_RUNTIME_ROOT" \
+            --execute \
+            > "$PRIVATE_ROOT/chromium-freeze-audit.json"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_RUNTIME_ROOT")" = "0:0:555"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_RUNTIME_ROOT/chrome-linux64")" = "0:0:555"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_RUNTIME_ROOT/chrome-linux64/chrome")" = "0:0:555"
+          test -z "$(sudo find "$BROWSER_RUNTIME_ROOT" -xdev \
+            \( ! -user root -o ! -group root \) -print -quit)"
+          test -z "$(sudo find "$BROWSER_RUNTIME_ROOT" -xdev -type d ! -perm 0555 -print -quit)"
+          test -z "$(sudo find "$BROWSER_RUNTIME_ROOT" -xdev -type f \
+            ! -perm 0444 ! -perm 0555 -print -quit)"
+          test -z "$(sudo find "$BROWSER_RUNTIME_ROOT" -xdev \
+            ! -type d ! -type f -print -quit)"
+
+      - name: Freeze the exact Node and Rolldown browser runtime dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          node_executable="$(realpath -- "$(command -v node)")"
+          rolldown_binding="$GITHUB_WORKSPACE/node_modules/@rolldown/binding-linux-x64-gnu/rolldown-binding.linux-x64-gnu.node"
+          test "$node_executable" = "/opt/hostedtoolcache/node/24.16.0/x64/bin/node"
+          test "$("$node_executable" --version)" = "v24.16.0"
+          test -f "$node_executable"
+          test ! -L "$node_executable"
+          test "$(stat -c %h -- "$node_executable")" -eq 1
+          test -f "$rolldown_binding"
+          test ! -L "$rolldown_binding"
+          test "$(stat -c %h -- "$rolldown_binding")" -eq 1
+          test "$(stat -c %s -- "$rolldown_binding")" -eq 19324672
+          test "$(sha256sum -- "$rolldown_binding" | cut -d ' ' -f 1)" \
+            = "ae16856655924ebc41f231393c7f8b89566430a845d1f073fd9d6abf219db04b"
+          test "$("$node_executable" -p \
+            "require('./node_modules/@rolldown/binding-linux-x64-gnu/package.json').version")" \
+            = "1.2.6"
+          test ! -e "$BROWSER_NODE_ROOT"
+          test ! -e "$BROWSER_ROLLDOWN_ROOT"
+          sudo install -d -m 0700 -o root -g root -- \
+            "$BROWSER_NODE_ROOT" "$BROWSER_NODE_ROOT/bin" "$BROWSER_ROLLDOWN_ROOT"
+          sudo install -m 0555 -o root -g root -- \
+            "$node_executable" "$BROWSER_NODE_ROOT/bin/node"
+          sudo install -m 0444 -o root -g root -- \
+            "$rolldown_binding" "$BROWSER_ROLLDOWN_ROOT/rolldown-binding.linux-x64-gnu.node"
+          sudo chown root:root -- "$rolldown_binding"
+          sudo chmod 0444 -- "$rolldown_binding"
+          test "$(sha256sum -- "$node_executable" | cut -d ' ' -f 1)" \
+            = "$(sudo sha256sum -- "$BROWSER_NODE_ROOT/bin/node" | cut -d ' ' -f 1)"
+          test "$(stat -c '%u:%g:%a:%h:%s' -- "$rolldown_binding")" \
+            = "0:0:444:1:19324672"
+          test "$(sudo stat -c '%u:%g:%a:%h' -- "$BROWSER_NODE_ROOT/bin/node")" \
+            = "0:0:555:1"
+          test "$(sudo stat -c '%u:%g:%a:%h:%s' -- \
+            "$BROWSER_ROLLDOWN_ROOT/rolldown-binding.linux-x64-gnu.node")" \
+            = "0:0:444:1:19324672"
+          test "$(sudo sha256sum -- \
+            "$BROWSER_ROLLDOWN_ROOT/rolldown-binding.linux-x64-gnu.node" | cut -d ' ' -f 1)" \
+            = "ae16856655924ebc41f231393c7f8b89566430a845d1f073fd9d6abf219db04b"
+          sudo chmod 0555 -- \
+            "$BROWSER_NODE_ROOT/bin" "$BROWSER_NODE_ROOT" "$BROWSER_ROLLDOWN_ROOT"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_NODE_ROOT")" = "0:0:555"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_NODE_ROOT/bin")" = "0:0:555"
+          test "$(sudo stat -c '%u:%g:%a' -- "$BROWSER_ROLLDOWN_ROOT")" = "0:0:555"
+
+      - name: Prefetch the pinned base image and record the Docker toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          docker version --format 'Docker version {{.Server.Version}}, build {{.Server.GitCommit}}' \
+            > "$EVIDENCE_ROOT/docker-version.txt"
+          docker buildx version > "$EVIDENCE_ROOT/buildx-version.txt"
+          test "$(wc -l < "$EVIDENCE_ROOT/docker-version.txt")" -eq 1
+          test "$(wc -l < "$EVIDENCE_ROOT/buildx-version.txt")" -eq 1
+          docker buildx imagetools inspect "$BASE_IMAGE_INDEX" --raw \
+            > "$PRIVATE_ROOT/base-image-index.json"
+          docker buildx imagetools inspect "$DOCKERFILE_FRONTEND" --raw \
+            > "$PRIVATE_ROOT/dockerfile-frontend-manifest.json"
+          test "sha256:$(sha256sum -- "$PRIVATE_ROOT/base-image-index.json" | cut -d ' ' -f 1)" \
+            = "$BASE_IMAGE_INDEX_DIGEST"
+          test "sha256:$(sha256sum -- "$PRIVATE_ROOT/dockerfile-frontend-manifest.json" | cut -d ' ' -f 1)" \
+            = "$DOCKERFILE_FRONTEND_DIGEST"
+          BASE_INDEX_PATH="$PRIVATE_ROOT/base-image-index.json" node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const index = JSON.parse(readFileSync(process.env.BASE_INDEX_PATH, 'utf8'));
+          const matches = Array.isArray(index.manifests) ? index.manifests.filter((entry) => (
+            entry?.platform?.os === 'linux' && entry?.platform?.architecture === 'amd64'
+          )) : [];
+          if (matches.length !== 1 || matches[0].digest !== process.env.BASE_IMAGE_PLATFORM_DIGEST) {
+            throw new Error('the locked index does not contain exactly the locked Linux/amd64 child');
+          }
+          NODE
+          docker pull --platform linux/amd64 "$BASE_IMAGE" >/dev/null
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$BASE_IMAGE")" = "linux/amd64"
+          REPOSITORY_DIGESTS_JSON="$(docker image inspect --format '{{json .RepoDigests}}' "$BASE_IMAGE")" \
+            node --input-type=module <<'NODE'
+          const digests = JSON.parse(process.env.REPOSITORY_DIGESTS_JSON);
+          if (!Array.isArray(digests) || !digests.includes(process.env.BASE_REPOSITORY_DIGEST)) {
+            throw new Error('the prefetched base image does not expose the locked repository digest');
+          }
+          NODE
+
+      - name: Build the OpenMM image with build-step network disabled
+        shell: bash
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+        run: |
+          set -euo pipefail
+          docker buildx build \
+            --platform linux/amd64 \
+            --network none \
+            --pull=false \
+            --no-cache \
+            --provenance=false \
+            --sbom=false \
+            --build-context "wheelhouse=$WHEELHOUSE" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --file atomistic/containers/openmm-water.Dockerfile \
+            --tag "$IMAGE_TAG" \
+            --load \
+            .
+          docker image inspect "$IMAGE_TAG" > "$EVIDENCE_ROOT/image-inspect.json"
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$IMAGE_TAG")" = "linux/amd64"
+          test "$(docker image inspect --format '{{.Config.Labels}}' "$IMAGE_TAG" | wc -l)" -eq 1
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$IMAGE_TAG")" = "$GITHUB_SHA"
+
+      - name: Create the hardened offline producer container
+        id: container
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          container_id="$(docker create \
+            --name "$CONTAINER_NAME" \
+            --platform linux/amd64 \
+            --pull never \
+            --network none \
+            --read-only \
+            --cap-drop ALL \
+            --security-opt no-new-privileges=true \
+            --pids-limit 128 \
+            --memory 8g \
+            --memory-swap 8g \
+            --cpus 2 \
+            --user 65532:65532 \
+            --mount "type=bind,src=$INPUT_ROOT,dst=/inputs,readonly" \
+            --mount "type=bind,src=$PRODUCER_OUTPUT,dst=/work/output" \
+            "$IMAGE_TAG" \
+            --input-root /inputs \
+            --output-root /work/output \
+            --source-revision "$GITHUB_SHA")"
+          case "$container_id" in
+            [0-9a-f][0-9a-f][0-9a-f][0-9a-f]*) ;;
+            *) exit 1 ;;
+          esac
+          test "${#container_id}" -eq 64
+          docker inspect "$container_id" > "$EVIDENCE_ROOT/container-create-inspect.json"
+          printf 'container_id=%s\n' "$container_id" >> "$GITHUB_OUTPUT"
+
+      - name: Start and wait for the private producer
+        shell: bash
+        env:
+          CONTAINER_ID: ${{ steps.container.outputs.container_id }}
+        run: |
+          set -euo pipefail
+          umask 077
+          cleanup_container() {
+            docker rm --force "$CONTAINER_ID" >/dev/null 2>&1 || true
+          }
+          trap cleanup_container EXIT
+          docker start "$CONTAINER_ID" >/dev/null
+          container_exit_code="$(docker wait "$CONTAINER_ID")"
+          case "$container_exit_code" in
+            0|[1-9][0-9]*) ;;
+            *) exit 1 ;;
+          esac
+          docker inspect "$CONTAINER_ID" > "$EVIDENCE_ROOT/container-final-inspect.json"
+          test "$container_exit_code" = "0"
+          docker rm "$CONTAINER_ID" >/dev/null
+          trap - EXIT
+
+      - name: Independently verify the complete private producer output
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/atomistic/openmm/verify-control-cli.mjs \
+            --artifact-root "$PRODUCER_OUTPUT" \
+            --output "$EVIDENCE_ROOT/openmm-tip3p-control-receipt.json" \
+            --expected-source-revision "$GITHUB_SHA"
+
+      - name: Require the exact independently verified-pass receipt
+        shell: bash
+        env:
+          RECEIPT_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-private/administrative-evidence/openmm-tip3p-control-receipt.json
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import {
+            canonicalJson,
+            canonicalJsonBytes,
+            parseJsonRejectDuplicateKeys,
+            sha256,
+          } from './scripts/atomistic/runtime-input-contract.mjs';
+
+          const bytes = readFileSync(process.env.RECEIPT_PATH);
+          const receipt = parseJsonRejectDuplicateKeys(bytes, 'OpenMM control receipt');
+          if (!bytes.equals(canonicalJsonBytes(receipt))) {
+            throw new Error('control receipt is not exact canonical JSON plus LF');
+          }
+          const { receiptDigest, ...preimage } = receipt;
+          const expectedPublicationPolicy = {
+            licenseClearance: false,
+            rawPayloadPublic: false,
+            cloudflareDistributionEligible: false,
+            protectedMainArtifact: false,
+            attestedArtifact: false,
+            promotionEligible: false,
+          };
+          if (receiptDigest !== sha256(canonicalJsonBytes(preimage))
+              || receipt.sourceRevision !== process.env.GITHUB_SHA
+              || receipt.status !== 'verified-pass'
+              || receipt.gates?.allPassed !== true
+              || receipt.claims?.scientificPass !== true
+              || receipt.verification?.executionAuthenticityVerified !== false
+              || receipt.claims?.openmmExecutionAuthenticated !== false
+              || receipt.claims?.reproduced !== false
+              || receipt.claims?.scorePromotionEligible !== false
+              || receipt.runtimeBindings?.derivedContainerImageDigest !== null
+              || receipt.verification?.verifierRuntime?.platform !== 'linux'
+              || receipt.verification?.verifierRuntime?.architecture !== 'x64'
+              || canonicalJson(receipt.publicationPolicy) !== canonicalJson(expectedPublicationPolicy)) {
+            throw new Error('control receipt failed the strict verified-pass and non-promotional gate');
+          }
+          process.stdout.write(`Strict verified-pass gate accepted ${receiptDigest}\n`);
+          NODE
+
+      - name: Freeze the verified OpenMM source and control receipt for private browser modes
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test ! -e "$BROWSER_SOURCE_ROOT"
+          test ! -e "$BROWSER_CONTROL_ROOT"
+          test ! -e "$BROWSER_RECEIPT_ROOT"
+          test -z "$(find "$PRODUCER_OUTPUT" -mindepth 1 ! -type d ! -type f -print -quit)"
+          test -z "$(find "$PRODUCER_OUTPUT" -type f ! -links 1 -print -quit)"
+          sudo install -d -m 0700 -o root -g root -- \
+            "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" "$BROWSER_RECEIPT_ROOT"
+          sudo cp -R --no-preserve=all -- "$PRODUCER_OUTPUT/." "$BROWSER_SOURCE_ROOT/"
+          sudo install -m 0444 -o root -g root -- \
+            "$EVIDENCE_ROOT/openmm-tip3p-control-receipt.json" \
+            "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json"
+          sudo find "$BROWSER_SOURCE_ROOT" -xdev -type f -exec chmod 0444 -- {} +
+          sudo find "$BROWSER_SOURCE_ROOT" -xdev -type d -exec chmod 0555 -- {} +
+          sudo chmod 0555 -- "$BROWSER_CONTROL_ROOT"
+          test -z "$(sudo find "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" -xdev \
+            \( ! -user root -o ! -group root \) -print -quit)"
+          test -z "$(sudo find "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" -xdev \
+            -type d ! -perm 0555 -print -quit)"
+          test -z "$(sudo find "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" -xdev \
+            -type f ! -perm 0444 -print -quit)"
+          test -z "$(sudo find "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" -xdev \
+            ! -type d ! -type f -print -quit)"
+          test -z "$(sudo find "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" -xdev \
+            -type f ! -links 1 -print -quit)"
+          sudo -u '#65534' -g '#65534' test -r "$BROWSER_SOURCE_ROOT/manifests/artifact-manifest.json"
+          sudo -u '#65534' -g '#65534' test -r "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json"
+
+      - name: Load and canary the exact Chromium AppArmor userns profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          expected_profile="tailing-future-chromium-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          expected_profile_path="/etc/apparmor.d/$expected_profile"
+          chromium_executable="$BROWSER_RUNTIME_ROOT/chrome-linux64/chrome"
+          profile_source="$PRIVATE_ROOT/chromium-userns-profile.apparmor"
+          test "$BROWSER_APPARMOR_PROFILE" = "$expected_profile"
+          test "$BROWSER_APPARMOR_PROFILE_PATH" = "$expected_profile_path"
+          test "$(cat /sys/module/apparmor/parameters/enabled)" = "Y"
+          test "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns)" = "1"
+          test "$(realpath -e -- /usr/bin/aa-exec)" = "/usr/bin/aa-exec"
+          test "$(realpath -e -- /usr/sbin/apparmor_parser)" = "/usr/sbin/apparmor_parser"
+          test "$(realpath -e -- /usr/bin/setpriv)" = "/usr/bin/setpriv"
+          test "$(realpath -e -- /usr/bin/unshare)" = "/usr/bin/unshare"
+          test "$(stat -c '%u:%g' -- /usr/bin/aa-exec /usr/sbin/apparmor_parser \
+            /usr/bin/setpriv /usr/bin/unshare | sort -u)" = "0:0"
+          test "$(realpath -e -- "$chromium_executable")" = "$chromium_executable"
+          test "$(stat -c '%u:%g:%a:%h' -- "$chromium_executable")" = "0:0:555:1"
+          test ! -e "$BROWSER_APPARMOR_PROFILE_PATH"
+          test ! -L "$BROWSER_APPARMOR_PROFILE_PATH"
+          test ! -e "$profile_source"
+          test ! -L "$profile_source"
+          if sudo grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\([^)]*\\)$" \
+              /sys/kernel/security/apparmor/profiles; then
+            exit 1
+          fi
+          {
+            printf '%s\n' 'abi <abi/4.0>,'
+            printf '%s\n' 'include <tunables/global>'
+            printf '\n'
+            printf 'profile %s %s flags=(unconfined) {\n' \
+              "$BROWSER_APPARMOR_PROFILE" "$chromium_executable"
+            printf '%s\n' '  userns,'
+            printf '%s\n' '}'
+          } > "$profile_source"
+          test "$(stat -c '%u:%g:%a:%h' -- "$profile_source")" = "$(id -u):$(id -g):600:1"
+          sudo install -m 0444 -o root -g root -- \
+            "$profile_source" "$BROWSER_APPARMOR_PROFILE_PATH"
+          rm -f -- "$profile_source"
+          test ! -e "$profile_source"
+          test "$(sudo stat -c '%u:%g:%a:%h' -- "$BROWSER_APPARMOR_PROFILE_PATH")" \
+            = "0:0:444:1"
+          sudo /usr/sbin/apparmor_parser --add --skip-cache "$BROWSER_APPARMOR_PROFILE_PATH"
+          sudo grep -Fqx -- "$BROWSER_APPARMOR_PROFILE (unconfined)" \
+            /sys/kernel/security/apparmor/profiles
+          sudo /usr/bin/aa-exec --profile="$BROWSER_APPARMOR_PROFILE" -- \
+            /usr/bin/setpriv \
+              --reuid=65534 --regid=65534 --clear-groups \
+              --inh-caps=-all --ambient-caps=-all --bounding-set=-all --no-new-privs \
+              /usr/bin/env -i LANG=C LC_ALL=C PATH=/usr/bin:/bin \
+              /usr/bin/unshare --user --map-root-user /bin/true
+          test "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns)" = "1"
+
+      - name: Run the three protected private browser modes
+        shell: bash
+        run: |
+          set -euo pipefail
+          supervisor="$GITHUB_WORKSPACE/scripts/atomistic/openmm/private-browser-harness/run-protected-browser-namespace-v049.sh"
+          test -f "$supervisor"
+          test ! -L "$supervisor"
+          sudo /bin/sh "$supervisor" \
+            --repository-root "$GITHUB_WORKSPACE" \
+            --artifact-root "$BROWSER_SOURCE_ROOT" \
+            --control-receipt "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json" \
+            --source-revision "$GITHUB_SHA" \
+            --session-id "v049-openmm-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --runtime-root "$BROWSER_RUNTIME_ROOT" \
+            --mode happy-path \
+            --output "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-happy-path-receipt.json"
+          sudo /bin/sh "$supervisor" \
+            --repository-root "$GITHUB_WORKSPACE" \
+            --artifact-root "$BROWSER_SOURCE_ROOT" \
+            --control-receipt "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json" \
+            --source-revision "$GITHUB_SHA" \
+            --session-id "v049-openmm-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --runtime-root "$BROWSER_RUNTIME_ROOT" \
+            --mode mid-playback-dispose \
+            --output "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-mid-playback-dispose-receipt.json"
+          sudo /bin/sh "$supervisor" \
+            --repository-root "$GITHUB_WORKSPACE" \
+            --artifact-root "$BROWSER_SOURCE_ROOT" \
+            --control-receipt "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json" \
+            --source-revision "$GITHUB_SHA" \
+            --session-id "v049-openmm-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --runtime-root "$BROWSER_RUNTIME_ROOT" \
+            --mode context-loss \
+            --output "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-context-loss-receipt.json"
+          sudo chmod 0555 -- "$BROWSER_RECEIPT_ROOT"
+          test "$(sudo find "$BROWSER_RECEIPT_ROOT" -mindepth 1 -maxdepth 1 \
+            -type f -links 1 -perm 0444 | wc -l)" -eq 3
+          test -z "$(sudo find "$BROWSER_RECEIPT_ROOT" -mindepth 1 -maxdepth 1 \
+            ! -type f -print -quit)"
+
+      - name: Compose the sanitized protected browser evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          node_executable="$(realpath -- "$(command -v node)")"
+          test "$node_executable" = "/opt/hostedtoolcache/node/24.16.0/x64/bin/node"
+          test ! -e "$EVIDENCE_ROOT/openmm-tip3p-protected-browser-evidence.json"
+          sudo "$node_executable" \
+            "$GITHUB_WORKSPACE/scripts/atomistic/openmm/private-browser-harness/compose-protected-browser-evidence-v049.mjs" \
+            --control-receipt "$BROWSER_CONTROL_ROOT/openmm-tip3p-control-receipt.json" \
+            --happy-path-receipt "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-happy-path-receipt.json" \
+            --mid-playback-dispose-receipt "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-mid-playback-dispose-receipt.json" \
+            --context-loss-receipt "$BROWSER_RECEIPT_ROOT/openmm-tip3p-protected-browser-context-loss-receipt.json" \
+            --output "$EVIDENCE_ROOT/openmm-tip3p-protected-browser-evidence.json"
+          test "$(stat -c '%u:%g:%a:%h' -- "$EVIDENCE_ROOT/openmm-tip3p-protected-browser-evidence.json")" \
+            = "0:0:444:1"
+
+      - name: Unload AppArmor profile and remove every private browser execution root
+        id: browser_cleanup
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_profile="tailing-future-chromium-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          expected_profile_path="/etc/apparmor.d/$expected_profile"
+          expected_private_root="$RUNNER_TEMP/tailing-openmm-tip3p-private"
+          profile_source="$expected_private_root/chromium-userns-profile.apparmor"
+          test "$BROWSER_APPARMOR_PROFILE" = "$expected_profile"
+          test "$BROWSER_APPARMOR_PROFILE_PATH" = "$expected_profile_path"
+          test "$PRIVATE_ROOT" = "$expected_private_root"
+          if [ -e "$profile_source" ] || [ -L "$profile_source" ]; then
+            sudo rm -f -- "$profile_source"
+            test ! -e "$profile_source"
+            test ! -L "$profile_source"
+          fi
+          if [ -e "$BROWSER_APPARMOR_PROFILE_PATH" ] || [ -L "$BROWSER_APPARMOR_PROFILE_PATH" ]; then
+            test -f "$BROWSER_APPARMOR_PROFILE_PATH"
+            test ! -L "$BROWSER_APPARMOR_PROFILE_PATH"
+            test "$(sudo realpath -e -- "$BROWSER_APPARMOR_PROFILE_PATH")" \
+              = "$BROWSER_APPARMOR_PROFILE_PATH"
+            test "$(sudo stat -c '%u:%g:%a:%h' -- "$BROWSER_APPARMOR_PROFILE_PATH")" \
+              = "0:0:444:1"
+            sudo test -r /sys/kernel/security/apparmor/profiles
+            if sudo grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\([^)]*\\)$" \
+                /sys/kernel/security/apparmor/profiles; then
+              sudo /usr/sbin/apparmor_parser --remove --skip-cache \
+                "$BROWSER_APPARMOR_PROFILE_PATH"
+            fi
+            ! sudo grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\([^)]*\\)$" \
+              /sys/kernel/security/apparmor/profiles
+            sudo rm -f -- "$BROWSER_APPARMOR_PROFILE_PATH"
+            test ! -e "$BROWSER_APPARMOR_PROFILE_PATH"
+            test ! -L "$BROWSER_APPARMOR_PROFILE_PATH"
+          elif sudo test -r /sys/kernel/security/apparmor/profiles; then
+            ! sudo grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\([^)]*\\)$" \
+              /sys/kernel/security/apparmor/profiles
+          fi
+          if [ -r /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            test "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns)" = "1"
+          fi
+          case "$CHROMIUM_ACQUISITION_ROOT" in
+            "/opt/tailing-private-chromium-acquisition-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_RUNTIME_ROOT" in
+            "/opt/tailing-private-chromium-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_SOURCE_ROOT" in
+            "/opt/tailing-private-openmm-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_CONTROL_ROOT" in
+            "/opt/tailing-private-openmm-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_RECEIPT_ROOT" in
+            "/opt/tailing-private-browser-receipts-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_NODE_ROOT" in
+            "/opt/tailing-private-node-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          case "$BROWSER_ROLLDOWN_ROOT" in
+            "/opt/tailing-private-rolldown-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT") ;;
+            *) exit 1 ;;
+          esac
+          for private_root in \
+            "$CHROMIUM_ACQUISITION_ROOT" "$BROWSER_RUNTIME_ROOT" \
+            "$BROWSER_SOURCE_ROOT" "$BROWSER_CONTROL_ROOT" "$BROWSER_RECEIPT_ROOT" \
+            "$BROWSER_NODE_ROOT" "$BROWSER_ROLLDOWN_ROOT"; do
+            if [ -e "$private_root" ] || [ -L "$private_root" ]; then
+              test -d "$private_root"
+              test ! -L "$private_root"
+              test "$(sudo realpath -e -- "$private_root")" = "$private_root"
+              test "$(sudo stat -c '%u:%g' -- "$private_root")" = "0:0"
+              sudo rm -rf -- "$private_root"
+              test ! -e "$private_root"
+              test ! -L "$private_root"
+            fi
+          done
+
+      - name: Write the sanitized protected-CI evidence envelope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/atomistic/openmm/write-ci-evidence.mjs \
+            --evidence-root "$EVIDENCE_ROOT" \
+            --output "$ENVELOPE_PATH" \
+            --repository "$GITHUB_REPOSITORY" \
+            --repository-id "$GITHUB_REPOSITORY_ID" \
+            --workflow-path .github/workflows/openmm-tip3p-protected.yml \
+            --workflow-ref "$GITHUB_REF" \
+            --source-revision "$GITHUB_SHA" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --runner-name ubuntu-24.04 \
+            --runner-os "$RUNNER_OS" \
+            --runner-arch "$RUNNER_ARCH"
+
+      - name: Stage only the nine allowlisted evidence files
+        id: stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(find "$ARTIFACT_ROOT" -mindepth 1 -maxdepth 1 -print -quit)"
+          install -m 0444 -- "$EVIDENCE_ROOT/buildx-version.txt" "$ARTIFACT_ROOT/buildx-version.txt"
+          install -m 0444 -- "$EVIDENCE_ROOT/container-create-inspect.json" "$ARTIFACT_ROOT/container-create-inspect.json"
+          install -m 0444 -- "$EVIDENCE_ROOT/container-final-inspect.json" "$ARTIFACT_ROOT/container-final-inspect.json"
+          install -m 0444 -- "$EVIDENCE_ROOT/docker-version.txt" "$ARTIFACT_ROOT/docker-version.txt"
+          install -m 0444 -- "$EVIDENCE_ROOT/image-inspect.json" "$ARTIFACT_ROOT/image-inspect.json"
+          install -m 0444 -- "$EVIDENCE_ROOT/openmm-ci-acquisition-manifest.json" "$ARTIFACT_ROOT/openmm-ci-acquisition-manifest.json"
+          install -m 0444 -- "$EVIDENCE_ROOT/openmm-tip3p-control-receipt.json" "$ARTIFACT_ROOT/openmm-tip3p-control-receipt.json"
+          install -m 0444 -- "$EVIDENCE_ROOT/openmm-tip3p-protected-browser-evidence.json" "$ARTIFACT_ROOT/openmm-tip3p-protected-browser-evidence.json"
+          install -m 0444 -- "$ENVELOPE_PATH" "$ARTIFACT_ROOT/openmm-tip3p-protected-ci-evidence.json"
+          test "$(find "$ARTIFACT_ROOT" -mindepth 1 -maxdepth 1 -type f -links 1 -printf x | wc -c)" -eq 9
+          test -z "$(find "$ARTIFACT_ROOT" -mindepth 1 -maxdepth 1 ! -type f -print -quit)"
+          artifact_name="tailing-openmm-tip3p-protected-evidence-$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          envelope_sha256="sha256:$(sha256sum -- "$ARTIFACT_ROOT/openmm-tip3p-protected-ci-evidence.json" | cut -d ' ' -f 1)"
+          envelope_size_bytes="$(stat -c '%s' -- "$ARTIFACT_ROOT/openmm-tip3p-protected-ci-evidence.json")"
+          test "$envelope_size_bytes" -gt 0
+          test "$envelope_size_bytes" -le 2097152
+          printf 'artifact_name=%s\n' "$artifact_name" >> "$GITHUB_OUTPUT"
+          printf 'envelope_sha256=%s\n' "$envelope_sha256" >> "$GITHUB_OUTPUT"
+          printf 'envelope_size_bytes=%s\n' "$envelope_size_bytes" >> "$GITHUB_OUTPUT"
+
+      - name: Upload only the allowlisted protected-CI evidence
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ steps.stage.outputs.artifact_name }}
+          path: |
+            ${{ env.ARTIFACT_ROOT }}/buildx-version.txt
+            ${{ env.ARTIFACT_ROOT }}/container-create-inspect.json
+            ${{ env.ARTIFACT_ROOT }}/container-final-inspect.json
+            ${{ env.ARTIFACT_ROOT }}/docker-version.txt
+            ${{ env.ARTIFACT_ROOT }}/image-inspect.json
+            ${{ env.ARTIFACT_ROOT }}/openmm-ci-acquisition-manifest.json
+            ${{ env.ARTIFACT_ROOT }}/openmm-tip3p-control-receipt.json
+            ${{ env.ARTIFACT_ROOT }}/openmm-tip3p-protected-browser-evidence.json
+            ${{ env.ARTIFACT_ROOT }}/openmm-tip3p-protected-ci-evidence.json
+          if-no-files-found: error
+          include-hidden-files: false
+          overwrite: false
+          retention-days: 7
+
+      - name: Bind the immutable GitHub artifact identity
+        id: bind
+        shell: bash
+        env:
+          EXPECTED_ARTIFACT_NAME: ${{ steps.stage.outputs.artifact_name }}
+          UPLOADED_ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          UPLOADED_ARTIFACT_DIGEST: ${{ steps.upload.outputs.artifact-digest }}
+        run: |
+          set -euo pipefail
+          case "$UPLOADED_ARTIFACT_ID" in
+            0|*[!0-9]*|'') exit 1 ;;
+          esac
+          case "$UPLOADED_ARTIFACT_DIGEST" in
+            *[!0-9a-f]*|'') exit 1 ;;
+          esac
+          test "${#UPLOADED_ARTIFACT_DIGEST}" -eq 64
+          printf 'artifact_name=%s\n' "$EXPECTED_ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+          printf 'artifact_id=%s\n' "$UPLOADED_ARTIFACT_ID" >> "$GITHUB_OUTPUT"
+          printf 'artifact_digest=sha256:%s\n' "$UPLOADED_ARTIFACT_DIGEST" >> "$GITHUB_OUTPUT"
+
+  attest:
+    name: Validate downloaded evidence and attest only the envelope
+    needs: execute
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Refuse attestation outside this protected run and create a clean download root
+        shell: bash
+        env:
+          DOWNLOAD_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-attest
+          ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          test "$GITHUB_REPOSITORY" = "tony070926-sudo/tailing-future"
+          test "$GITHUB_REPOSITORY_ID" = "1349498456"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_REF_PROTECTED" = "true"
+          test "$GITHUB_WORKFLOW_REF" = "$GITHUB_REPOSITORY/.github/workflows/openmm-tip3p-protected.yml@refs/heads/main"
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+          test "$RUNNER_OS" = "Linux"
+          test "$RUNNER_ARCH" = "X64"
+          test ! -e "$DOWNLOAD_ROOT"
+          install -d -m 0700 -- "$DOWNLOAD_ROOT"
+          test "$(realpath -- "$DOWNLOAD_ROOT")" = "$DOWNLOAD_ROOT"
+          test -z "$(find "$DOWNLOAD_ROOT" -mindepth 1 -maxdepth 1 -print -quit)"
+
+      - name: Install the pinned JavaScript runtime without repository checkout
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24.16.0
+
+      - name: Download the exact allowlisted evidence artifact from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ${{ needs.execute.outputs.artifact_name }}
+          path: ${{ runner.temp }}/tailing-openmm-tip3p-attest
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
+
+      - name: Verify every downloaded evidence file and envelope binding
+        shell: bash
+        env:
+          DOWNLOAD_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-attest
+          ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
+          EXPECTED_ARTIFACT_NAME: ${{ needs.execute.outputs.artifact_name }}
+          EXPECTED_ARTIFACT_ID: ${{ needs.execute.outputs.artifact_id }}
+          EXPECTED_ARTIFACT_DIGEST: ${{ needs.execute.outputs.artifact_digest }}
+          EXPECTED_ENVELOPE_SHA256: ${{ needs.execute.outputs.envelope_sha256 }}
+          EXPECTED_ENVELOPE_SIZE_BYTES: ${{ needs.execute.outputs.envelope_size_bytes }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { open, lstat, readdir, realpath } from 'node:fs/promises';
+          import path from 'node:path';
+
+          const digestPattern = /^sha256:(?!0{64}$)[0-9a-f]{64}$/;
+          const positiveDecimal = /^[1-9][0-9]*$/;
+          const expectedSourceFiles = [
+            'buildx-version.txt',
+            'container-create-inspect.json',
+            'container-final-inspect.json',
+            'docker-version.txt',
+            'image-inspect.json',
+            'openmm-ci-acquisition-manifest.json',
+            'openmm-tip3p-control-receipt.json',
+            'openmm-tip3p-protected-browser-evidence.json',
+          ];
+          const expectedFiles = [
+            ...expectedSourceFiles,
+            'openmm-tip3p-protected-ci-evidence.json',
+          ];
+          const maximumBytes = {
+            'buildx-version.txt': 65_536,
+            'container-create-inspect.json': 20_000_000,
+            'container-final-inspect.json': 20_000_000,
+            'docker-version.txt': 65_536,
+            'image-inspect.json': 20_000_000,
+            'openmm-ci-acquisition-manifest.json': 2_000_000,
+            'openmm-tip3p-control-receipt.json': 8_000_000,
+            'openmm-tip3p-protected-browser-evidence.json': 2_000_000,
+            'openmm-tip3p-protected-ci-evidence.json': 2_000_000,
+          };
+
+          function canonicalJson(value) {
+            if (value === null) return 'null';
+            if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
+            if (typeof value === 'object') {
+              return `{${Object.keys(value).sort().map((key) => (
+                `${JSON.stringify(key)}:${canonicalJson(value[key])}`
+              )).join(',')}}`;
+            }
+            if (typeof value === 'number' && !Number.isFinite(value)) {
+              throw new TypeError('non-finite JSON number');
+            }
+            return JSON.stringify(value);
+          }
+
+          function canonicalJsonBytes(value) {
+            return Buffer.from(`${canonicalJson(value)}\n`, 'ascii');
+          }
+
+          function sha256(bytes) {
+            return `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+          }
+
+          function sameIdentity(left, right) {
+            return left.dev === right.dev && left.ino === right.ino && left.size === right.size
+              && left.mtimeNs === right.mtimeNs && left.ctimeNs === right.ctimeNs;
+          }
+
+          async function readBoundedRegularFile(root, filename) {
+            const filePath = path.join(root, filename);
+            if (await realpath(filePath) !== filePath) {
+              throw new Error(`${filename} is not one canonical path`);
+            }
+            const beforePath = await lstat(filePath, { bigint: true });
+            if (!beforePath.isFile() || beforePath.isSymbolicLink() || beforePath.nlink !== 1n
+                || beforePath.size < 1n || beforePath.size > BigInt(maximumBytes[filename])) {
+              throw new Error(`${filename} is not one bounded single-link regular file`);
+            }
+            const handle = await open(filePath, 'r');
+            try {
+              const before = await handle.stat({ bigint: true });
+              if (!sameIdentity(beforePath, before)) throw new Error(`${filename} changed while opening`);
+              const bytes = await handle.readFile();
+              const after = await handle.stat({ bigint: true });
+              if (!sameIdentity(before, after) || BigInt(bytes.length) !== after.size) {
+                throw new Error(`${filename} changed while reading`);
+              }
+              return { bytes, identity: `${after.dev}:${after.ino}` };
+            } finally {
+              await handle.close();
+            }
+          }
+
+          const root = process.env.DOWNLOAD_ROOT;
+          if (!path.isAbsolute(root) || path.normalize(root) !== root || await realpath(root) !== root) {
+            throw new Error('download root is not one normalized canonical path');
+          }
+          const rootBefore = await lstat(root, { bigint: true });
+          if (!rootBefore.isDirectory() || rootBefore.isSymbolicLink()) {
+            throw new Error('download root is not one real directory');
+          }
+          const names = (await readdir(root)).sort();
+          if (canonicalJson(names) !== canonicalJson(expectedFiles)) {
+            throw new Error('downloaded artifact does not contain the exact nine-file allowlist');
+          }
+          const records = new Map();
+          const identities = new Set();
+          for (const filename of expectedFiles) {
+            const record = await readBoundedRegularFile(root, filename);
+            if (identities.has(record.identity)) throw new Error('downloaded files alias one inode');
+            identities.add(record.identity);
+            records.set(filename, record.bytes);
+          }
+          const rootAfter = await lstat(root, { bigint: true });
+          if (rootBefore.dev !== rootAfter.dev || rootBefore.ino !== rootAfter.ino
+              || canonicalJson((await readdir(root)).sort()) !== canonicalJson(expectedFiles)) {
+            throw new Error('download root changed during verification');
+          }
+
+          const envelopeBytes = records.get('openmm-tip3p-protected-ci-evidence.json');
+          if (!positiveDecimal.test(process.env.EXPECTED_ENVELOPE_SIZE_BYTES ?? '')
+              || Number(process.env.EXPECTED_ENVELOPE_SIZE_BYTES) !== envelopeBytes.length
+              || !digestPattern.test(process.env.EXPECTED_ENVELOPE_SHA256 ?? '')
+              || sha256(envelopeBytes) !== process.env.EXPECTED_ENVELOPE_SHA256) {
+            throw new Error('envelope size or SHA-256 differs from the producing job output');
+          }
+          let envelope;
+          try {
+            envelope = JSON.parse(envelopeBytes.toString('ascii'));
+          } catch (error) {
+            throw new Error('envelope is not strict JSON', { cause: error });
+          }
+          if (!envelopeBytes.equals(canonicalJsonBytes(envelope))) {
+            throw new Error('envelope is not exact canonical JSON plus LF');
+          }
+          const { evidenceDigest, ...evidencePreimage } = envelope;
+          if (!digestPattern.test(evidenceDigest ?? '')
+              || evidenceDigest !== sha256(canonicalJsonBytes(evidencePreimage))) {
+            throw new Error('envelope has a stale self digest');
+          }
+          if (!Array.isArray(envelope.files) || envelope.files.length !== expectedSourceFiles.length) {
+            throw new Error('envelope does not bind the exact eight source evidence files');
+          }
+          for (let index = 0; index < expectedSourceFiles.length; index += 1) {
+            const filename = expectedSourceFiles[index];
+            const record = envelope.files[index];
+            const bytes = records.get(filename);
+            if (record === null || typeof record !== 'object' || Array.isArray(record)
+                || canonicalJson(Object.keys(record).sort()) !== canonicalJson(['path', 'sha256', 'sizeBytes'])
+                || record.path !== filename || record.sizeBytes !== bytes.length
+                || record.sha256 !== sha256(bytes)) {
+              throw new Error(`${filename} differs from its envelope byte binding`);
+            }
+          }
+          const expectedArtifactName = `tailing-openmm-tip3p-protected-evidence-${process.env.GITHUB_SHA}-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
+          if (process.env.EXPECTED_ARTIFACT_NAME !== expectedArtifactName
+              || !positiveDecimal.test(process.env.EXPECTED_ARTIFACT_ID ?? '')
+              || !digestPattern.test(process.env.EXPECTED_ARTIFACT_DIGEST ?? '')
+              || envelope.schemaVersion !== 'tf.openmm-tip3p-protected-ci-evidence/0.4.9'
+              || envelope.workflow?.path !== '.github/workflows/openmm-tip3p-protected.yml'
+              || envelope.workflow?.ref !== 'refs/heads/main'
+              || envelope.workflow?.sourceRevision !== process.env.GITHUB_SHA
+              || envelope.workflow?.runId !== process.env.GITHUB_RUN_ID
+              || envelope.workflow?.runAttempt !== Number(process.env.GITHUB_RUN_ATTEMPT)
+              || envelope.publicationPolicy?.rawScientificPayloadPublished !== false
+              || envelope.publicationPolicy?.runtimeInputsPublished !== false
+              || envelope.publicationPolicy?.cloudflareDistributionEligible !== false
+              || envelope.claims?.attestationPending !== true
+              || envelope.claims?.executionAuthenticated !== false
+              || envelope.claims?.reproduced !== false
+              || envelope.claims?.promotionEligible !== false) {
+            throw new Error('artifact, workflow, publication, or claim boundary changed');
+          }
+          const outerControlReceiptKeys = [
+            'receiptDigest', 'sourceRevision', 'systemDigest', 'planDigest',
+            'producerOutcomeDigest', 'artifactManifestDigest', 'payloadBundleRoot',
+            'verifierDigest', 'status', 'allPassed', 'scientificPass',
+            'executionAuthenticated', 'reproduced', 'promotionEligible',
+          ].sort();
+          const outerControlDigestKeys = [
+            'receiptDigest', 'systemDigest', 'planDigest', 'producerOutcomeDigest',
+            'artifactManifestDigest', 'payloadBundleRoot', 'verifierDigest',
+          ];
+          if (envelope.controlReceipt === null || typeof envelope.controlReceipt !== 'object'
+              || Array.isArray(envelope.controlReceipt)
+              || canonicalJson(Object.keys(envelope.controlReceipt).sort())
+                !== canonicalJson(outerControlReceiptKeys)
+              || outerControlDigestKeys.some(
+                (key) => !digestPattern.test(envelope.controlReceipt[key] ?? ''),
+              )
+              || envelope.controlReceipt.sourceRevision !== process.env.GITHUB_SHA
+              || envelope.controlReceipt.status !== 'verified-pass'
+              || envelope.controlReceipt.allPassed !== true
+              || envelope.controlReceipt.scientificPass !== true
+              || envelope.controlReceipt.executionAuthenticated !== false
+              || envelope.controlReceipt.reproduced !== false
+              || envelope.controlReceipt.promotionEligible !== false) {
+            throw new Error('outer control receipt projection changed');
+          }
+          const expectedBrowserControlReceipt = {
+            receiptDigest: envelope.controlReceipt.receiptDigest,
+            systemDigest: envelope.controlReceipt.systemDigest,
+            planDigest: envelope.controlReceipt.planDigest,
+            producerOutcomeDigest: envelope.controlReceipt.producerOutcomeDigest,
+            artifactManifestDigest: envelope.controlReceipt.artifactManifestDigest,
+            payloadBundleRoot: envelope.controlReceipt.payloadBundleRoot,
+            verifierDigest: envelope.controlReceipt.verifierDigest,
+            status: 'verified-pass',
+            allPassed: true,
+            scientificPass: true,
+          };
+
+          const browserBytes = records.get('openmm-tip3p-protected-browser-evidence.json');
+          let browser;
+          try {
+            browser = JSON.parse(browserBytes.toString('ascii'));
+          } catch (error) {
+            throw new Error('browser evidence is not strict JSON', { cause: error });
+          }
+          if (!browserBytes.equals(canonicalJsonBytes(browser))) {
+            throw new Error('browser evidence is not exact canonical JSON plus LF');
+          }
+          const { evidenceDigest: browserEvidenceDigest, ...browserPreimage } = browser;
+          if (!digestPattern.test(browserEvidenceDigest ?? '')
+              || browserEvidenceDigest !== sha256(canonicalJsonBytes(browserPreimage))) {
+            throw new Error('browser evidence has a stale self digest');
+          }
+          const browserTopLevelKeys = [
+            'schemaVersion', 'profile', 'statusDomain', 'sourceRevision', 'controlReceipt',
+            'source', 'browserRuntime', 'isolation', 'client', 'modeResults', 'crossMode',
+            'cleanup', 'publicationPolicy', 'claims', 'evidenceDigest',
+          ].sort();
+          if (browser === null || typeof browser !== 'object' || Array.isArray(browser)
+              || canonicalJson(Object.keys(browser).sort()) !== canonicalJson(browserTopLevelKeys)) {
+            throw new Error('browser evidence top-level shape changed');
+          }
+          const expectedBrowserClaims = {
+            protectedWorkflowExecutionReported: true,
+            realOpenMmProducerOutputConsumed: true,
+            allThreeModesPassed: true,
+            realBrowserDrawObserved: true,
+            executionAuthenticated: false,
+            reproduced: false,
+            hostRuntimeClosureVerified: false,
+            immutableRuntimeSnapshotVerified: false,
+            promotionEligible: false,
+            publicDistributionEligible: false,
+            cloudflareDistributionEligible: false,
+          };
+          const expectedBrowserPublicationPolicy = {
+            artifactClass: 'non-sensitive-administrative-browser-evidence-only',
+            rawScientificPayloadPublished: false,
+            runtimeInputsPublished: false,
+            browserArtifactsPublished: false,
+            publicDistributionEligible: false,
+            cloudflareDistributionEligible: false,
+            licenseClearance: false,
+            attested: false,
+          };
+          const expectedBrowserIsolation = {
+            platform: 'linux-x64',
+            allCredentialIdsNonRoot: true,
+            allCapabilitySetsEmpty: true,
+            appArmorUserNamespaceProfileVerified: true,
+            noNewPrivilegesVerified: true,
+            noSupplementaryPrivilegeGroups: true,
+            forbiddenEnvironmentAbsent: true,
+            onlyLoopbackInterfacesVerified: true,
+            onlyLoopbackRoutesVerified: true,
+            readOnlySourceMountVerified: true,
+            readOnlyRuntimeMountVerified: true,
+            pidNamespaceKillBoundaryVerified: false,
+            cgroupDrainVerified: false,
+          };
+          const expectedBrowserRuntime = {
+            playwrightVersion: '1.62.1',
+            browserVersion: '151.0.7922.34',
+            chromiumRevision: '1234',
+            playwrightPackageTreeDigest:
+              'sha256:5981dbf5b0604778dfe94c03564da904f13ba2289340fd1f695211922de1dc3f',
+            playwrightCorePackageTreeDigest:
+              'sha256:c3d1a9f4d8c8a2f5251c323aa3a4cb4202ba86f7ba4ff6330c1fa0e634f7c357',
+            distributionTreeDigest:
+              'sha256:ef61b26dc6a3b390355d5a4c1ea60b9ae4839bb3add815fadb26c626e7fae658',
+            frozenRuntimeTreeDigest:
+              'sha256:379be99b95a5b092c51dee46cc3053b08ec513618fe939a945df1f3a9a04adb3',
+            allModePrePostCheckpointsMatched: true,
+            hostRuntimeClosureVerified: false,
+            immutableRuntimeSnapshotVerified: false,
+          };
+          const expectedBrowserCrossMode = {
+            sameSourceLineage: true,
+            sameTrajectoryBinding: true,
+            sameClientBytes: true,
+            sameFrozenRuntimeTree: true,
+            threeFreshCapabilities: true,
+          };
+          const expectedBrowserCleanup = {
+            allListenersClosed: true,
+            allPacketsZeroized: true,
+            allTokenVerifierBytesZeroized: true,
+            allAssetsZeroized: true,
+            securePhysicalErasureVerified: false,
+          };
+          const expectedBrowserModes = [
+            {
+              mode: 'happy-path',
+              status: 'digest-locked-main-executable-private-trajectory-draw-observed',
+              terminalState: 'disposed',
+              browserDrawObserved: true,
+              trajectoryCompleted: true,
+              frameCount: 101,
+              renderedFrameCount: 101,
+            },
+            {
+              mode: 'mid-playback-dispose',
+              status: 'digest-locked-main-executable-private-trajectory-interruption-failed-closed',
+              terminalState: 'disposed',
+              browserDrawObserved: true,
+              trajectoryCompleted: false,
+              frameCount: null,
+              renderedFrameCount: 37,
+            },
+            {
+              mode: 'context-loss',
+              status: 'digest-locked-main-executable-private-trajectory-interruption-failed-closed',
+              terminalState: 'context-lost',
+              browserDrawObserved: true,
+              trajectoryCompleted: false,
+              frameCount: null,
+              renderedFrameCount: 37,
+            },
+          ];
+          const browserModeKeys = [
+            'mode', 'status', 'observationDigest', 'terminalState', 'cleanupComplete',
+            'sourceOwnerRevoked', 'runtimeDisposed', 'threeDisposed', 'rendererDisposed',
+            'clientResponseDigestVerified', 'browserDrawObserved', 'frameCount',
+            'renderedFrameCount', 'trajectoryCompleted',
+          ].sort();
+          const browserSourceDigestKeys = [
+            'atomOrderDigest',
+            'browserPacketDigest',
+            'browserTrajectoryMetadataDigest',
+            'cellDigest',
+            'orderedFrameDigest',
+            'orderedPositionFrameDigest',
+            'positionsF32TrajectoryDigest',
+            'privateTrajectoryMetadataDigest',
+            'referenceARunArtifactDigest',
+            'referenceARunReceiptDigest',
+            'topologyDigest',
+            'trajectoryDigest',
+            'worldSessionDigest',
+          ];
+          const browserSourceKeys = [...browserSourceDigestKeys, 'frameCount', 'positionsOnly'].sort();
+          const expectedBrowserProjection = {
+            evidenceDigest: browserEvidenceDigest,
+            sourceRevision: browser.sourceRevision,
+            controlReceiptDigest: browser.controlReceipt?.receiptDigest,
+            allThreeModesPassed: true,
+            protectedWorkflowExecutionReported: true,
+            executionAuthenticated: false,
+            reproduced: false,
+            promotionEligible: false,
+          };
+          const browserClientKeys = [
+            'byteLength', 'sha256', 'responseDigestVerifiedInAllModes',
+          ].sort();
+          if (browser.client === null || typeof browser.client !== 'object'
+              || Array.isArray(browser.client)
+              || canonicalJson(Object.keys(browser.client).sort())
+                !== canonicalJson(browserClientKeys)
+              || !Number.isSafeInteger(browser.client.byteLength)
+              || browser.client.byteLength < 1 || browser.client.byteLength > 2 * 1024 * 1024
+              || !digestPattern.test(browser.client.sha256 ?? '')
+              || browser.client.responseDigestVerifiedInAllModes !== true) {
+            throw new Error('browser client byte binding changed');
+          }
+          if (!Array.isArray(browser.modeResults)
+              || browser.modeResults.length !== expectedBrowserModes.length) {
+            throw new Error('browser mode result count changed');
+          }
+          const observationDigests = new Set();
+          for (let index = 0; index < expectedBrowserModes.length; index += 1) {
+            const mode = browser.modeResults[index];
+            const expected = expectedBrowserModes[index];
+            if (mode === null || typeof mode !== 'object' || Array.isArray(mode)
+                || canonicalJson(Object.keys(mode).sort()) !== canonicalJson(browserModeKeys)
+                || !digestPattern.test(mode.observationDigest ?? '')
+                || mode.mode !== expected.mode || mode.status !== expected.status
+                || mode.terminalState !== expected.terminalState
+                || mode.browserDrawObserved !== expected.browserDrawObserved
+                || mode.trajectoryCompleted !== expected.trajectoryCompleted
+                || mode.frameCount !== expected.frameCount
+                || mode.renderedFrameCount !== expected.renderedFrameCount
+                || mode.cleanupComplete !== true || mode.sourceOwnerRevoked !== true
+                || mode.runtimeDisposed !== true || mode.threeDisposed !== true
+                || mode.rendererDisposed !== true
+                || mode.clientResponseDigestVerified !== true) {
+              throw new Error(`browser mode ${expected.mode} changed its exact result boundary`);
+            }
+            observationDigests.add(mode.observationDigest);
+          }
+          if (observationDigests.size !== expectedBrowserModes.length) {
+            throw new Error('browser modes did not bind three distinct observations');
+          }
+          if (browser.schemaVersion !== 'tf.openmm-tip3p-protected-browser-evidence/0.4.9'
+              || browser.profile
+                !== 'protected-main-private-openmm-positions-three-mode-browser-evidence'
+              || browser.statusDomain
+                !== 'protected-ci-browser-observation-not-execution-attestation-reproduction-or-release'
+              || browser.sourceRevision !== process.env.GITHUB_SHA
+              || canonicalJson(browser.controlReceipt)
+                !== canonicalJson(expectedBrowserControlReceipt)
+              || canonicalJson(Object.keys(browser.source ?? {}).sort())
+                !== canonicalJson(browserSourceKeys)
+              || browserSourceDigestKeys.some((key) => !digestPattern.test(browser.source?.[key] ?? ''))
+              || browser.source?.frameCount !== 101 || browser.source?.positionsOnly !== true
+              || canonicalJson(browser.browserRuntime) !== canonicalJson(expectedBrowserRuntime)
+              || canonicalJson(browser.isolation) !== canonicalJson(expectedBrowserIsolation)
+              || canonicalJson(browser.crossMode) !== canonicalJson(expectedBrowserCrossMode)
+              || canonicalJson(browser.cleanup) !== canonicalJson(expectedBrowserCleanup)
+              || canonicalJson(browser.claims) !== canonicalJson(expectedBrowserClaims)
+              || canonicalJson(browser.publicationPolicy)
+                !== canonicalJson(expectedBrowserPublicationPolicy)
+              || canonicalJson(envelope.browserEvidence)
+                !== canonicalJson(expectedBrowserProjection)) {
+            throw new Error('browser evidence or outer-envelope projection changed');
+          }
+
+          const metadataUrl = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/actions/artifacts/${process.env.EXPECTED_ARTIFACT_ID}`;
+          const response = await fetch(metadataUrl, {
+            method: 'GET',
+            redirect: 'error',
+            headers: {
+              accept: 'application/vnd.github+json',
+              'accept-encoding': 'identity',
+              authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+              'x-github-api-version': '2022-11-28',
+            },
+            signal: AbortSignal.timeout(30_000),
+          });
+          if (!response.ok || response.status !== 200 || response.redirected) {
+            throw new Error(`artifact metadata request failed with HTTP ${response.status}`);
+          }
+          if (response.url !== metadataUrl || response.body === null) {
+            throw new Error('artifact metadata response URL or body changed');
+          }
+          const contentEncoding = response.headers.get('content-encoding');
+          if (contentEncoding !== null
+              && contentEncoding.trim().toLowerCase() !== 'identity') {
+            throw new Error('artifact metadata response used an unexpected content encoding');
+          }
+          const maximumMetadataBytes = 65_536;
+          const declaredLength = response.headers.get('content-length');
+          if (declaredLength !== null
+              && (!positiveDecimal.test(declaredLength)
+                || Number(declaredLength) > maximumMetadataBytes)) {
+            throw new Error('artifact metadata Content-Length is invalid or too large');
+          }
+          const reader = response.body.getReader();
+          const chunks = [];
+          let metadataSize = 0;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (!(value instanceof Uint8Array) || value.byteLength === 0) {
+              throw new Error('artifact metadata response emitted an invalid chunk');
+            }
+            metadataSize += value.byteLength;
+            if (metadataSize > maximumMetadataBytes) {
+              await reader.cancel();
+              throw new Error('artifact metadata response exceeded its byte bound');
+            }
+            chunks.push(value);
+          }
+          const metadataBytes = Buffer.concat(chunks, metadataSize);
+          if (declaredLength !== null && Number(declaredLength) !== metadataBytes.length) {
+            throw new Error('artifact metadata Content-Length differs from the response bytes');
+          }
+          let metadata;
+          try {
+            metadata = JSON.parse(metadataBytes.toString('utf8'));
+          } catch (error) {
+            throw new Error('artifact metadata is not strict JSON', { cause: error });
+          }
+          if (String(metadata.id) !== process.env.EXPECTED_ARTIFACT_ID
+              || metadata.name !== expectedArtifactName
+              || metadata.expired !== false
+              || metadata.digest !== process.env.EXPECTED_ARTIFACT_DIGEST
+              || String(metadata.workflow_run?.id) !== process.env.GITHUB_RUN_ID
+              || String(metadata.workflow_run?.repository_id) !== process.env.GITHUB_REPOSITORY_ID
+              || String(metadata.workflow_run?.head_repository_id) !== process.env.GITHUB_REPOSITORY_ID
+              || metadata.workflow_run?.head_branch !== 'main'
+              || metadata.workflow_run?.head_sha !== process.env.GITHUB_SHA
+              || !Number.isSafeInteger(metadata.size_in_bytes)
+              || metadata.size_in_bytes < 1 || metadata.size_in_bytes > 100_000_000) {
+            throw new Error('GitHub artifact metadata differs from this run and upload digest');
+          }
+          process.stdout.write(`Verified nine bounded files and envelope ${evidenceDigest}\n`);
+          NODE
+
+      - name: Attest only the verified sanitized evidence envelope
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
+          show-summary: false
+          github-token: ${{ github.token }}

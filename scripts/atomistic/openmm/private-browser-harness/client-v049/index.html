@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Tailing Future · Private 101-frame WebGL2 proof</title>
+    <style nonce="__TF_PRIVATE_CSP_NONCE__">
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; overflow: hidden; color: #e9fbf7; background: #02090b; }
+      main { display: grid; grid-template-columns: minmax(0, 1fr) 25rem; min-height: 100vh; }
+      .viewport { position: relative; min-height: 100vh; border-right: 1px solid #173638; }
+      canvas { display: block; width: 100%; height: 100vh; }
+      header { position: absolute; z-index: 2; top: 1.5rem; left: 1.75rem; max-width: 39rem; pointer-events: none; }
+      .eyebrow { margin: 0 0 .5rem; color: #71dccc; font-size: .7rem; font-weight: 750; letter-spacing: .2em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.75rem); font-weight: 560; letter-spacing: -.035em; }
+      .subtitle { color: #a8c9c3; font-size: .86rem; line-height: 1.6; }
+      aside { height: 100vh; overflow: auto; padding: 1.35rem; background: rgba(4, 17, 19, .94); }
+      .badges { display: flex; flex-wrap: wrap; gap: .45rem; }
+      .badge { border: 1px solid rgba(114, 223, 207, .22); border-radius: 999px; padding: .35rem .56rem; color: #9ceadd; font-size: .62rem; font-weight: 720; letter-spacing: .08em; text-transform: uppercase; }
+      .warning { color: #ff9aa7; border-color: rgba(255, 116, 130, .28); }
+      section { margin-top: 1rem; padding: 1rem; border: 1px solid rgba(139, 227, 216, .12); border-radius: .9rem; background: rgba(8, 29, 31, .72); }
+      h2 { margin: 0 0 .7rem; color: #c7eee7; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+      #harness-status { min-height: 2.6rem; color: #b7d7d1; font-size: .78rem; line-height: 1.55; }
+      pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #9bbab5; font: .62rem/1.55 "SFMono-Regular", Consolas, monospace; }
+      button { width: 100%; margin-top: 1rem; border: 1px solid rgba(120, 225, 211, .25); border-radius: .75rem; padding: .72rem; color: #d8f8f2; background: rgba(15, 91, 87, .2); cursor: pointer; }
+      button:disabled { cursor: default; opacity: .45; }
+      @media (max-width: 850px) { body { overflow: auto; } main { grid-template-columns: 1fr; } .viewport { min-height: 68vh; } canvas { height: 68vh; } aside { height: auto; } }
+    </style>
+  </head>
+  <body data-harness-state="booting">
+    <main>
+      <div class="viewport">
+        <header>
+          <p class="eyebrow">Tailing Future · V049 private evidence surface</p>
+          <h1>101 discrete atomistic frames</h1>
+          <p class="subtitle">每一帧只来自摘要绑定的 F32 positions。浏览器不插值、不外推，也不把重复绘制冒充求解器时间推进。</p>
+        </header>
+        <canvas id="atomistic-canvas" width="960" height="640" aria-label="私有 101 帧原子级 WebGL2 画布"></canvas>
+      </div>
+      <aside>
+        <div class="badges" aria-label="证据边界">
+          <span class="badge">private loopback</span>
+          <span class="badge">101 positions frames</span>
+          <span class="badge warning">execution unattested</span>
+          <span class="badge warning">not reproduced</span>
+        </div>
+        <section><h2>Runtime status</h2><div id="harness-status" role="status" aria-live="polite">正在验证完整轨迹和 WebGL2 环境…</div></section>
+        <section><h2>Scientific boundary</h2><pre>原子与 O–H 圆柱使用非物理显示半径；圆柱只表示拓扑邻接与刚性约束。
+力、速度、能量、应力与电子密度未传输。
+轨迹可能来自 synthetic fixture；本页不证明 OpenMM 执行真实性、复现或发布资格。</pre></section>
+        <section><h2>Observable evidence</h2><pre id="harness-evidence">{ "state": "booting" }</pre></section>
+        <button id="continue-harness" type="button" disabled>Continue from audited frame 37 barrier</button>
+        <button id="dispose-harness" type="button">Dispose GPU and revoke local copies</button>
+      </aside>
+    </main>
+    <script nonce="__TF_PRIVATE_CSP_NONCE__" type="module" src="/client.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+# Tailing Future OpenMM 8.6.0 pure-water control runtime.
+#
+# This is an all-wheel, Linux/x86_64 CPython 3.12 lock.  The image build uses
+# --no-index --require-hashes --only-binary=:all: and a two-file named-context
+# wheelhouse, so this file cannot trigger dependency resolution or networking.
+
+numpy==2.2.6 \
+    --hash=sha256:fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249
+openmm==8.6.0 \
+    --hash=sha256:e7acafe671fe40c502623886b15a97bcc948a83a4a995da0336b7ee3ab4b0221
