@@ -5,7 +5,7 @@ export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
 export const ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap-verify.yml';
 export const OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH = '.github/workflows/openmm-tip3p-protected.yml';
-export const OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256 = 'd137f2b2a73ad9d259b32046f7df627273277d13ce54d520119b4a81542b13f0';
+export const OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256 = '1e709fd989d30908df269ed236af00b7d94f3b77e8945cccdb3f45622bf87810';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = '65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
@@ -15,7 +15,7 @@ export const ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH = 1787977543;
 export const ATOMISTIC_SOURCE_MANIFEST_DIGEST = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
 export const ATOMISTIC_MATERIALIZATION_DIGEST = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
-export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '8419e7bcf8fe194d1830b5e9dda54b1dcd97846c743eb865ccf1f1089a965e94';
+export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '6683d641e7b8898af7729877fdffa7ac28de543783d052bc40d4c1023ee341dc';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
 export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af';
@@ -66,6 +66,7 @@ export const ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS = Object.freeze({
   'Match the single downloaded receipt to the verify job bytes': 'sha256:55d6c9d0fe405505ceb9487e78e1a07fefbd3d025a44437f7dfb748520b97299',
 });
 export const OPENMM_TIP3P_PROTECTED_RUN_DIGESTS = Object.freeze({
+  'Bind runner-scoped private paths': 'sha256:74a7a4f56113f1182e0afdba1f4e25e47fec6584c43409e623bd7a8ad127ec35',
   'Refuse dispatch outside protected main Linux x86_64': 'sha256:456a1faabd99d49666f1af5ca3e1250e8a6deaa14e191b8399d67b640b4ed0dc',
   'Install locked verifier dependencies without lifecycle scripts': 'sha256:5469a61773fc1075e46bc071c03a1eef6ad400f0dc794cf06a3e2abead9bd176',
   'Create isolated private acquisition and execution roots': 'sha256:a25418c8dabfa5f4a87c28bbb375ea294b23564363f1f8367bcc9ecc50dbb15e',
@@ -360,7 +361,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
     'permissions', 'runs-on', 'steps', 'timeout-minutes',
   ].sort())) failures.push(`${prefix} evaluate job contains an unreviewed key.`);
   if (!sameJson(job.permissions, { contents: 'read' })) failures.push(`${prefix} evaluate job must have only contents: read.`);
-  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 20) {
+  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 35) {
     failures.push(`${prefix} evaluate job must remain a bounded Ubuntu 24.04 job.`);
   }
 
@@ -1306,14 +1307,6 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
       DOCKERFILE_FRONTEND_DIGEST: 'sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e',
       IMAGE_TAG: 'tailing/openmm-tip3p:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}',
       CONTAINER_NAME: 'tailing-openmm-tip3p-${{ github.run_id }}-${{ github.run_attempt }}',
-      PRIVATE_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private',
-      INPUT_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/inputs',
-      WHEELHOUSE: '${{ runner.temp }}/tailing-openmm-tip3p-private/wheelhouse',
-      PRODUCER_OUTPUT: '${{ runner.temp }}/tailing-openmm-tip3p-private/producer-output',
-      EVIDENCE_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/administrative-evidence',
-      PUBLISH_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope',
-      ENVELOPE_PATH: '${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope/openmm-tip3p-protected-ci-evidence.json',
-      ARTIFACT_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-public-evidence',
       CHROMIUM_ACQUISITION_ROOT: '/opt/tailing-private-chromium-acquisition-${{ github.run_id }}-${{ github.run_attempt }}',
       BROWSER_RUNTIME_ROOT: '/opt/tailing-private-chromium-${{ github.run_id }}-${{ github.run_attempt }}',
       BROWSER_SOURCE_ROOT: '/opt/tailing-private-openmm-source-${{ github.run_id }}-${{ github.run_attempt }}',
@@ -1329,6 +1322,7 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
     const expectedNames = [
       'Check out the protected-main source without credentials',
       'Install the pinned JavaScript runtime',
+      'Bind runner-scoped private paths',
       'Refuse dispatch outside protected main Linux x86_64',
       'Install locked verifier dependencies without lifecycle scripts',
       'Create isolated private acquisition and execution roots',
@@ -1402,6 +1396,9 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
     if (!hasAll(executable, [
       'test "$GITHUB_REF" = "refs/heads/main"',
       'test "$GITHUB_REF_PROTECTED" = "true"',
+      'test "$(realpath -- "$RUNNER_TEMP")" = "$RUNNER_TEMP"',
+      "printf 'PRIVATE_ROOT=%s/tailing-openmm-tip3p-private\\n' \"$RUNNER_TEMP\"",
+      '} >> "$GITHUB_ENV"',
       'test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"',
       'test "$GITHUB_RUN_ATTEMPT" = "1"',
       'test "$(git rev-parse refs/remotes/origin/main^{commit})" = "$GITHUB_SHA"',
@@ -1483,7 +1480,7 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
     failures.push(`${prefix} attest job is missing.`);
   } else {
     if (!sameJson(Object.keys(attest).sort(), [
-      'env', 'name', 'needs', 'permissions', 'runs-on', 'steps', 'timeout-minutes',
+      'name', 'needs', 'permissions', 'runs-on', 'steps', 'timeout-minutes',
     ].sort())) failures.push(`${prefix} attest job contains an unreviewed key.`);
     if (attest.name !== 'Validate downloaded evidence and attest only the envelope'
         || attest.needs !== 'execute'
@@ -1494,10 +1491,6 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
     if (!sameJson(attest.permissions, attestPermissions)) {
       failures.push(`${prefix} attest permissions drifted from the exact read/OIDC/attestation set.`);
     }
-    if (!sameJson(attest.env, {
-      DOWNLOAD_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-attest',
-      ENVELOPE_PATH: '${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json',
-    })) failures.push(`${prefix} attest download and subject paths drifted.`);
     const steps = Array.isArray(attest.steps) ? attest.steps : [];
     const expectedNames = [
       'Refuse attestation outside this protected run and create a clean download root',
@@ -1509,6 +1502,20 @@ export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined
     if (!sameJson(steps.map((step) => step?.name), expectedNames)) {
       failures.push(`${prefix} attest step set or order drifted.`);
     }
+    const attestPaths = {
+      DOWNLOAD_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-attest',
+      ENVELOPE_PATH: '${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json',
+    };
+    if (!sameJson(steps[0]?.env, attestPaths)
+        || !sameJson(steps[3]?.env, {
+          ...attestPaths,
+          EXPECTED_ARTIFACT_NAME: '${{ needs.execute.outputs.artifact_name }}',
+          EXPECTED_ARTIFACT_ID: '${{ needs.execute.outputs.artifact_id }}',
+          EXPECTED_ARTIFACT_DIGEST: '${{ needs.execute.outputs.artifact_digest }}',
+          EXPECTED_ENVELOPE_SHA256: '${{ needs.execute.outputs.envelope_sha256 }}',
+          EXPECTED_ENVELOPE_SIZE_BYTES: '${{ needs.execute.outputs.envelope_size_bytes }}',
+          GITHUB_TOKEN: '${{ github.token }}',
+        })) failures.push(`${prefix} attest step-scoped download and subject paths drifted.`);
     if (steps.some((step) => String(step?.uses ?? '').startsWith('actions/checkout@')
         || String(step?.uses ?? '').startsWith('./')
         || (typeof step?.run === 'string' && /(?:^|[\s"'])scripts\//m.test(step.run)))) {

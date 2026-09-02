@@ -41,14 +41,6 @@ jobs:
       DOCKERFILE_FRONTEND_DIGEST: sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
       IMAGE_TAG: tailing/openmm-tip3p:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
       CONTAINER_NAME: tailing-openmm-tip3p-${{ github.run_id }}-${{ github.run_attempt }}
-      PRIVATE_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-private
-      INPUT_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-private/inputs
-      WHEELHOUSE: ${{ runner.temp }}/tailing-openmm-tip3p-private/wheelhouse
-      PRODUCER_OUTPUT: ${{ runner.temp }}/tailing-openmm-tip3p-private/producer-output
-      EVIDENCE_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-private/administrative-evidence
-      PUBLISH_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope
-      ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope/openmm-tip3p-protected-ci-evidence.json
-      ARTIFACT_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-public-evidence
       CHROMIUM_ACQUISITION_ROOT: /opt/tailing-private-chromium-acquisition-${{ github.run_id }}-${{ github.run_attempt }}
       BROWSER_RUNTIME_ROOT: /opt/tailing-private-chromium-${{ github.run_id }}-${{ github.run_attempt }}
       BROWSER_SOURCE_ROOT: /opt/tailing-private-openmm-source-${{ github.run_id }}-${{ github.run_attempt }}
@@ -71,6 +63,30 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24.16.0
+
+      - name: Bind runner-scoped private paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$RUNNER_TEMP" in
+            /*) ;;
+            *) exit 1 ;;
+          esac
+          test -d "$RUNNER_TEMP"
+          test ! -L "$RUNNER_TEMP"
+          test "$(realpath -- "$RUNNER_TEMP")" = "$RUNNER_TEMP"
+          test -f "$GITHUB_ENV"
+          test ! -L "$GITHUB_ENV"
+          {
+            printf 'PRIVATE_ROOT=%s/tailing-openmm-tip3p-private\n' "$RUNNER_TEMP"
+            printf 'INPUT_ROOT=%s/tailing-openmm-tip3p-private/inputs\n' "$RUNNER_TEMP"
+            printf 'WHEELHOUSE=%s/tailing-openmm-tip3p-private/wheelhouse\n' "$RUNNER_TEMP"
+            printf 'PRODUCER_OUTPUT=%s/tailing-openmm-tip3p-private/producer-output\n' "$RUNNER_TEMP"
+            printf 'EVIDENCE_ROOT=%s/tailing-openmm-tip3p-private/administrative-evidence\n' "$RUNNER_TEMP"
+            printf 'PUBLISH_ROOT=%s/tailing-openmm-tip3p-private/sanitized-envelope\n' "$RUNNER_TEMP"
+            printf 'ENVELOPE_PATH=%s/tailing-openmm-tip3p-private/sanitized-envelope/openmm-tip3p-protected-ci-evidence.json\n' "$RUNNER_TEMP"
+            printf 'ARTIFACT_ROOT=%s/tailing-openmm-tip3p-public-evidence\n' "$RUNNER_TEMP"
+          } >> "$GITHUB_ENV"
 
       - name: Refuse dispatch outside protected main Linux x86_64
         shell: bash
@@ -732,13 +748,13 @@ jobs:
       artifact-metadata: write
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    env:
-      DOWNLOAD_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-attest
-      ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
 
     steps:
       - name: Refuse attestation outside this protected run and create a clean download root
         shell: bash
+        env:
+          DOWNLOAD_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-attest
+          ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
         run: |
           set -euo pipefail
           test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
@@ -773,6 +789,8 @@ jobs:
       - name: Verify every downloaded evidence file and envelope binding
         shell: bash
         env:
+          DOWNLOAD_ROOT: ${{ runner.temp }}/tailing-openmm-tip3p-attest
+          ENVELOPE_PATH: ${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json
           EXPECTED_ARTIFACT_NAME: ${{ needs.execute.outputs.artifact_name }}
           EXPECTED_ARTIFACT_ID: ${{ needs.execute.outputs.artifact_id }}
           EXPECTED_ARTIFACT_DIGEST: ${{ needs.execute.outputs.artifact_digest }}

@@ -1,10 +1,10 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-02T18:11:46.884Z",
+  "generatedAt": "2026-09-02T18:49:14.794Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:32777c7662c52b37bfb1e10cc38dfd75a4466af2e9326844711360d8cb2dc270",
+  "artifactDigest": "sha256:3e91a7d9856cb927a8ee3bb75219c33857c783578387f16c683d65b102d21024",
   "sourceFileCount": 375,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
@@ -14,8 +14,8 @@
     ".github/workflows/atomistic-bootstrap-verify.yml": "sha256:39a2ebedeaf136b127cb66c20e89f121e211085985b14d3c40fd7dc9eb5626eb",
     ".github/workflows/atomistic-bootstrap.yml": "sha256:e2e05d7e52c9f3ebb67bf067e388382c87d0dc68a7cf54acb4791615bbe8a001",
     ".github/workflows/comparator-refresh.yml": "sha256:abf1f3672af5515241eaa76818fef9be182efb062c9d7c7ea7f8772cbf4dd986",
-    ".github/workflows/evaluate.yml": "sha256:8419e7bcf8fe194d1830b5e9dda54b1dcd97846c743eb865ccf1f1089a965e94",
-    ".github/workflows/openmm-tip3p-protected.yml": "sha256:d137f2b2a73ad9d259b32046f7df627273277d13ce54d520119b4a81542b13f0",
+    ".github/workflows/evaluate.yml": "sha256:6683d641e7b8898af7729877fdffa7ac28de543783d052bc40d4c1023ee341dc",
+    ".github/workflows/openmm-tip3p-protected.yml": "sha256:1e709fd989d30908df269ed236af00b7d94f3b77e8945cccdb3f45622bf87810",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d",
     ".gitignore": "sha256:db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28",
     ".openai/hosting.json": "sha256:d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947",
@@ -377,8 +377,8 @@
     "scripts/validate-atomistic-runtime-lock.mjs": "sha256:93e2e0e0b222d12072aa83d04db0b791c2bf3fafd23cd9f3e1c1318ea18257f4",
     "scripts/validate-production-isolation.mjs": "sha256:3eaeed5a058579ca5ca3a87f67c0eb2dbf533779b589ba3a92672d2ef0eed19a",
     "scripts/validate-production-isolation.test.mjs": "sha256:f0adaf5e18adf59539741db1fbfbb2c13d25e5b97f45418be75b07a57bc3a6f1",
-    "scripts/workflow-policy.mjs": "sha256:a192661888b0dafdd3b18e3b411c0e5c01439e2383df0f9b9ccb9ac382b4d2c7",
-    "scripts/workflow-policy.test.mjs": "sha256:e255923aa642df244711cb0ef36b919eaaadcf35e7c2ce217cdf0ef38a24a8b3",
+    "scripts/workflow-policy.mjs": "sha256:307b6784236cbca58238e203ec6edbfb5d8e98cbf827f61dce821d2e9146e3ad",
+    "scripts/workflow-policy.test.mjs": "sha256:8ba4e152bb621e13cb7378a623ad4097220d5036cf17b24ae25468d4a620800c",
     "tsconfig.json": "sha256:3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8",
     "vite.config.ts": "sha256:b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa",
     "vitest.config.ts": "sha256:c71b966d6c632b94d915fa319f862a16b9e990837efd22134a12080c774226b5"
@@ -741,7 +741,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 296079.99
+    "elapsedMs": 339159.77
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -773,8 +773,8 @@
     "schemas/atomistic-full-candidate-receipt.schema.json": "sha256:f6dfdec4d81bd1467ec459f6e0153dee5fe877a17819de4704c0ae189dcc70aa",
     ".github/workflows/atomistic-bootstrap.yml": "sha256:e2e05d7e52c9f3ebb67bf067e388382c87d0dc68a7cf54acb4791615bbe8a001",
     ".github/workflows/atomistic-bootstrap-verify.yml": "sha256:39a2ebedeaf136b127cb66c20e89f121e211085985b14d3c40fd7dc9eb5626eb",
-    "scripts/workflow-policy.mjs": "sha256:a192661888b0dafdd3b18e3b411c0e5c01439e2383df0f9b9ccb9ac382b4d2c7",
-    "scripts/workflow-policy.test.mjs": "sha256:e255923aa642df244711cb0ef36b919eaaadcf35e7c2ce217cdf0ef38a24a8b3",
+    "scripts/workflow-policy.mjs": "sha256:307b6784236cbca58238e203ec6edbfb5d8e98cbf827f61dce821d2e9146e3ad",
+    "scripts/workflow-policy.test.mjs": "sha256:8ba4e152bb621e13cb7378a623ad4097220d5036cf17b24ae25468d4a620800c",
     "scripts/atomistic/verify-bootstrap-replicas.mjs": "sha256:877e57767b13d52a9abe41236a3ea3ac1f2b41a616b5acac4b891df4e9cb6441",
     "scripts/atomistic/verify-bootstrap-replicas.test.mjs": "sha256:f7cae9a4e07a29a722facd94c175e9b97ab87cfc9f7e05eb45faa0b94cb1a809",
     "scripts/atomistic/bootstrap-replica-receipt-policy.mjs": "sha256:705674ea788779a821f0cd513953419bff289c0014cc86ff6d2f303424ef66d2",
@@ -825,7 +825,7 @@
     "docs/NACL_WATER_INTERFACE_V0410_CONTRACT.md": "sha256:f884d5a1f491e3bd5b61b1075b8b4b8e4433fe50f48db4963293ef7389f2b3e6",
     "docs/NACL_WATER_INTERFACE_V0411_IMPORT_CONTRACT.md": "sha256:c5b68a8ca7ca1950c397eaa19e21e7cf1790a0c96ebcd4290220c3886ffd2f06",
     "lib/simulation/thermochemical-world.ts": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8",
-    ".github/workflows/evaluate.yml": "sha256:8419e7bcf8fe194d1830b5e9dda54b1dcd97846c743eb865ccf1f1089a965e94",
+    ".github/workflows/evaluate.yml": "sha256:6683d641e7b8898af7729877fdffa7ac28de543783d052bc40d4c1023ee341dc",
     "app/page.tsx": "sha256:a24618209e79d40f32b2d96b0cccf3c96938096cf72794557ffa3777c14ef176",
     "app/components/molecular-lab.tsx": "sha256:93743dfe35079f93930be011ea23305253f05d3e75cb6fc5e8381c14de3919fc",
     "app/components/molecular-canvas.tsx": "sha256:e4d1aa219e895a8fe3e050c529a0f95791406ae6fd3c0614665d14efcf74006f",

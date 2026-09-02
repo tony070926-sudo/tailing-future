@@ -201,7 +201,7 @@ describe('workflow source policy', () => {
     expect(Object.keys(sentinelEvaluationWorkflow.jobs)).toEqual(['evaluate']);
     expect(sentinelEvaluationWorkflow.jobs.evaluate.permissions).toEqual({ contents: 'read' });
     expect(sentinelEvaluationWorkflow.jobs.evaluate['runs-on']).toBe('ubuntu-24.04');
-    expect(sentinelEvaluationWorkflow.jobs.evaluate['timeout-minutes']).toBe(20);
+    expect(sentinelEvaluationWorkflow.jobs.evaluate['timeout-minutes']).toBe(35);
     const evaluationCheckout = sentinelEvaluationWorkflow.jobs.evaluate.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
     expect(evaluationCheckout?.with).toEqual({ 'persist-credentials': false, 'fetch-depth': 0 });
     const pythonSetup = sentinelEvaluationWorkflow.jobs.evaluate.steps.find(
