@@ -217,7 +217,7 @@ export async function main({
       fail('checked-in report runtime does not match the release host');
     }
     if (!reportsReleaseEquivalent(localReport, ciReport)) {
-      fail('checked-in report and successful CI artifact describe different source evidence');
+      fail('checked-in report and successful CI artifact describe different release-equivalence evidence');
     }
 
     console.log(`Release guard: PASS · commit ${head} · workflow ${sentinelWorkflow.id} · run ${successful.id}/attempt ${successful.run_attempt} · artifact ${artifact.id} ${artifact.digest} · report ${ciReport.artifactDigest}`);
