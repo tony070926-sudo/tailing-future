@@ -21,6 +21,9 @@ describe('Tailing Future source scope', () => {
     expect(selectProjectSourceFiles([
       'scripts/evaluate.mjs',
       'evaluation/latest-report.json',
+      'evaluation/latest-report.md',
+      'evaluation/public-summary.json',
+      'evaluation/public-product-evaluation.json',
       'tailing-future-health/src/App.tsx',
       'app/page.tsx',
       'scripts/evaluate.mjs',

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/nacl-water-interface-action/0.4.10",
+  "title": "Tailing Future NaCl{100}-Water Interface Action v0.4.10",
+  "description": "Closed action envelope. Preparation and dynamics requests remain blocked while prerequisite receipts are absent.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "actionId",
+    "parentSystemDigest",
+    "kind",
+    "requestedSeedDigest",
+    "actionDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "tf.nacl-water-interface-action/0.4.10" },
+    "actionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "parentSystemDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:d47785bc641fd6483c58b8549bf7c0dc7e116a5892c0c13864c98e87c712133a"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "inspect-coordinate-seed",
+        "request-interface-preparation",
+        "request-mobile-interface-dynamics"
+      ]
+    },
+    "requestedSeedDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:beb7f2c4f997e2e8b8158a05d6083a7d6569bd1f11457f922844646cac0cc426"
+    },
+    "actionDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": false
+}

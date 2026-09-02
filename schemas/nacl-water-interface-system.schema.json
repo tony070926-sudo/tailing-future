@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/nacl-water-interface-system/0.4.10",
+  "title": "Tailing Future NaCl{100}-Water Interface System v0.4.10",
+  "description": "Closed specification for a deterministic, balanced-double-interface, fully periodic geometric coordinate seed. This schema is not simulation evidence.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "systemId",
+    "status",
+    "scientificIdentity",
+    "sourcePins",
+    "composition",
+    "periodicCell",
+    "crystalConstruction",
+    "waterConstruction",
+    "coordinateContract",
+    "candidateForceModel",
+    "prerequisiteGates",
+    "plannedReadouts",
+    "evidenceSemantics",
+    "claimBoundaries",
+    "systemDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "tf.nacl-water-interface-system/0.4.10" },
+    "systemId": { "type": "string", "const": "nacl-100-tip3p-balanced-double-interface-6x6x4-geometric-seed" },
+    "status": { "type": "string", "const": "geometric-coordinate-seed-not-executed" },
+    "scientificIdentity": {
+      "const": {
+        "role": "pre-equilibration-balanced-double-interface-nacl-100-water-coordinate-seed",
+        "surfaceFamily": "{100}",
+        "representedPlane": "(001)-cubic-equivalent-member-of-{100}",
+        "surfaceNormalMiller": [0, 0, 1],
+        "surfaceNormalCartesianAxis": "z",
+        "interfaceCount": 2,
+        "vacuumRegionPresent": false,
+        "slabCorrectionRequiredByConstruction": false
+      }
+    },
+    "sourcePins": {
+      "const": [
+        {
+          "sourceId": "nist-nbs-circular-539-volume-2-nacl-26c",
+          "role": "crystal-structure-reference",
+          "owner": "NIST/NBS",
+          "title": "Standard X-ray Diffraction Powder Patterns, NBS Circular 539 Volume 2",
+          "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular539v2.pdf",
+          "doi": "10.6028/NBS.CIRC.539v2",
+          "repository": null,
+          "release": null,
+          "commit": null,
+          "path": null,
+          "byteCount": 6365255,
+          "sha256": "sha256:ad69a84ba964e66caf2de506b7ac044531e0721e2b626ddcfce6d1f839652426",
+          "evidenceStatus": "downloaded-byte-pin",
+          "redistributionCleared": false
+        },
+        {
+          "sourceId": "openmm-8.6-amber14-tip3p-parameter-candidate",
+          "role": "candidate-parameter-input",
+          "owner": "OpenMM",
+          "title": "OpenMM 8.6 amber14/tip3p.xml",
+          "url": "https://raw.githubusercontent.com/openmm/openmm/c6173db6e8edd705eb59172bd21e9ce69c572405/wrappers/python/openmm/app/data/amber14/tip3p.xml",
+          "doi": null,
+          "repository": "https://github.com/openmm/openmm",
+          "release": "8.6.0",
+          "commit": "c6173db6e8edd705eb59172bd21e9ce69c572405",
+          "path": "wrappers/python/openmm/app/data/amber14/tip3p.xml",
+          "byteCount": 19070,
+          "sha256": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9",
+          "evidenceStatus": "pinned-upstream-byte-identity",
+          "redistributionCleared": false
+        },
+        {
+          "sourceId": "openmm-8.6-license-notices",
+          "role": "license-notices",
+          "owner": "OpenMM",
+          "title": "OpenMM 8.6 license notices",
+          "url": "https://raw.githubusercontent.com/openmm/openmm/c6173db6e8edd705eb59172bd21e9ce69c572405/docs-source/licenses/Licenses.txt",
+          "doi": null,
+          "repository": "https://github.com/openmm/openmm",
+          "release": "8.6.0",
+          "commit": "c6173db6e8edd705eb59172bd21e9ce69c572405",
+          "path": "docs-source/licenses/Licenses.txt",
+          "byteCount": 9305,
+          "sha256": "sha256:437b7168cc997abea3b5f2a9e0fb6894f96de77b9c69be428ccfcfe9bed58293",
+          "evidenceStatus": "pinned-upstream-byte-identity",
+          "redistributionCleared": false
+        }
+      ]
+    },
+    "composition": {
+      "const": {
+        "conventionalCellCount": 144,
+        "sodiumIonCount": 576,
+        "chlorideIonCount": 576,
+        "crystalIonCount": 1152,
+        "waterMoleculeCount": 1728,
+        "waterCountPerRegion": 864,
+        "particleCount": 6336,
+        "residueCount": 2880,
+        "structuralWaterBondCount": 3456,
+        "rigidWaterConstraintCount": 5184,
+        "totalFormalChargeE": 0,
+        "totalModelPointChargeE": 0,
+        "totalMassDalton": 64791.919872,
+        "nominalWaterSeedDensityKgM3": 1000.3659761772168
+      }
+    },
+    "periodicCell": {
+      "const": {
+        "kind": "orthorhombic-fully-periodic",
+        "vectorsNanometer": [
+          { "x": 3.38412, "y": 0, "z": 0 },
+          { "x": 0, "y": 3.38412, "z": 0 },
+          { "x": 0, "y": 0, "z": 6.76824 }
+        ],
+        "lengthsNanometer": { "x": 3.38412, "y": 3.38412, "z": 6.76824 },
+        "periodicAxes": [true, true, true],
+        "volumeNanometer3": 77.51169954870105,
+        "nominalSlabThicknessNanometer": 2.25608,
+        "nominalWaterThicknessPerSideNanometer": 2.25608,
+        "combinedWaterThicknessNanometer": 4.51216,
+        "periodicSurfacePlaneSeparationNanometer": 4.794169999999999,
+        "twoWaterRegionsHaveEqualCompositionAndPackingRecipe": true
+      }
+    },
+    "crystalConstruction": {
+      "const": {
+        "algorithm": "replicated-fm-3m-conventional-basis-v0410",
+        "spaceGroup": "Fm-3m",
+        "latticeConstantNanometer": 0.56402,
+        "latticeConstantTemperatureCelsius": 26,
+        "latticeConstantRole": "experimental-geometric-seed-not-force-field-equilibrium",
+        "conventionalCellRepeats": [6, 6, 4],
+        "formulaUnitsPerConventionalCell": 4,
+        "basis": [
+          { "element": "Na", "fractional": { "x": 0, "y": 0, "z": 0 } },
+          { "element": "Na", "fractional": { "x": 0, "y": 0.5, "z": 0.5 } },
+          { "element": "Na", "fractional": { "x": 0.5, "y": 0, "z": 0.5 } },
+          { "element": "Na", "fractional": { "x": 0.5, "y": 0.5, "z": 0 } },
+          { "element": "Cl", "fractional": { "x": 0.5, "y": 0.5, "z": 0.5 } },
+          { "element": "Cl", "fractional": { "x": 0.5, "y": 0, "z": 0 } },
+          { "element": "Cl", "fractional": { "x": 0, "y": 0.5, "z": 0 } },
+          { "element": "Cl", "fractional": { "x": 0, "y": 0, "z": 0.5 } }
+        ],
+        "atomicPlaneCount": 8,
+        "ionsPerAtomicPlane": 144,
+        "sodiumPerAtomicPlane": 72,
+        "chloridePerAtomicPlane": 72,
+        "planeFormalChargeE": 0,
+        "firstPlaneZNanometer": 2.3970849999999997,
+        "lastPlaneZNanometer": 4.371155,
+        "lowerAndUpperTermination": "neutral-mixed-na-cl-{100}-planes"
+      }
+    },
+    "waterConstruction": {
+      "const": {
+        "algorithm": "balanced-six-orientation-rigid-tip3p-grid-seed-v0410",
+        "role": "deterministic-pre-minimization-packing-not-equilibrated-water",
+        "gridsPerRegion": [12, 12, 6],
+        "regionOrder": ["lower-water-region", "upper-water-region"],
+        "oxygenHydrogenDistanceNanometer": 0.09572,
+        "hydrogenHydrogenDistanceNanometer": 0.15139006545247014,
+        "hydrogenOxygenHydrogenAngleRadian": 1.82421813418,
+        "orientationIds": ["+x", "-x", "+y", "-y", "+z", "-z"],
+        "occurrencesPerOrientationPerRegion": 144,
+        "netDipoleDirectionSumPerRegion": { "x": 0, "y": 0, "z": 0 }
+      }
+    },
+    "coordinateContract": {
+      "const": {
+        "seedId": "nacl-100-tip3p-balanced-double-interface-6x6x4-seed-20260902",
+        "algorithmVersion": "tf.nacl-water-interface-coordinate-seed/0.4.10",
+        "unit": "nanometer",
+        "atomOrder": "crystal-cell-z-y-x-basis-then-lower-water-z-y-x-ohh-then-upper-water-z-y-x-ohh",
+        "wrapping": "all-sites-inside-primary-cell-no-post-generation-wrap",
+        "coordinateConstructionDigest": "sha256:7b77acefe148d5e6adb4e27829589cb0e34e17d5cfe78fb0c83d0816ceb05fbb",
+        "coordinatePayloadDigest": "sha256:17631204745ab1bb264d2052c9cfefb6afbd989a6559d6de1ef5c091c1d8ae99",
+        "topologyDigest": "sha256:e9d7293e55709ffe8e964c266fe936d597d30d2dd244b398e20b4d0239709183"
+      }
+    },
+    "candidateForceModel": {
+      "const": {
+        "familyId": "openmm-amber14-tip3p-joung-cheatham-candidate",
+        "waterModel": "rigid-TIP3P",
+        "ionModel": "Joung-Cheatham-monovalent-ions-for-TIP3P",
+        "combiningRule": "Lorentz-Berthelot",
+        "electrostaticsPlan": "three-dimensional-PME",
+        "cutoffNanometer": 1,
+        "dispersionCorrection": true,
+        "solidInterfaceDomainValidated": false,
+        "saturationOrPhaseEquilibriumValidated": false,
+        "executionEligibility": "blocked-until-all-prerequisite-gates-have-independent-receipts"
+      }
+    },
+    "prerequisiteGates": {
+      "const": [
+        {
+          "gateId": "pure-water-openmm-control",
+          "requirement": "protected OpenMM 8.6 Reference replay and CPU fixed-coordinate comparison",
+          "status": "required-not-satisfied",
+          "receiptDigest": null
+        },
+        {
+          "gateId": "single-pair-low-salt-pme-control",
+          "requirement": "same force-family periodic water plus one neutral NaCl pair with preregistered bulk gates",
+          "status": "required-not-satisfied",
+          "receiptDigest": null
+        },
+        {
+          "gateId": "dry-nacl-100-slab-stability-control",
+          "requirement": "mobile dry slab stability, force closure and lattice-order audit",
+          "status": "required-not-satisfied",
+          "receiptDigest": null
+        },
+        {
+          "gateId": "solid-water-interface-potential-domain-qualification",
+          "requirement": "independent evidence that the selected potential is valid for solid, solution and interface use",
+          "status": "required-not-satisfied",
+          "receiptDigest": null
+        }
+      ]
+    },
+    "plannedReadouts": {
+      "const": {
+        "availableFromGeometricSeed": [
+          "atom-identity-formal-and-model-point-charge",
+          "exact-coordinate-and-cell",
+          "crystal-layer-and-surface-labels",
+          "rigid-water-topology"
+        ],
+        "requireExecutedVerifiedTrajectory": [
+          "energy-and-potential-force",
+          "z-resolved-species-density",
+          "water-dipole-orientation",
+          "na-o-cl-h-cl-o-geometric-coordination",
+          "surface-site-displacement-and-occupancy"
+        ],
+        "requireQualifiedPotentialAndMultiSeedStatistics": [
+          "persistent-detachment-and-reattachment-events",
+          "largest-crystal-cluster-and-local-q8",
+          "dissolution-or-crystallization-rate"
+        ]
+      }
+    },
+    "evidenceSemantics": {
+      "const": {
+        "coordinateConstructionExecutedLocally": true,
+        "molecularDynamicsExecuted": false,
+        "openmmExecuted": false,
+        "pmeExecuted": false,
+        "minimized": false,
+        "equilibrated": false,
+        "trajectoryAvailable": false,
+        "forceOrEnergyAvailable": false,
+        "protectedMainArtifact": false
+      }
+    },
+    "claimBoundaries": {
+      "const": {
+        "lowSaltQualified": false,
+        "drySlabQualified": false,
+        "interfacePotentialQualified": false,
+        "interfaceDynamicsSimulated": false,
+        "hydrationStructureMeasured": false,
+        "dissolutionObserved": false,
+        "crystallizationObserved": false,
+        "kineticRateEstimated": false,
+        "electronicStructureComputed": false,
+        "learnedWorldModelTrained": false,
+        "industrialPrediction": false,
+        "publicReleaseEligible": false
+      }
+    },
+    "systemDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:d47785bc641fd6483c58b8549bf7c0dc7e116a5892c0c13864c98e87c712133a"
+    }
+  },
+  "additionalProperties": false
+}

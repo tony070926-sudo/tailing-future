@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "tf.public-product-evaluation/0.1",
+  "sourceArtifactDigest": "sha256:32777c7662c52b37bfb1e10cc38dfd75a4466af2e9326844711360d8cb2dc270",
+  "scorecard": {
+    "candidateVersion": "0.4.11-nacl-water-semantic-import",
+    "dimensions": [
+      {
+        "id": "contract",
+        "displayLabel": "状态 / 动作 / 观测契约",
+        "weight": 8,
+        "score": 2,
+        "summary": "双 world schema + digest + atomic replay"
+      },
+      {
+        "id": "data",
+        "displayLabel": "数据与来源追踪",
+        "weight": 8,
+        "score": 1,
+        "summary": "固定资产已在受保护 Linux 验证；未完成全基准"
+      },
+      {
+        "id": "atomistic",
+        "displayLabel": "原子层物理",
+        "weight": 12,
+        "score": 1,
+        "summary": "LJ 回归 + 有界水二聚体轨迹 + 6,336 位点 NaCl{100}–水几何与跨语言语义导入 + 双模型 10 帧隔离 smoke"
+      },
+      {
+        "id": "mesoscale",
+        "displayLabel": "介观层",
+        "weight": 8,
+        "score": 0,
+        "summary": "尚未接入"
+      },
+      {
+        "id": "continuum",
+        "displayLabel": "连续热场",
+        "weight": 10,
+        "score": 3,
+        "summary": "面积热容 + 二维二阶收敛"
+      },
+      {
+        "id": "process",
+        "displayLabel": "反应器与流程",
+        "weight": 10,
+        "score": 0,
+        "summary": "仅 A→B 标签，非反应器"
+      },
+      {
+        "id": "coupling",
+        "displayLabel": "跨尺度耦合",
+        "weight": 14,
+        "score": 3,
+        "summary": "解析交换 + 原子反应结算"
+      },
+      {
+        "id": "world_rollout",
+        "displayLabel": "多轮世界行为",
+        "weight": 8,
+        "score": 2,
+        "summary": "双 world typed action + branch + replay"
+      },
+      {
+        "id": "uq_ood",
+        "displayLabel": "UQ / OOD",
+        "weight": 8,
+        "score": 2,
+        "summary": "完整资源域，尚无校准 UQ"
+      },
+      {
+        "id": "repro_cost",
+        "displayLabel": "可复现性与成本",
+        "weight": 6,
+        "score": 2,
+        "summary": "8×5000 经验尾部 + 成本预算"
+      },
+      {
+        "id": "visual_truth",
+        "displayLabel": "可视化真实性",
+        "weight": 4,
+        "score": 2,
+        "summary": "粒子 / 分子 / 力 / 轨迹与账本同帧"
+      },
+      {
+        "id": "safety",
+        "displayLabel": "安全 / 许可 / 治理",
+        "weight": 4,
+        "score": 1,
+        "summary": "advisory-only + claim lint"
+      }
+    ]
+  },
+  "comparators": {
+    "snapshotDate": "2026-09-02",
+    "items": [
+      {
+        "id": "aido-cell-1.0",
+        "name": "AIDO Cell 1.0",
+        "scope": "persistent multi-scale state, actions and multimodal readouts",
+        "evidenceClass": "claim"
+      },
+      {
+        "id": "equiformerv3-dens-oam",
+        "name": "EquiformerV3+DeNS-OAM",
+        "scope": "crystal stability and phonon benchmark artifacts",
+        "evidenceClass": "auditable"
+      },
+      {
+        "id": "tece-oam-rra-1.0",
+        "name": "TECE-OAM-RRA-1.0",
+        "scope": "crystal stability and phonon thermal-conductivity artifacts",
+        "evidenceClass": "auditable"
+      },
+      {
+        "id": "mattersim-1.0.0-5m",
+        "name": "MatterSim-v1.0.0-5M",
+        "scope": "open atomistic energy, force, stress and MD baseline",
+        "evidenceClass": "auditable"
+      },
+      {
+        "id": "mace-mpa-0",
+        "name": "MACE-MPA-0",
+        "scope": "open atomistic interatomic-potential control",
+        "evidenceClass": "auditable"
+      },
+      {
+        "id": "openmm-8.5.1-tip3p-ions",
+        "name": "OpenMM 8.5.1 Amber14 TIP3P plus ions",
+        "scope": "compatible TIP3P water and monovalent-ion parameter source for a future Ewald comparator",
+        "evidenceClass": "reference"
+      },
+      {
+        "id": "openmm-8.6.0-tip3p-control",
+        "name": "OpenMM 8.6.0 TIP3P pure-water control",
+        "scope": "pinned OpenMM runtime and exact 895-water Reference/CPU control plan",
+        "evidenceClass": "reference"
+      },
+      {
+        "id": "pfhub-benchmark-3",
+        "name": "NIST PFHub Benchmark 3",
+        "scope": "coupled phase-field and heat-diffusion reference",
+        "evidenceClass": "reference"
+      },
+      {
+        "id": "cantera-3.2-cstr",
+        "name": "Cantera 3.2 CSTR",
+        "scope": "isothermal reactor-kinetics reference; future energy closure must include thermostat heat load",
+        "evidenceClass": "reference"
+      },
+      {
+        "id": "idaes-2.12",
+        "name": "IDAES 2.12",
+        "scope": "process systems, unit models and constrained optimization",
+        "evidenceClass": "reference"
+      }
+    ]
+  }
+}

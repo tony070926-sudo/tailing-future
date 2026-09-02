@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/molecular-observation/0.4",
+  "title": "Tailing Future Molecular Dynamics Observation",
+  "type": "object",
+  "required": [
+    "schemaVersion", "worldId", "stateId", "stateDigest", "physicalDigest",
+    "parentStateId", "step", "timePicoseconds", "options", "topologyDigest",
+    "atoms", "bonds", "bodies", "pairInteractions", "forceByAtomIdKjMolAngstrom",
+    "energy", "conservation", "cell", "thermodynamics", "stressKjMolAngstrom3",
+    "stressStatus", "numericalValidity", "provenance", "boundaries"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.molecular-observation/0.4" },
+    "worldId": { "const": "tf.world/water-dimer-fixed-orientation-isolated-energy/v1" },
+    "stateId": { "type": "string", "minLength": 1 },
+    "stateDigest": { "$ref": "#/$defs/digest" },
+    "physicalDigest": { "$ref": "#/$defs/digest" },
+    "parentStateId": { "type": ["string", "null"] },
+    "step": { "type": "integer", "minimum": 0, "maximum": 10000 },
+    "timePicoseconds": { "type": "number", "minimum": 0, "maximum": 5 },
+    "options": { "$ref": "#/$defs/options" },
+    "topologyDigest": { "$ref": "#/$defs/digest" },
+    "atoms": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/atom" }
+    },
+    "bonds": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/bond" }
+    },
+    "bodies": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/body" }, { "type": "object", "properties": { "id": { "const": "water-a" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/body" }, { "type": "object", "properties": { "id": { "const": "water-b" } } }] }
+      ],
+      "items": false
+    },
+    "pairInteractions": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/pairInteraction" }
+    },
+    "forceByAtomIdKjMolAngstrom": {
+      "type": "object",
+      "required": [
+        "water-a-o", "water-a-h1", "water-a-h2",
+        "water-b-o", "water-b-h1", "water-b-h2"
+      ],
+      "properties": {
+        "water-a-o": { "$ref": "#/$defs/vector3" },
+        "water-a-h1": { "$ref": "#/$defs/vector3" },
+        "water-a-h2": { "$ref": "#/$defs/vector3" },
+        "water-b-o": { "$ref": "#/$defs/vector3" },
+        "water-b-h1": { "$ref": "#/$defs/vector3" },
+        "water-b-h2": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "energy": {
+      "type": "object",
+      "required": [
+        "coulombKjMol", "lennardJonesKjMol", "potentialKjMol", "kineticKjMol",
+        "totalKjMol", "initialTotalKjMol", "driftReferenceKjMol",
+        "absoluteExcursionKjMol", "maximumAbsoluteExcursionKjMol", "relativeDrift",
+        "maximumRelativeExcursion", "linearDriftSlopeKjMolPerPicosecond",
+        "linearRelativeDriftRatePerPicosecond", "driftSampleCount"
+      ],
+      "properties": {
+        "coulombKjMol": { "type": "number" },
+        "lennardJonesKjMol": { "type": "number" },
+        "potentialKjMol": { "type": "number" },
+        "kineticKjMol": { "type": "number", "minimum": 0 },
+        "totalKjMol": { "type": "number" },
+        "initialTotalKjMol": { "type": "number" },
+        "driftReferenceKjMol": { "type": "number", "exclusiveMinimum": 0 },
+        "absoluteExcursionKjMol": { "type": "number", "minimum": 0 },
+        "maximumAbsoluteExcursionKjMol": { "type": "number", "minimum": 0 },
+        "relativeDrift": { "type": "number", "minimum": -0.0001, "maximum": 0.0001 },
+        "maximumRelativeExcursion": { "type": "number", "minimum": 0, "maximum": 0.0001 },
+        "linearDriftSlopeKjMolPerPicosecond": { "type": "number" },
+        "linearRelativeDriftRatePerPicosecond": { "type": "number" },
+        "driftSampleCount": { "type": "integer", "minimum": 1, "maximum": 10001 }
+      },
+      "additionalProperties": false
+    },
+    "conservation": {
+      "type": "object",
+      "required": [
+        "totalMassDalton", "totalChargeE", "totalMomentumDaltonAngstromPerPicosecond",
+        "momentumResidual", "centerOfMassAngstrom", "centerOfMassResidualAngstrom",
+        "internalForceResidualKjMolAngstrom", "maximumBondResidualAngstrom",
+        "maximumAngleResidualDegrees"
+      ],
+      "properties": {
+        "totalMassDalton": { "type": "number", "exclusiveMinimum": 0 },
+        "totalChargeE": { "type": "number" },
+        "totalMomentumDaltonAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+        "momentumResidual": { "type": "number", "minimum": 0, "maximum": 1e-9 },
+        "centerOfMassAngstrom": { "$ref": "#/$defs/vector3" },
+        "centerOfMassResidualAngstrom": { "type": "number", "minimum": 0, "maximum": 1e-9 },
+        "internalForceResidualKjMolAngstrom": { "type": "number", "minimum": 0, "maximum": 1e-9 },
+        "maximumBondResidualAngstrom": { "type": "number", "minimum": 0, "maximum": 1e-12 },
+        "maximumAngleResidualDegrees": { "type": "number", "minimum": 0, "maximum": 1e-10 }
+      },
+      "additionalProperties": false
+    },
+    "cell": {
+      "type": "object",
+      "required": ["boundary", "periodicAxes", "vectorsAngstrom"],
+      "properties": {
+        "boundary": { "const": "vacuum" },
+        "periodicAxes": {
+          "type": "array",
+          "prefixItems": [{ "const": false }, { "const": false }, { "const": false }],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "vectorsAngstrom": { "type": "null" }
+      },
+      "additionalProperties": false
+    },
+    "thermodynamics": {
+      "type": "object",
+      "required": ["temperatureKelvin", "pressure", "status"],
+      "properties": {
+        "temperatureKelvin": { "type": "null" },
+        "pressure": { "type": "null" },
+        "status": { "const": "not-defined-for-two-fixed-orientation-bodies" }
+      },
+      "additionalProperties": false
+    },
+    "stressKjMolAngstrom3": { "type": "null" },
+    "stressStatus": { "const": "not-modeled-vacuum-two-body" },
+    "numericalValidity": {
+      "type": "object",
+      "required": [
+        "status", "energyDriftLimit", "energyGateMetric", "momentumResidualLimit",
+        "internalForceResidualLimit", "minimumCrossPairDistanceAngstrom"
+      ],
+      "properties": {
+        "status": { "const": "pass" },
+        "energyDriftLimit": { "const": 0.0001 },
+        "energyGateMetric": { "const": "maximum-relative-excursion" },
+        "momentumResidualLimit": { "const": 1e-9 },
+        "internalForceResidualLimit": { "const": 1e-9 },
+        "minimumCrossPairDistanceAngstrom": { "type": "number", "exclusiveMinimum": 0.2 }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "solver", "solverVersion", "modelRole", "fidelity", "forceModel",
+        "electronicStructureSolved", "uncertaintyStatus"
+      ],
+      "properties": {
+        "solver": { "const": "tf-fixed-orientation-rigid-body-vv" },
+        "solverVersion": { "const": "0.4.0" },
+        "modelRole": { "const": "solver" },
+        "fidelity": { "const": "two-fixed-orientation-rigid-tip3p-parameterized-monomers-isolated-energy" },
+        "forceModel": { "const": "tf-local-classical-tip3p-openmm-8.5.1-parameters-cross-only/v1" },
+        "electronicStructureSolved": { "const": false },
+        "uncertaintyStatus": { "const": "not-quantified" }
+      },
+      "additionalProperties": false
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "vector3": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "scenario", "forceModel", "integrator", "constraint", "ensemble",
+        "boundary", "timeStepPicoseconds", "maximumSteps"
+      ],
+      "properties": {
+        "scenario": { "const": "water-dimer-2.9A-0deg-rest/v1" },
+        "forceModel": { "const": "tf-local-classical-tip3p-openmm-8.5.1-parameters-cross-only/v1" },
+        "integrator": { "const": "velocity-verlet-fixed-orientation/v1" },
+        "constraint": { "const": "fixed-body-frame-no-rotation" },
+        "ensemble": { "const": "isolated-constant-energy" },
+        "boundary": { "const": "vacuum" },
+        "timeStepPicoseconds": { "const": 0.0005 },
+        "maximumSteps": { "const": 10000 }
+      },
+      "additionalProperties": false
+    },
+    "atom": {
+      "type": "object",
+      "required": [
+        "id", "bodyId", "label", "element", "chargeE", "massDalton",
+        "positionAngstrom", "velocityAngstromPerPicosecond", "forceKjMolAngstrom"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "bodyId": { "enum": ["water-a", "water-b"] },
+        "label": { "type": "string", "minLength": 1 },
+        "element": { "enum": ["H", "O"] },
+        "chargeE": { "type": "number" },
+        "massDalton": { "type": "number", "exclusiveMinimum": 0 },
+        "positionAngstrom": { "$ref": "#/$defs/vector3" },
+        "velocityAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+        "forceKjMolAngstrom": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "bond": {
+      "type": "object",
+      "required": ["id", "atomAId", "atomBId", "kind", "lengthAngstrom"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "atomAId": { "type": "string", "minLength": 1 },
+        "atomBId": { "type": "string", "minLength": 1 },
+        "kind": { "const": "rigid-covalent" },
+        "lengthAngstrom": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "body": {
+      "type": "object",
+      "required": [
+        "id", "centerOfMassAngstrom", "velocityAngstromPerPicosecond",
+        "massDalton", "forceKjMolAngstrom", "unintegratedTorqueKjMol"
+      ],
+      "properties": {
+        "id": { "enum": ["water-a", "water-b"] },
+        "centerOfMassAngstrom": { "$ref": "#/$defs/vector3" },
+        "velocityAngstromPerPicosecond": { "$ref": "#/$defs/vector3" },
+        "massDalton": { "type": "number", "exclusiveMinimum": 0 },
+        "forceKjMolAngstrom": { "$ref": "#/$defs/vector3" },
+        "unintegratedTorqueKjMol": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    },
+    "pairInteraction": {
+      "type": "object",
+      "required": [
+        "id", "sourceAtomId", "targetAtomId", "distanceAngstrom",
+        "coulombEnergyKjMol", "lennardJonesEnergyKjMol", "lennardJonesModel",
+        "totalEnergyKjMol", "forceOnTargetKjMolAngstrom"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sourceAtomId": { "type": "string", "minLength": 1 },
+        "targetAtomId": { "type": "string", "minLength": 1 },
+        "distanceAngstrom": { "type": "number", "exclusiveMinimum": 0.2 },
+        "coulombEnergyKjMol": { "type": "number" },
+        "lennardJonesEnergyKjMol": { "type": "number" },
+        "lennardJonesModel": { "enum": ["tip3p-oxygen-oxygen", "not-applied"] },
+        "totalEnergyKjMol": { "type": "number" },
+        "forceOnTargetKjMolAngstrom": { "$ref": "#/$defs/vector3" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

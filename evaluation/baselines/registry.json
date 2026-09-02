@@ -1,6 +1,6 @@
 {
   "schemaVersion": "tf.comparators/0.2",
-  "snapshotDate": "2026-08-29",
+  "snapshotDate": "2026-09-02",
   "policy": "CLAIM never enters numeric ranking; AUDITABLE means public artifacts can be checked; only Tailing Future REPRODUCED like-for-like runs may enter candidate rankings.",
   "comparators": [
     {
@@ -45,6 +45,22 @@
       "reason": "Protected-main run 33226521340 completed the two clean python-hostlist builds, exact lock, isolated image and ten-record MACE smoke predictions with finite E/F/stress and no reference labels. No full Random-TP metrics or blind engineering baseline exists, so it remains auditable and non-comparable."
     },
     {
+      "id": "openmm-8.5.1-tip3p-ions", "name": "OpenMM 8.5.1 Amber14 TIP3P plus ions", "scope": "compatible TIP3P water and monovalent-ion parameter source for a future Ewald comparator",
+      "source": "https://github.com/openmm/openmm/blob/f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5/wrappers/python/openmm/app/data/amber14/tip3p.xml",
+      "revision": "OpenMM 8.5.1 commit f7fa0c27; raw amber14/tip3p.xml 19070 bytes", "evidenceClass": "reference", "claimOwner": "OpenMM / Amber parameter authors", "comparable": false,
+      "sourceCommit": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5", "sourceDigest": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9",
+      "benchmarkCommit": "f7fa0c27c1f8d943c339d67b3bf22f026d0bd8b5", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "The immutable XML binds one compatible water/ion parameter family. Tailing Future has not bundled the asset, resolved its redistribution status, run OpenMM or reproduced an OpenMM Ewald trajectory, so this remains a non-comparable reference."
+    },
+    {
+      "id": "openmm-8.6.0-tip3p-control", "name": "OpenMM 8.6.0 TIP3P pure-water control", "scope": "pinned OpenMM runtime and exact 895-water Reference/CPU control plan",
+      "source": "https://github.com/openmm/openmm/blob/c6173db6e8edd705eb59172bd21e9ce69c572405/wrappers/python/openmm/app/data/amber14/tip3p.xml",
+      "revision": "OpenMM 8.6.0 commit c6173db; raw amber14/tip3p.xml 19070 bytes", "evidenceClass": "reference", "claimOwner": "OpenMM / Amber parameter authors", "comparable": false,
+      "sourceCommit": "c6173db6e8edd705eb59172bd21e9ce69c572405", "sourceDigest": "sha256:3f4b188dbcb6c02863230eaca231e927fb6bf3307ce947d8a50d0f46f6dd83d9",
+      "benchmarkCommit": "c6173db6e8edd705eb59172bd21e9ce69c572405", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
+      "reason": "The local producer and independent verifier are implemented for the locked 895-water Reference/CPU control, but no protected-main artifact has been consumed by the browser path, execution authenticity is not certified, the run is not independently reproduced, and redistribution clearance remains unresolved."
+    },
+    {
       "id": "pfhub-benchmark-3", "name": "NIST PFHub Benchmark 3", "scope": "coupled phase-field and heat-diffusion reference",
       "source": "https://github.com/usnistgov/pfhub/blob/316f242042af2c086e030864f2af201e0bee8618/benchmarks/benchmark3.ipynb", "revision": "PFHub commit 316f242042af2c086e030864f2af201e0bee8618", "evidenceClass": "reference", "claimOwner": "NIST PFHub", "comparable": false,
       "sourceCommit": "316f242042af2c086e030864f2af201e0bee8618", "sourceDigest": "sha256:0443ae7019a4495b1cf2ebaa46cca2bb90c63e508154701f5b575ed91e15ba27",
@@ -52,11 +68,11 @@
       "reason": "Community reference for the next mesoscale coupling stage; not implemented in the R2 candidate."
     },
     {
-      "id": "cantera-3.2-cstr", "name": "Cantera 3.2 CSTR", "scope": "reactor kinetics and energy-balance reference",
+      "id": "cantera-3.2-cstr", "name": "Cantera 3.2 CSTR", "scope": "isothermal reactor-kinetics reference; future energy closure must include thermostat heat load",
       "source": "https://github.com/Cantera/cantera/blob/4a8358eb80cfeb50474386b5f9ec0b3a83519889/samples/python/reactors/continuous_reactor.py", "revision": "Cantera v3.2.0 commit 4a8358eb80cfeb50474386b5f9ec0b3a83519889", "evidenceClass": "reference", "claimOwner": "Cantera project", "comparable": false,
       "sourceCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "sourceDigest": "sha256:72843e6c153c21ae18ff9d310b6b48fbcf37255ab599ed4c647cea48cb970e49",
       "benchmarkCommit": "4a8358eb80cfeb50474386b5f9ec0b3a83519889", "checkpointDigest": null, "datasetDigest": null, "runnerDigest": null,
-      "reason": "Pinned reactor reference for the next iteration; the current A/B labels are not a reactor model."
+      "reason": "Pinned isothermal reactor reference for the next iteration; both example reactors use energy=off. It cannot establish adiabatic energy conservation, and any future energy ledger must explicitly include the external heat load required to maintain temperature."
     },
     {
       "id": "idaes-2.12", "name": "IDAES 2.12", "scope": "process systems, unit models and constrained optimization",

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/molecular-action/0.4",
+  "title": "Tailing Future Molecular Dynamics Action",
+  "type": "object",
+  "required": [
+    "schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId",
+    "appliedAtStep", "parameters"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.molecular-action/0.4" },
+    "actionId": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["step", "branch"] },
+    "parentStateId": { "type": "string", "minLength": 1 },
+    "resultingStateId": { "type": "string", "minLength": 1 },
+    "appliedAtStep": { "type": "integer", "minimum": 0, "maximum": 10000 },
+    "parameters": { "type": "object" }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "kind": { "const": "step" },
+        "parameters": {
+          "type": "object",
+          "required": ["substeps"],
+          "properties": {
+            "substeps": { "type": "integer", "minimum": 1, "maximum": 1000 }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "properties": {
+        "kind": { "const": "branch" },
+        "parameters": {
+          "type": "object",
+          "required": ["fromStep", "branchOrdinal"],
+          "properties": {
+            "fromStep": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "branchOrdinal": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

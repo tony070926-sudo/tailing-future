@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Tailing Future · Private Atomistic WebGL2 Proof</title>
+    <style nonce="__TF_PRIVATE_CSP_NONCE__">
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #02090b;
+        color: #e9fbf7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 14%, rgba(23, 145, 142, 0.14), transparent 32rem),
+          radial-gradient(circle at 82% 72%, rgba(255, 92, 111, 0.1), transparent 34rem),
+          #02090b;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 24rem;
+        min-height: 100vh;
+      }
+
+      .viewport {
+        position: relative;
+        min-height: 100vh;
+        border-right: 1px solid rgba(137, 232, 219, 0.12);
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100vh;
+      }
+
+      .title {
+        position: absolute;
+        z-index: 2;
+        top: 1.5rem;
+        left: 1.75rem;
+        max-width: 36rem;
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.5rem;
+        color: #71dccc;
+        font-size: 0.7rem;
+        font-weight: 750;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.55rem, 3vw, 2.75rem);
+        font-weight: 560;
+        letter-spacing: -0.035em;
+      }
+
+      .subtitle {
+        margin: 0.65rem 0 0;
+        color: #a8c9c3;
+        font-size: 0.86rem;
+        line-height: 1.6;
+      }
+
+      aside {
+        height: 100vh;
+        overflow: auto;
+        padding: 1.4rem;
+        background: rgba(4, 17, 19, 0.88);
+        backdrop-filter: blur(24px);
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .badge {
+        border: 1px solid rgba(114, 223, 207, 0.2);
+        border-radius: 999px;
+        padding: 0.36rem 0.58rem;
+        color: #9ceadd;
+        background: rgba(18, 95, 91, 0.12);
+        font-size: 0.63rem;
+        font-weight: 720;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .badge.warning {
+        border-color: rgba(255, 116, 130, 0.26);
+        color: #ff9aa7;
+        background: rgba(128, 27, 43, 0.12);
+      }
+
+      section {
+        margin-top: 1rem;
+        padding: 1rem;
+        border: 1px solid rgba(139, 227, 216, 0.11);
+        border-radius: 0.9rem;
+        background: rgba(8, 29, 31, 0.7);
+      }
+
+      h2 {
+        margin: 0 0 0.7rem;
+        color: #c7eee7;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      #harness-status {
+        min-height: 2.6rem;
+        color: #b7d7d1;
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        color: #9bbab5;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 0.62rem;
+        line-height: 1.55;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 1rem;
+        border: 1px solid rgba(120, 225, 211, 0.25);
+        border-radius: 0.75rem;
+        padding: 0.72rem;
+        color: #d8f8f2;
+        background: rgba(15, 91, 87, 0.2);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      button:disabled { cursor: default; opacity: 0.45; }
+
+      @media (max-width: 850px) {
+        body { overflow: auto; }
+        main { grid-template-columns: 1fr; }
+        .viewport { min-height: 68vh; border-right: 0; }
+        canvas { height: 68vh; }
+        aside { height: auto; min-height: 32vh; }
+      }
+    </style>
+  </head>
+  <body data-harness-state="booting">
+    <main>
+      <div class="viewport">
+        <div class="title">
+          <p class="eyebrow">Tailing Future · V047 private evidence surface</p>
+          <h1>Atomistic WebGL2 frame proof</h1>
+          <p class="subtitle">小型原子核与 O–H 拓扑约束来自摘要绑定的 positions 帧；本页不是公开产品路由，也不是执行真实性或发布证据。</p>
+        </div>
+        <canvas id="atomistic-canvas" width="960" height="640" aria-label="私有原子级 WebGL2 画布"></canvas>
+      </div>
+      <aside>
+        <div class="badges" aria-label="证据边界">
+          <span class="badge">private local test</span>
+          <span class="badge">positions only</span>
+          <span class="badge warning">execution unattested</span>
+          <span class="badge warning">not reproduced</span>
+        </div>
+        <section>
+          <h2>Runtime status</h2>
+          <div id="harness-status" role="status" aria-live="polite">正在验证一次性数据包与 WebGL2 环境…</div>
+        </section>
+        <section>
+          <h2>Scientific boundary</h2>
+          <pre>O–H 圆柱：拓扑邻接与刚性距离约束，不是能量键或键级。
+F32 positions：显示派生，不提升科学精度，不插值。
+力、速度、非键场、应力与电子密度：未传输、未渲染。
+来源：可能是合成测试 fixture；执行真实性尚未认证。</pre>
+        </section>
+        <section>
+          <h2>Observable evidence</h2>
+          <pre id="harness-evidence">{ "state": "booting" }</pre>
+        </section>
+        <button id="dispose-harness" type="button">Dispose GPU and revoke local copies</button>
+      </aside>
+    </main>
+    <script nonce="__TF_PRIVATE_CSP_NONCE__" type="module" src="/client.js"></script>
+  </body>
+</html>

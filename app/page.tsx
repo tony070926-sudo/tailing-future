@@ -10,9 +10,8 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import scorecard from '@/evaluation/current-scorecard.json' with { type: 'json' };
-import latestReport from '@/evaluation/latest-report.json' with { type: 'json' };
-import comparatorRegistry from '@/evaluation/baselines/registry.json' with { type: 'json' };
+import publicSummary from '@/evaluation/public-summary.json' with { type: 'json' };
+import publicProductEvaluation from '@/evaluation/public-product-evaluation.json' with { type: 'json' };
 import { ARGON_UNITS } from '@/lib/simulation/lennard-jones';
 import {
   ThermochemicalWorld,
@@ -143,6 +142,8 @@ const COMPARATOR_GAPS: Record<string, string> = {
   'tece-oam-rra-1.0': '热输运前沿产物可审计，尚无本地复现。',
   'mattersim-1.0.0-5m': 'checkpoint 已锁定且 10-frame smoke 完成；693-record 指标仍为空。',
   'mace-mpa-0': 'challenger 已锁定且 10-frame smoke 完成；693-record 盲跑仍未执行。',
+  'openmm-8.5.1-tip3p-ions': '参数来源已锁定；尚无获授权且认证的 OpenMM 轨迹复现。',
+  'openmm-8.6.0-tip3p-control': '受保护执行链已写入源码；尚无 main 分支真实产物或认证。',
   'pfhub-benchmark-3': 'Fourier 门已过，尚未完成相场—热耦合。',
   'cantera-3.2-cstr': 'A/B 标签不是反应器；下一轮先锁定 CSTR。',
   'idaes-2.12': '尚无设备、flowsheet 或优化建议。',
@@ -154,7 +155,10 @@ const NEXT_ACTIONS: Record<string, string> = {
   mesoscale: '实现 NIST PFHub BM3 相场—热耦合基准',
 };
 
-const weightedScore = scorecard.dimensions.reduce((total, dimension) => total + dimension.weight * dimension.score / 4, 0);
+const weightedScore = publicProductEvaluation.scorecard.dimensions.reduce(
+  (total, dimension) => total + dimension.weight * dimension.score / 4,
+  0,
+);
 
 export default function Home() {
   const [activeView, setActiveView] = useState<View>('lab');
@@ -651,7 +655,7 @@ export function LegacyThermochemicalLab({ active }: { active: boolean }) {
                 <button type="button" className="warm" onClick={injectPulse}>＋<span>热脉冲</span></button>
               </div>
               <div className="horizon-track">
-                <div><span>{error ?? eventNote}</span><b>{snapshot.step.toLocaleString()} / {WORLD_DOMAIN.maximumTotalSteps.toLocaleString()} steps</b></div>
+                <div><span>{error ?? eventNote}</span><b>{snapshot.step} / {WORLD_DOMAIN.maximumTotalSteps} steps</b></div>
                 <i><em style={{ width: horizonProgress + '%' }} /></i>
                 <small>{snapshot.timePicoseconds.toFixed(2)} ps approximate Argon mapping · action {snapshot.lastAction?.kind ?? 'initial'}</small>
               </div>
@@ -922,11 +926,11 @@ function ArchitectureView() {
 function SentinelView() {
   return (
     <section className="content-view sentinel-view">
-      <div className="view-intro"><div><p className="eyebrow">TAILING SENTINEL / ITERATION 02</p><h1>候选版本必须同时通过物理、契约与证据门。</h1><small className="build-provenance">commit {BUILD_COMMIT.slice(0, 12)} · report {latestReport.artifactDigest.slice(7, 19)}</small></div><div className="score-orbit"><strong>{weightedScore.toFixed(1)}</strong><span>/ 100<br />证据成熟度</span><em>{latestReport.verdict.toUpperCase()}</em></div></div>
+      <div className="view-intro"><div><p className="eyebrow">TAILING SENTINEL / ITERATION 02</p><h1>候选版本必须同时通过物理、契约与证据门。</h1><small className="build-provenance">commit {BUILD_COMMIT.slice(0, 12)} · report {publicSummary.artifactDigest.slice(7, 19)}</small></div><div className="score-orbit"><strong>{weightedScore.toFixed(1)}</strong><span>/ 100<br />证据成熟度</span><em>{publicSummary.verdict.toUpperCase()}</em></div></div>
       <div className="sentinel-grid">
         <article className="scorecard-panel panel-block">
-          <div className="panel-heading"><span>锁定评分卡</span><small>{scorecard.candidateVersion}</small></div>
-          <div className="score-table">{scorecard.dimensions.map((dimension) => (
+          <div className="panel-heading"><span>锁定评分卡</span><small>{publicProductEvaluation.scorecard.candidateVersion}</small></div>
+          <div className="score-table">{publicProductEvaluation.scorecard.dimensions.map((dimension) => (
             <div className="score-row" key={dimension.id}>
               <span className="score-label">{dimension.displayLabel}<small>{dimension.summary}</small></span>
               <span className="score-weight">{dimension.weight}%</span>
@@ -949,11 +953,11 @@ function SentinelView() {
         </article>
       </div>
       <article className="comparators-panel panel-block">
-        <div className="panel-heading"><span>外部比较器注册表</span><small>snapshot · {comparatorRegistry.snapshotDate}</small></div>
+        <div className="panel-heading"><span>外部比较器注册表</span><small>snapshot · {publicProductEvaluation.comparators.snapshotDate}</small></div>
         <div className="comparator-head"><span>比较器</span><span>角色</span><span>证据</span><span>当前最大差距</span></div>
-        {comparatorRegistry.comparators.map((item) => <div className="comparator-row" key={item.id}><b>{item.name}</b><span>{item.scope}</span><em>{EVIDENCE_LABELS[item.evidenceClass]}</em><p>{COMPARATOR_GAPS[item.id] ?? item.reason}</p></div>)}
+        {publicProductEvaluation.comparators.items.map((item) => <div className="comparator-row" key={item.id}><b>{item.name}</b><span>{item.scope}</span><em>{EVIDENCE_LABELS[item.evidenceClass]}</em><p>{COMPARATOR_GAPS[item.id] ?? '受控比较差距待登记'}</p></div>)}
       </article>
-      <div className="next-gaps"><span>NEXT ITERATION · SENTINEL OUTPUT</span>{latestReport.gaps.map((gap) => <b key={gap.dimension}>{gap.severity} · {NEXT_ACTIONS[gap.dimension] ?? gap.recommendedChange}</b>)}</div>
+      <div className="next-gaps"><span>NEXT ITERATION · SENTINEL OUTPUT</span>{publicSummary.gaps.map((gap) => <b key={gap.dimension}>{gap.severity} · {NEXT_ACTIONS[gap.dimension] ?? '受控差距待下一轮锁定'}</b>)}</div>
     </section>
   );
 }

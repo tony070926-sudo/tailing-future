@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/nacl-water-interface-coordinate-seed/0.4.10",
+  "title": "Tailing Future NaCl{100}-Water Coordinate Seed v0.4.10",
+  "description": "Closed full-payload schema for the 6,336-site geometric coordinate seed. It carries no dynamics evidence.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "seedId",
+    "status",
+    "systemId",
+    "systemDigest",
+    "atoms",
+    "structuralBonds",
+    "rigidConstraints",
+    "constructionReceipt",
+    "seedDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "tf.nacl-water-interface-coordinate-seed/0.4.10" },
+    "seedId": { "type": "string", "const": "nacl-100-tip3p-balanced-double-interface-6x6x4-seed-20260902" },
+    "status": { "type": "string", "const": "geometric-coordinate-seed-not-minimized-or-executed" },
+    "systemId": { "type": "string", "const": "nacl-100-tip3p-balanced-double-interface-6x6x4-geometric-seed" },
+    "systemDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:d47785bc641fd6483c58b8549bf7c0dc7e116a5892c0c13864c98e87c712133a"
+    },
+    "atoms": {
+      "type": "array",
+      "minItems": 6336,
+      "maxItems": 6336,
+      "items": { "$ref": "#/$defs/atom" }
+    },
+    "structuralBonds": {
+      "type": "array",
+      "minItems": 3456,
+      "maxItems": 3456,
+      "items": { "$ref": "#/$defs/bond" }
+    },
+    "rigidConstraints": {
+      "type": "array",
+      "minItems": 5184,
+      "maxItems": 5184,
+      "items": { "$ref": "#/$defs/constraint" }
+    },
+    "constructionReceipt": {
+      "const": {
+        "atomCount": 6336,
+        "sodiumIonCount": 576,
+        "chlorideIonCount": 576,
+        "waterMoleculeCount": 1728,
+        "lowerWaterCount": 864,
+        "upperWaterCount": 864,
+        "crystalLayerCount": 8,
+        "neutralCrystalLayerCount": 8,
+        "balancedWaterOrientationRegions": 2,
+        "allSitesInsidePrimaryCell": true,
+        "totalFormalChargeE": 0,
+        "totalModelPointChargeE": 0,
+        "totalMassDalton": 64791.919872000544,
+        "minimumDifferentMoleculeDistanceNanometer": 0.16483354467600186,
+        "coordinatePayloadDigest": "sha256:17631204745ab1bb264d2052c9cfefb6afbd989a6559d6de1ef5c091c1d8ae99",
+        "topologyDigest": "sha256:e9d7293e55709ffe8e964c266fe936d597d30d2dd244b398e20b4d0239709183"
+      }
+    },
+    "seedDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:beb7f2c4f997e2e8b8158a05d6083a7d6569bd1f11457f922844646cac0cc426"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "boundedId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9:+._-]{0,127}$"
+    },
+    "position": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "exclusiveMaximum": 3.38412 },
+        "y": { "type": "number", "minimum": 0, "exclusiveMaximum": 3.38412 },
+        "z": { "type": "number", "minimum": 0, "exclusiveMaximum": 6.76824 }
+      },
+      "additionalProperties": false
+    },
+    "cellIndex": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "type": "integer", "minimum": 0, "maximum": 5 },
+        { "type": "integer", "minimum": 0, "maximum": 5 },
+        { "type": "integer", "minimum": 0, "maximum": 3 }
+      ],
+      "items": false
+    },
+    "waterGridIndex": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "type": "integer", "minimum": 0, "maximum": 11 },
+        { "type": "integer", "minimum": 0, "maximum": 11 },
+        { "type": "integer", "minimum": 0, "maximum": 5 }
+      ],
+      "items": false
+    },
+    "crystalSite": {
+      "type": "object",
+      "required": ["cellIndex", "basisIndex", "layerIndex", "surfaceRole"],
+      "properties": {
+        "cellIndex": { "$ref": "#/$defs/cellIndex" },
+        "basisIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "layerIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "surfaceRole": {
+          "type": "string",
+          "enum": ["lower-surface-plane", "upper-surface-plane", "interior-plane"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "waterSite": {
+      "type": "object",
+      "required": ["region", "gridIndex", "orientationId", "siteRole"],
+      "properties": {
+        "region": { "type": "string", "enum": ["lower-water-region", "upper-water-region"] },
+        "gridIndex": { "$ref": "#/$defs/waterGridIndex" },
+        "orientationId": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] },
+        "siteRole": { "type": "string", "enum": ["O", "H1", "H2"] }
+      },
+      "additionalProperties": false
+    },
+    "atom": {
+      "type": "object",
+      "required": [
+        "atomIndex",
+        "atomId",
+        "moleculeId",
+        "residueId",
+        "element",
+        "species",
+        "phase",
+        "formalChargeE",
+        "modelPointChargeE",
+        "massDalton",
+        "positionNanometer",
+        "crystalSite",
+        "waterSite"
+      ],
+      "properties": {
+        "atomIndex": { "type": "integer", "minimum": 0, "maximum": 6335 },
+        "atomId": { "$ref": "#/$defs/boundedId" },
+        "moleculeId": { "$ref": "#/$defs/boundedId" },
+        "residueId": { "$ref": "#/$defs/boundedId" },
+        "element": { "type": "string", "enum": ["Na", "Cl", "O", "H"] },
+        "species": { "type": "string", "enum": ["Na+", "Cl-", "TIP3P-O", "TIP3P-H"] },
+        "phase": { "type": "string", "enum": ["solid-coordinate-seed", "water-coordinate-seed"] },
+        "formalChargeE": { "type": "number", "enum": [-1, 0, 1], "minimum": -1, "maximum": 1 },
+        "modelPointChargeE": { "type": "number", "enum": [-1, -0.834, 0.417, 1], "minimum": -1, "maximum": 1 },
+        "massDalton": {
+          "type": "number",
+          "enum": [1.007947, 15.99943, 22.99, 35.45],
+          "minimum": 1.007947,
+          "maximum": 35.45
+        },
+        "positionNanometer": { "$ref": "#/$defs/position" },
+        "crystalSite": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/crystalSite" }] },
+        "waterSite": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/waterSite" }] }
+      },
+      "additionalProperties": false
+    },
+    "bond": {
+      "type": "object",
+      "required": ["bondId", "atomAIndex", "atomBIndex", "atomAId", "atomBId", "role", "energeticInteraction"],
+      "properties": {
+        "bondId": { "$ref": "#/$defs/boundedId" },
+        "atomAIndex": { "type": "integer", "minimum": 0, "maximum": 6335 },
+        "atomBIndex": { "type": "integer", "minimum": 0, "maximum": 6335 },
+        "atomAId": { "$ref": "#/$defs/boundedId" },
+        "atomBId": { "$ref": "#/$defs/boundedId" },
+        "role": { "type": "string", "const": "structural-rigid-water-oh-link" },
+        "energeticInteraction": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "constraint": {
+      "type": "object",
+      "required": [
+        "constraintId",
+        "atomAIndex",
+        "atomBIndex",
+        "atomAId",
+        "atomBId",
+        "sitePair",
+        "targetDistanceNanometer"
+      ],
+      "properties": {
+        "constraintId": { "$ref": "#/$defs/boundedId" },
+        "atomAIndex": { "type": "integer", "minimum": 0, "maximum": 6335 },
+        "atomBIndex": { "type": "integer", "minimum": 0, "maximum": 6335 },
+        "atomAId": { "$ref": "#/$defs/boundedId" },
+        "atomBId": { "$ref": "#/$defs/boundedId" },
+        "sitePair": { "type": "string", "enum": ["O-H1", "O-H2", "H1-H2"] },
+        "targetDistanceNanometer": {
+          "type": "number",
+          "enum": [0.09572, 0.15139006545247014],
+          "minimum": 0.09572,
+          "maximum": 0.15139006545247014
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

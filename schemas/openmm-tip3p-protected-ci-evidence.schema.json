@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/openmm-tip3p-protected-ci-evidence/0.4.9",
+  "title": "Tailing Future protected OpenMM TIP3P CI administrative evidence",
+  "description": "A non-sensitive, run-local administrative envelope emitted after the protected workflow has completed the private OpenMM producer and independent verifier. It is not an execution attestation, reproduction claim, promotion root, or public scientific payload.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "statusDomain",
+    "repository",
+    "workflow",
+    "runner",
+    "files",
+    "acquisition",
+    "container",
+    "controlReceipt",
+    "browserEvidence",
+    "toolchain",
+    "publicationPolicy",
+    "claims",
+    "evidenceDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.openmm-tip3p-protected-ci-evidence/0.4.9" },
+    "profile": { "const": "openmm-tip3p-protected-ci-non-sensitive-administrative-evidence" },
+    "statusDomain": { "const": "protected-ci-run-record-not-attestation-reproduction-or-release" },
+    "repository": {
+      "type": "object",
+      "required": ["fullName", "id"],
+      "properties": {
+        "fullName": { "const": "tony070926-sudo/tailing-future" },
+        "id": { "const": "1349498456" }
+      },
+      "additionalProperties": false
+    },
+    "workflow": {
+      "type": "object",
+      "required": ["path", "ref", "sourceRevision", "runId", "runAttempt"],
+      "properties": {
+        "path": { "const": ".github/workflows/openmm-tip3p-protected.yml" },
+        "ref": { "const": "refs/heads/main" },
+        "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+        "runId": { "$ref": "#/$defs/positiveDecimalString" },
+        "runAttempt": { "type": "integer", "minimum": 1, "maximum": 1000000 }
+      },
+      "additionalProperties": false
+    },
+    "runner": {
+      "const": {
+        "name": "ubuntu-24.04",
+        "os": "Linux",
+        "architecture": "X64"
+      }
+    },
+    "files": {
+      "type": "array",
+      "prefixItems": [
+        { "$ref": "#/$defs/buildxVersionFile" },
+        { "$ref": "#/$defs/containerCreateInspectFile" },
+        { "$ref": "#/$defs/containerFinalInspectFile" },
+        { "$ref": "#/$defs/dockerVersionFile" },
+        { "$ref": "#/$defs/imageInspectFile" },
+        { "$ref": "#/$defs/acquisitionManifestFile" },
+        { "$ref": "#/$defs/controlReceiptFile" },
+        { "$ref": "#/$defs/protectedBrowserEvidenceFile" }
+      ],
+      "minItems": 8,
+      "maxItems": 8
+    },
+    "acquisition": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "openmmSourceCommit",
+        "networkAccessUsed",
+        "sourceCount",
+        "manifestDigest",
+        "lockedSourcesDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "tf.openmm-ci-acquisition-manifest/0.4.5" },
+        "openmmSourceCommit": { "const": "c6173db6e8edd705eb59172bd21e9ce69c572405" },
+        "networkAccessUsed": { "const": true },
+        "sourceCount": { "const": 5 },
+        "manifestDigest": { "$ref": "#/$defs/digest" },
+        "lockedSourcesDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "container": {
+      "type": "object",
+      "required": [
+        "imageConfigDigest",
+        "platform",
+        "user",
+        "containerId",
+        "entrypoint",
+        "producerArguments",
+        "security",
+        "mounts",
+        "finalState"
+      ],
+      "properties": {
+        "imageConfigDigest": { "$ref": "#/$defs/digest" },
+        "platform": { "const": "linux/amd64" },
+        "user": { "const": "65532:65532" },
+        "containerId": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "entrypoint": {
+          "const": [
+            "/usr/bin/env",
+            "-u",
+            "PYTHONPATH",
+            "-u",
+            "PYTHONHOME",
+            "-u",
+            "PYTHONSTARTUP",
+            "-u",
+            "PYTHONUSERBASE",
+            "/opt/tailing-venv/bin/python",
+            "-P",
+            "-s",
+            "-B",
+            "-m",
+            "producer"
+          ]
+        },
+        "producerArguments": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "--input-root" },
+            { "const": "/inputs" },
+            { "const": "--output-root" },
+            { "const": "/work/output" },
+            { "const": "--source-revision" },
+            { "$ref": "#/$defs/sourceRevision" }
+          ],
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "security": {
+          "const": {
+            "networkMode": "none",
+            "readOnlyRootFilesystem": true,
+            "capDrop": ["ALL"],
+            "noNewPrivileges": true,
+            "privileged": false,
+            "pidsLimit": 128,
+            "memoryBytes": 8589934592,
+            "memorySwapBytes": 8589934592,
+            "nanoCpus": 2000000000
+          }
+        },
+        "mounts": {
+          "const": [
+            {
+              "destination": "/inputs",
+              "type": "bind",
+              "readWrite": false
+            },
+            {
+              "destination": "/work/output",
+              "type": "bind",
+              "readWrite": true
+            }
+          ]
+        },
+        "finalState": {
+          "const": {
+            "status": "exited",
+            "exitCode": 0,
+            "oomKilled": false,
+            "dead": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "controlReceipt": {
+      "type": "object",
+      "required": [
+        "receiptDigest",
+        "sourceRevision",
+        "systemDigest",
+        "planDigest",
+        "producerOutcomeDigest",
+        "artifactManifestDigest",
+        "payloadBundleRoot",
+        "verifierDigest",
+        "status",
+        "allPassed",
+        "scientificPass",
+        "executionAuthenticated",
+        "reproduced",
+        "promotionEligible"
+      ],
+      "properties": {
+        "receiptDigest": { "$ref": "#/$defs/digest" },
+        "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+        "systemDigest": { "$ref": "#/$defs/digest" },
+        "planDigest": { "$ref": "#/$defs/digest" },
+        "producerOutcomeDigest": { "$ref": "#/$defs/digest" },
+        "artifactManifestDigest": { "$ref": "#/$defs/digest" },
+        "payloadBundleRoot": { "$ref": "#/$defs/digest" },
+        "verifierDigest": { "$ref": "#/$defs/digest" },
+        "status": { "const": "verified-pass" },
+        "allPassed": { "const": true },
+        "scientificPass": { "const": true },
+        "executionAuthenticated": { "const": false },
+        "reproduced": { "const": false },
+        "promotionEligible": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "browserEvidence": {
+      "type": "object",
+      "required": [
+        "evidenceDigest",
+        "sourceRevision",
+        "controlReceiptDigest",
+        "allThreeModesPassed",
+        "protectedWorkflowExecutionReported",
+        "executionAuthenticated",
+        "reproduced",
+        "promotionEligible"
+      ],
+      "properties": {
+        "evidenceDigest": { "$ref": "#/$defs/digest" },
+        "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+        "controlReceiptDigest": { "$ref": "#/$defs/digest" },
+        "allThreeModesPassed": { "const": true },
+        "protectedWorkflowExecutionReported": { "const": true },
+        "executionAuthenticated": { "const": false },
+        "reproduced": { "const": false },
+        "promotionEligible": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "toolchain": {
+      "type": "object",
+      "required": ["dockerVersion", "buildxVersion"],
+      "properties": {
+        "dockerVersion": { "$ref": "#/$defs/nonemptyLine" },
+        "buildxVersion": { "$ref": "#/$defs/nonemptyLine" }
+      },
+      "additionalProperties": false
+    },
+    "publicationPolicy": {
+      "const": {
+        "artifactClass": "non-sensitive-administrative-evidence-only",
+        "rawScientificPayloadEphemeral": true,
+        "rawScientificPayloadPublished": false,
+        "runtimeInputsPublished": false,
+        "cloudflareDistributionEligible": false,
+        "licenseClearance": false,
+        "attested": false
+      }
+    },
+    "claims": {
+      "const": {
+        "attestationPending": true,
+        "executionAuthenticated": false,
+        "reproduced": false,
+        "promotionEligible": false
+      }
+    },
+    "evidenceDigest": { "$ref": "#/$defs/digest" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000000000000000000000000000$)[0-9a-f]{40}$"
+    },
+    "positiveDecimalString": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,31}$"
+    },
+    "nonemptyLine": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^[ -~]+$"
+    },
+    "file": {
+      "type": "object",
+      "required": ["path", "sizeBytes", "sha256"],
+      "properties": {
+        "path": { "type": "string" },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 20971520 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "acquisitionManifestFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "openmm-ci-acquisition-manifest.json" } } }
+      ]
+    },
+    "buildxVersionFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "buildx-version.txt" } } }
+      ]
+    },
+    "containerCreateInspectFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "container-create-inspect.json" } } }
+      ]
+    },
+    "containerFinalInspectFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "container-final-inspect.json" } } }
+      ]
+    },
+    "dockerVersionFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "docker-version.txt" } } }
+      ]
+    },
+    "imageInspectFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "image-inspect.json" } } }
+      ]
+    },
+    "controlReceiptFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "openmm-tip3p-control-receipt.json" } } }
+      ]
+    },
+    "protectedBrowserEvidenceFile": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        { "type": "object", "properties": { "path": { "const": "openmm-tip3p-protected-browser-evidence.json" } } }
+      ]
+    }
+  }
+}

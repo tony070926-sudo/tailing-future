@@ -1,0 +1,18 @@
+{
+  "artifactDigest": "sha256:32777c7662c52b37bfb1e10cc38dfd75a4466af2e9326844711360d8cb2dc270",
+  "verdict": "conditional",
+  "gaps": [
+    {
+      "severity": "P1",
+      "dimension": "atomistic"
+    },
+    {
+      "severity": "P1",
+      "dimension": "mesoscale"
+    },
+    {
+      "severity": "P1",
+      "dimension": "process"
+    }
+  ]
+}

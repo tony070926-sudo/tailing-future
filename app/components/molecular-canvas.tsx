@@ -21,6 +21,7 @@ import {
   type WaterDonorAcceptorAxisGuide,
   type WaterValenceFrame,
 } from './molecular-visual-guides';
+import type { MolecularObservationV04 } from '@/lib/simulation/molecular-world';
 
 export type MolecularCamera = Readonly<{ yaw: number; pitch: number; zoom: number }>;
 
@@ -31,6 +32,8 @@ export type MolecularVisualLayers = Readonly<{
   interactions: boolean;
   pairForces: boolean;
   netForce: boolean;
+  trajectories: boolean;
+  velocities: boolean;
   valenceDirections: boolean;
   hybridizationGuide: boolean;
   bondAxisGuide: boolean;
@@ -61,6 +64,8 @@ export function MolecularCanvas({
   onCameraChange,
   onAtomSelect,
   onAnnouncement,
+  trajectoryFrames = [],
+  projectionReferenceFrame,
 }: {
   scene: MolecularScene;
   camera: MolecularCamera;
@@ -69,6 +74,8 @@ export function MolecularCanvas({
   onCameraChange: (camera: MolecularCamera) => void;
   onAtomSelect: (atomId: string) => void;
   onAnnouncement: (message: string) => void;
+  trajectoryFrames?: ReadonlyArray<MolecularObservationV04>;
+  projectionReferenceFrame?: MolecularObservationV04;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gestureRef = useRef<Gesture | null>(null);
@@ -92,8 +99,10 @@ export function MolecularCanvas({
       camera,
       selectedAtomId,
       layers,
+      trajectoryFrames,
+      projectionReferenceFrame,
     );
-  }, [camera, layers, scene, selectedAtomId]);
+  }, [camera, layers, projectionReferenceFrame, scene, selectedAtomId, trajectoryFrames]);
 
   useLayoutEffect(draw, [draw]);
 
@@ -109,6 +118,7 @@ export function MolecularCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const handleWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey && !event.metaKey) return;
       event.preventDefault();
       const next = {
         ...cameraRef.current,
@@ -197,8 +207,9 @@ export function MolecularCanvas({
       onPointerMove={moveGesture}
       onPointerUp={endGesture}
       onPointerCancel={cancelGesture}
+      onLostPointerCapture={cancelGesture}
       onKeyDown={handleKeyboard}
-      aria-label={`${scene.name}的真实 x/y/z 结构视图。拖动旋转，滚轮或加减键缩放，点击选择原子或离子，方向键调整视角，数字零复位。`}
+      aria-label={`${scene.name}的真实 x/y/z 结构视图。拖动旋转，Control 或 Command 加滚轮、或加减键缩放，点击选择原子或离子，方向键调整视角，数字零复位。`}
       aria-describedby="molecular-boundary"
     />
   );
@@ -212,13 +223,17 @@ function drawMolecularScene(
   camera: MolecularCamera,
   selectedAtomId: string,
   layers: MolecularVisualLayers,
+  trajectoryFrames: ReadonlyArray<MolecularObservationV04>,
+  projectionReferenceFrame?: MolecularObservationV04,
 ) {
   context.clearRect(0, 0, width, height);
   context.fillStyle = '#f2f7f3';
   context.fillRect(0, 0, width, height);
   drawBackdrop(context, width, height);
 
-  const projection = createProjection(scene, width, height, camera);
+  const referencePositions = (projectionReferenceFrame ?? trajectoryFrames[0])?.atoms
+    .map((atom) => atom.positionAngstrom);
+  const projection = createProjection(scene, width, height, camera, referencePositions);
   const atomById = new Map(scene.atoms.map((atom) => [atom.id, atom]));
   const projectedAtoms = scene.atoms.map((atom) => {
     const point = projection.project(atom.positionAngstrom);
@@ -228,6 +243,10 @@ function drawMolecularScene(
       radius: Math.max(4, atom.displayRadiusAngstrom * projection.pixelsPerAngstrom * point.scale),
     };
   }).sort((first, second) => second.point.depth - first.point.depth);
+
+  if (layers.trajectories && trajectoryFrames.length > 1) {
+    drawSolverTrajectory(context, trajectoryFrames, selectedAtomId, projection.project);
+  }
 
   if (scene.unitCell && layers.unitCell) {
     drawUnitCell(context, scene.unitCell.originAngstrom, scene.unitCell.edgeAngstrom, projection.project);
@@ -284,6 +303,14 @@ function drawMolecularScene(
     }
   }
 
+  if (layers.velocities && trajectoryFrames.length > 0) {
+    const dynamicAtom = trajectoryFrames.at(-1)?.atoms.find((atom) => atom.id === selectedAtomId);
+    const selected = atomById.get(selectedAtomId);
+    if (dynamicAtom && selected) {
+      drawVelocityArrow(context, selected, dynamicAtom.velocityAngstromPerPicosecond, projection.project);
+    }
+  }
+
   const localInteractionAtomIds = new Set(scene.guides.flatMap((guide) => [guide.atomAId, guide.atomBId]));
   projectedAtoms.forEach(({ atom, point, radius }) => {
     const emphasized = scene.kind === 'water-dimer' || localInteractionAtomIds.has(atom.id);
@@ -301,17 +328,23 @@ function drawMolecularScene(
   return projectedAtoms;
 }
 
-function createProjection(scene: MolecularScene, width: number, height: number, camera: MolecularCamera) {
-  const bounds = scene.atoms.reduce((current, atom) => ({
+function createProjection(
+  scene: MolecularScene,
+  width: number,
+  height: number,
+  camera: MolecularCamera,
+  referencePositions: ReadonlyArray<Vector3> = scene.atoms.map((atom) => atom.positionAngstrom),
+) {
+  const bounds = referencePositions.reduce((current, position) => ({
     minimum: {
-      x: Math.min(current.minimum.x, atom.positionAngstrom.x),
-      y: Math.min(current.minimum.y, atom.positionAngstrom.y),
-      z: Math.min(current.minimum.z, atom.positionAngstrom.z),
+      x: Math.min(current.minimum.x, position.x),
+      y: Math.min(current.minimum.y, position.y),
+      z: Math.min(current.minimum.z, position.z),
     },
     maximum: {
-      x: Math.max(current.maximum.x, atom.positionAngstrom.x),
-      y: Math.max(current.maximum.y, atom.positionAngstrom.y),
-      z: Math.max(current.maximum.z, atom.positionAngstrom.z),
+      x: Math.max(current.maximum.x, position.x),
+      y: Math.max(current.maximum.y, position.y),
+      z: Math.max(current.maximum.z, position.z),
     },
   }), {
     minimum: { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY, z: Number.POSITIVE_INFINITY },
@@ -322,7 +355,7 @@ function createProjection(scene: MolecularScene, width: number, height: number, 
     y: (bounds.minimum.y + bounds.maximum.y) / 2,
     z: (bounds.minimum.z + bounds.maximum.z) / 2,
   };
-  const radius = Math.max(1.2, ...scene.atoms.map((atom) => magnitude(subtract(atom.positionAngstrom, center))));
+  const radius = Math.max(1.2, ...referencePositions.map((position) => magnitude(subtract(position, center))));
   const pixelsPerAngstrom = Math.min(width, height) * (scene.kind === 'water-dimer' ? 0.37 : 0.42) / radius * camera.zoom;
   const focalDistance = radius * 5.5;
 
@@ -612,6 +645,47 @@ function drawPairInfluence(context: CanvasRenderingContext2D, start: ProjectedPo
   context.lineWidth = 1.2;
   drawLine(context, start, end);
   context.restore();
+}
+
+function drawSolverTrajectory(
+  context: CanvasRenderingContext2D,
+  frames: ReadonlyArray<MolecularObservationV04>,
+  selectedAtomId: string,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  const points = frames
+    .map((frame) => frame.atoms.find((atom) => atom.id === selectedAtomId)?.positionAngstrom)
+    .filter((position): position is Vector3 => Boolean(position))
+    .map(project);
+  if (points.length < 2) return;
+  context.save();
+  context.strokeStyle = 'rgba(79, 95, 177, .62)';
+  context.lineWidth = 2;
+  context.setLineDash([5, 5]);
+  context.beginPath();
+  context.moveTo(points[0].x, points[0].y);
+  points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+  context.stroke();
+  context.setLineDash([]);
+  points.forEach((point, index) => {
+    if (index % Math.max(1, Math.floor(points.length / 8)) !== 0 && index !== points.length - 1) return;
+    context.beginPath();
+    context.arc(point.x, point.y, index === points.length - 1 ? 3.2 : 1.8, 0, Math.PI * 2);
+    context.fillStyle = index === points.length - 1 ? '#4f5fb1' : 'rgba(79, 95, 177, .42)';
+    context.fill();
+  });
+  context.restore();
+}
+
+function drawVelocityArrow(
+  context: CanvasRenderingContext2D,
+  atom: MolecularAtom,
+  velocity: Vector3,
+  project: (position: Vector3) => ProjectedPoint,
+) {
+  if (magnitude(velocity) < 1e-10) return;
+  const endWorld = add(atom.positionAngstrom, scale(normalize(velocity), 0.72));
+  drawArrow(context, project(atom.positionAngstrom), project(endWorld), '#4f5fb1', 2.2, 7);
 }
 
 function drawPairForceArrows(

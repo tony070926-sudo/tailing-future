@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { validateComparatorEvidenceRegistry } from './comparator-evidence-policy.mjs';
 
 const registry = JSON.parse(await readFile(new URL('../evaluation/baselines/registry.json', import.meta.url), 'utf8'));
-const frozenNow = new Date('2026-08-29T12:00:00.000Z');
+const frozenNow = new Date('2026-09-02T12:00:00.000Z');
 
 describe('comparator evidence registry policy', () => {
   it('accepts the checked-in non-promoted comparator registry', async () => {
@@ -37,7 +37,7 @@ describe('comparator evidence registry policy', () => {
     missing.comparators = missing.comparators.filter((entry) => entry.id !== 'aido-cell-1.0');
     expect((await validateComparatorEvidenceRegistry(missing, { now: frozenNow })).join('\n')).toMatch(/aido-cell-1\.0: required comparator is missing/);
 
-    const future = { ...structuredClone(registry), snapshotDate: '2026-08-30' };
+    const future = { ...structuredClone(registry), snapshotDate: '2026-09-03' };
     expect((await validateComparatorEvidenceRegistry(future, { now: frozenNow })).join('\n')).toMatch(/in the future/);
 
     const lookalike = structuredClone(registry);

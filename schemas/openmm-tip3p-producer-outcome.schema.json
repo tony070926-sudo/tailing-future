@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/openmm-tip3p-producer-outcome/0.4.5",
+  "title": "Tailing Future OpenMM TIP3P Producer Outcome",
+  "description": "Atomic producer execution-integrity outcome. It never grants scientific acceptance, reproduction, release provenance, or promotion authority.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifactId",
+    "planDigest",
+    "systemDigest",
+    "status",
+    "statusDomain",
+    "terminalStage",
+    "stages",
+    "evidence",
+    "diagnosticMetrics",
+    "diagnosticMetricsAreAcceptance",
+    "claims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.openmm-tip3p-producer-outcome/0.4.5" },
+    "artifactId": { "const": "tf.openmm-pure-water-cold-start-pme-control/1" },
+    "planDigest": { "$ref": "#/$defs/digest" },
+    "systemDigest": { "$ref": "#/$defs/digest" },
+    "status": { "enum": ["complete-pass", "complete-fail", "incomplete"] },
+    "statusDomain": { "const": "producer-execution-integrity-only-not-scientific-assessment" },
+    "terminalStage": {
+      "type": ["string", "null"],
+      "enum": [
+        null,
+        "guard",
+        "inputs",
+        "runtime",
+        "prepare",
+        "reference-a",
+        "reference-b",
+        "cpu-fixed-coordinate",
+        "manifest"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        { "$ref": "#/$defs/guardStage" },
+        { "$ref": "#/$defs/inputsStage" },
+        { "$ref": "#/$defs/runtimeStage" },
+        { "$ref": "#/$defs/prepareStage" },
+        { "$ref": "#/$defs/referenceAStage" },
+        { "$ref": "#/$defs/referenceBStage" },
+        { "$ref": "#/$defs/cpuStage" },
+        { "$ref": "#/$defs/manifestStage" }
+      ],
+      "items": false
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 34,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "diagnosticMetrics": { "type": ["object", "null"] },
+    "diagnosticMetricsAreAcceptance": { "const": false },
+    "claims": {
+      "const": {
+        "scientificPass": false,
+        "accepted": false,
+        "reproduced": false,
+        "promotionEligible": false,
+        "protectedMainArtifact": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "stageOutcome": { "enum": ["success", "failure", "cancelled", "skipped"] },
+    "guardStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "guard" } } },
+    "inputsStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "inputs" } } },
+    "runtimeStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "runtime" } } },
+    "prepareStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "prepare" } } },
+    "referenceAStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "reference-a" } } },
+    "referenceBStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "reference-b" } } },
+    "cpuStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "cpu-fixed-coordinate" } } },
+    "manifestStage": { "$ref": "#/$defs/stage", "type": "object", "properties": { "stage": { "const": "manifest" } } },
+    "stage": {
+      "type": "object",
+      "required": ["stage", "outcome"],
+      "properties": {
+        "stage": { "type": "string" },
+        "outcome": { "$ref": "#/$defs/stageOutcome" }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["path", "stage", "sizeBytes", "sha256", "stageOutcome"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(arrays|manifests)/[a-z0-9][a-z0-9./-]{0,190}(\\.f64le|\\.u32le|\\.json)$"
+        },
+        "stage": {
+          "enum": ["inputs", "runtime", "prepare", "reference-a", "reference-b", "cpu-fixed-coordinate"]
+        },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 1073741824 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "stageOutcome": { "$ref": "#/$defs/stageOutcome" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

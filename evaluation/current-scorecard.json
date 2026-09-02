@@ -1,14 +1,14 @@
 {
   "schemaVersion": "tf.scorecard/0.2",
-  "candidateVersion": "0.3.1-r7b1-evidence-boundary",
-  "baselineSnapshotDate": "2026-08-29",
+  "candidateVersion": "0.4.11-nacl-water-semantic-import",
+  "baselineSnapshotDate": "2026-09-02",
   "hardGateFailures": [],
   "dimensions": [
     {
       "id": "contract", "label": "State/action/observer contract", "displayLabel": "状态 / 动作 / 观测契约", "weight": 8, "score": 2, "promotionFloor": 2,
-      "summary": "schema + digest + atomic replay",
-      "evidence": ["Executable world/action schemas, SHA-256 state digests, deterministic ordinal branch namespaces and transactional rollback."],
-      "evidenceArtifacts": ["schemas/world-state.schema.json", "schemas/action.schema.json", "lib/simulation/digest.ts", "lib/simulation/lennard-jones.test.ts", "lib/simulation/thermochemical-world.test.ts"],
+      "summary": "双 world schema + digest + atomic replay",
+      "evidence": ["Executable thermochemical and bounded molecular world/action/observation schemas, SHA-256 state digests, deterministic ordinal branch namespaces, semantic restore gates and transactional rollback. R8 adds recomputed-digest negative tests for contradictory molecular step lineage and translated initial state. v0.4.11 adds a closed, strictly negative-claim receipt for an independently rechecked cross-language NaCl-water semantic import; the score remains E2."],
+      "evidenceArtifacts": ["schemas/world-state.schema.json", "schemas/action.schema.json", "schemas/molecular-world-state.schema.json", "schemas/molecular-action.schema.json", "schemas/molecular-observation.schema.json", "schemas/nacl-water-interface-import-receipt.schema.json", "lib/simulation/nacl-water-interface-import-receipt-schemas-v0411.test.ts", "lib/simulation/digest.ts", "lib/simulation/lennard-jones.test.ts", "lib/simulation/thermochemical-world.test.ts", "lib/simulation/molecular-world.ts", "lib/simulation/molecular-world.test.ts", "evaluation/reviews/2026-09-02-v0411-semantic-import-release-review.md"],
       "nextAction": "Move the runtime into a worker-backed append-only action log.",
       "acceptanceTest": "Fresh worker restoration reproduces state digest, parent chain and ordered actions across 1/5/20 horizons."
     },
@@ -22,9 +22,9 @@
     },
     {
       "id": "atomistic", "label": "Atomistic physics", "displayLabel": "原子层物理", "weight": 12, "score": 1, "promotionFloor": 1,
-      "summary": "LJ 回归 + 双模型 10 帧隔离 smoke",
-      "evidence": ["Force finite-difference, cutoff continuity, exact pair momentum and 10k-step NVE drift tests remain unchanged. The authenticated S replicas each contain ten finite label-free outputs per model. MACE physical predictions agree across the two runs; MatterSim differs only below the frozen bootstrap numerical tolerances. Commit F freezes the stable runtime inputs at 2/2 but these remain smoke observations without labels or accuracy metrics, not a scientific reproduction, model comparison or score increase."],
-      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts", ".github/workflows/atomistic-bootstrap.yml", ".github/workflows/atomistic-bootstrap-verify.yml", "evaluation/atomistic/bootstrap-quarantine.json", "evaluation/atomistic/runtime-lock.json", "evaluation/atomistic/evidence/r6e-verifier-33296529694/atomistic-bootstrap-replica-receipt.json", "evaluation/atomistic/evidence/r6e-verifier-33296529694/receipt-attestation.sigstore.jsonl", "scripts/workflow-policy.mjs", "scripts/workflow-policy.test.mjs", "scripts/atomistic/verify-bootstrap-replicas.mjs", "scripts/atomistic/bootstrap-replica-receipt-policy.mjs", "scripts/atomistic/runtime-freeze-evidence-policy.mjs", "scripts/atomistic/v2/run_model.py", "scripts/atomistic/v2/runtime_contract.py", "scripts/atomistic/runtime_contract_v2_test.py", "docs/ATOMISTIC_REPRODUCTION.md"],
+      "summary": "LJ 回归 + 有界水二聚体轨迹 + 6,336 位点 NaCl{100}–水几何与跨语言语义导入 + 双模型 10 帧隔离 smoke",
+      "evidence": ["Force finite-difference, cutoff continuity and exact pair momentum tests remain unchanged. R8 adds a local two-fixed-orientation rigid-TIP3P water-body Velocity Verlet trajectory with a 10,000-step maximum relative energy-excursion gate, OLS drift diagnostic, momentum/center-of-mass/internal-force/rigid-geometry closure and deterministic replay. v0.4.10 adds a complete deterministic 6,336-site NaCl{100}–TIP3P geometric seed with exact system/coordinate/topology identity, structural schemas and fail-closed actions. v0.4.11 independently reconstructs the six-digest graph, crystal/water geometry, topology, charge/mass and periodic cell in standard-library Python, writes ten digest-bound normalized artifacts, and has Node decode every value back against the locked TypeScript plan. All four solver-admission receipts remain absent; OpenMM import, system compilation, PME, minimization, trajectory, hydration, dissolution and phase-equilibrium evidence remain false. The authenticated S replicas each contain ten finite label-free outputs per learned model; the full 693-by-two benchmark remains not run. No scientific reproduction, learned-potential comparison or score increase is claimed."],
+      "evidenceArtifacts": ["lib/simulation/lennard-jones.ts", "lib/simulation/lennard-jones.test.ts", "lib/molecular/molecular-interactions.ts", "lib/molecular/molecular-interactions.test.ts", "lib/simulation/molecular-world.ts", "lib/simulation/molecular-world.test.ts", "schemas/molecular-world-state.schema.json", "schemas/molecular-action.schema.json", "schemas/molecular-observation.schema.json", "lib/simulation/nacl-water-interface-system-v0410.ts", "lib/simulation/nacl-water-interface-system-v0410.test.ts", "lib/simulation/nacl-water-interface-schemas-v0410.test.ts", "lib/simulation/nacl-water-interface-import-receipt-schemas-v0411.test.ts", "schemas/nacl-water-interface-system.schema.json", "schemas/nacl-water-interface-coordinate-seed.schema.json", "schemas/nacl-water-interface-plan.schema.json", "schemas/nacl-water-interface-action.schema.json", "schemas/nacl-water-interface-observation.schema.json", "schemas/nacl-water-interface-import-receipt.schema.json", "scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.mjs", "scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.test.mjs", "scripts/atomistic/openmm/nacl_water_interface_import_v0411.py", "scripts/atomistic/openmm/nacl_water_interface_import_v0411_test.py", "scripts/atomistic/openmm/verify-nacl-water-interface-import-v0411.mjs", "scripts/atomistic/openmm/nacl-water-interface-import-v0411.test.mjs", "evaluation/reviews/2026-09-02-v0410-nacl-water-interface-review.md", "evaluation/reviews/2026-09-02-v0411-semantic-import-release-review.md", ".github/workflows/atomistic-bootstrap.yml", ".github/workflows/atomistic-bootstrap-verify.yml", "evaluation/atomistic/bootstrap-quarantine.json", "evaluation/atomistic/runtime-lock.json", "evaluation/atomistic/evidence/r6e-verifier-33296529694/atomistic-bootstrap-replica-receipt.json", "evaluation/atomistic/evidence/r6e-verifier-33296529694/receipt-attestation.sigstore.jsonl", "scripts/workflow-policy.mjs", "scripts/workflow-policy.test.mjs", "scripts/atomistic/verify-bootstrap-replicas.mjs", "scripts/atomistic/bootstrap-replica-receipt-policy.mjs", "scripts/atomistic/runtime-freeze-evidence-policy.mjs", "scripts/atomistic/v2/run_model.py", "scripts/atomistic/v2/runtime_contract.py", "scripts/atomistic/runtime_contract_v2_test.py", "docs/ATOMISTIC_REPRODUCTION.md", "docs/MOLECULAR_DYNAMICS.md", "docs/NACL_WATER_INTERFACE_V0410_CONTRACT.md", "docs/NACL_WATER_INTERFACE_V0411_IMPORT_CONTRACT.md"],
       "nextAction": "Complete the authenticated provenance/archive adapter and private handoff, then execute both frozen runtimes on all 693 Random-TP records with an independent scientific verifier.",
       "acceptanceTest": "Authenticated inputs produce two 693/693 receipts; energy, force, stress, stability, OOD and cost metrics are recomputed with checkpoint, runner, source-tree and outcome digests."
     },
@@ -60,9 +60,9 @@
     },
     {
       "id": "world_rollout", "label": "Multi-turn world behavior", "displayLabel": "多轮世界行为", "weight": 8, "score": 2, "promotionFloor": 2,
-      "summary": "typed action + branch + replay",
-      "evidence": ["Content-disambiguated state/action IDs, complete integrity digests, idempotent branch tokens, full-state serialization and deterministic counter RNG."],
-      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts", "schemas/action.schema.json"],
+      "summary": "双 world typed action + branch + replay",
+      "evidence": ["Content-disambiguated state/action IDs, complete integrity digests, deterministic branch namespaces, full-state serialization and deterministic continuation now cover both the R2 thermochemical world and the bounded R8 molecular trajectory. No learned future-state predictor is claimed and the score remains E2."],
+      "evidenceArtifacts": ["lib/simulation/thermochemical-world.ts", "lib/simulation/thermochemical-world.test.ts", "schemas/action.schema.json", "lib/simulation/molecular-world.ts", "lib/simulation/molecular-world.test.ts", "schemas/molecular-action.schema.json", "schemas/molecular-world-state.schema.json"],
       "nextAction": "Persist append-only histories and quantify rollout error at 1/5/20 horizons.",
       "acceptanceTest": "No state collision, ordering ambiguity, NaN or unexplained error growth across locked action sequences."
     },
@@ -84,9 +84,9 @@
     },
     {
       "id": "visual_truth", "label": "Visualization truthfulness", "displayLabel": "可视化真实性", "weight": 4, "score": 2, "promotionFloor": 2,
-      "summary": "粒子 / 热场 / 账本同帧",
-      "evidence": ["Canvas heat field, particle labels, fixed 20–260 K scale, state ID, ledger and click probe are derived from one observation snapshot; the exact observation can be downloaded."],
-      "evidenceArtifacts": ["app/page.tsx", "lib/simulation/thermochemical-world.ts"],
+      "summary": "粒子 / 分子 / 力 / 轨迹与账本同帧",
+      "evidence": ["The thermochemical canvas remains bound to one observation. R8 adds a separate molecular solver mode whose atom positions, selected-atom velocity and force, normalized vector layers, trajectory trail, energies, conservation residuals, state ID and digest derive from one typed molecular observation. The static NaCl and coordinate-scan modes stay explicitly marked non-time/non-MD. Rendering interpolation cannot mutate solver state; no electron-density result is fabricated. The score remains E2 pending immutable pixel replay."],
+      "evidenceArtifacts": ["app/page.tsx", "app/components/molecular-lab.tsx", "app/components/molecular-canvas.tsx", "lib/simulation/thermochemical-world.ts", "lib/simulation/molecular-world.ts", "schemas/molecular-observation.schema.json", "docs/MOLECULAR_DYNAMICS.md"],
       "nextAction": "Package a signed, immutable replay bundle that binds the observation, action chain and release provenance.",
       "acceptanceTest": "A clean browser replays the downloaded bundle and reproduces every sampled pixel/cell/particle value under the same release commit and digest."
     },
@@ -94,7 +94,7 @@
       "id": "safety", "label": "Safety, license and governance", "displayLabel": "安全 / 许可 / 治理", "weight": 4, "score": 1, "promotionFloor": 1,
       "summary": "advisory-only + claim lint",
       "evidence": ["Visible toy-model boundary, claim lint, pinned package/model/data license catalogs, an explicit fail-closed UMA exclusion, a green-commit Cloudflare release guard, dependency audit and no control-output endpoint."],
-      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "evaluation/reviews/2026-08-29-r3-protocol-review.md", "scripts/evaluate.mjs", "scripts/evaluate-worker.mjs", "scripts/evaluate-launcher.test.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml", ".github/workflows/sentinel-report.yml"],
+      "evidenceArtifacts": ["docs/SAFETY.md", "evaluation/atomistic/reproduction-plan.json", "evaluation/data/datasets.json", "evaluation/reviews/2026-08-28-r2-release-review.md", "evaluation/reviews/2026-08-29-r3-protocol-review.md", "evaluation/reviews/2026-08-31-r8-atomistic-dynamics-foundation-review.md", "evaluation/reviews/2026-09-02-v049-protected-main-source-contract-review.md", "evaluation/reviews/2026-09-02-v0411-semantic-import-release-review.md", "scripts/evaluate.mjs", "scripts/evaluate-worker.mjs", "scripts/evaluate-launcher.test.mjs", "scripts/release-cloudflare.mjs", "scripts/release-report.test.mjs", ".github/workflows/evaluate.yml", ".github/workflows/sentinel-report.yml"],
       "nextAction": "Generate a CycloneDX SBOM and freeze the remaining dataset legal bytes and attribution obligations.",
       "acceptanceTest": "Dependency, package, model, dataset and SBOM policy gates pass; unresolved legal bytes abstain and no direct control endpoint exists."
     }

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/nacl-water-interface-observation/0.4.10",
+  "title": "Tailing Future NaCl{100}-Water Interface Observation v0.4.10",
+  "description": "Read-only geometric observation or a fail-closed prerequisite decision. It cannot carry solver evidence.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "observationId",
+    "actionDigest",
+    "systemDigest",
+    "coordinateSeedDigest",
+    "outcome",
+    "stateMutationPerformed",
+    "solverInvoked",
+    "unmetGateIds",
+    "availableEvidence",
+    "unavailableEvidence",
+    "observationDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "tf.nacl-water-interface-observation/0.4.10" },
+    "observationId": {
+      "type": "string",
+      "minLength": 13,
+      "maxLength": 140,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}:observation$"
+    },
+    "actionDigest": { "$ref": "#/$defs/digest" },
+    "systemDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:d47785bc641fd6483c58b8549bf7c0dc7e116a5892c0c13864c98e87c712133a"
+    },
+    "coordinateSeedDigest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "const": "sha256:beb7f2c4f997e2e8b8158a05d6083a7d6569bd1f11457f922844646cac0cc426"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "accepted-read-only-inspection",
+        "blocked-prerequisite-gates-unsatisfied"
+      ]
+    },
+    "stateMutationPerformed": { "type": "boolean", "const": false },
+    "solverInvoked": { "type": "boolean", "const": false },
+    "unmetGateIds": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 4,
+      "items": {
+        "type": "string",
+        "enum": [
+          "pure-water-openmm-control",
+          "single-pair-low-salt-pme-control",
+          "dry-nacl-100-slab-stability-control",
+          "solid-water-interface-potential-domain-qualification"
+        ]
+      }
+    },
+    "availableEvidence": {
+      "const": [
+        "atom-identity-formal-and-model-point-charge",
+        "exact-coordinate-and-cell",
+        "crystal-layer-and-surface-labels",
+        "rigid-water-topology"
+      ]
+    },
+    "unavailableEvidence": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 10,
+      "items": { "type": "string", "minLength": 1, "maxLength": 128 },
+      "uniqueItems": true
+    },
+    "observationDigest": { "$ref": "#/$defs/digest" }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "outcome": { "const": "accepted-read-only-inspection" },
+        "unmetGateIds": { "const": [] },
+        "unavailableEvidence": {
+          "const": [
+            "energy-and-potential-force",
+            "z-resolved-species-density",
+            "water-dipole-orientation",
+            "na-o-cl-h-cl-o-geometric-coordination",
+            "surface-site-displacement-and-occupancy",
+            "persistent-detachment-and-reattachment-events",
+            "largest-crystal-cluster-and-local-q8",
+            "dissolution-or-crystallization-rate"
+          ]
+        }
+      }
+    },
+    {
+      "properties": {
+        "outcome": { "const": "blocked-prerequisite-gates-unsatisfied" },
+        "unmetGateIds": {
+          "const": [
+            "pure-water-openmm-control",
+            "single-pair-low-salt-pme-control",
+            "dry-nacl-100-slab-stability-control",
+            "solid-water-interface-potential-domain-qualification"
+          ]
+        },
+        "unavailableEvidence": {
+          "const": [
+            "interface-preparation",
+            "interface-dynamics",
+            "energy-and-potential-force",
+            "z-resolved-species-density",
+            "water-dipole-orientation",
+            "na-o-cl-h-cl-o-geometric-coordination",
+            "surface-site-displacement-and-occupancy",
+            "persistent-detachment-and-reattachment-events",
+            "largest-crystal-cluster-and-local-q8",
+            "dissolution-or-crystallization-rate"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

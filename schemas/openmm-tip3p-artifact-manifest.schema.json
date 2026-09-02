@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/openmm-tip3p-artifact-manifest/0.4.5",
+  "title": "Tailing Future OpenMM TIP3P Control Artifact Manifest",
+  "description": "An internal, non-promotional inventory of the exact raw arrays and administrative receipts emitted by one OpenMM TIP3P producer run. Scientific acceptance belongs exclusively to the independent verifier.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profile",
+    "systemDigest",
+    "planDigest",
+    "sourceRevision",
+    "producerOutcomeDigest",
+    "artifacts",
+    "bundleRoot",
+    "publicationPolicy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.openmm-tip3p-artifact-manifest/0.4.5" },
+    "profile": { "const": "openmm-tip3p-producer-internal-evidence" },
+    "systemDigest": { "$ref": "#/$defs/digest" },
+    "planDigest": { "$ref": "#/$defs/digest" },
+    "sourceRevision": { "$ref": "#/$defs/sourceRevision" },
+    "producerOutcomeDigest": { "$ref": "#/$defs/digest" },
+    "artifacts": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/artifact" }
+    },
+    "bundleRoot": { "$ref": "#/$defs/digest" },
+    "publicationPolicy": {
+      "const": {
+        "profile": "tf.openmm-tip3p-internal-evidence/0.4.5",
+        "rawScientificPayloadPublic": false,
+        "parameterAssetsPublic": false,
+        "coordinateAssetsPublic": false,
+        "serializedSystemPublic": false,
+        "containerPublic": false,
+        "licenseClearanceRequired": true,
+        "independentVerificationRequired": true,
+        "attestationRequiredForPromotion": true
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000000000000000000000000000$)[0-9a-f]{40}$"
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["id", "path", "kind", "dtype", "shape", "unit", "sizeBytes", "sha256"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,95}$" },
+        "path": {
+          "type": "string",
+          "pattern": "^(arrays|manifests)/[a-z0-9][a-z0-9./-]{0,190}(\\.f64le|\\.u32le|\\.json)$"
+        },
+        "kind": { "enum": ["array", "canonical-json"] },
+        "dtype": { "enum": ["float64-le", "uint32-le", "canonical-json"] },
+        "shape": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 4,
+          "items": { "type": "integer", "minimum": 1, "maximum": 1000000000 }
+        },
+        "unit": {
+          "enum": [
+            "none",
+            "index",
+            "step",
+            "picosecond",
+            "nanometer",
+            "nanometer-per-picosecond",
+            "dalton",
+            "kilojoule-per-mole",
+            "kilojoule-per-mole-per-nanometer",
+            "canonical-json-bytes"
+          ]
+        },
+        "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 1073741824 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

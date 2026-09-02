@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/periodic-atomistic-action/0.4.1",
+  "title": "Tailing Future Periodic Atomistic Action",
+  "type": "object",
+  "required": [
+    "schemaVersion", "actionId", "kind", "parentStateId", "resultingStateId",
+    "appliedAtStep", "parameters"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.periodic-atomistic-action/0.4.1" },
+    "actionId": { "$ref": "#/$defs/digest" },
+    "kind": { "enum": ["step", "branch"] },
+    "parentStateId": { "$ref": "#/$defs/stateToken" },
+    "resultingStateId": { "$ref": "#/$defs/stateToken" },
+    "appliedAtStep": { "$ref": "#/$defs/step" },
+    "parameters": {
+      "oneOf": [
+        { "$ref": "#/$defs/stepParameters" },
+        { "$ref": "#/$defs/branchParameters" }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "kind": { "const": "step" },
+        "parameters": { "$ref": "#/$defs/stepParameters" }
+      },
+      "required": ["kind", "parameters"]
+    },
+    {
+      "properties": {
+        "kind": { "const": "branch" },
+        "parameters": { "$ref": "#/$defs/branchParameters" }
+      },
+      "required": ["kind", "parameters"]
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "stateToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+    },
+    "step": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "stepParameters": {
+      "type": "object",
+      "required": ["substeps", "fromStep", "toStep"],
+      "properties": {
+        "substeps": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "fromStep": { "$ref": "#/$defs/step" },
+        "toStep": { "$ref": "#/$defs/step" }
+      },
+      "additionalProperties": false
+    },
+    "branchParameters": {
+      "type": "object",
+      "required": ["fromStep", "branchOrdinal"],
+      "properties": {
+        "fromStep": { "$ref": "#/$defs/step" },
+        "branchOrdinal": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

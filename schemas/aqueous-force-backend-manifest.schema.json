@@ -1,0 +1,520 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/aqueous-force-backend-manifest/0.4.4",
+  "title": "Tailing Future Aqueous Force Backend Manifest v0.4.4",
+  "description": "Closed, declarative OpenMM 8.6 Reference and CPU PME backend plans. This schema does not represent execution evidence.",
+  "oneOf": [
+    { "$ref": "#/$defs/referenceBackend" },
+    { "$ref": "#/$defs/cpuBackend" }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "referenceBackend": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "backendId",
+        "manifestDigest",
+        "role",
+        "engine",
+        "runtime",
+        "capabilities",
+        "determinism",
+        "fallbackPolicy",
+        "evidence",
+        "license",
+        "claimBoundaries"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "tf.force-backend-manifest/0.4.4"
+        },
+        "backendId": {
+          "type": "string",
+          "const": "openmm-8.6.0-reference-pme"
+        },
+        "manifestDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:7f7104ea225819798c9c06eed382298c4d90ec19484f632fc6910832369882b9"
+        },
+        "role": { "type": "string", "const": "canonical" },
+        "engine": { "$ref": "#/$defs/referenceEngine" },
+        "runtime": { "$ref": "#/$defs/referenceRuntime" },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "determinism": { "$ref": "#/$defs/referenceDeterminism" },
+        "fallbackPolicy": {
+          "type": "string",
+          "const": "reject-no-algorithm-or-platform-fallback"
+        },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "license": { "$ref": "#/$defs/license" },
+        "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" }
+      },
+      "additionalProperties": false
+    },
+    "cpuBackend": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "backendId",
+        "manifestDigest",
+        "role",
+        "engine",
+        "runtime",
+        "capabilities",
+        "determinism",
+        "fallbackPolicy",
+        "evidence",
+        "license",
+        "claimBoundaries"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "tf.force-backend-manifest/0.4.4"
+        },
+        "backendId": {
+          "type": "string",
+          "const": "openmm-8.6.0-cpu-pme"
+        },
+        "manifestDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:8bea1d8a2f48897d34594fb416f791aa8d94c02807857182681c32c9d6e0424b"
+        },
+        "role": { "type": "string", "const": "comparison" },
+        "engine": { "$ref": "#/$defs/cpuEngine" },
+        "runtime": { "$ref": "#/$defs/cpuRuntime" },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "determinism": { "$ref": "#/$defs/cpuDeterminism" },
+        "fallbackPolicy": {
+          "type": "string",
+          "const": "reject-no-algorithm-or-platform-fallback"
+        },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "license": { "$ref": "#/$defs/license" },
+        "claimBoundaries": { "$ref": "#/$defs/claimBoundaries" }
+      },
+      "additionalProperties": false
+    },
+    "referenceEngine": {
+      "type": "object",
+      "required": ["name", "version", "sourceCommit", "platform", "platformProperties"],
+      "properties": {
+        "name": { "type": "string", "const": "OpenMM" },
+        "version": { "type": "string", "const": "8.6.0" },
+        "sourceCommit": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "const": "c6173db6e8edd705eb59172bd21e9ce69c572405"
+        },
+        "platform": { "type": "string", "const": "Reference" },
+        "platformProperties": { "$ref": "#/$defs/referencePlatformProperties" }
+      },
+      "additionalProperties": false
+    },
+    "cpuEngine": {
+      "type": "object",
+      "required": ["name", "version", "sourceCommit", "platform", "platformProperties"],
+      "properties": {
+        "name": { "type": "string", "const": "OpenMM" },
+        "version": { "type": "string", "const": "8.6.0" },
+        "sourceCommit": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "const": "c6173db6e8edd705eb59172bd21e9ce69c572405"
+        },
+        "platform": { "type": "string", "const": "CPU" },
+        "platformProperties": { "$ref": "#/$defs/cpuPlatformProperties" }
+      },
+      "additionalProperties": false
+    },
+    "referencePlatformProperties": {
+      "type": "object",
+      "required": ["Threads", "precision"],
+      "properties": {
+        "Threads": { "type": "null" },
+        "precision": {
+          "type": "string",
+          "const": "platform-native-no-Precision-property"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cpuPlatformProperties": {
+      "type": "object",
+      "required": ["Threads", "precision"],
+      "properties": {
+        "Threads": { "type": "string", "const": "1" },
+        "precision": {
+          "type": "string",
+          "const": "platform-native-no-Precision-property"
+        }
+      },
+      "additionalProperties": false
+    },
+    "referenceRuntime": {
+      "type": "object",
+      "required": [
+        "os",
+        "architecture",
+        "pythonVersion",
+        "numpyVersion",
+        "packageIndex",
+        "containerRegistry",
+        "containerRepository",
+        "containerTag",
+        "containerIndexDigest",
+        "containerPlatformDigest",
+        "openmmWheelFilename",
+        "openmmWheelUrl",
+        "openmmWheelByteCount",
+        "openmmWheelSha256",
+        "numpyWheelFilename",
+        "numpyWheelUrl",
+        "numpyWheelByteCount",
+        "numpyWheelSha256",
+        "environment"
+      ],
+      "properties": {
+        "os": { "type": "string", "const": "linux" },
+        "architecture": { "type": "string", "const": "x86_64" },
+        "pythonVersion": { "type": "string", "const": "3.12.11" },
+        "numpyVersion": { "type": "string", "const": "2.2.6" },
+        "packageIndex": { "type": "string", "const": "https://pypi.org/simple" },
+        "containerRegistry": { "type": "string", "const": "docker.io" },
+        "containerRepository": { "type": "string", "const": "library/python" },
+        "containerTag": { "type": "string", "const": "3.12.11-slim-bookworm" },
+        "containerIndexDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7"
+        },
+        "containerPlatformDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49"
+        },
+        "openmmWheelFilename": {
+          "type": "string",
+          "const": "openmm-8.6.0-cp312-cp312-manylinux_2_34_x86_64.whl"
+        },
+        "openmmWheelUrl": {
+          "type": "string",
+          "const": "https://files.pythonhosted.org/packages/f1/ac/31ad62cb2066bf3ec805534d95724572fd26c372fb6b1c2403fc4f48875f/openmm-8.6.0-cp312-cp312-manylinux_2_34_x86_64.whl"
+        },
+        "openmmWheelByteCount": {
+          "type": "integer",
+          "minimum": 14428011,
+          "maximum": 14428011,
+          "const": 14428011
+        },
+        "openmmWheelSha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:e7acafe671fe40c502623886b15a97bcc948a83a4a995da0336b7ee3ab4b0221"
+        },
+        "numpyWheelFilename": {
+          "type": "string",
+          "const": "numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        },
+        "numpyWheelUrl": {
+          "type": "string",
+          "const": "https://files.pythonhosted.org/packages/8c/3d/1e1db36cfd41f895d266b103df00ca5b3cbe965184df824dec5c08c6b803/numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        },
+        "numpyWheelByteCount": {
+          "type": "integer",
+          "minimum": 16527618,
+          "maximum": 16527618,
+          "const": 16527618
+        },
+        "numpyWheelSha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249"
+        },
+        "environment": { "$ref": "#/$defs/referenceEnvironment" }
+      },
+      "additionalProperties": false
+    },
+    "cpuRuntime": {
+      "type": "object",
+      "required": [
+        "os",
+        "architecture",
+        "pythonVersion",
+        "numpyVersion",
+        "packageIndex",
+        "containerRegistry",
+        "containerRepository",
+        "containerTag",
+        "containerIndexDigest",
+        "containerPlatformDigest",
+        "openmmWheelFilename",
+        "openmmWheelUrl",
+        "openmmWheelByteCount",
+        "openmmWheelSha256",
+        "numpyWheelFilename",
+        "numpyWheelUrl",
+        "numpyWheelByteCount",
+        "numpyWheelSha256",
+        "environment"
+      ],
+      "properties": {
+        "os": { "type": "string", "const": "linux" },
+        "architecture": { "type": "string", "const": "x86_64" },
+        "pythonVersion": { "type": "string", "const": "3.12.11" },
+        "numpyVersion": { "type": "string", "const": "2.2.6" },
+        "packageIndex": { "type": "string", "const": "https://pypi.org/simple" },
+        "containerRegistry": { "type": "string", "const": "docker.io" },
+        "containerRepository": { "type": "string", "const": "library/python" },
+        "containerTag": { "type": "string", "const": "3.12.11-slim-bookworm" },
+        "containerIndexDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7"
+        },
+        "containerPlatformDigest": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49"
+        },
+        "openmmWheelFilename": {
+          "type": "string",
+          "const": "openmm-8.6.0-cp312-cp312-manylinux_2_34_x86_64.whl"
+        },
+        "openmmWheelUrl": {
+          "type": "string",
+          "const": "https://files.pythonhosted.org/packages/f1/ac/31ad62cb2066bf3ec805534d95724572fd26c372fb6b1c2403fc4f48875f/openmm-8.6.0-cp312-cp312-manylinux_2_34_x86_64.whl"
+        },
+        "openmmWheelByteCount": {
+          "type": "integer",
+          "minimum": 14428011,
+          "maximum": 14428011,
+          "const": 14428011
+        },
+        "openmmWheelSha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:e7acafe671fe40c502623886b15a97bcc948a83a4a995da0336b7ee3ab4b0221"
+        },
+        "numpyWheelFilename": {
+          "type": "string",
+          "const": "numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        },
+        "numpyWheelUrl": {
+          "type": "string",
+          "const": "https://files.pythonhosted.org/packages/8c/3d/1e1db36cfd41f895d266b103df00ca5b3cbe965184df824dec5c08c6b803/numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        },
+        "numpyWheelByteCount": {
+          "type": "integer",
+          "minimum": 16527618,
+          "maximum": 16527618,
+          "const": 16527618
+        },
+        "numpyWheelSha256": {
+          "type": "string",
+          "minLength": 71,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "const": "sha256:fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249"
+        },
+        "environment": { "$ref": "#/$defs/cpuEnvironment" }
+      },
+      "additionalProperties": false
+    },
+    "referenceEnvironment": {
+      "type": "object",
+      "required": ["PYTHONHASHSEED", "TZ", "LC_ALL", "OPENMM_CPU_THREADS"],
+      "properties": {
+        "PYTHONHASHSEED": { "type": "string", "const": "0" },
+        "TZ": { "type": "string", "const": "UTC" },
+        "LC_ALL": { "type": "string", "const": "C.UTF-8" },
+        "OPENMM_CPU_THREADS": { "type": "null" }
+      },
+      "additionalProperties": false
+    },
+    "cpuEnvironment": {
+      "type": "object",
+      "required": ["PYTHONHASHSEED", "TZ", "LC_ALL", "OPENMM_CPU_THREADS"],
+      "properties": {
+        "PYTHONHASHSEED": { "type": "string", "const": "0" },
+        "TZ": { "type": "string", "const": "UTC" },
+        "LC_ALL": { "type": "string", "const": "C.UTF-8" },
+        "OPENMM_CPU_THREADS": { "type": "string", "const": "1" }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "cell",
+        "maximumParticles",
+        "potentialEnergy",
+        "atomicForces",
+        "forceSemantics",
+        "velocities",
+        "pme",
+        "constraints",
+        "completeVirial",
+        "pressure",
+        "stress",
+        "electronicDensity"
+      ],
+      "properties": {
+        "cell": { "type": "string", "const": "triclinic-3d-periodic" },
+        "maximumParticles": {
+          "type": "integer",
+          "minimum": 2685,
+          "maximum": 2685,
+          "const": 2685
+        },
+        "potentialEnergy": { "type": "boolean", "const": true },
+        "atomicForces": { "type": "boolean", "const": true },
+        "forceSemantics": {
+          "type": "string",
+          "const": "potential-force-excluding-constraint-impulses"
+        },
+        "velocities": { "type": "boolean", "const": true },
+        "pme": { "type": "boolean", "const": true },
+        "constraints": { "type": "boolean", "const": true },
+        "completeVirial": { "type": "boolean", "const": false },
+        "pressure": { "type": "boolean", "const": false },
+        "stress": { "type": "boolean", "const": false },
+        "electronicDensity": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "referenceDeterminism": {
+      "type": "object",
+      "required": [
+        "scope",
+        "executionMode",
+        "freeTrajectoryCrossPlatformEquality",
+        "randomSeedReconstructsPortableState"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "const": "same-host-same-container-fresh-process-exact-required"
+        },
+        "executionMode": {
+          "type": "string",
+          "const": "canonical-reference-trajectory-and-fixed-coordinate-evaluation"
+        },
+        "freeTrajectoryCrossPlatformEquality": { "type": "boolean", "const": false },
+        "randomSeedReconstructsPortableState": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "cpuDeterminism": {
+      "type": "object",
+      "required": [
+        "scope",
+        "executionMode",
+        "freeTrajectoryCrossPlatformEquality",
+        "randomSeedReconstructsPortableState"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "const": "fixed-coordinate-comparison-only-no-integration"
+        },
+        "executionMode": {
+          "type": "string",
+          "const": "fixed-coordinate-evaluation-only-zero-integrated-steps"
+        },
+        "freeTrajectoryCrossPlatformEquality": { "type": "boolean", "const": false },
+        "randomSeedReconstructsPortableState": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "status",
+        "externalExecutionPerformed",
+        "pmeExecutionPerformed",
+        "actualRuntimeInventory",
+        "prepareReceiptDigest",
+        "attestationBundleDigest"
+      ],
+      "properties": {
+        "status": { "type": "string", "const": "planned-not-executed" },
+        "externalExecutionPerformed": { "type": "boolean", "const": false },
+        "pmeExecutionPerformed": { "type": "boolean", "const": false },
+        "actualRuntimeInventory": { "type": "null" },
+        "prepareReceiptDigest": { "type": "null" },
+        "attestationBundleDigest": { "type": "null" }
+      },
+      "additionalProperties": false
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "apiReferenceCpuLicense",
+        "thirdPartyNoticesRequired",
+        "parameterAssetLicenseReviewed",
+        "coordinateAssetLicenseReviewed",
+        "redistributionCleared",
+        "licenseClearance"
+      ],
+      "properties": {
+        "apiReferenceCpuLicense": { "type": "string", "const": "MIT" },
+        "thirdPartyNoticesRequired": { "type": "boolean", "const": true },
+        "parameterAssetLicenseReviewed": { "type": "boolean", "const": false },
+        "coordinateAssetLicenseReviewed": { "type": "boolean", "const": false },
+        "redistributionCleared": { "type": "boolean", "const": false },
+        "licenseClearance": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "claimBoundaries": {
+      "type": "object",
+      "required": [
+        "locallyExecuted",
+        "openmmReproduced",
+        "bulkWaterValidated",
+        "interfaceSimulated",
+        "industrialPrediction",
+        "scorePromotionEligible"
+      ],
+      "properties": {
+        "locallyExecuted": { "type": "boolean", "const": false },
+        "openmmReproduced": { "type": "boolean", "const": false },
+        "bulkWaterValidated": { "type": "boolean", "const": false },
+        "interfaceSimulated": { "type": "boolean", "const": false },
+        "industrialPrediction": { "type": "boolean", "const": false },
+        "scorePromotionEligible": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    }
+  }
+}

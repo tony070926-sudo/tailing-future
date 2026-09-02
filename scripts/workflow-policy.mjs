@@ -4,6 +4,8 @@ import { load as parseYaml } from 'js-yaml';
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
 export const ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap-verify.yml';
+export const OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH = '.github/workflows/openmm-tip3p-protected.yml';
+export const OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256 = 'd137f2b2a73ad9d259b32046f7df627273277d13ce54d520119b4a81542b13f0';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = '65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
@@ -13,6 +15,7 @@ export const ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH = 1787977543;
 export const ATOMISTIC_SOURCE_MANIFEST_DIGEST = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
 export const ATOMISTIC_MATERIALIZATION_DIGEST = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
+export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '8419e7bcf8fe194d1830b5e9dda54b1dcd97846c743eb865ccf1f1089a965e94';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
 export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af';
@@ -41,10 +44,12 @@ export const SETUPTOOLS_STARTUP_HOOK_SHA256 = '2638ce9e2500e572a5e0de7faed6661eb
 export const ATOMISTIC_DOCKERFILE_DIGESTS = Object.freeze({
   'atomistic/containers/mace.Dockerfile': 'sha256:d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f',
   'atomistic/containers/mattersim.Dockerfile': 'sha256:d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455',
+  'atomistic/containers/openmm-water.Dockerfile': 'sha256:939e5358108493c6b0e03f2f177a3de88bbe0d8e013d1d615a52d27a6f185884',
 });
 
 const CHECKOUT_ACTION = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262';
 const SETUP_NODE_ACTION = 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020';
+const SETUP_PYTHON_ACTION = 'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065';
 const UPLOAD_ARTIFACT_ACTION = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02';
 const GITHUB_SCRIPT_ACTION = 'actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b';
 export const ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION = 'actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803';
@@ -59,6 +64,32 @@ export const ATOMISTIC_BOOTSTRAP_VERIFY_RUN_DIGESTS = Object.freeze({
   'Verify both replicas and create one canonical bootstrap-only receipt': 'sha256:2c84744b91126abf23ac2e5d615b2a94976535e96372c1c6d1919789c1d2cc3f',
   'Create a clean receipt download directory': 'sha256:50df08f79a467e5aa999616094b630f87faa2fa9f386c1a09a50e056f0e46e60',
   'Match the single downloaded receipt to the verify job bytes': 'sha256:55d6c9d0fe405505ceb9487e78e1a07fefbd3d025a44437f7dfb748520b97299',
+});
+export const OPENMM_TIP3P_PROTECTED_RUN_DIGESTS = Object.freeze({
+  'Refuse dispatch outside protected main Linux x86_64': 'sha256:456a1faabd99d49666f1af5ca3e1250e8a6deaa14e191b8399d67b640b4ed0dc',
+  'Install locked verifier dependencies without lifecycle scripts': 'sha256:5469a61773fc1075e46bc071c03a1eef6ad400f0dc794cf06a3e2abead9bd176',
+  'Create isolated private acquisition and execution roots': 'sha256:a25418c8dabfa5f4a87c28bbb375ea294b23564363f1f8367bcc9ecc50dbb15e',
+  'Acquire the five locked OpenMM inputs and wheels': 'sha256:55611f4ad5c2403c3bad900f21ede77603da9e59ec213e666fb8dba0c5920621',
+  'Acquire the exact locked private Chromium archive': 'sha256:15f3b58515e0f91aa95220263d27f100a02c1c17aa410b36ad71d1c428f877d6',
+  'Safely extract the exact locked private Chromium runtime': 'sha256:453375419701fc50539e857a011caf2a6d17d7f657e812a791e77608761316ca',
+  'Freeze and verify the exact locked private Chromium runtime': 'sha256:9abca5f60f9af7e119bc40f25a444a12bdc8d42f61569f4506d074ff6584b6fa',
+  'Freeze the exact Node and Rolldown browser runtime dependencies': 'sha256:dedbb78dc6b12473ef83148c4726ab672bcec5c4029bc18681d814438a773d1e',
+  'Prefetch the pinned base image and record the Docker toolchain': 'sha256:685c6e63f97d7737985a5694cf9d0131069792a7325639e0768f76cdd24dffb5',
+  'Build the OpenMM image with build-step network disabled': 'sha256:fc3dc1a0e208949cb8615ea1a34e8260b52b5682bd36953550d0b0286c79c2a0',
+  'Create the hardened offline producer container': 'sha256:65ccfaf9873203e3efe802f9dbfc2fb0a57bce13b49710ec3337e0094c20f0dd',
+  'Start and wait for the private producer': 'sha256:f8035bad4801cd9a0645b96de9df145494bb5ecb32839e41df2702145d55cb7d',
+  'Independently verify the complete private producer output': 'sha256:11c57e6b76cc8c3d3e2b811cc6317fe3b90285d6b092e9c346e9e72dfd171625',
+  'Require the exact independently verified-pass receipt': 'sha256:1ac97403754bdf2301bde22b9c9f4b925b4515231bc8f961ac8e466332d39a53',
+  'Freeze the verified OpenMM source and control receipt for private browser modes': 'sha256:6f6dcf059bd913547f1217676aaa335db8b6806467bc55f9cf58dcfdd12b22a9',
+  'Load and canary the exact Chromium AppArmor userns profile': 'sha256:c700ed6c6803162ef930c91d8a0ee9c454c939f3b7ba350465846f044608a923',
+  'Run the three protected private browser modes': 'sha256:44e26daabb5745b292e9219832418adb2436d17bc383dd81297e1c4fab94e99f',
+  'Compose the sanitized protected browser evidence': 'sha256:3cbfabdacfc20cfe07ab3ba8e538158b2841f4a97fe75c72d8afc329e8baa5ee',
+  'Unload AppArmor profile and remove every private browser execution root': 'sha256:3962c6b1cdda8e356a5d198ec464bc97ec52ff0ddaa872fa706e467b19cc1361',
+  'Write the sanitized protected-CI evidence envelope': 'sha256:05e220db38e4a9b5726c28fad1e091007885b27b2db761846b4cdcf85f45a4f8',
+  'Stage only the nine allowlisted evidence files': 'sha256:60e0b3198461c4e26949bb621da833c3859f1ab5322de56ca86e0867943beea7',
+  'Bind the immutable GitHub artifact identity': 'sha256:7f48b12a81104be3f0e01c314151aa1104f133457d29efe5388fc7f0ef87a342',
+  'Refuse attestation outside this protected run and create a clean download root': 'sha256:c59e6957d7f729d11df9aa49e24b745d5e8e356b6badbb21ed5eefff5f217a42',
+  'Verify every downloaded evidence file and envelope binding': 'sha256:12b75cf8bb1230abbe6aa13ebf37cf1a776b565edfc182f5913844c514c28f0b',
 });
 
 export const ATOMISTIC_SELECTED_SOURCE_FILES = Object.freeze([
@@ -273,10 +304,15 @@ export function inspectWorkflowSource(relativePath, source) {
       if (step.with?.['persist-credentials'] !== false) failures.push(`${relativePath}: actions/checkout must set persist-credentials: false.`);
     }
   }
-  if (relativePath === SENTINEL_EVALUATION_WORKFLOW_PATH) failures.push(...inspectSentinelEvaluationWorkflow(workflow));
+  if (relativePath === SENTINEL_EVALUATION_WORKFLOW_PATH) {
+    failures.push(...inspectSentinelEvaluationWorkflow(workflow, source));
+  }
   if (relativePath === SENTINEL_REPORT_WORKFLOW_PATH) failures.push(...inspectSentinelReportWorkflow(workflow));
   if (relativePath === ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapWorkflow(workflow));
   if (relativePath === ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapVerifyWorkflow(workflow));
+  if (relativePath === OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH) {
+    failures.push(...inspectOpenMmTip3pProtectedWorkflow(workflow, source));
+  }
   return failures;
 }
 
@@ -302,9 +338,12 @@ export function inspectAtomisticBootstrapQuarantineSource(relativePath, source) 
   return failures;
 }
 
-export function inspectSentinelEvaluationWorkflow(workflow) {
+export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
   const failures = [];
   const prefix = `${SENTINEL_EVALUATION_WORKFLOW_PATH}:`;
+  if (sha256(source) !== `sha256:${SENTINEL_EVALUATION_WORKFLOW_SHA256}`) {
+    failures.push(`${prefix} complete reviewed workflow bytes drifted.`);
+  }
   if (workflow.name !== 'Tailing Sentinel') failures.push(`${prefix} evaluation workflow name drifted.`);
   if (!sameJson(workflow.on, {
     push: { branches: ['**'] },
@@ -317,8 +356,13 @@ export function inspectSentinelEvaluationWorkflow(workflow) {
   if (!sameJson(Object.keys(jobs), ['evaluate'])) failures.push(`${prefix} candidate workflow may contain only the read-only evaluate job.`);
   const job = jobs.evaluate;
   if (!job || typeof job !== 'object' || Array.isArray(job)) return [...failures, `${prefix} evaluate job is missing.`];
+  if (!sameJson(Object.keys(job).sort(), [
+    'permissions', 'runs-on', 'steps', 'timeout-minutes',
+  ].sort())) failures.push(`${prefix} evaluate job contains an unreviewed key.`);
   if (!sameJson(job.permissions, { contents: 'read' })) failures.push(`${prefix} evaluate job must have only contents: read.`);
-  if (job['runs-on'] !== 'ubuntu-24.04') failures.push(`${prefix} evaluate job must use ubuntu-24.04.`);
+  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 20) {
+    failures.push(`${prefix} evaluate job must remain a bounded Ubuntu 24.04 job.`);
+  }
 
   const steps = Array.isArray(job.steps) ? job.steps : [];
   const checkouts = steps.filter((step) => step?.uses === CHECKOUT_ACTION);
@@ -326,6 +370,62 @@ export function inspectSentinelEvaluationWorkflow(workflow) {
     uses: CHECKOUT_ACTION,
     with: { 'persist-credentials': false, 'fetch-depth': 0 },
   })) failures.push(`${prefix} evaluation checkout must fetch immutable ancestor objects without credentials.`);
+  const setupNodes = steps.filter((step) => step?.uses === SETUP_NODE_ACTION);
+  if (setupNodes.length !== 1 || !sameJson(setupNodes[0], {
+    uses: SETUP_NODE_ACTION,
+    with: { 'node-version': '24.16.0', cache: 'npm' },
+  })) failures.push(`${prefix} Node runtime setup drifted.`);
+  const setupPythons = steps.filter((step) => step?.uses === SETUP_PYTHON_ACTION);
+  if (setupPythons.length !== 1 || !sameJson(setupPythons[0], {
+    uses: SETUP_PYTHON_ACTION,
+    with: { 'python-version': '3.12.11' },
+  })) failures.push(`${prefix} Python runtime setup drifted.`);
+  const expectedSimpleGates = {
+    install: { id: 'install', 'continue-on-error': true, run: 'npm ci' },
+    lint: {
+      id: 'lint', if: 'always()', 'continue-on-error': true, run: 'npm run lint',
+    },
+    typecheck: {
+      id: 'typecheck', if: 'always()', 'continue-on-error': true, run: 'npm run typecheck',
+    },
+    test: {
+      id: 'test', if: 'always()', 'continue-on-error': true, run: 'npm test',
+    },
+    atomistic_manifest: {
+      id: 'atomistic_manifest',
+      if: 'always()',
+      'continue-on-error': true,
+      run: 'npm run atomistic:validate',
+    },
+    audit: {
+      id: 'audit',
+      if: 'always()',
+      'continue-on-error': true,
+      run: 'npm audit --audit-level=low',
+    },
+    release_manifest: {
+      id: 'release_manifest',
+      if: 'always()',
+      'continue-on-error': true,
+      run: 'npm run release:manifest',
+    },
+  };
+  for (const [id, expected] of Object.entries(expectedSimpleGates)) {
+    const matches = steps.filter((step) => step?.id === id);
+    if (matches.length !== 1 || !sameJson(matches[0], expected)) {
+      failures.push(`${prefix} ${id} gate drifted.`);
+    }
+  }
+  for (const id of ['build', 'report_build']) {
+    const matches = steps.filter((step) => step?.id === id);
+    if (matches.length !== 1 || !sameJson(matches[0], {
+      id,
+      if: 'always()',
+      'continue-on-error': true,
+      env: { NEXT_PUBLIC_TAILING_COMMIT_SHA: '${{ github.sha }}' },
+      run: 'npm run build',
+    })) failures.push(`${prefix} ${id} revision-bound build gate drifted.`);
+  }
   const atomisticGates = steps.filter((step) => step?.id === 'atomistic_manifest');
   if (atomisticGates.length !== 1 || !sameJson(atomisticGates[0], {
     id: 'atomistic_manifest',
@@ -333,19 +433,45 @@ export function inspectSentinelEvaluationWorkflow(workflow) {
     'continue-on-error': true,
     run: 'npm run atomistic:validate',
   })) failures.push(`${prefix} atomistic plan plus runtime-lock validation gate drifted.`);
-  const sentinel = steps.find((step) => step?.id === 'sentinel');
-  if (sentinel?.env?.TAILING_ATOMISTIC_MANIFEST_STATUS !== '${{ steps.atomistic_manifest.outcome }}'
-      || sentinel?.run !== 'npm run evaluate') {
-    failures.push(`${prefix} Sentinel must receive the exact atomistic validation outcome.`);
-  }
+  const sentinelMatches = steps.filter((step) => step?.id === 'sentinel');
+  const sentinel = sentinelMatches[0];
+  if (sentinelMatches.length !== 1 || !sameJson(sentinel, {
+    id: 'sentinel',
+    if: 'always()',
+    'continue-on-error': true,
+    env: {
+      TAILING_INSTALL_STATUS: '${{ steps.install.outcome }}',
+      TAILING_LINT_STATUS: '${{ steps.lint.outcome }}',
+      TAILING_TYPECHECK_STATUS: '${{ steps.typecheck.outcome }}',
+      TAILING_TEST_STATUS: '${{ steps.test.outcome }}',
+      TAILING_ATOMISTIC_MANIFEST_STATUS: '${{ steps.atomistic_manifest.outcome }}',
+      TAILING_BUILD_STATUS: '${{ steps.build.outcome }}',
+      TAILING_AUDIT_STATUS: '${{ steps.audit.outcome }}',
+    },
+    run: 'npm run evaluate',
+  })) failures.push(`${prefix} Sentinel upstream status binding drifted.`);
   const finalGate = steps.at(-1);
-  if (finalGate?.if !== 'always()'
-      || finalGate?.env?.ATOMISTIC_MANIFEST_STATUS !== '${{ steps.atomistic_manifest.outcome }}'
-      || typeof finalGate?.run !== 'string'
-      || !finalGate.run.includes("'ATOMISTIC_MANIFEST'")
-      || !finalGate.run.includes("process.env[name + '_STATUS'] !== 'success'")) {
-    failures.push(`${prefix} final evaluation gate must fail when atomistic validation fails.`);
-  }
+  const expectedFinalRun = 'node -e "const failed = ['
+    + "'INSTALL','LINT','TYPECHECK','TEST','ATOMISTIC_MANIFEST','BUILD','AUDIT',"
+    + "'SENTINEL','REPORT_BUILD','RELEASE_MANIFEST'].filter(name => "
+    + "process.env[name + '_STATUS'] !== 'success'); if (failed.length) { "
+    + "console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }\"";
+  if (!sameJson(finalGate, {
+    if: 'always()',
+    env: {
+      INSTALL_STATUS: '${{ steps.install.outcome }}',
+      LINT_STATUS: '${{ steps.lint.outcome }}',
+      TYPECHECK_STATUS: '${{ steps.typecheck.outcome }}',
+      TEST_STATUS: '${{ steps.test.outcome }}',
+      ATOMISTIC_MANIFEST_STATUS: '${{ steps.atomistic_manifest.outcome }}',
+      BUILD_STATUS: '${{ steps.build.outcome }}',
+      AUDIT_STATUS: '${{ steps.audit.outcome }}',
+      SENTINEL_STATUS: '${{ steps.sentinel.outcome }}',
+      REPORT_BUILD_STATUS: '${{ steps.report_build.outcome }}',
+      RELEASE_MANIFEST_STATUS: '${{ steps.release_manifest.outcome }}',
+    },
+    run: `${expectedFinalRun}\n`,
+  })) failures.push(`${prefix} final ten-gate aggregation drifted.`);
   const reportUploads = steps.filter((step) => step?.uses === UPLOAD_ARTIFACT_ACTION
     && step?.with?.name === 'tailing-sentinel-pr-report-${{ github.run_id }}-${{ github.run_attempt }}');
   if (reportUploads.length !== 1 || !sameJson(reportUploads[0], {
@@ -1097,6 +1223,367 @@ export function inspectAtomisticBootstrapVerifyWorkflow(workflow) {
   return failures;
 }
 
+export function inspectOpenMmTip3pProtectedWorkflow(workflow, source = undefined) {
+  const failures = [];
+  const prefix = `${OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH}:`;
+  const readOnlyPermissions = { contents: 'read', actions: 'read' };
+  const attestPermissions = {
+    contents: 'read',
+    actions: 'read',
+    'id-token': 'write',
+    attestations: 'write',
+    'artifact-metadata': 'write',
+  };
+  const artifactName = '${{ steps.stage.outputs.artifact_name }}';
+  const artifactRoot = '${{ env.ARTIFACT_ROOT }}';
+  const expectedArtifactFiles = [
+    'buildx-version.txt',
+    'container-create-inspect.json',
+    'container-final-inspect.json',
+    'docker-version.txt',
+    'image-inspect.json',
+    'openmm-ci-acquisition-manifest.json',
+    'openmm-tip3p-control-receipt.json',
+    'openmm-tip3p-protected-browser-evidence.json',
+    'openmm-tip3p-protected-ci-evidence.json',
+  ];
+
+  if (source !== undefined
+      && sha256(source) !== `sha256:${OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256}`) {
+    failures.push(`${prefix} complete reviewed workflow bytes drifted.`);
+  }
+  if (!sameJson(Object.keys(workflow).sort(), ['concurrency', 'jobs', 'name', 'on', 'permissions'])) {
+    failures.push(`${prefix} workflow contains an unreviewed top-level key.`);
+  }
+  if (workflow.name !== 'OpenMM TIP3P protected control') {
+    failures.push(`${prefix} workflow name drifted.`);
+  }
+  if (!sameJson(workflow.on, { workflow_dispatch: null })) {
+    failures.push(`${prefix} protected control must be manual workflow_dispatch only.`);
+  }
+  if (!sameJson(workflow.permissions, readOnlyPermissions)) {
+    failures.push(`${prefix} root permissions must remain read-only without attestation authority.`);
+  }
+  if (!sameJson(workflow.concurrency, {
+    group: 'openmm-tip3p-protected-${{ github.ref }}-${{ github.sha }}',
+    'cancel-in-progress': false,
+  })) failures.push(`${prefix} concurrency must bind the protected ref and exact source SHA.`);
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs)
+    ? workflow.jobs : {};
+  if (!sameJson(Object.keys(jobs), ['execute', 'attest'])) {
+    failures.push(`${prefix} only the separated execute and attest jobs are allowed.`);
+  }
+  const execute = jobs.execute;
+  if (!execute || typeof execute !== 'object' || Array.isArray(execute)) {
+    failures.push(`${prefix} execute job is missing.`);
+  } else {
+    if (!sameJson(Object.keys(execute).sort(), [
+      'env', 'name', 'outputs', 'permissions', 'runs-on', 'steps', 'timeout-minutes',
+    ].sort())) failures.push(`${prefix} execute job contains an unreviewed key.`);
+    if (execute.name !== 'Produce and independently verify private OpenMM evidence'
+        || execute['runs-on'] !== 'ubuntu-24.04'
+        || execute['timeout-minutes'] !== 350) {
+      failures.push(`${prefix} execute must remain the bounded Ubuntu 24.04 lane.`);
+    }
+    if (!sameJson(execute.permissions, readOnlyPermissions)) {
+      failures.push(`${prefix} execute job may have only contents/actions read.`);
+    }
+    if (!sameJson(execute.outputs, {
+      artifact_name: '${{ steps.bind.outputs.artifact_name }}',
+      artifact_id: '${{ steps.bind.outputs.artifact_id }}',
+      artifact_digest: '${{ steps.bind.outputs.artifact_digest }}',
+      envelope_sha256: '${{ steps.stage.outputs.envelope_sha256 }}',
+      envelope_size_bytes: '${{ steps.stage.outputs.envelope_size_bytes }}',
+    })) failures.push(`${prefix} execute outputs must bind the immutable artifact and envelope bytes.`);
+    if (!sameJson(execute.env, {
+      BASE_IMAGE_INDEX: 'python:3.12.11-slim-bookworm@sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7',
+      BASE_IMAGE_INDEX_DIGEST: 'sha256:519591d6871b7bc437060736b9f7456b8731f1499a57e22e6c285135ae657bf7',
+      BASE_IMAGE: 'python:3.12.11-slim-bookworm@sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49',
+      BASE_IMAGE_PLATFORM_DIGEST: 'sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49',
+      BASE_REPOSITORY_DIGEST: 'python@sha256:c00fc7b44d844b6da22861ec24af43968a5200eac4ec607b4725d585165d6b49',
+      DOCKERFILE_FRONTEND: PINNED_DOCKERFILE_FRONTEND,
+      DOCKERFILE_FRONTEND_DIGEST: 'sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e',
+      IMAGE_TAG: 'tailing/openmm-tip3p:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}',
+      CONTAINER_NAME: 'tailing-openmm-tip3p-${{ github.run_id }}-${{ github.run_attempt }}',
+      PRIVATE_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private',
+      INPUT_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/inputs',
+      WHEELHOUSE: '${{ runner.temp }}/tailing-openmm-tip3p-private/wheelhouse',
+      PRODUCER_OUTPUT: '${{ runner.temp }}/tailing-openmm-tip3p-private/producer-output',
+      EVIDENCE_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/administrative-evidence',
+      PUBLISH_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope',
+      ENVELOPE_PATH: '${{ runner.temp }}/tailing-openmm-tip3p-private/sanitized-envelope/openmm-tip3p-protected-ci-evidence.json',
+      ARTIFACT_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-public-evidence',
+      CHROMIUM_ACQUISITION_ROOT: '/opt/tailing-private-chromium-acquisition-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_RUNTIME_ROOT: '/opt/tailing-private-chromium-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_SOURCE_ROOT: '/opt/tailing-private-openmm-source-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_CONTROL_ROOT: '/opt/tailing-private-openmm-control-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_RECEIPT_ROOT: '/opt/tailing-private-browser-receipts-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_NODE_ROOT: '/opt/tailing-private-node-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_ROLLDOWN_ROOT: '/opt/tailing-private-rolldown-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_APPARMOR_PROFILE: 'tailing-future-chromium-${{ github.run_id }}-${{ github.run_attempt }}',
+      BROWSER_APPARMOR_PROFILE_PATH: '/etc/apparmor.d/tailing-future-chromium-${{ github.run_id }}-${{ github.run_attempt }}',
+    })) failures.push(`${prefix} execute image trust roots or private/public path split drifted.`);
+
+    const steps = Array.isArray(execute.steps) ? execute.steps : [];
+    const expectedNames = [
+      'Check out the protected-main source without credentials',
+      'Install the pinned JavaScript runtime',
+      'Refuse dispatch outside protected main Linux x86_64',
+      'Install locked verifier dependencies without lifecycle scripts',
+      'Create isolated private acquisition and execution roots',
+      'Acquire the five locked OpenMM inputs and wheels',
+      'Acquire the exact locked private Chromium archive',
+      'Safely extract the exact locked private Chromium runtime',
+      'Freeze and verify the exact locked private Chromium runtime',
+      'Freeze the exact Node and Rolldown browser runtime dependencies',
+      'Prefetch the pinned base image and record the Docker toolchain',
+      'Build the OpenMM image with build-step network disabled',
+      'Create the hardened offline producer container',
+      'Start and wait for the private producer',
+      'Independently verify the complete private producer output',
+      'Require the exact independently verified-pass receipt',
+      'Freeze the verified OpenMM source and control receipt for private browser modes',
+      'Load and canary the exact Chromium AppArmor userns profile',
+      'Run the three protected private browser modes',
+      'Compose the sanitized protected browser evidence',
+      'Unload AppArmor profile and remove every private browser execution root',
+      'Write the sanitized protected-CI evidence envelope',
+      'Stage only the nine allowlisted evidence files',
+      'Upload only the allowlisted protected-CI evidence',
+      'Bind the immutable GitHub artifact identity',
+    ];
+    if (!sameJson(steps.map((step) => step?.name), expectedNames)) {
+      failures.push(`${prefix} execute step set or order drifted.`);
+    }
+    if (!sameJson(steps[0], {
+      name: expectedNames[0],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_CHECKOUT_ACTION,
+      with: { ref: '${{ github.sha }}', 'persist-credentials': false, 'fetch-depth': 0 },
+    })) failures.push(`${prefix} protected source checkout drifted.`);
+    if (!sameJson(steps[1], {
+      name: expectedNames[1],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION,
+      with: { 'node-version': ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION },
+    })) failures.push(`${prefix} execute Node runtime drifted.`);
+
+    const runSteps = new Map();
+    for (const step of steps) {
+      if (typeof step?.run !== 'string') continue;
+      const allowedKeys = step.name === 'Unload AppArmor profile and remove every private browser execution root'
+        ? ['id', 'if', 'name', 'run', 'shell']
+        : ['env', 'id', 'name', 'run', 'shell'];
+      if (step.shell !== 'bash'
+          || !Object.keys(step).every((key) => allowedKeys.includes(key))
+          || runSteps.has(step.name)) {
+        failures.push(`${prefix} execute run step keys, shell, or uniqueness drifted.`);
+      }
+      runSteps.set(step.name, step);
+    }
+    const cleanup = runSteps.get('Unload AppArmor profile and remove every private browser execution root');
+    if (cleanup?.id !== 'browser_cleanup' || cleanup?.if !== 'always()'
+        || !sameJson(Object.keys(cleanup ?? {}).sort(), [
+          'id', 'if', 'name', 'run', 'shell',
+        ].sort())) {
+      failures.push(`${prefix} private browser cleanup must always run as the reviewed gate.`);
+    }
+    for (const name of expectedNames.filter((name) => Object.hasOwn(
+      OPENMM_TIP3P_PROTECTED_RUN_DIGESTS, name,
+    ))) {
+      const step = runSteps.get(name);
+      if (!step || sha256(step.run) !== OPENMM_TIP3P_PROTECTED_RUN_DIGESTS[name]) {
+        failures.push(`${prefix} reviewed execute program drifted: ${name}.`);
+      }
+    }
+    const executable = [...runSteps.values()].map((step) => step.run).join('\n');
+    if (/--no-sandbox|--disable-setuid-sandbox|chmod\s+0?4755|(?:echo|printf)[^\n]*\b0\b[^\n]*apparmor_restrict_unprivileged_userns|sysctl[^\n]*apparmor_restrict_unprivileged_userns[^\n]*=\s*0/u.test(executable)) {
+      failures.push(`${prefix} Chromium sandbox or global AppArmor userns restriction was weakened.`);
+    }
+    if (!hasAll(executable, [
+      'test "$GITHUB_REF" = "refs/heads/main"',
+      'test "$GITHUB_REF_PROTECTED" = "true"',
+      'test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"',
+      'test "$GITHUB_RUN_ATTEMPT" = "1"',
+      'test "$(git rev-parse refs/remotes/origin/main^{commit})" = "$GITHUB_SHA"',
+      'fetch-ci-assets.mjs',
+      '--manifest "$EVIDENCE_ROOT/openmm-ci-acquisition-manifest.json"',
+      'docker buildx imagetools inspect "$BASE_IMAGE_INDEX" --raw',
+      'docker buildx imagetools inspect "$DOCKERFILE_FRONTEND" --raw',
+      '--network none',
+      '--read-only',
+      '--cap-drop ALL',
+      '--security-opt no-new-privileges=true',
+      '--pids-limit 128',
+      '--memory 8g',
+      '--memory-swap 8g',
+      '--cpus 2',
+      '--platform linux/amd64',
+      '--mount "type=bind,src=$INPUT_ROOT,dst=/inputs,readonly"',
+      '--mount "type=bind,src=$PRODUCER_OUTPUT,dst=/work/output"',
+      'verify-control-cli.mjs',
+      "receipt.status !== 'verified-pass'",
+      'receipt.gates?.allPassed !== true',
+      'receipt.claims?.scientificPass !== true',
+      'fetch-private-chromium-v049.mjs',
+      'safe_extract_private_chromium_v049.py',
+      'freeze-private-chromium-runtime-v049.py',
+      '--runtime-root "$BROWSER_RUNTIME_ROOT"',
+      '--execute',
+      '/opt/hostedtoolcache/node/24.16.0/x64/bin/node',
+      '@rolldown/binding-linux-x64-gnu/rolldown-binding.linux-x64-gnu.node',
+      'ae16856655924ebc41f231393c7f8b89566430a845d1f073fd9d6abf219db04b',
+      '0:0:444:1:19324672',
+      'run-protected-browser-namespace-v049.sh',
+      'apparmor_restrict_unprivileged_userns',
+      'grep -Eq -- "^$BROWSER_APPARMOR_PROFILE \\\\([^)]*\\\\)$"',
+      '/usr/sbin/apparmor_parser --add --skip-cache',
+      '/usr/bin/aa-exec --profile="$BROWSER_APPARMOR_PROFILE" --',
+      '/usr/bin/unshare --user --map-root-user /bin/true',
+      '/usr/sbin/apparmor_parser --remove --skip-cache',
+      'sudo rm -f -- "$profile_source"',
+      '--mode happy-path',
+      '--mode mid-playback-dispose',
+      '--mode context-loss',
+      'compose-protected-browser-evidence-v049.mjs',
+      '--output "$EVIDENCE_ROOT/openmm-tip3p-protected-browser-evidence.json"',
+      'sudo rm -rf -- "$private_root"',
+      'write-ci-evidence.mjs',
+      'test "$(find "$ARTIFACT_ROOT" -mindepth 1 -maxdepth 1 -type f -links 1 -printf x | wc -c)" -eq 9',
+    ])) failures.push(`${prefix} protected-main, private browser, cleanup, or nine-file staging guard is incomplete.`);
+    const browserModes = runSteps.get('Run the three protected private browser modes')?.run ?? '';
+    const sharedSession = '--session-id "v049-openmm-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"';
+    if (browserModes.split(sharedSession).length !== 4) {
+      failures.push(`${prefix} all three browser modes must bind the same exact world-session identity.`);
+    }
+
+    const upload = steps.find((step) => step?.name
+      === 'Upload only the allowlisted protected-CI evidence');
+    const expectedUploadPath = `${expectedArtifactFiles.map((name) => `${artifactRoot}/${name}`).join('\n')}\n`;
+    if (!sameJson(upload, {
+      name: 'Upload only the allowlisted protected-CI evidence',
+      id: 'upload',
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_UPLOAD_ACTION,
+      with: {
+        name: artifactName,
+        path: expectedUploadPath,
+        'if-no-files-found': 'error',
+        'include-hidden-files': false,
+        overwrite: false,
+        'retention-days': 7,
+      },
+    })) failures.push(`${prefix} upload must contain only the exact nine sanitized evidence files.`);
+    if (typeof upload?.with?.path === 'string'
+        && /PRODUCER_OUTPUT|INPUT_ROOT|WHEELHOUSE|\.pdb|\.xml|arrays\//.test(upload.with.path)) {
+      failures.push(`${prefix} raw inputs, wheels, coordinates, parameters, or arrays may not be uploaded.`);
+    }
+  }
+
+  const attest = jobs.attest;
+  if (!attest || typeof attest !== 'object' || Array.isArray(attest)) {
+    failures.push(`${prefix} attest job is missing.`);
+  } else {
+    if (!sameJson(Object.keys(attest).sort(), [
+      'env', 'name', 'needs', 'permissions', 'runs-on', 'steps', 'timeout-minutes',
+    ].sort())) failures.push(`${prefix} attest job contains an unreviewed key.`);
+    if (attest.name !== 'Validate downloaded evidence and attest only the envelope'
+        || attest.needs !== 'execute'
+        || attest['runs-on'] !== 'ubuntu-24.04'
+        || attest['timeout-minutes'] !== 15) {
+      failures.push(`${prefix} attest must remain a bounded job dependent on execute.`);
+    }
+    if (!sameJson(attest.permissions, attestPermissions)) {
+      failures.push(`${prefix} attest permissions drifted from the exact read/OIDC/attestation set.`);
+    }
+    if (!sameJson(attest.env, {
+      DOWNLOAD_ROOT: '${{ runner.temp }}/tailing-openmm-tip3p-attest',
+      ENVELOPE_PATH: '${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json',
+    })) failures.push(`${prefix} attest download and subject paths drifted.`);
+    const steps = Array.isArray(attest.steps) ? attest.steps : [];
+    const expectedNames = [
+      'Refuse attestation outside this protected run and create a clean download root',
+      'Install the pinned JavaScript runtime without repository checkout',
+      'Download the exact allowlisted evidence artifact from this run',
+      'Verify every downloaded evidence file and envelope binding',
+      'Attest only the verified sanitized evidence envelope',
+    ];
+    if (!sameJson(steps.map((step) => step?.name), expectedNames)) {
+      failures.push(`${prefix} attest step set or order drifted.`);
+    }
+    if (steps.some((step) => String(step?.uses ?? '').startsWith('actions/checkout@')
+        || String(step?.uses ?? '').startsWith('./')
+        || (typeof step?.run === 'string' && /(?:^|[\s"'])scripts\//m.test(step.run)))) {
+      failures.push(`${prefix} privileged attest job may not check out or execute repository code.`);
+    }
+    if (!sameJson(steps[1], {
+      name: expectedNames[1],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_SETUP_NODE_ACTION,
+      with: { 'node-version': ATOMISTIC_BOOTSTRAP_VERIFY_NODE_VERSION },
+    })) failures.push(`${prefix} attest Node runtime drifted.`);
+    if (!sameJson(steps[2], {
+      name: expectedNames[2],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_DOWNLOAD_ACTION,
+      with: {
+        name: '${{ needs.execute.outputs.artifact_name }}',
+        path: '${{ runner.temp }}/tailing-openmm-tip3p-attest',
+        'github-token': '${{ github.token }}',
+        repository: '${{ github.repository }}',
+        'run-id': '${{ github.run_id }}',
+      },
+    })) failures.push(`${prefix} attest download must bind the exact current-run artifact.`);
+    for (const index of [0, 3]) {
+      const step = steps[index];
+      if (!step || step.shell !== 'bash'
+          || !Object.keys(step).every((key) => ['env', 'name', 'run', 'shell'].includes(key))
+          || sha256(step.run) !== OPENMM_TIP3P_PROTECTED_RUN_DIGESTS[step.name]) {
+        failures.push(`${prefix} reviewed attest validation program drifted: ${step?.name ?? index}.`);
+      }
+    }
+    const verifyProgram = typeof steps[3]?.run === 'string' ? steps[3].run : '';
+    if (!hasAll(verifyProgram, [
+      'downloaded artifact does not contain the exact nine-file allowlist',
+      'envelope.files.length !== expectedSourceFiles.length',
+      "records.get('openmm-tip3p-protected-browser-evidence.json')",
+      'browser evidence is not exact canonical JSON plus LF',
+      'browser evidence has a stale self digest',
+      'canonicalJson(Object.keys(browser).sort())',
+      'outerControlDigestKeys.some',
+      "envelope.controlReceipt.status !== 'verified-pass'",
+      "browser.sourceRevision !== process.env.GITHUB_SHA",
+      'canonicalJson(expectedBrowserControlReceipt)',
+      'browserSourceDigestKeys.some',
+      'canonicalJson(browser.browserRuntime) !== canonicalJson(expectedBrowserRuntime)',
+      'canonicalJson(Object.keys(browser.client).sort())',
+      'browser.modeResults.length !== expectedBrowserModes.length',
+      'observationDigests.size !== expectedBrowserModes.length',
+      'mode.browserDrawObserved !== expected.browserDrawObserved',
+      'mode.trajectoryCompleted !== expected.trajectoryCompleted',
+      'mode.renderedFrameCount !== expected.renderedFrameCount',
+      'canonicalJson(browser.isolation) !== canonicalJson(expectedBrowserIsolation)',
+      'canonicalJson(browser.crossMode) !== canonicalJson(expectedBrowserCrossMode)',
+      'canonicalJson(browser.cleanup) !== canonicalJson(expectedBrowserCleanup)',
+      'canonicalJson(browser.claims) !== canonicalJson(expectedBrowserClaims)',
+      'canonicalJson(envelope.browserEvidence)',
+      "envelope.schemaVersion !== 'tf.openmm-tip3p-protected-ci-evidence/0.4.9'",
+      "'accept-encoding': 'identity'",
+      "contentEncoding.trim().toLowerCase() !== 'identity'",
+      'metadataSize > maximumMetadataBytes',
+      'metadata.digest !== process.env.EXPECTED_ARTIFACT_DIGEST',
+      "metadata.workflow_run?.head_branch !== 'main'",
+      'metadata.workflow_run?.head_sha !== process.env.GITHUB_SHA',
+    ])) failures.push(`${prefix} attester must independently bind all files, the envelope, and GitHub artifact metadata.`);
+    if (!sameJson(steps[4], {
+      name: expectedNames[4],
+      uses: ATOMISTIC_BOOTSTRAP_VERIFY_ATTEST_ACTION,
+      with: {
+        'subject-path': '${{ runner.temp }}/tailing-openmm-tip3p-attest/openmm-tip3p-protected-ci-evidence.json',
+        'show-summary': false,
+        'github-token': '${{ github.token }}',
+      },
+    })) failures.push(`${prefix} attestation must be last and cover only the sanitized envelope.`);
+  }
+  return failures;
+}
+
 export function inspectDockerfileSource(relativePath, source) {
   const failures = [];
   const expectedSourceDigest = ATOMISTIC_DOCKERFILE_DIGESTS[relativePath];
@@ -1107,7 +1594,11 @@ export function inspectDockerfileSource(relativePath, source) {
   if (source.split(/\r?\n/, 1)[0] !== expectedDirective) failures.push(`${relativePath}: Dockerfile frontend must equal ${PINNED_DOCKERFILE_FRONTEND}.`);
   const args = [...source.matchAll(/^\s*ARG\s+([^\s=]+)(?:=(\S+))?\s*$/gmi)];
   const baseArgs = args.filter((match) => match[1] === 'BASE_IMAGE');
-  if (baseArgs.length !== 1 || baseArgs[0][2] !== undefined) failures.push(`${relativePath}: ARG BASE_IMAGE must be declared exactly once without a mutable default.`);
+  if (relativePath === 'atomistic/containers/openmm-water.Dockerfile') {
+    if (baseArgs.length !== 0) failures.push(`${relativePath}: the OpenMM control must keep its exact in-source base digest and no BASE_IMAGE argument.`);
+  } else if (baseArgs.length !== 1 || baseArgs[0][2] !== undefined) {
+    failures.push(`${relativePath}: ARG BASE_IMAGE must be declared exactly once without a mutable default.`);
+  }
 
   const stageAliases = new Set();
   const fromReferences = [...source.matchAll(/^\s*FROM(?:\s+--platform=\S+)?\s+([^\s]+)(?:\s+AS\s+([A-Za-z0-9_.-]+))?\s*$/gmi)];
