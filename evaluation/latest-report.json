@@ -1,11 +1,11 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-03T10:39:17.565Z",
+  "generatedAt": "2026-09-03T12:27:34.843Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:ec17aed795536579be91c0e73dc43327ec402175e527e6f0cd3362c28198cd0f",
-  "sourceFileCount": 388,
+  "artifactDigest": "sha256:c645192ad9c6b70c35991a5a190098c7656380808d5095d83890de809d9961e8",
+  "sourceFileCount": 389,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:8f51aa8ffd959d0e2d63ce0b4a2d34516dd2eaf7106c5ede829a9f12c030ec5a",
@@ -92,6 +92,7 @@
     "evaluation/reviews/2026-09-02-v049-chromium-acquisition-review.md": "sha256:712961393bc9cd02437fa16c6e926cf324baa375217bf5e4bd9a5dbd91b124ca",
     "evaluation/reviews/2026-09-02-v049-private-browser-trajectory-review.md": "sha256:0ebb26db03dcaa96141aac6e212df536eb7cae43486388c6411824af1899ac0f",
     "evaluation/reviews/2026-09-02-v049-protected-main-source-contract-review.md": "sha256:b1ead60b01055068f7275773d2ef086860bbcd27be64176fb7aae3e3f00d1ee1",
+    "evaluation/reviews/2026-09-03-full-candidate-registration-lifecycle-review.md": "sha256:b29cb4a969aa8fe1032c080af6ff7d52cf209c458c609c2c905e686ab2972b26",
     "evaluation/reviews/2026-09-03-full-candidate-registration-source-integrity-review.md": "sha256:4642213df792a6f35a865ae854dea396b26e61f276905ee367515541c05df2d8",
     "evaluation/reviews/2026-09-03-r7b2-github-readiness-private-handoff-review.md": "sha256:d473fc14529b469f29c1fa924dff5cec5c7906cf498489c82dbdac109d0d60a7",
     "evaluation/reviews/2026-09-03-runtime-freeze-gh-toolchain-repair-review.md": "sha256:a8332652a65083ab71df33be9963f33f47f73fbf3e1e936a4e49b0ba32194ae0",
@@ -754,7 +755,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 378923.12
+    "elapsedMs": 371019.04
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
