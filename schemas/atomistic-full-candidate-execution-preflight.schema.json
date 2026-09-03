@@ -1,0 +1,595 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-execution-preflight/0.1",
+  "title": "Tailing Future Atomistic Full-Candidate Execution Preflight",
+  "description": "A frozen, non-executable preflight that preserves accepted bootstrap runtime bytes and preregisters a claim-negative shared-host execution topology. It is not a full inference receipt.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "status",
+    "frozenAt",
+    "purpose",
+    "predecessor",
+    "sourceEvidence",
+    "trackedRuntimeInputs",
+    "candidateTopology",
+    "quantityContract",
+    "preregisteredValidation",
+    "dispatchGates",
+    "claims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-execution-preflight/0.1" },
+    "status": { "const": "frozen-topology-and-runtime-inputs-not-executable" },
+    "frozenAt": { "const": "2026-09-04" },
+    "purpose": { "type": "string", "minLength": 80, "maxLength": 1024 },
+    "predecessor": {
+      "type": "object",
+      "required": ["path", "schemaVersion", "rawDigest", "compatibility"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/full-candidate-plan.json" },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-plan/0.2" },
+        "rawDigest": { "$ref": "#/$defs/digest" },
+        "compatibility": { "type": "string", "minLength": 80, "maxLength": 512 }
+      },
+      "additionalProperties": false
+    },
+    "sourceEvidence": {
+      "const": {
+        "classification": "auditable-bootstrap-input-freeze-not-full-inference",
+        "repository": "tony070926-sudo/tailing-future",
+        "repositoryId": 1349498456,
+        "sourceRevision": "687755a5835b92b632fc116e9b73ab11c1eb6cb5",
+        "sourceRef": "refs/heads/main",
+        "workflow": {
+          "path": ".github/workflows/atomistic-bootstrap.yml",
+          "id": 344903345,
+          "event": "workflow_dispatch"
+        },
+        "evidenceChain": {
+          "runtimeLock": {
+            "path": "evaluation/atomistic/runtime-lock.json",
+            "schemaVersion": "tf.atomistic-runtime-lock/0.3",
+            "sizeBytes": 12558,
+            "rawDigest": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1",
+            "semanticDigest": "sha256:3f817d5536589d7d1eaeda32d27917ba590d517ee8172d6572b4bee90cc1193a",
+            "state": "bootstrap-runtime-frozen-not-reproduced"
+          },
+          "signedReceipt": {
+            "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/atomistic-bootstrap-replica-receipt.json",
+            "schemaVersion": "tf.atomistic-bootstrap-replica-receipt/0.1",
+            "sizeBytes": 27676,
+            "rawDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4",
+            "semanticDigest": "sha256:ab6a7ea36118e388bc26fca532f571a34536156a0226d027708f793adbfad868",
+            "createdAt": "2026-08-30T06:17:07.843Z",
+            "status": "verified-stable-input-agreement",
+            "stableInputsCommitment": "sha256:b4183913307ca0810813c66a3963de1cb20f63ae2000121f9d1016eac94fbfcb"
+          },
+          "attestation": {
+            "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/receipt-attestation.sigstore.jsonl",
+            "mediaType": "application/vnd.dev.sigstore.bundle.v0.3+json",
+            "sizeBytes": 11787,
+            "rawDigest": "sha256:2200a92fadbb596e5b16ee7b66b097f2aa3fa7f756ff15066d2d2b4a4b85b542",
+            "subjectName": "atomistic-bootstrap-replica-receipt.json",
+            "subjectDigest": "sha256:d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4"
+          }
+        },
+        "replicas": [
+          {
+            "runId": 33242996794,
+            "runAttempt": 1,
+            "conclusion": "success",
+            "artifacts": {
+              "mattersim": {
+                "id": 9711953689,
+                "name": "tailing-atomistic-bootstrap-mattersim-687755a5835b92b632fc116e9b73ab11c1eb6cb5-33242996794-1",
+                "archiveBytes": 108337,
+                "archiveDigest": "sha256:12035812d29f2794a449dbe1da932d7ffb8fe954e3c3b8188d4381b760d53384",
+                "expiresAt": "2026-09-05T08:25:36Z"
+              },
+              "mace": {
+                "id": 9711940176,
+                "name": "tailing-atomistic-bootstrap-mace-687755a5835b92b632fc116e9b73ab11c1eb6cb5-33242996794-1",
+                "archiveBytes": 50326,
+                "archiveDigest": "sha256:be8ff03de186f93658d2dd5a9f30402d9b08db9f991685641e0ae4ec2a7951fa",
+                "expiresAt": "2026-09-05T08:24:29Z"
+              }
+            }
+          },
+          {
+            "runId": 33242999376,
+            "runAttempt": 1,
+            "conclusion": "success",
+            "artifacts": {
+              "mattersim": {
+                "id": 9711987070,
+                "name": "tailing-atomistic-bootstrap-mattersim-687755a5835b92b632fc116e9b73ab11c1eb6cb5-33242999376-1",
+                "archiveBytes": 108348,
+                "archiveDigest": "sha256:f298e09634006840583bb9be02dc9ff51cc35508d0bdea85cf9d2fe22d4bd3b8",
+                "expiresAt": "2026-09-05T08:28:12Z"
+              },
+              "mace": {
+                "id": 9711979645,
+                "name": "tailing-atomistic-bootstrap-mace-687755a5835b92b632fc116e9b73ab11c1eb6cb5-33242999376-1",
+                "archiveBytes": 50320,
+                "archiveDigest": "sha256:2180079d260b343f6ebfb3f3bcf19c9bd517056632c461bdeb2d0bfadaa69e53",
+                "expiresAt": "2026-09-05T08:27:36Z"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "trackedRuntimeInputs": {
+      "type": "object",
+      "required": ["mattersim", "mace"],
+      "properties": {
+        "mattersim": {
+          "const": {
+            "modelId": "mattersim-v1.0.0-5m",
+            "dependencyLock": {
+              "path": "atomistic/locks/mattersim.requirements.lock",
+              "sizeBytes": 16233,
+              "sha256": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b"
+            },
+            "runtimeInputManifest": {
+              "path": "evaluation/atomistic/runtime-inputs/mattersim.runtime-inputs.json",
+              "schemaVersion": "tf.atomistic-runtime-inputs/0.2",
+              "sizeBytes": 157190,
+              "sha256": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53"
+            },
+            "wheelClosure": {
+              "platform": "linux/amd64",
+              "python": "3.12.13",
+              "wheelCount": 157,
+              "wheelBytes": 675408593,
+              "dependencyGraphDigest": "sha256:089b3a59daaf10fef45086ea5e8d63a7bf143d2d99aefef6cb7451e34dc50da0",
+              "installedPathDigest": "sha256:cf12e368061c2420f802592a8b732e4f510e15129144c4a56161766a0e5bb321",
+              "runtimeInstalledPathDigest": "sha256:3c393f19d748b945a77683d5e722f3a3b49d49415652ba4c78380bc1c175d873"
+            },
+            "byteIdenticalAcrossAcceptedReplicas": true
+          }
+        },
+        "mace": {
+          "const": {
+            "modelId": "mace-mpa-0-medium",
+            "dependencyLock": {
+              "path": "atomistic/locks/mace.requirements.lock",
+              "sizeBytes": 4612,
+              "sha256": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+            },
+            "runtimeInputManifest": {
+              "path": "evaluation/atomistic/runtime-inputs/mace.runtime-inputs.json",
+              "schemaVersion": "tf.atomistic-runtime-inputs/0.2",
+              "sizeBytes": 55251,
+              "sha256": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+            },
+            "wheelClosure": {
+              "platform": "linux/amd64",
+              "python": "3.12.13",
+              "wheelCount": 44,
+              "wheelBytes": 294237409,
+              "dependencyGraphDigest": "sha256:27045fc8bfc4bf841b6164f1360c71450753329db1aa8e61e22cf0963f82246b",
+              "installedPathDigest": "sha256:e880ee162447820b350b0056700656f903bb6ff782bea9b15fd0be24bc08e290",
+              "runtimeInstalledPathDigest": "sha256:cc7c3b47516ab8d80d96243c14a648f39bc89ce9ae3b8ad894868fab2c9029e5"
+            },
+            "byteIdenticalAcrossAcceptedReplicas": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidateTopology": {
+      "type": "object",
+      "required": ["profile", "sharedHost", "producerJobCount", "requiredContainerExecutionsTotal", "authoritativePredictionRecordsTotal", "repeatValidationPredictionRecordsTotal", "independentJobClaimAllowed", "independentHardwareClaimAllowed", "independentReplicaClaimAllowed", "containerLanes", "containerIsolation", "labelAccess", "centralVerification", "publication"],
+      "properties": {
+        "profile": { "const": "single-shared-host-sequential-isolated-model-lanes-central-verifier/v1" },
+        "sharedHost": { "const": true },
+        "producerJobCount": { "const": 1 },
+        "requiredContainerExecutionsTotal": { "const": 4 },
+        "authoritativePredictionRecordsTotal": { "const": 1386 },
+        "repeatValidationPredictionRecordsTotal": { "const": 1386 },
+        "independentJobClaimAllowed": { "const": false },
+        "independentHardwareClaimAllowed": { "const": false },
+        "independentReplicaClaimAllowed": { "const": false },
+        "containerLanes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/matterSimLane" },
+            { "$ref": "#/$defs/maceLane" }
+          ],
+          "items": false
+        },
+        "containerIsolation": { "$ref": "#/$defs/containerIsolation" },
+        "labelAccess": { "$ref": "#/$defs/labelAccess" },
+        "centralVerification": { "$ref": "#/$defs/centralVerification" },
+        "publication": { "$ref": "#/$defs/publication" }
+      },
+      "additionalProperties": false
+    },
+    "quantityContract": { "$ref": "#/$defs/quantityContract" },
+    "preregisteredValidation": { "$ref": "#/$defs/preregisteredValidation" },
+    "dispatchGates": { "$ref": "#/$defs/dispatchGates" },
+    "claims": { "$ref": "#/$defs/claims" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "lane": {
+      "type": "object",
+      "required": ["order", "model", "modelId", "freshContainerExecutionsRequired", "recordsPerContainerExecution", "authoritativeExecutionOrdinal", "repeatValidationExecutionOrdinal", "distinctContainerExecutionIdsRequired"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "model": { "enum": ["mattersim", "mace"] },
+        "modelId": { "enum": ["mattersim-v1.0.0-5m", "mace-mpa-0-medium"] },
+        "freshContainerExecutionsRequired": { "const": 2 },
+        "recordsPerContainerExecution": { "const": 693 },
+        "authoritativeExecutionOrdinal": { "const": 0 },
+        "repeatValidationExecutionOrdinal": { "const": 1 },
+        "distinctContainerExecutionIdsRequired": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "matterSimLane": {
+      "allOf": [
+        { "$ref": "#/$defs/lane" },
+        { "type": "object", "properties": { "order": { "const": 0 }, "model": { "const": "mattersim" }, "modelId": { "const": "mattersim-v1.0.0-5m" } } }
+      ]
+    },
+    "maceLane": {
+      "allOf": [
+        { "$ref": "#/$defs/lane" },
+        { "type": "object", "properties": { "order": { "const": 1 }, "model": { "const": "mace" }, "modelId": { "const": "mace-mpa-0-medium" } } }
+      ]
+    },
+    "containerIsolation": {
+      "type": "object",
+      "required": ["network", "rootFilesystem", "user", "capabilities", "noNewPrivileges", "hostSocketsMounted", "hostSecretsMounted", "referenceLabelsMounted", "sharedWritableMountBetweenModelLanes", "sharedWritableMountBetweenContainerExecutions", "perExecutionWritableOutputDirectoryOnly", "exactMountAndCommandObservationRequired", "hostObservedRuntimeIdentityRequired"],
+      "properties": {
+        "network": { "const": "none" },
+        "rootFilesystem": { "const": "read-only" },
+        "user": { "const": "65532:65532" },
+        "capabilities": { "const": "drop-all" },
+        "noNewPrivileges": { "const": true },
+        "hostSocketsMounted": { "const": false },
+        "hostSecretsMounted": { "const": false },
+        "referenceLabelsMounted": { "const": false },
+        "sharedWritableMountBetweenModelLanes": { "const": false },
+        "sharedWritableMountBetweenContainerExecutions": { "const": false },
+        "perExecutionWritableOutputDirectoryOnly": { "const": true },
+        "exactMountAndCommandObservationRequired": { "const": true },
+        "hostObservedRuntimeIdentityRequired": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "labelAccess": {
+      "type": "object",
+      "required": ["trustedPreprocessor", "modelContainers", "centralVerifier", "centralVerifierStartsAfterAllFourContainerExecutionsExit", "containerReadDenialProbeRequired", "exactMountAndEnvironmentAllowlistRequired", "canaryAbsenceRequiredInEnvironmentLogsPredictionsAndReceipt"],
+      "properties": {
+        "trustedPreprocessor": { "const": true },
+        "modelContainers": { "const": false },
+        "centralVerifier": { "const": true },
+        "centralVerifierStartsAfterAllFourContainerExecutionsExit": { "const": true },
+        "containerReadDenialProbeRequired": { "const": true },
+        "exactMountAndEnvironmentAllowlistRequired": { "const": true },
+        "canaryAbsenceRequiredInEnvironmentLogsPredictionsAndReceipt": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "centralVerification": {
+      "type": "object",
+      "required": ["class", "rawDatasetAndPredictionsRemainOnEphemeralRunner", "recomputeAllPerRecordMetrics", "authoritativePredictionRecords", "repeatValidationPredictionRecords", "trustPredictionEnvironmentSelfReport", "safeReceiptClass", "offlineRecomputationAfterRunnerDisposalAvailable"],
+      "properties": {
+        "class": { "const": "producer-independent-label-bearing-host-verifier" },
+        "rawDatasetAndPredictionsRemainOnEphemeralRunner": { "const": true },
+        "recomputeAllPerRecordMetrics": { "const": true },
+        "authoritativePredictionRecords": { "const": 1386 },
+        "repeatValidationPredictionRecords": { "const": 1386 },
+        "trustPredictionEnvironmentSelfReport": { "const": false },
+        "safeReceiptClass": { "const": "on-run-verified-non-promotional" },
+        "offlineRecomputationAfterRunnerDisposalAvailable": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "publication": {
+      "type": "object",
+      "required": ["enabled", "allowedArtifactPaths", "forbiddenClasses", "aggregateReceiptRightsDispositionRequired", "runtimeRedistributionAllowed"],
+      "properties": {
+        "enabled": { "const": false },
+        "allowedArtifactPaths": { "type": "array", "maxItems": 0 },
+        "forbiddenClasses": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "raw-dataset" },
+            { "const": "structure-bundle" },
+            { "const": "atomic-number-array" },
+            { "const": "reference-label" },
+            { "const": "per-record-prediction" },
+            { "const": "per-record-latency" },
+            { "const": "checkpoint" },
+            { "const": "runtime-container" },
+            { "const": "unsanitized-traceback" }
+          ],
+          "items": false,
+          "minItems": 9,
+          "maxItems": 9
+        },
+        "aggregateReceiptRightsDispositionRequired": { "const": true },
+        "runtimeRedistributionAllowed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "quantityContract": {
+      "const": {
+        "coordinate": {
+          "quantity": "Cartesian position",
+          "unit": "angstrom",
+          "dimension": "length",
+          "basis": "ASE Cartesian coordinates in a three-dimensional periodic row-cell"
+        },
+        "cell": {
+          "quantity": "periodic lattice cell",
+          "unit": "angstrom",
+          "dimension": "length",
+          "basis": "ASE 3x3 row vectors with three-dimensional PBC"
+        },
+        "energy": {
+          "quantity": "total potential energy",
+          "unit": "eV",
+          "dimension": "energy",
+          "basis": "one 16-atom frame; no fitted offset or scale"
+        },
+        "energyError": {
+          "quantity": "absolute per-atom energy error",
+          "unit": "eV/atom",
+          "dimension": "energy-per-atom",
+          "basis": "absolute total-energy difference divided by exactly 16 atoms per released Random-TP frame; no fitted offset or scale"
+        },
+        "force": {
+          "quantity": "Cartesian atomic force",
+          "unit": "eV/angstrom",
+          "dimension": "energy-per-length",
+          "basis": "F=-dE/dr at fixed cell"
+        },
+        "forceError": {
+          "quantity": "per-frame force vector error",
+          "unit": "eV/angstrom",
+          "dimension": "energy-per-length",
+          "basis": "arithmetic mean of exactly 16 per-atom Cartesian force-vector L2 errors"
+        },
+        "stress": {
+          "quantity": "Cauchy stress",
+          "unit": "eV/angstrom^3",
+          "dimension": "energy-per-volume",
+          "basis": "ASE tensile-positive symmetric 3x3 tensor; pressure=-trace(stress)/3; Voigt order xx,yy,zz,yz,xz,xy"
+        },
+        "stressError": {
+          "quantity": "per-frame full-tensor stress error",
+          "unit": "GPa",
+          "dimension": "pressure",
+          "basis": "full 3x3 Frobenius error in eV/angstrom^3 converted exactly once to GPa"
+        },
+        "stressSymmetryResidual": {
+          "quantity": "maximum absolute antisymmetric stress component",
+          "unit": "eV/angstrom^3",
+          "dimension": "pressure",
+          "basis": "maximum over i,j of abs(sigma_ij-sigma_ji) on the raw ASE 3x3 tensor before acceptance"
+        },
+        "stressUnitConversion": {
+          "quantity": "stress unit conversion factor",
+          "value": 160.21766208,
+          "unit": "GPa/(eV/angstrom^3)",
+          "dimension": "unit-conversion",
+          "basis": "exact frozen factor applied once after computing an eV/angstrom^3 stress error"
+        },
+        "aggregation": {
+          "quantity": "per-model metric aggregation",
+          "unit": "structure-weight",
+          "dimension": "dimensionless-weighting",
+          "basis": "equal-weight structure mean over exactly 693 ASCII-ordered IDs",
+          "summation": "CPython-3.12-math.fsum-equivalent-binary64",
+          "quantiles": "Hyndman-Fan-7-linear"
+        }
+      }
+    },
+    "preregisteredValidation": {
+      "const": {
+        "completeness": {
+          "scope": "authoritative prediction executions only; repeat-validation predictions are counted under determinismPerModel",
+          "requiredModels": {
+            "value": 2,
+            "unit": "model",
+            "dimension": "count",
+            "basis": "the fixed MatterSim and MACE model lanes"
+          },
+          "recordsPerModel": {
+            "value": 693,
+            "unit": "prediction-record/model",
+            "dimension": "count",
+            "basis": "one authoritative prediction for every frozen ASCII-ordered Random-TP ID"
+          },
+          "requiredTotalPredictions": {
+            "value": 1386,
+            "unit": "prediction-record",
+            "dimension": "count",
+            "basis": "693 authoritative records for each of two models"
+          },
+          "atomsPerFrame": {
+            "value": 16,
+            "unit": "atom/frame",
+            "dimension": "count",
+            "basis": "the released and byte-frozen Random-TP 693x16 artifact"
+          },
+          "allowedMissingExtraDuplicateFailedNonfiniteMalformedPerCategory": {
+            "value": 0,
+            "unit": "prediction-record",
+            "dimension": "count",
+            "basis": "each named failure category independently has an exact zero allowance"
+          }
+        },
+        "invariancePerModel": {
+          "requiredCases": {
+            "value": 40,
+            "unit": "transformed-case/model",
+            "dimension": "count",
+            "basis": "10 frozen structure IDs times translation, reverse permutation, proper rotation and periodic-image shift"
+          },
+          "selection": "predecessor.protocol.invariance exact 10-ID and four-transform contract",
+          "maximumEnergyError": {
+            "value": 0.0001,
+            "unit": "eV",
+            "dimension": "energy",
+            "basis": "maximum absolute total-energy difference between each transformed case and its frozen source frame"
+          },
+          "maximumForceVectorError": {
+            "value": 0.0001,
+            "unit": "eV/angstrom",
+            "dimension": "energy-per-length",
+            "basis": "maximum per-atom Cartesian vector error after the preregistered inverse permutation or rotation"
+          },
+          "maximumStressFrobeniusError": {
+            "value": 0.00001,
+            "unit": "eV/angstrom^3",
+            "dimension": "pressure",
+            "basis": "maximum full 3x3 Frobenius error after the preregistered rotation back to the source basis"
+          }
+        },
+        "forceFiniteDifferencePerModel": {
+          "requiredCases": {
+            "value": 89,
+            "unit": "element-case/model",
+            "dimension": "count",
+            "basis": "one preregistered atom/component case for every element in the frozen 89-element set"
+          },
+          "selection": "for-each-element-in-frozen-set-lexicographically-first-id-containing-element-lowest-zero-based-atom-index-axis-Z-modulo-3/v1",
+          "steps": {
+            "values": [0.01, 0.005],
+            "unit": "angstrom",
+            "dimension": "length",
+            "basis": "Cartesian plus/minus h displacement at fixed cell and fixed other coordinates"
+          },
+          "method": "central-difference-with-Richardson-extrapolation",
+          "absoluteTolerance": {
+            "value": 0.02,
+            "unit": "eV/angstrom",
+            "dimension": "energy-per-length",
+            "basis": "absolute analytic-force-component versus Richardson-extrapolated finite-difference residual"
+          },
+          "relativeTolerance": {
+            "value": 0.01,
+            "unit": "1",
+            "dimension": "dimensionless",
+            "basis": "multiplier on max(abs(analytic component),abs(Richardson finite-difference component))"
+          }
+        },
+        "stressFiniteDifferencePerModel": {
+          "requiredCases": {
+            "value": 60,
+            "unit": "strain-case/model",
+            "dimension": "count",
+            "basis": "10 frozen structures times six preregistered strain modes"
+          },
+          "selection": "10-fixed-structures-times-6-strain-modes",
+          "strainSteps": {
+            "values": [0.002, 0.001],
+            "unit": "1",
+            "dimension": "dimensionless-strain",
+            "basis": "plus/minus engineering strain h with one-half off-diagonal shear basis at fixed fractional coordinates"
+          },
+          "method": "fixed-fractional-coordinates-engineering-shear-half-basis-central-difference-with-Richardson-extrapolation",
+          "absoluteTolerance": {
+            "value": 0.005,
+            "unit": "eV/angstrom^3",
+            "dimension": "pressure",
+            "basis": "absolute same-sign ASE stress component versus Richardson-extrapolated energy derivative residual"
+          },
+          "relativeTolerance": {
+            "value": 0.02,
+            "unit": "1",
+            "dimension": "dimensionless",
+            "basis": "multiplier on max(abs(analytic ASE component),abs(Richardson finite-difference component))"
+          },
+          "postHocSignSelectionAllowed": false
+        },
+        "determinismPerModel": {
+          "freshContainersOnSameRunner": {
+            "value": 2,
+            "unit": "container-execution/model",
+            "dimension": "count",
+            "basis": "one authoritative execution and one repeat-validation execution in distinct fresh containers on the same runner"
+          },
+          "recordsPerContainer": {
+            "value": 693,
+            "unit": "prediction-record/container-execution",
+            "dimension": "count",
+            "basis": "every frozen ASCII-ordered Random-TP ID in each fresh container execution"
+          },
+          "authoritativePredictionRecordsTotal": {
+            "value": 1386,
+            "unit": "prediction-record",
+            "dimension": "count",
+            "basis": "one 693-record authoritative execution for each of two models"
+          },
+          "repeatValidationPredictionRecordsTotal": {
+            "value": 1386,
+            "unit": "prediction-record",
+            "dimension": "count",
+            "basis": "one separate 693-record repeat-validation execution for each of two models"
+          },
+          "canonicalPredictionBytesAndRootMustMatch": true,
+          "crossRunnerBitExactRequired": false,
+          "crossRunnerNumericToleranceMustBePreregistered": true
+        },
+        "stressSymmetryTolerance": {
+          "status": "unresolved-versioned-contract-required",
+          "pythonRunnerAbsoluteTolerance": {
+            "value": 1e-10,
+            "unit": "eV/angstrom^3",
+            "dimension": "pressure",
+            "basis": "NumPy absolute tolerance for raw sigma versus transpose with relative tolerance zero"
+          },
+          "javascriptVerifierAbsoluteTolerance": {
+            "value": 2.220446049250313e-16,
+            "unit": "eV/angstrom^3",
+            "dimension": "pressure",
+            "basis": "JavaScript absolute componentwise tolerance for raw sigma versus transpose"
+          },
+          "dispatchBlockedUntilUnified": true
+        }
+      }
+    },
+    "dispatchGates": {
+      "type": "object",
+      "required": ["vNextPlanReceiptAndProvenanceSchemasReviewed", "executableWorkflowAndObserverReviewed", "labelIsolationCanaryPassed", "allScientificValidationImplementationsPresent", "aggregateReceiptRightsDispositionRecorded", "ociManifestAndConfigTrustRootsAvailable", "firstMainSentinelSuccessForExecutableRevision", "dispatchEligible"],
+      "properties": {
+        "vNextPlanReceiptAndProvenanceSchemasReviewed": { "const": false },
+        "executableWorkflowAndObserverReviewed": { "const": false },
+        "labelIsolationCanaryPassed": { "const": false },
+        "allScientificValidationImplementationsPresent": { "const": false },
+        "aggregateReceiptRightsDispositionRecorded": { "const": false },
+        "ociManifestAndConfigTrustRootsAvailable": { "const": false },
+        "firstMainSentinelSuccessForExecutableRevision": { "const": false },
+        "dispatchEligible": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "object",
+      "required": ["fullInferenceRun", "claimEligible", "comparisonEligible", "promotionEligible", "reproductionEligible", "reproduced", "sota", "dataLeakageCertified", "industrialFitness"],
+      "properties": {
+        "fullInferenceRun": { "const": false },
+        "claimEligible": { "const": false },
+        "comparisonEligible": { "const": false },
+        "promotionEligible": { "const": false },
+        "reproductionEligible": { "const": false },
+        "reproduced": { "const": false },
+        "sota": { "const": false },
+        "dataLeakageCertified": { "const": false },
+        "industrialFitness": { "const": false }
+      },
+      "additionalProperties": false
+    }
+  }
+}

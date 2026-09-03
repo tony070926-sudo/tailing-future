@@ -8,6 +8,10 @@ import {
   FULL_CANDIDATE_PLAN_PATH,
   validateFullCandidatePlanRepository,
 } from './atomistic/full-candidate-plan-policy.mjs';
+import {
+  FULL_CANDIDATE_EXECUTION_PREFLIGHT_PATH,
+  validateFullCandidateExecutionPreflightRepository,
+} from './atomistic/full-candidate-execution-preflight-policy.mjs';
 import { validateFrozenAtomisticPlan, validateFrozenAtomisticPlanBytes } from './atomistic/plan-policy.mjs';
 import {
   validateFullCandidateRegistrationWorkflowRepository,
@@ -35,6 +39,12 @@ const candidatePlanBytes = await readFile(path.join(root, FULL_CANDIDATE_PLAN_PA
 const candidateValidation = await validateFullCandidatePlanRepository(candidatePlanBytes, { root });
 const candidatePlan = candidateValidation.plan;
 failures.push(...candidateValidation.failures);
+const executionPreflightBytes = await readFile(
+  path.join(root, FULL_CANDIDATE_EXECUTION_PREFLIGHT_PATH),
+);
+const executionPreflightValidation =
+  await validateFullCandidateExecutionPreflightRepository(executionPreflightBytes, { root });
+failures.push(...executionPreflightValidation.failures);
 
 const ajv = new Ajv2020({ allErrors: true, validateFormats: false });
 const validate = ajv.compile(schema);
@@ -152,5 +162,5 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
+  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · SHARED-HOST VNEXT PREFLIGHT ONLY · DISPATCH BLOCKED · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
 }

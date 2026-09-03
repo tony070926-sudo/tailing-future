@@ -1,7 +1,8 @@
 # Atomistic foundation-model reproduction protocol
 
 Status: **runtime-frozen-not-reproduced** for bootstrap execution and
-**planned-not-reproduced** for the full dual-model benchmark on 2026-08-30.
+**frozen-topology-and-runtime-inputs-not-executable** for the full dual-model
+benchmark as of 2026-09-04.
 Protected-main run `33226521340` first completed non-promotional, ten-record
 smoke inference for both MatterSim and MACE. R6a discovery runs
 `33229898921` and `33229901480` later failed closed after image export; R6b
@@ -35,6 +36,52 @@ The primary like-for-like author test benchmark is the fixed [MatterSim Random-T
 - ten preregistered smoke structures cover all 89 elements, but full acceptance always runs all 693 frames.
 
 The MatterSim training corpus is not hash-public, so Random-TP cannot be called leakage-certified. It also lacks per-frame T/P metadata and was produced by the MatterSim authors. The independent stability reference is WBM / Matbench Discovery, but its raw redistribution license and locked artifact digest remain unresolved; the manifest therefore blocks mirroring and local promotion.
+
+## Full-candidate execution preflight (not executable)
+
+`evaluation/atomistic/full-candidate-execution-preflight.json` freezes the
+runtime inputs recovered from accepted protected-main bootstrap runs
+`33242996794` and `33242999376`. It binds the exact MatterSim lock (16,233 bytes,
+SHA-256 `9c9909…3642b`) and runtime-input manifest (157,190 bytes, SHA-256
+`203acc…5c53`), plus the exact MACE lock (4,612 bytes, SHA-256 `ae4b21…7e33`)
+and runtime-input manifest (55,251 bytes, SHA-256 `6bb7f7…6f47`). The two
+accepted observations agree byte-for-byte on each bound file. This freezes
+inputs; it is not a container build, a 693×2 inference, a scientific receipt or
+a reproduction result.
+
+The preflight validator re-reads the frozen runtime lock, signed bootstrap
+receipt and Sigstore bundle, locks their exact byte and semantic digests, and
+projects every retained run and artifact field from that receipt. This is an
+exact-byte/projection check, not a second cryptographic signature verification.
+The following runtime-lock gate in `npm run atomistic:validate` separately runs
+the pinned offline `gh attestation verify` path with the frozen trusted root.
+Artifact expiry timestamps remain historical capture metadata and do not claim
+that the source archives are still downloadable.
+
+The preregistered vNext topology uses one private host job and two logical model
+lanes. Each lane requires one authoritative and one repeat-validation full-693
+execution in distinct fresh, sequential, separately mounted, network-disabled
+containers: four container executions total, with 1,386 authoritative and
+1,386 repeat-validation prediction records. The label-bearing central verifier
+may start only after all four containers exit. No labels, host sockets, secrets
+or shared writable directory may enter either model lane or pass between fresh
+executions. Because both lanes share one host and job, the contract explicitly forbids independent-job,
+independent-hardware and independent-replica claims. The existing
+`tf.atomistic-full-candidate-plan/0.2` remains unchanged and must continue to
+reject this same-job topology; the preflight cannot be used as a substitute for
+a reviewed vNext plan, provenance or receipt schema.
+
+Dispatch remains blocked. The executable producer identity is still
+`configured:false`/`id:null`, all eight dispatch gates and all nine scientific
+claims are false, and publication has an empty allowlist. Before any run, a
+later candidate must supply and independently review the executable workflow
+and observer, host-observed container identities and exact mount/command
+evidence, label-isolation canaries, the 40 invariance / 89 force finite-
+difference / 60 stress finite-difference implementations per model, fresh-
+container repeat evidence, one versioned stress-symmetry tolerance, an
+aggregate-receipt rights disposition, and OCI manifest/config trust roots.
+MACE's `python-hostlist` GPL-2.0-or-later closure remains private-evaluation
+only until binary-distribution obligations are closed.
 
 ## Fail-closed runner contract
 
@@ -338,8 +385,9 @@ exact proof. Without a future authenticated executable-producer/job GitHub
 adapter, none of these process-local proofs is authoritative control-plane
 evidence.
 
-Because Random-TP has no dataset-specific redistribution grant, every GitHub
-Actions artifact is forbidden in this scope, including ciphertext. The
+Because no dataset-specific Random-TP redistribution grant is recorded in the
+pinned evidence, every GitHub Actions artifact is forbidden in this scope,
+including ciphertext. The
 AES-256-GCM codec remains only a restricted-private-storage format: encrypted
 and plaintext payload publication eligibility are both false, access-control,
 deletion, maximum 24-hour retention and per-model/per-run key-rotation evidence
@@ -407,9 +455,8 @@ They have not been reproduced locally. A future MatterSim run must reproduce
 those model-card targets within the preregistered tolerances in the manifest.
 MACE has no locked official Random-TP target: its first complete blind run may
 establish an engineering baseline, but cannot be used to claim superiority.
-Until the separate runtime lock is independently replicated and the full
-693-record verifier passes, both models remain `AUDITABLE`, never `REPRODUCED`
-or numerically comparable.
+Until every executable vNext gate and the full 693-record verifier pass, both
+models remain `AUDITABLE`, never `REPRODUCED` or numerically comparable.
 
 Twelve protected-main bootstrap dispatches are preserved. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction
