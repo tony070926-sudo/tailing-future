@@ -19,6 +19,7 @@
     "atomistic:verify-openmm-control": "node scripts/atomistic/openmm/verify-control-cli.mjs",
     "atomistic:verify-bootstrap": "node scripts/atomistic/verify-bootstrap-replicas.mjs",
     "atomistic:inspect-full-github-readiness": "node scripts/atomistic/inspect-full-candidate-github-readiness.mjs",
+    "atomistic:inspect-full-registration": "node scripts/atomistic/inspect-full-candidate-registration.mjs",
     "atomistic:fetch": "node scripts/atomistic/fetch-assets.mjs",
     "evaluate": "node scripts/evaluate.mjs",
     "release:manifest": "node scripts/release-artifact.mjs create",

@@ -20,6 +20,33 @@ export const FULL_CANDIDATE_PRODUCER_WORKFLOW = Object.freeze({
   name: 'Atomistic full candidate private producer (non-promotional)',
   path: '.github/workflows/atomistic-full-candidate.yml',
 });
+export const FULL_CANDIDATE_REGISTRATION_WORKFLOW = Object.freeze({
+  id: 349_363_715,
+  name: FULL_CANDIDATE_PRODUCER_WORKFLOW.name,
+  nodeId: 'W_kwDOUG-2WM4U0t4D',
+  path: FULL_CANDIDATE_PRODUCER_WORKFLOW.path,
+  producerConfigured: false,
+  registered: true,
+  state: 'active',
+  registration: Object.freeze({
+    gitBlobOid: '76d40b0938df50375728b4f68133a52a1ceabd13',
+    parentRevision: '72bc2011d75d9880b9918b70c903129b9bf1de65',
+    revision: '3221265a4145626dd9e32876fa911f23ae49fbff',
+    sha256: 'sha256:e578459f2c46e77d10f3fd944984daa01f845219921454c3095b9852e4074cc0',
+    sizeBytes: 520,
+    treeOid: '2b9735696a4c2b1fc8419b6de818df7289246c8b',
+  }),
+  sentinel: Object.freeze({
+    checkRunId: 100_666_166_912,
+    checkSuiteId: 91_492_151_082,
+    jobId: 100_666_166_912,
+    runAttempt: 1,
+    runId: 33_760_752_864,
+  }),
+});
+
+export const FULL_CANDIDATE_REGISTRATION_OBSERVATION_SCHEMA_VERSION =
+  'tf.atomistic-full-candidate-registration-observation/0.1';
 
 const GITHUB_ACTIONS_APP_ID = 15_368;
 const MAX_COMPLETE_RUN_LISTING = 1_000;
@@ -466,7 +493,7 @@ export function fullCandidateGitHubRejection(error, fallbackCode = 'github-contr
 export function producerWorkflowNotPinnedError() {
   return new FullCandidateGitHubPolicyError(
     'producer-workflow-not-pinned',
-    'The full-candidate producer workflow has not been merged and assigned a GitHub workflow ID; dispatch and scientific verification are forbidden.',
+    'The registered quarantine shell is not an executable producer, and no executable full-candidate producer workflow identity has been reviewed or pinned; dispatch and scientific verification are forbidden.',
   );
 }
 

@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-registration-observation/0.1",
+  "title": "Tailing Future full-candidate registration-only GitHub observation",
+  "$defs": {
+    "abstentions": {
+      "const": [
+        "producer-execution-not-observed",
+        "scientific-results-not-observed",
+        "visible-history-does-not-prove-never-run-or-no-deletion",
+        "structure-and-redistribution-rights-not-verified",
+        "private-verifier-and-handoff-not-verified",
+        "actual-producer-runner-and-toolchain-not-verified"
+      ]
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimEligible",
+        "comparisonEligible",
+        "promotionEligible",
+        "reproduced",
+        "reproductionEligible",
+        "superiorityClaimAllowed"
+      ],
+      "properties": {
+        "claimEligible": { "const": false },
+        "comparisonEligible": { "const": false },
+        "promotionEligible": { "const": false },
+        "reproduced": { "const": false },
+        "reproductionEligible": { "const": false },
+        "superiorityClaimAllowed": { "const": false }
+      }
+    },
+    "prerequisites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actualProducerRunnerVerified",
+        "actualProducerToolchainVerified",
+        "credentialReadOnlyScopeProven",
+        "dispatchEligible",
+        "privateHandoffVerified",
+        "producerConfigured",
+        "redistributionRightsVerified",
+        "scientificEvidenceAvailable",
+        "structureRightsVerified"
+      ],
+      "properties": {
+        "actualProducerRunnerVerified": { "const": false },
+        "actualProducerToolchainVerified": { "const": false },
+        "credentialReadOnlyScopeProven": { "const": false },
+        "dispatchEligible": { "const": false },
+        "privateHandoffVerified": { "const": false },
+        "producerConfigured": { "const": false },
+        "redistributionRightsVerified": { "const": false },
+        "scientificEvidenceAvailable": { "const": false },
+        "structureRightsVerified": { "const": false }
+      }
+    },
+    "scientificResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparison", "mace", "mattersim", "status"],
+      "properties": {
+        "comparison": { "type": "null" },
+        "mace": { "type": "null" },
+        "mattersim": { "type": "null" },
+        "status": { "const": "unavailable" }
+      }
+    },
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$"
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "abstentions",
+        "actor",
+        "claims",
+        "observationWindow",
+        "prerequisites",
+        "registration",
+        "repository",
+        "schemaVersion",
+        "scientificResults",
+        "status"
+      ],
+      "properties": {
+        "abstentions": { "$ref": "#/$defs/abstentions" },
+        "actor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "login"],
+          "properties": {
+            "id": { "const": 288004538 },
+            "login": { "const": "tony070926-sudo" }
+          }
+        },
+        "claims": { "$ref": "#/$defs/claims" },
+        "observationWindow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["completedAt", "startedAt"],
+          "properties": {
+            "completedAt": { "$ref": "#/$defs/timestamp" },
+            "startedAt": { "$ref": "#/$defs/timestamp" }
+          }
+        },
+        "prerequisites": { "$ref": "#/$defs/prerequisites" },
+        "registration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "currentMain",
+            "historicalSource",
+            "protectedMainSentinel",
+            "visibleHistory",
+            "workflow"
+          ],
+          "properties": {
+            "currentMain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "branchProtection",
+                "protected",
+                "registrationAncestor",
+                "registrationRelation",
+                "revision",
+                "treeOid"
+              ],
+              "properties": {
+                "branchProtection": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "allowDeletions",
+                    "allowForcePushes",
+                    "bypassActorsFullyObserved",
+                    "classicSelectedFieldsVerified",
+                    "conversationResolutionRequired",
+                    "enforceAdmins",
+                    "linearHistoryRequired",
+                    "requiredCheckAppId",
+                    "requiredCheckContext",
+                    "requiredStatusChecksStrict",
+                    "rulesetsFullyObserved"
+                  ],
+                  "properties": {
+                    "allowDeletions": { "const": false },
+                    "allowForcePushes": { "const": false },
+                    "bypassActorsFullyObserved": { "const": false },
+                    "classicSelectedFieldsVerified": { "const": true },
+                    "conversationResolutionRequired": { "const": true },
+                    "enforceAdmins": { "const": true },
+                    "linearHistoryRequired": { "const": true },
+                    "requiredCheckAppId": { "const": 15368 },
+                    "requiredCheckContext": { "const": "evaluate" },
+                    "requiredStatusChecksStrict": { "const": true },
+                    "rulesetsFullyObserved": { "const": false }
+                  }
+                },
+                "protected": { "const": true },
+                "registrationAncestor": { "const": true },
+                "registrationRelation": { "enum": ["ahead", "identical"] },
+                "revision": { "$ref": "#/$defs/sha1" },
+                "treeOid": { "$ref": "#/$defs/sha1" }
+              }
+            },
+            "historicalSource": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "blob",
+                "parentRevision",
+                "revision",
+                "signatureReason",
+                "signatureVerified",
+                "treeOid"
+              ],
+              "properties": {
+                "blob": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["gitBlobOid", "mode", "path", "sha256", "sizeBytes"],
+                  "properties": {
+                    "gitBlobOid": { "const": "76d40b0938df50375728b4f68133a52a1ceabd13" },
+                    "mode": { "const": "100644" },
+                    "path": { "const": ".github/workflows/atomistic-full-candidate.yml" },
+                    "sha256": { "const": "sha256:e578459f2c46e77d10f3fd944984daa01f845219921454c3095b9852e4074cc0" },
+                    "sizeBytes": { "const": 520 }
+                  }
+                },
+                "parentRevision": { "const": "72bc2011d75d9880b9918b70c903129b9bf1de65" },
+                "revision": { "const": "3221265a4145626dd9e32876fa911f23ae49fbff" },
+                "signatureReason": { "const": "valid" },
+                "signatureVerified": { "const": true },
+                "treeOid": { "const": "2b9735696a4c2b1fc8419b6de818df7289246c8b" }
+              }
+            },
+            "protectedMainSentinel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "checkRunId",
+                "completedAt",
+                "jobId",
+                "runAttempt",
+                "runId",
+                "sourceRevision",
+                "status",
+                "workflowId"
+              ],
+              "properties": {
+                "checkRunId": { "const": 100666166912 },
+                "completedAt": { "$ref": "#/$defs/timestamp" },
+                "jobId": { "const": 100666166912 },
+                "runAttempt": { "const": 1 },
+                "runId": { "const": 33760752864 },
+                "sourceRevision": { "const": "3221265a4145626dd9e32876fa911f23ae49fbff" },
+                "status": { "const": "verified-control-plane-only" },
+                "workflowId": { "const": 344526316 }
+              }
+            },
+            "visibleHistory": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "completeCurrentVisiblePagination",
+                "completeHistoryProven",
+                "neverRunProven",
+                "noDeletionProven",
+                "pageSize",
+                "paginationBound",
+                "passCount",
+                "repositoryRunCount",
+                "repositoryRunPagesIncludingTerminator",
+                "repositoryTargetMatchCount",
+                "sentinelJobPagesIncludingTerminator",
+                "snapshotSha256",
+                "stableAcrossTwoPasses",
+                "targetWorkflowRunCount",
+                "targetWorkflowRunPagesIncludingTerminator",
+                "workflowCount",
+                "workflowPagesIncludingTerminator",
+                "workflowTargetMatchCount"
+              ],
+              "properties": {
+                "completeCurrentVisiblePagination": { "const": true },
+                "completeHistoryProven": { "const": false },
+                "neverRunProven": { "const": false },
+                "noDeletionProven": { "const": false },
+                "pageSize": { "const": 100 },
+                "paginationBound": { "const": 1000 },
+                "passCount": { "const": 2 },
+                "repositoryRunCount": { "type": "integer", "minimum": 1, "maximum": 1000 },
+                "repositoryRunPagesIncludingTerminator": { "type": "integer", "minimum": 2, "maximum": 11 },
+                "repositoryTargetMatchCount": { "const": 0 },
+                "sentinelJobPagesIncludingTerminator": { "type": "integer", "minimum": 2, "maximum": 11 },
+                "snapshotSha256": { "$ref": "#/$defs/sha256" },
+                "stableAcrossTwoPasses": { "const": true },
+                "targetWorkflowRunCount": { "const": 0 },
+                "targetWorkflowRunPagesIncludingTerminator": { "const": 1 },
+                "workflowCount": { "type": "integer", "minimum": 1, "maximum": 1000 },
+                "workflowPagesIncludingTerminator": { "type": "integer", "minimum": 2, "maximum": 11 },
+                "workflowTargetMatchCount": { "const": 1 }
+              }
+            },
+            "workflow": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "dispatchEligible",
+                "id",
+                "name",
+                "nodeId",
+                "path",
+                "producerConfigured",
+                "registered",
+                "state"
+              ],
+              "properties": {
+                "dispatchEligible": { "const": false },
+                "id": { "const": 349363715 },
+                "name": { "const": "Atomistic full candidate private producer (non-promotional)" },
+                "nodeId": { "const": "W_kwDOUG-2WM4U0t4D" },
+                "path": { "const": ".github/workflows/atomistic-full-candidate.yml" },
+                "producerConfigured": { "const": false },
+                "registered": { "const": true },
+                "state": { "const": "active" }
+              }
+            }
+          }
+        },
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["defaultBranch", "id", "nameWithOwner", "private"],
+          "properties": {
+            "defaultBranch": { "const": "main" },
+            "id": { "const": 1349498456 },
+            "nameWithOwner": { "const": "tony070926-sudo/tailing-future" },
+            "private": { "const": false }
+          }
+        },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-registration-observation/0.1" },
+        "scientificResults": { "$ref": "#/$defs/scientificResults" },
+        "status": { "const": "verified-registration-only" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "abstentions",
+        "claims",
+        "prerequisites",
+        "rejection",
+        "schemaVersion",
+        "scientificResults",
+        "status"
+      ],
+      "properties": {
+        "abstentions": { "$ref": "#/$defs/abstentions" },
+        "claims": { "$ref": "#/$defs/claims" },
+        "prerequisites": { "$ref": "#/$defs/prerequisites" },
+        "rejection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message"],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          }
+        },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-registration-observation/0.1" },
+        "scientificResults": { "$ref": "#/$defs/scientificResults" },
+        "status": { "const": "rejected" }
+      }
+    }
+  ]
+}

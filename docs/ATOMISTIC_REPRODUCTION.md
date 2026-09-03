@@ -245,8 +245,11 @@ accepts no run ID, token, artifact or scientific claim and currently returns
 the schema-bound, test-validated machine rejection
 `producer-workflow-not-pinned`.
 
-The producer identity remains frozen as `configured:false` and `id:null`.
-This candidate adds only a registration-only workflow at
+The executable producer identity remains frozen as `configured:false` and
+`id:null`. The separately named registration identity records GitHub workflow
+ID `349363715`, node ID `W_kwDOUG-2WM4U0t4D`, and state `active`; those fields
+describe only GitHub's current registration of the quarantine shell. They do
+not configure a producer or grant dispatch eligibility. The shell remains at
 `.github/workflows/atomistic-full-candidate.yml`; it does not add an executable
 producer. Under [GitHub's documented event-filter semantics](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
 as observed on 2026-09-03, its sole `push` event excludes both every branch and
@@ -267,19 +270,59 @@ read through `O_NOFOLLOW` with pre/open/post identity checks. Those captured
 bytes must equal the stage-zero mode-`100644` Git index blob and the same blob
 in a freshly derived staged tree. An untracked file, symlink at the target or
 an ancestor, hard link, executable bit, byte drift or detected read/index race
-fails closed. This is a pre-commit source-integrity check only; it does not show
-default-branch registration, a workflow ID, a run, runner allocation or any
-scientific result.
+fails closed. This remains a local source-integrity check; the separate GitHub
+observer below supplies current registration evidence but no runner allocation
+or scientific result.
 
 The `ubuntu-24.04` value is only a future runner selector inside the skipped
 job. It is not evidence of an allocated runner, actual `ImageVersion`, runner
 inventory, architecture or GitHub CLI 2.99.0. GitHub does not document an exact
-workflow-ID allocation time or stability SLA. Tailing Future must therefore
-wait until this file is ingested from the default branch, observe the numeric
-workflow ID through complete read-only REST listings, and lock that observed ID
-in a separate reviewed candidate. Any observed run history at that point must
-fail closed. Until the second candidate, readiness continues to exit nonzero
-with `producer-workflow-not-pinned` and all six claims false.
+workflow-ID allocation time or stability SLA, so every observation rechecks
+the list, numeric-ID and filename forms of the workflow identity.
+
+`npm run atomistic:inspect-full-registration` is the isolated authenticated
+observer. It accepts no arguments and reads only `GITHUB_TOKEN`. Its client
+constructs a fixed `https://api.github.com` endpoint set, sends only `GET` with
+no request body or redirect, pins REST API versions, bounds every response,
+parses strict UTF-8 JSON with duplicate-key rejection, and never requests an
+artifact, log or scientific payload. Workflow, target-run, repository-run and
+attempt-one job listings use fixed 100-item pages, an explicit empty terminal
+page and two complete passes. A changed count or identity, malformed/cross-host
+Link, target workflow run, GitHub error, timeout, source drift, selected classic
+branch-protection drift or pass-to-pass race returns a schema-valid rejection.
+
+The token must be able to read repository metadata, contents, Actions, Checks
+and Administration branch-protection data. A conservative documented
+fine-grained read-permission union is `Metadata:read`, `Contents:read`,
+`Actions:read`, `Checks:read` and `Administration:read`; this is not claimed to
+be the unique minimum for every repository visibility and authentication mode,
+and a successful request does not prove that the actual credential lacks
+broader permissions. The observer validates selected classic
+branch-protection fields, including required conversation resolution. It does
+not fully observe ruleset bypass actors, and reports both
+`rulesetsFullyObserved:false` and `bypassActorsFullyObserved:false`.
+
+The success schema is
+`tf.atomistic-full-candidate-registration-observation/0.1` with status
+`verified-registration-only`. It binds the signed historical main commit
+`3221265a4145626dd9e32876fa911f23ae49fbff`, tree
+`2b9735696a4c2b1fc8419b6de818df7289246c8b`, 520-byte workflow blob
+`76d40b0938df50375728b4f68133a52a1ceabd13`, and first-main Sentinel attempt
+`33760752864/1`. It also requires that the registration commit remains an
+ancestor of current protected main and that the same blob is still present.
+The observation is intentionally not invoked by the offline evaluator or CI.
+
+GitHub's current run lists are mutable: completed runs can be deleted and
+checks or artifacts can expire or be removed. Therefore even two stable,
+pagination-complete passes prove only the API-visible state during the recorded
+window. Its `observationWindow` comes from the local process clock, not GitHub
+or a timestamp authority, so it is not trusted third-party time evidence.
+`completeHistoryProven`, `neverRunProven` and `noDeletionProven` remain false.
+The token's successful reads do not prove that its credential scope is
+read-only, so `credentialReadOnlyScopeProven` is also false. The original
+readiness command continues to exit nonzero with
+`producer-workflow-not-pinned`; all six scientific/readiness claims remain
+false and MatterSim/MACE values remain `null`/unavailable.
 
 The existing control-plane policy requires workflow run number one, binds its
 redundant summary fields to attempt one and rejects equal-time or earlier
@@ -291,8 +334,9 @@ status and conclusion. Only a `completed/success` model job may carry a
 complete private scientific handoff; failed, cancelled, timed-out and
 not-started model states remain empty terminal evidence. A workflow may fail
 overall while one model job succeeds, but that job must still have its own
-exact proof. Without a future authenticated GitHub adapter, none of these
-process-local proofs is authoritative control-plane evidence.
+exact proof. Without a future authenticated executable-producer/job GitHub
+adapter, none of these process-local proofs is authoritative control-plane
+evidence.
 
 Because Random-TP has no dataset-specific redistribution grant, every GitHub
 Actions artifact is forbidden in this scope, including ciphertext. The

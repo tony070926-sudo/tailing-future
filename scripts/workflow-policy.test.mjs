@@ -63,7 +63,10 @@ import {
   SETUPTOOLS_RUNTIME_WHEEL_SHA256,
   SETUPTOOLS_STARTUP_HOOK_SHA256,
 } from './workflow-policy.mjs';
-import { FULL_CANDIDATE_PRODUCER_WORKFLOW } from './atomistic/full-candidate-github-evidence-policy.mjs';
+import {
+  FULL_CANDIDATE_PRODUCER_WORKFLOW,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW,
+} from './atomistic/full-candidate-github-evidence-policy.mjs';
 
 const atomisticBootstrapSource = readFileSync(
   new URL('../.github/workflows/atomistic-bootstrap.yml', import.meta.url),
@@ -897,6 +900,24 @@ describe('Dockerfile source policy', () => {
 });
 
 describe('full-candidate registration-only workflow policy', () => {
+  it('cross-locks the local workflow bytes to the separate remote registration identity', () => {
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW).toMatchObject({
+      id: 349_363_715,
+      name: FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME,
+      path: FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      producerConfigured: false,
+      registered: true,
+    });
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW.registration).toMatchObject({
+      sha256: `sha256:${FULL_CANDIDATE_REGISTRATION_WORKFLOW_SHA256}`,
+      sizeBytes: FULL_CANDIDATE_REGISTRATION_WORKFLOW_SIZE_BYTES,
+    });
+    expect(FULL_CANDIDATE_PRODUCER_WORKFLOW).toMatchObject({
+      configured: false,
+      id: null,
+    });
+  });
+
   it('accepts only the digest-bound no-matching-push workflow with a false job canary', () => {
     expect(inspectWorkflowSource(
       FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
