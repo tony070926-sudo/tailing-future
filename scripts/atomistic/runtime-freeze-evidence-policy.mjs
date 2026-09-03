@@ -67,6 +67,38 @@ export const MINIMUM_SYSTEM_PATH = [
   '/bin',
 ].join(path.delimiter);
 
+export const RUNTIME_FREEZE_GH_CHILD_PATH = ['/usr/bin', '/bin'].join(path.delimiter);
+
+export const RUNTIME_FREEZE_GH_PATH_ENV = 'TAILING_RUNTIME_FREEZE_GH_PATH';
+
+export const EXPECTED_RUNTIME_FREEZE_GH_CLI = deepFreeze({
+  version: '2.98.0',
+  releasedAt: '2026-08-20',
+  releaseUrl: 'https://github.com/cli/cli/releases/tag/v2.98.0',
+  releaseTagCommit: 'a255baf71d13fe5947a4eb7ad521ffd412d64cee',
+  checksums: {
+    url: 'https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_checksums.txt',
+    sizeBytes: 1_950,
+    sha256: 'sha256:275b90ae8a642fb8bdf4f21d7673e34643a445f7993f1821ac917ff8a2cc4db9',
+  },
+  platforms: {
+    'darwin-arm64': {
+      defaultPath: null,
+      archiveName: 'gh_2.98.0_macOS_arm64.zip',
+      archiveSha256: 'sha256:8cfb027cc5310675f2b830eac8f9865c1155a45ffcf9757f699fdd5a22046ca4',
+      executableSizeBytes: 39_256_176,
+      executableSha256: 'sha256:eedbfd5b8071027fe6326826eded48d274f1ec9d93f9239d9ba778ea1f479ac9',
+    },
+    'linux-x64': {
+      defaultPath: '/usr/bin/gh',
+      archiveName: 'gh_2.98.0_linux_amd64.deb',
+      archiveSha256: 'sha256:f65a3fa2fa0eb2e97c445ee3f5e087a40aae03b64847f45a8f13805e504535d6',
+      executableSizeBytes: 41_377_954,
+      executableSha256: 'sha256:62885b97de6a0cd85e616cdd94bcda908bf5cf1018094385892b05cea3537163',
+    },
+  },
+});
+
 const EXACT_EVIDENCE_FILES = deepFreeze({
   receipt: {
     path: RUNTIME_FREEZE_RECEIPT_PATH,
@@ -384,7 +416,10 @@ async function verifyAttestationSnapshotOffline(root, lock, injectedRunGh, verif
     await chmod(ghStateRoot, 0o700);
     const temporaryEvidencePaths = await materializeVerifiedEvidenceFiles(ghStateRoot, evidenceFiles);
     const args = attestationVerificationArguments(repositoryRoot, temporaryEvidencePaths);
-    output = await commandStdout(runGh, args, ghOptions(repositoryRoot, ghStateRoot));
+    output = normalizeVerifierStdout(
+      await runGh(args, ghOptions(ghStateRoot)),
+      'gh attestation verifier output',
+    );
     await assertMaterializedEvidenceFilesUnchanged(temporaryEvidencePaths, evidenceFiles);
   } catch (error) {
     verificationError = error;
@@ -417,7 +452,42 @@ async function verifyAttestationSnapshotOffline(root, lock, injectedRunGh, verif
     return ['runtime-freeze.attestation: gh must verify exactly one attestation result'];
   }
 
-  const result = results[0]?.verificationResult;
+  const wrapper = results[0];
+  requireExactObjectKeys(
+    failures,
+    'attestation.ghResult',
+    wrapper,
+    ['attestation', 'verificationResult'],
+  );
+  const attestationWrapper = wrapper?.attestation;
+  requireExactObjectKeys(
+    failures,
+    'attestation.ghResult.attestation',
+    attestationWrapper,
+    ['bundle', 'bundle_url', 'initiator'],
+  );
+  compare(
+    failures,
+    'attestation.ghResult.attestation.bundle',
+    attestationWrapper?.bundle,
+    parseSingleBundle(evidenceFiles.attestation.bytes),
+  );
+  compare(failures, 'attestation.ghResult.attestation.bundle_url', attestationWrapper?.bundle_url, '');
+  compare(failures, 'attestation.ghResult.attestation.initiator', attestationWrapper?.initiator, '');
+
+  const result = wrapper?.verificationResult;
+  requireExactObjectKeys(
+    failures,
+    'attestation.ghResult.verificationResult',
+    result,
+    ['mediaType', 'signature', 'statement', 'verifiedIdentity', 'verifiedTimestamps'],
+  );
+  compare(
+    failures,
+    'attestation.ghResult.verificationResult.mediaType',
+    result?.mediaType,
+    'application/vnd.dev.sigstore.verificationresult+json;version=0.1',
+  );
   const certificate = result?.signature?.certificate;
   const statement = result?.statement;
   const predicate = statement?.predicate;
@@ -461,6 +531,7 @@ export function attestationVerificationArguments(root = process.cwd(), evidenceP
   return [
     'attestation', 'verify', receiptPath,
     '--repo', REPOSITORY_FULL_NAME,
+    '--hostname', 'github.com',
     '--bundle', attestationPath,
     '--custom-trusted-root', trustedRootPath,
     '--cert-identity', CERTIFICATE_IDENTITY,
@@ -831,6 +902,13 @@ function compare(failures, label, actual, expected) {
   }
 }
 
+function requireExactObjectKeys(failures, label, value, expectedKeys) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+      || canonicalJson(Object.keys(value).sort()) !== canonicalJson([...expectedKeys].sort())) {
+    failures.push(`${label}: exact object keys mismatch`);
+  }
+}
+
 async function commandStdout(command, args, options) {
   const result = await command(args, options);
   if (Buffer.isBuffer(result) || result instanceof Uint8Array || typeof result === 'string') return result;
@@ -843,7 +921,182 @@ async function defaultRunGit(args, options) {
 }
 
 async function defaultRunGh(args, options) {
-  return execFile('gh', args, options);
+  return runPinnedGhOfflineVerifier(args, options);
+}
+
+/**
+ * Execute only a byte-pinned GitHub CLI copied into the already-private gh
+ * state root. The configured source path is an absolute locator; PATH is not
+ * consulted, and the copied single-link executable is checked before and
+ * after both the version probe and offline attestation verification.
+ */
+export async function runPinnedGhOfflineVerifier(
+  args,
+  options,
+  configuredPath = process.env[RUNTIME_FREEZE_GH_PATH_ENV],
+) {
+  const stateRoot = ghStateRootFromOptions(options);
+  const executable = await materializePinnedGhExecutable(stateRoot, configuredPath);
+  const versionResult = await execFile(executable.path, ['version'], options);
+  const versionOutput = execFileStdout(versionResult, 'pinned gh version output');
+  const expectedVersionOutput = Buffer.from(
+    `gh version ${EXPECTED_RUNTIME_FREEZE_GH_CLI.version} (${EXPECTED_RUNTIME_FREEZE_GH_CLI.releasedAt})\n`
+      + `${EXPECTED_RUNTIME_FREEZE_GH_CLI.releaseUrl}\n`,
+    'utf8',
+  );
+  if (!versionOutput.equals(expectedVersionOutput)) {
+    throw new Error('pinned gh version output differs from the exact runtime-freeze policy');
+  }
+  await assertPinnedGhExecutable(executable);
+  const verificationResult = await execFile(executable.path, args, options);
+  const verificationOutput = execFileStdout(verificationResult, 'pinned gh attestation verification output');
+  await assertPinnedGhExecutable(executable);
+  return verificationOutput;
+}
+
+async function materializePinnedGhExecutable(stateRoot, configuredPath) {
+  const platformKey = `${process.platform}-${process.arch}`;
+  const expected = EXPECTED_RUNTIME_FREEZE_GH_CLI.platforms[platformKey];
+  if (!expected) throw new Error(`unsupported pinned gh platform ${platformKey}`);
+  const sourcePath = configuredPath ?? expected.defaultPath;
+  if (typeof sourcePath !== 'string' || !path.isAbsolute(sourcePath) || path.normalize(sourcePath) !== sourcePath) {
+    throw new Error(`${RUNTIME_FREEZE_GH_PATH_ENV} must name one normalized absolute path`);
+  }
+
+  const stateMetadata = await lstat(stateRoot);
+  if (!stateMetadata.isDirectory() || stateMetadata.isSymbolicLink() || (stateMetadata.mode & 0o777) !== 0o700) {
+    throw new Error('pinned gh state root must be one private 0700 directory');
+  }
+  const sourceBefore = await lstat(sourcePath, { bigint: true });
+  if (!sourceBefore.isFile() || sourceBefore.isSymbolicLink() || sourceBefore.nlink !== 1n
+      || sourceBefore.size !== BigInt(expected.executableSizeBytes)
+      || (sourceBefore.mode & 0o777n) !== 0o755n) {
+    throw new Error('configured gh is not the exact bounded regular single-link executable');
+  }
+  const sourceCanonicalPath = await realpath(sourcePath);
+  if (sourceCanonicalPath !== sourcePath) {
+    throw new Error('configured gh path must be canonical and contain no symlink locator');
+  }
+
+  const executableRoot = path.join(stateRoot, 'verifier-bin');
+  await mkdir(executableRoot, { mode: 0o700 });
+  await chmod(executableRoot, 0o700);
+  const executablePath = path.join(executableRoot, 'gh');
+  const sourceHandle = await open(sourceCanonicalPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+  let targetHandle;
+  const hash = createHash('sha256');
+  const buffer = Buffer.allocUnsafe(1024 * 1024);
+  let offset = 0;
+  try {
+    targetHandle = await open(
+      executablePath,
+      constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
+      0o500,
+    );
+    const sourceOpened = await sourceHandle.stat({ bigint: true });
+    if (!sameFileIdentity(sourceBefore, sourceOpened)) throw new Error('configured gh changed before its private copy');
+    while (offset < expected.executableSizeBytes) {
+      const length = Math.min(buffer.length, expected.executableSizeBytes - offset);
+      const { bytesRead } = await sourceHandle.read(buffer, 0, length, offset);
+      if (bytesRead === 0) throw new Error('configured gh became shorter while copied');
+      const chunk = buffer.subarray(0, bytesRead);
+      hash.update(chunk);
+      let written = 0;
+      while (written < bytesRead) {
+        const result = await targetHandle.write(chunk, written, bytesRead - written, offset + written);
+        if (result.bytesWritten === 0) throw new Error('private gh copy made no write progress');
+        written += result.bytesWritten;
+      }
+      offset += bytesRead;
+    }
+    const sourceAfter = await sourceHandle.stat({ bigint: true });
+    if (!sameFileIdentity(sourceBefore, sourceAfter)) throw new Error('configured gh changed while copied');
+    await targetHandle.sync();
+  } finally {
+    buffer.fill(0);
+    await Promise.all([
+      sourceHandle.close(),
+      targetHandle?.close(),
+    ]);
+  }
+  const digest = `sha256:${hash.digest('hex')}`;
+  if (digest !== expected.executableSha256) {
+    throw new Error('configured gh executable digest differs from the exact platform lock');
+  }
+  await chmod(executablePath, 0o500);
+  const executable = Object.freeze({
+    path: executablePath,
+    expected,
+    sourceCanonicalPath,
+  });
+  await assertPinnedGhExecutable(executable);
+  return executable;
+}
+
+async function assertPinnedGhExecutable(executable) {
+  const before = await lstat(executable.path, { bigint: true });
+  if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n
+      || before.size !== BigInt(executable.expected.executableSizeBytes)
+      || (before.mode & 0o777n) !== 0o500n) {
+    throw new Error('private gh copy is not the exact 0500 regular single-link executable');
+  }
+  const handle = await open(executable.path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  const hash = createHash('sha256');
+  const buffer = Buffer.allocUnsafe(1024 * 1024);
+  let offset = 0;
+  try {
+    const opened = await handle.stat({ bigint: true });
+    if (!sameFileIdentity(before, opened)) throw new Error('private gh copy changed before verification');
+    while (offset < executable.expected.executableSizeBytes) {
+      const length = Math.min(buffer.length, executable.expected.executableSizeBytes - offset);
+      const { bytesRead } = await handle.read(buffer, 0, length, offset);
+      if (bytesRead === 0) throw new Error('private gh copy became shorter during verification');
+      hash.update(buffer.subarray(0, bytesRead));
+      offset += bytesRead;
+    }
+    const after = await handle.stat({ bigint: true });
+    if (!sameFileIdentity(before, after)) throw new Error('private gh copy changed during verification');
+  } finally {
+    buffer.fill(0);
+    await handle.close();
+  }
+  if (`sha256:${hash.digest('hex')}` !== executable.expected.executableSha256) {
+    throw new Error('private gh copy digest differs from the exact platform lock');
+  }
+}
+
+function ghStateRootFromOptions(options) {
+  const configRoot = options?.env?.GH_CONFIG_DIR;
+  if (typeof configRoot !== 'string' || !path.isAbsolute(configRoot)
+      || path.basename(configRoot) !== 'config') {
+    throw new Error('pinned gh requires an absolute private GH_CONFIG_DIR');
+  }
+  return path.dirname(configRoot);
+}
+
+function execFileStdout(result, label) {
+  if (!result || typeof result !== 'object' || !Object.hasOwn(result, 'stdout')) {
+    throw new TypeError(`${label} is absent`);
+  }
+  return normalizeVerifierStdout(result.stdout, label);
+}
+
+function normalizeVerifierStdout(value, label) {
+  if (Buffer.isBuffer(value)) return Buffer.from(value);
+  if (value instanceof Uint8Array) return Buffer.from(value);
+  if (typeof value === 'string') return Buffer.from(value, 'utf8');
+  throw new TypeError(`${label} must be bytes or a string`);
+}
+
+function sameFileIdentity(left, right) {
+  return left.isFile() && right.isFile()
+    && left.dev === right.dev
+    && left.ino === right.ino
+    && left.size === right.size
+    && left.nlink === right.nlink
+    && left.mode === right.mode
+    && left.mtimeNs === right.mtimeNs
+    && left.ctimeNs === right.ctimeNs;
 }
 
 function gitOptions(root) {
@@ -863,13 +1116,17 @@ function gitOptions(root) {
   };
 }
 
-function ghOptions(root, stateRoot) {
+function ghOptions(stateRoot) {
   return {
-    cwd: root,
+    cwd: stateRoot,
     encoding: null,
     maxBuffer: 5 * 1024 * 1024,
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
+    shell: false,
+    windowsHide: true,
     env: {
-      PATH: MINIMUM_SYSTEM_PATH,
+      PATH: RUNTIME_FREEZE_GH_CHILD_PATH,
       GH_CONFIG_DIR: path.join(stateRoot, 'config'),
       XDG_STATE_HOME: path.join(stateRoot, 'state'),
       XDG_CACHE_HOME: path.join(stateRoot, 'cache'),

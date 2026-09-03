@@ -4,7 +4,7 @@
 - Evidence maturity: **41.00 / 100** (not a SOTA score)
 - Comparator snapshot: **2026-09-02**
 - Evaluated revision: **local working tree**
-- Artifact: `sha256:c23335fc8f28c1913cb1851036e90177daba7e55864ff65ec69605f5373136f8` across 375 source files
+- Artifact: `sha256:c645192ad9c6b70c35991a5a190098c7656380808d5095d83890de809d9961e8` across 389 source files
 
 ## Hard gates
 
@@ -16,7 +16,7 @@
 - Molecular isolated constant-energy trajectory: 10000 steps / 5.000 ps; maximum |ΔE|/max(|E₀|, 1 kJ mol⁻¹): 1.263e-5; OLS relative drift: 7.448e-8 ps⁻¹; deterministic replay: PASS.
 - Periodic atomistic fixed-cell NVE calibration: 10,000 primary + 10,000 independent replay steps; maximum relative energy excursion 6.086e-9; momentum / internal-force / COM residuals 2.729e-12 / 6.476e-15 / 7.857e-15; physical, full-state, observation and trajectory/checkpoint digest replay PASS (evidence sha256:c19d04cfd1ebae74ea1ea8c71e99bb092aedff44cb164ad971af3f7fb36707e9).
 - Aqueous foundation references: 15/15 direct-Ewald and rigid-constraint gates passed; NaCl point-charge Madelung |ΔE| 2.274e-12 kJ mol⁻¹; triclinic force finite-difference maximum 3.782e-9 kJ mol⁻¹ Å⁻¹; TIP3P position / velocity-derivative residuals 6.772e-13 Å / 6.722e-13 Å² ps⁻¹ (foundation only; no NaCl–water trajectory, PME or OpenMM execution; evidence sha256:7a015b6879c2bdbe8c39a6bbe5f0c2f4384cd0a7ad527616e57edcab4ee3f78a).
-- World/action schemas and negative mutation corpus: PASS; molecular world/action/observation schemas and recomputed-tamper corpus: PASS; periodic atomistic world/action/observation schemas: PASS; aqueous v0.4.4 system/backend schemas and exact negative-evidence plan: PASS (declarative contract only; OpenMM not run); NaCl-water v0.4.10 full-seed schemas, locked digests and fail-closed actions: PASS (geometric contract only; no trajectory or solver); v0.4.11 Python semantic import and independent byte verifier source contract: PASS (portable input only; OpenMM not imported); atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 261952.5 ms.
+- World/action schemas and negative mutation corpus: PASS; molecular world/action/observation schemas and recomputed-tamper corpus: PASS; periodic atomistic world/action/observation schemas: PASS; aqueous v0.4.4 system/backend schemas and exact negative-evidence plan: PASS (declarative contract only; OpenMM not run); NaCl-water v0.4.10 full-seed schemas, locked digests and fail-closed actions: PASS (geometric contract only; no trajectory or solver); v0.4.11 Python semantic import and independent byte verifier source contract: PASS (portable input only; OpenMM not imported); atomistic reproduction + full-candidate plans / dataset catalog / comparator receipts: PASS (candidate contract only; no full run); evaluator runtime: 371019.0 ms.
 - Industrial default exclusions: facebook-uma (manual; industrialDefaultAllowed=false).
 
 ## Next iteration gaps

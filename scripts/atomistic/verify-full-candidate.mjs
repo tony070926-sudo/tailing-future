@@ -586,6 +586,7 @@ export function validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes
   const producers = partitions.filter((partition) => partition?.producer).map((partition) => partition.producer);
   for (const producer of producers) {
     if (producer.repositoryId !== receipt?.source?.repositoryId || producer.revision !== receipt?.source?.revision) errors.push('producer provenance differs from the receipt source');
+    if (producer.runAttempt !== 1) errors.push('producer provenance is not bound to workflow attempt one');
   }
   if (new Set(producers.map((producer) => producer.jobId)).size !== producers.length) errors.push('producer job IDs are not distinct');
   const runKeys = new Set(producers.map((producer) => `${producer.workflowRunId}/${producer.runAttempt}`));
@@ -1052,7 +1053,8 @@ function validProducer(producer) {
     && isDeepStrictEqual(Object.keys(producer).sort(asciiCompare), PRODUCER_KEYS)
     && producer.repositoryId === EXPECTED_REPOSITORY_ID
     && SHA_PATTERN.test(producer.revision ?? '')
-    && ['workflowRunId', 'runAttempt', 'jobId'].every((key) => Number.isSafeInteger(producer[key]) && producer[key] > 0)
+    && ['workflowRunId', 'jobId'].every((key) => Number.isSafeInteger(producer[key]) && producer[key] > 0)
+    && producer.runAttempt === 1
     && typeof producer.hardwareId === 'string'
     && producer.hardwareId.length >= 3
     && producer.hardwareId.length <= 128;

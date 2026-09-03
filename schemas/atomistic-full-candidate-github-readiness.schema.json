@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing-future.local/schemas/atomistic-full-candidate-github-readiness.schema.json",
+  "title": "Tailing Future atomistic full-candidate GitHub readiness rejection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claims", "rejection", "schemaVersion", "status"],
+  "properties": {
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimEligible",
+        "comparisonEligible",
+        "promotionEligible",
+        "reproduced",
+        "reproductionEligible",
+        "superiorityClaimAllowed"
+      ],
+      "properties": {
+        "claimEligible": { "const": false },
+        "comparisonEligible": { "const": false },
+        "promotionEligible": { "const": false },
+        "reproduced": { "const": false },
+        "reproductionEligible": { "const": false },
+        "superiorityClaimAllowed": { "const": false }
+      }
+    },
+    "rejection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      }
+    },
+    "schemaVersion": {
+      "const": "tf.atomistic-full-candidate-github-readiness/0.1"
+    },
+    "status": { "const": "rejected" }
+  }
+}
