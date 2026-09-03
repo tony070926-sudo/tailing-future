@@ -24,6 +24,7 @@ const projectSpecifiers = [
   '../lib/simulation/periodic-atomistic-world.ts',
   '../lib/simulation/digest.ts',
   './atomistic/full-candidate-plan-policy.mjs',
+  './atomistic/full-candidate-execution-preflight-policy.mjs',
   './workflow-policy.mjs',
   './comparator-evidence-policy.mjs',
   './source-snapshot.mjs',
@@ -69,6 +70,10 @@ const [
     FULL_CANDIDATE_PRODUCER_OUTCOME_SCHEMA_RAW_DIGEST,
     FULL_CANDIDATE_RECEIPT_SCHEMA_RAW_DIGEST,
   },
+  {
+    FULL_CANDIDATE_EXECUTION_PREFLIGHT_PATH,
+    validateFullCandidateExecutionPreflightRepository,
+  },
   { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource },
   { validateComparatorEvidenceRegistry },
   { captureProjectSourceSnapshot },
@@ -84,6 +89,7 @@ const [
   import('../lib/simulation/periodic-atomistic-world.ts'),
   import('../lib/simulation/digest.ts'),
   import('./atomistic/full-candidate-plan-policy.mjs'),
+  import('./atomistic/full-candidate-execution-preflight-policy.mjs'),
   import('./workflow-policy.mjs'),
   import('./comparator-evidence-policy.mjs'),
   import('./source-snapshot.mjs'),
@@ -629,6 +635,12 @@ try {
     workflowFailures.push(...inspectDockerfileSource(relativePath, readSnapshotText(relativePath)));
   }
   workflowFailures.push(...inspectDockerignoreSource('.dockerignore', readSnapshotText('.dockerignore')));
+  const candidateExecutionPreflightValidation =
+    await validateFullCandidateExecutionPreflightRepository(
+      Buffer.from(readSnapshotText(FULL_CANDIDATE_EXECUTION_PREFLIGHT_PATH), 'utf8'),
+      { root },
+    );
+  hardGateFailures.push(...candidateExecutionPreflightValidation.failures);
   const randomTpCatalog = datasetCatalog.datasets.find((dataset) => dataset.id === 'mattersim-random-tp');
   const candidateBenchmark = atomisticCandidatePlan.bindings?.benchmark;
   const candidateContractValid = validateAtomisticCandidatePlan(atomisticCandidatePlan)
@@ -647,6 +659,7 @@ try {
     && atomisticCandidatePlan.execution.producerScientificPayloadPolicy.publicationEligible === false
     && atomisticCandidatePlan.claimBoundaries.randomTpIsMatbenchWbm === false
     && atomisticCandidatePlan.claimBoundaries.currentSotaClaimAllowed === false
+    && candidateExecutionPreflightValidation.failures.length === 0
     && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
     && randomTpCatalog?.redistribute === false
     && randomTpCatalog?.license?.startsWith('NOASSERTION:')
