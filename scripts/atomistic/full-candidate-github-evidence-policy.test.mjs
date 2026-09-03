@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   FULL_CANDIDATE_PRODUCER_WORKFLOW,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW,
   FULL_CANDIDATE_REPOSITORY,
   FULL_CANDIDATE_REPOSITORY_ID,
   FULL_CANDIDATE_REPOSITORY_OWNER_ID,
@@ -175,7 +176,7 @@ function sentinelObservations() {
 }
 
 describe('full-candidate GitHub control-plane policy', () => {
-  it('keeps the production workflow unconfigured until a real GitHub workflow ID is reviewed', () => {
+  it('keeps the registered quarantine shell separate from the unconfigured producer', () => {
     expect(FULL_CANDIDATE_PRODUCER_WORKFLOW).toEqual({
       configured: false,
       id: null,
@@ -186,7 +187,24 @@ describe('full-candidate GitHub control-plane policy', () => {
       { total_count: 0, workflow_runs: [] },
       FULL_CANDIDATE_PRODUCER_WORKFLOW,
       SOURCE_REVISION,
-    )).toThrow(/has not been merged and assigned a GitHub workflow ID/);
+    )).toThrow(/registered quarantine shell is not an executable producer/);
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW).toMatchObject({
+      id: 349_363_715,
+      name: FULL_CANDIDATE_PRODUCER_WORKFLOW.name,
+      nodeId: 'W_kwDOUG-2WM4U0t4D',
+      path: FULL_CANDIDATE_PRODUCER_WORKFLOW.path,
+      producerConfigured: false,
+      registered: true,
+      state: 'active',
+    });
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW.registration).toEqual({
+      gitBlobOid: '76d40b0938df50375728b4f68133a52a1ceabd13',
+      parentRevision: '72bc2011d75d9880b9918b70c903129b9bf1de65',
+      revision: '3221265a4145626dd9e32876fa911f23ae49fbff',
+      sha256: 'sha256:e578459f2c46e77d10f3fd944984daa01f845219921454c3095b9852e4074cc0',
+      sizeBytes: 520,
+      treeOid: '2b9735696a4c2b1fc8419b6de818df7289246c8b',
+    });
   });
 
   it('selects the first dispatch even when a later independent dispatch succeeds', () => {
