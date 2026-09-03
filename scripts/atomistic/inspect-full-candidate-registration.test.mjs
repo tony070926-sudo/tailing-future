@@ -52,6 +52,8 @@ const originalToken = process.env.GITHUB_TOKEN;
 const originalApiUrl = process.env.GITHUB_API_URL;
 const frozen = FULL_CANDIDATE_REGISTRATION_WORKFLOW.registration;
 const sentinel = FULL_CANDIDATE_REGISTRATION_WORKFLOW.sentinel;
+const currentMainRevision = '4599bb92e47e4de0c339f095b4874384939030d4';
+const currentMainTreeOid = '69500d95bec19c3a7ac296ff3bf5b3f478efd1f3';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -251,6 +253,19 @@ function capture() {
 function mutateBoth(registrationCapture, mutator) {
   registrationCapture.passes.forEach(mutator);
   return registrationCapture;
+}
+
+function advanceMain(registrationCapture) {
+  return mutateBoth(registrationCapture, (pass) => {
+    pass.branch.commit.sha = currentMainRevision;
+    pass.branch.commit.commit.tree.sha = currentMainTreeOid;
+    pass.compare.ahead_by = 1;
+    pass.compare.commits = [{ sha: currentMainRevision }];
+    pass.compare.head_commit = { sha: currentMainRevision };
+    pass.compare.status = 'ahead';
+    pass.compare.total_commits = 1;
+    pass.currentTree.sha = currentMainTreeOid;
+  });
 }
 
 function expectSchema(result) {
@@ -465,6 +480,44 @@ describe('full-candidate registration-only observation policy', () => {
     const offlineSources = [...workflowSources, ...offlineEvaluatorSources].join('\n');
     expect(offlineSources).not.toContain('atomistic:inspect-full-registration');
     expect(offlineSources).not.toContain('inspect-full-candidate-registration.mjs');
+  });
+
+  it.each([
+    ['null', (pass) => { pass.compare.head_commit = null; }],
+    ['missing', (pass) => { delete pass.compare.head_commit; }],
+  ])('accepts an ahead comparison with a %s head_commit when the commit tail binds current main', (_label, mutator) => {
+    const registrationCapture = advanceMain(capture());
+    registrationCapture.passes.forEach(mutator);
+    const result = validateFullCandidateRegistrationCapture(registrationCapture);
+    expect(result.registration.currentMain).toMatchObject({
+      registrationRelation: 'ahead',
+      revision: currentMainRevision,
+    });
+    expectSchema(result);
+  });
+
+  it('rejects an ahead comparison with a mismatching non-null head_commit', () => {
+    const registrationCapture = advanceMain(capture());
+    registrationCapture.passes.forEach((pass) => {
+      pass.compare.head_commit = { sha: frozen.revision };
+    });
+    expect(() => validateFullCandidateRegistrationCapture(registrationCapture)).toThrow(
+      /an ahead registration comparison does not terminate at current main/,
+    );
+  });
+
+  it.each([
+    ['null', (pass) => { pass.compare.head_commit = null; }],
+    ['missing', (pass) => { delete pass.compare.head_commit; }],
+  ])('rejects an ahead comparison with a %s head_commit when the commit tail differs from current main', (_label, mutator) => {
+    const registrationCapture = advanceMain(capture());
+    registrationCapture.passes.forEach((pass) => {
+      mutator(pass);
+      pass.compare.commits = [{ sha: frozen.revision }];
+    });
+    expect(() => validateFullCandidateRegistrationCapture(registrationCapture)).toThrow(
+      /an ahead registration comparison does not terminate at current main/,
+    );
   });
 
   it.each([
