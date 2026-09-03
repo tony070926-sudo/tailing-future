@@ -395,7 +395,7 @@ function validateCompare(compare, currentRevision) {
   } else {
     requirePolicy(
       compare.status === 'ahead'
-        && compare.head_commit?.sha === currentRevision
+        && (compare.head_commit == null || compare.head_commit?.sha === currentRevision)
         && commits.at(-1)?.sha === currentRevision,
       'registration-main-ancestry-invalid',
       'an ahead registration comparison does not terminate at current main',

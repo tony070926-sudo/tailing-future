@@ -1,11 +1,11 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-03T16:16:01.798Z",
+  "generatedAt": "2026-09-03T18:31:09.589Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:c4a94578d246bee45b2777dfc3533cb36dc7fcb22d4c09302565e19be0aab671",
-  "sourceFileCount": 394,
+  "artifactDigest": "sha256:83d215e37959d1fddd509c1d9eb01e6eb547969dc38e822ecaea84b53a2a195b",
+  "sourceFileCount": 395,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:8f51aa8ffd959d0e2d63ce0b4a2d34516dd2eaf7106c5ede829a9f12c030ec5a",
@@ -96,6 +96,7 @@
     "evaluation/reviews/2026-09-03-full-candidate-registration-observer-review.md": "sha256:a20d65585f6aa883a2c17dc27832c566a36c4d28858252df5b3266410ca9a7d4",
     "evaluation/reviews/2026-09-03-full-candidate-registration-source-integrity-review.md": "sha256:4642213df792a6f35a865ae854dea396b26e61f276905ee367515541c05df2d8",
     "evaluation/reviews/2026-09-03-r7b2-github-readiness-private-handoff-review.md": "sha256:d473fc14529b469f29c1fa924dff5cec5c7906cf498489c82dbdac109d0d60a7",
+    "evaluation/reviews/2026-09-03-registration-compare-null-head-review.md": "sha256:f260d6fe48c975a1d36a48f8005c7af77129b8157d6ecfd59292164706e5c5e8",
     "evaluation/reviews/2026-09-03-runtime-freeze-gh-toolchain-repair-review.md": "sha256:a8332652a65083ab71df33be9963f33f47f73fbf3e1e936a4e49b0ba32194ae0",
     "lib/molecular/aqueous-dynamics-lab-component.test.ts": "sha256:220406a2f98aad659121b78a8501168af8c00705e60e089ffdaf85897afd36be",
     "lib/molecular/aqueous-dynamics-render-frame.test.ts": "sha256:b7fe5a418833a983720e27dcf61ae3002853ef15d20db4498b7a6416cba3865b",
@@ -245,13 +246,13 @@
     "scripts/atomistic/full-candidate-plan-policy.test.mjs": "sha256:99fdf3b22a221e35ac488a74815e2932e72d49ed5c2df5d1bd0b659b35e0211a",
     "scripts/atomistic/full-candidate-producer-outcome-policy.mjs": "sha256:7d4d13c649b7850095a1b26216e8fc25063319b9c2d877655a951012e96b14d0",
     "scripts/atomistic/full-candidate-producer-outcome-policy.test.mjs": "sha256:8800bdf2865e7d22ca2674eb9f77c26ff79d9703f652011a0ecae9278575b4c6",
-    "scripts/atomistic/full-candidate-registration-policy.mjs": "sha256:4d648cf1d7fb061171819ac9eeb5a5fdbc32ca0c22bd2fcffd8df37ec09d8a3c",
+    "scripts/atomistic/full-candidate-registration-policy.mjs": "sha256:a1eba4bbf6386a54fcfaa66e5374bb692a8d102ebdc64b1bd8aa389bb4644f1b",
     "scripts/atomistic/full-candidate-registration-source-policy.mjs": "sha256:a1dd2e9dffada2821cde2be4e6431ec0217cbc54aa74b4221f5a6171ad367ee2",
     "scripts/atomistic/full-candidate-registration-source-policy.test.mjs": "sha256:60a6f7de7aaa0d45e37b7d3b7a0dcd76edb9f87f4515f408a3d490563ae3edcb",
     "scripts/atomistic/inspect-full-candidate-github-readiness.mjs": "sha256:44e420fc7a8fd3ae3309a92193746b01c776598e9f954d58851759393f60f6df",
     "scripts/atomistic/inspect-full-candidate-github-readiness.test.mjs": "sha256:d998f26e5396e1bfcb813c36afb35c75a30f1b3603974dc4a066ac7921cda1b9",
     "scripts/atomistic/inspect-full-candidate-registration.mjs": "sha256:ad9c44b7a4aa2b8f0bb18d2767bd31f6972cfbee4a9aff43778c802ec2f05ea7",
-    "scripts/atomistic/inspect-full-candidate-registration.test.mjs": "sha256:f88416d3514539c2cff11a01c875114c08a11168831bfd2d1633846de2f49041",
+    "scripts/atomistic/inspect-full-candidate-registration.test.mjs": "sha256:c3a5fd3e968ce59358f480aecf31fe81d5cc01995f648a62f596d77f809b8ca4",
     "scripts/atomistic/openmm/artifact_manifest_test.py": "sha256:969782193d137dd40eebe32be22a9ea8dfd26dd8ecbfaa570b6903ea671ea622",
     "scripts/atomistic/openmm/binary_codec.py": "sha256:ef142564ab151c8a7aecb726b9709f6c8609088de96f06f453d640f2e077f2d3",
     "scripts/atomistic/openmm/container_contract_test.py": "sha256:1196fbcc9b078a8a051b24eb85f451d42a693033747a293e3f7ca535dafd5e78",
@@ -760,7 +761,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 165950.77
+    "elapsedMs": 173931.57
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
