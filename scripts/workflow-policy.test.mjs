@@ -36,7 +36,13 @@ import {
   ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH,
   ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH,
   DOCKERIGNORE_ALLOWLIST,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW_SHA256,
+  FULL_CANDIDATE_REGISTRATION_WORKFLOW_SIZE_BYTES,
   inspectAtomisticBootstrapQuarantineSource,
+  inspectFullCandidateRegistrationWorkflow,
+  inspectFullCandidateRegistrationWorkflowSource,
   inspectOpenMmTip3pProtectedWorkflow,
   inspectDockerfileSource,
   inspectDockerignoreSource,
@@ -57,6 +63,7 @@ import {
   SETUPTOOLS_RUNTIME_WHEEL_SHA256,
   SETUPTOOLS_STARTUP_HOOK_SHA256,
 } from './workflow-policy.mjs';
+import { FULL_CANDIDATE_PRODUCER_WORKFLOW } from './atomistic/full-candidate-github-evidence-policy.mjs';
 
 const atomisticBootstrapSource = readFileSync(
   new URL('../.github/workflows/atomistic-bootstrap.yml', import.meta.url),
@@ -68,6 +75,10 @@ const atomisticBootstrapVerifySource = readFileSync(
 );
 const openMmTip3pProtectedSource = readFileSync(
   new URL('../.github/workflows/openmm-tip3p-protected.yml', import.meta.url),
+  'utf8',
+);
+const fullCandidateRegistrationSource = readFileSync(
+  new URL('../.github/workflows/atomistic-full-candidate.yml', import.meta.url),
   'utf8',
 );
 const atomisticBootstrapQuarantineSource = readFileSync(
@@ -161,6 +172,15 @@ function inspectMutatedOpenMmProtected(mutator, { semanticOnly = false } = {}) {
   return inspectWorkflowSource(
     OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH,
     dumpYaml(workflow, { lineWidth: -1, noRefs: true }),
+  );
+}
+
+function inspectMutatedFullCandidateRegistration(mutator) {
+  const workflow = parseYaml(fullCandidateRegistrationSource);
+  mutator(workflow);
+  return inspectFullCandidateRegistrationWorkflow(
+    workflow,
+    fullCandidateRegistrationSource,
   );
 }
 
@@ -873,6 +893,191 @@ describe('Dockerfile source policy', () => {
       relativePath,
       openMmWaterDockerfileSource.replace('\nFROM --platform', '\nARG BASE_IMAGE\nFROM --platform'),
     ).join('\n')).toMatch(/reviewed Dockerfile bytes drifted|no BASE_IMAGE argument/);
+  });
+});
+
+describe('full-candidate registration-only workflow policy', () => {
+  it('accepts only the digest-bound no-matching-push workflow with a false job canary', () => {
+    expect(inspectWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      fullCandidateRegistrationSource,
+    )).toEqual([]);
+    expect(inspectFullCandidateRegistrationWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      fullCandidateRegistrationSource,
+    )).toEqual([]);
+    expect(createHash('sha256').update(fullCandidateRegistrationSource).digest('hex'))
+      .toBe(FULL_CANDIDATE_REGISTRATION_WORKFLOW_SHA256);
+    expect(Buffer.byteLength(fullCandidateRegistrationSource))
+      .toBe(FULL_CANDIDATE_REGISTRATION_WORKFLOW_SIZE_BYTES);
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH)
+      .toBe(FULL_CANDIDATE_PRODUCER_WORKFLOW.path);
+    expect(FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME)
+      .toBe(FULL_CANDIDATE_PRODUCER_WORKFLOW.name);
+    expect(FULL_CANDIDATE_PRODUCER_WORKFLOW).toMatchObject({
+      configured: false,
+      id: null,
+    });
+
+    const workflow = parseYaml(fullCandidateRegistrationSource);
+    expect(workflow.on).toEqual({
+      push: {
+        'branches-ignore': ['**'],
+        'tags-ignore': ['**'],
+      },
+    });
+    expect(workflow.permissions).toEqual({});
+    expect(Object.keys(workflow.jobs)).toEqual(['registration-quarantine']);
+    expect(workflow.jobs['registration-quarantine']).toMatchObject({
+      if: '${{ false }}',
+      'runs-on': 'ubuntu-24.04',
+      'timeout-minutes': 1,
+      permissions: {},
+    });
+    expect(workflow.jobs['registration-quarantine'].steps).toHaveLength(1);
+    expect(fullCandidateRegistrationSource).not.toMatch(
+      /workflow_dispatch|workflow_call|repository_dispatch|schedule|ImageVersion|RUNNER_ARCH|gh version/,
+    );
+  });
+
+  it('rejects every trigger or all-ref filter expansion', () => {
+    const cases = [
+      ['workflow dispatch', (workflow) => { workflow.on.workflow_dispatch = null; }],
+      ['workflow call', (workflow) => { workflow.on.workflow_call = null; }],
+      ['repository dispatch', (workflow) => { workflow.on.repository_dispatch = null; }],
+      ['schedule', (workflow) => { workflow.on.schedule = [{ cron: '0 0 * * *' }]; }],
+      ['pull request', (workflow) => { workflow.on.pull_request = null; }],
+      ['branch filter removal', (workflow) => { delete workflow.on.push['branches-ignore']; }],
+      ['tag filter removal', (workflow) => { delete workflow.on.push['tags-ignore']; }],
+      ['branch wildcard narrowing', (workflow) => { workflow.on.push['branches-ignore'] = ['main']; }],
+      ['tag wildcard narrowing', (workflow) => { workflow.on.push['tags-ignore'] = ['v*']; }],
+      ['inputs', (workflow) => {
+        workflow.on.workflow_dispatch = { inputs: { execute: { required: false, type: 'boolean' } } };
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedFullCandidateRegistration(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects permission, job guard, runner, timeout and job-count drift', () => {
+    const cases = [
+      ['top-level read permission', (workflow) => { workflow.permissions = { contents: 'read' }; }],
+      ['top-level write permission', (workflow) => { workflow.permissions = { contents: 'write' }; }],
+      ['job permission', (workflow) => {
+        workflow.jobs['registration-quarantine'].permissions = { contents: 'read' };
+      }],
+      ['job guard deletion', (workflow) => { delete workflow.jobs['registration-quarantine'].if; }],
+      ['truthy job guard', (workflow) => { workflow.jobs['registration-quarantine'].if = '${{ true }}'; }],
+      ['runner drift', (workflow) => {
+        workflow.jobs['registration-quarantine']['runs-on'] = 'ubuntu-latest';
+      }],
+      ['timeout drift', (workflow) => {
+        workflow.jobs['registration-quarantine']['timeout-minutes'] = 2;
+      }],
+      ['additional job', (workflow) => {
+        workflow.jobs.execute = {
+          if: '${{ false }}',
+          'runs-on': 'ubuntu-24.04',
+          permissions: {},
+          steps: [],
+        };
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedFullCandidateRegistration(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects every execution, context, secret and topology expansion', () => {
+    const cases = [
+      ['additional step', (workflow) => {
+        workflow.jobs['registration-quarantine'].steps.push({ run: 'exit 1' });
+      }],
+      ['checkout', (workflow) => {
+        workflow.jobs['registration-quarantine'].steps[0] = {
+          uses: `actions/checkout@${'a'.repeat(40)}`,
+          with: { 'persist-credentials': false },
+        };
+      }],
+      ['upload artifact', (workflow) => {
+        workflow.jobs['registration-quarantine'].steps[0] = {
+          uses: `actions/upload-artifact@${'a'.repeat(40)}`,
+          with: { name: 'forbidden', path: '.' },
+        };
+      }],
+      ['local action', (workflow) => {
+        workflow.jobs['registration-quarantine'].steps[0] = { uses: './.github/actions/local' };
+      }],
+      ['top-level env', (workflow) => { workflow.env = { TOKEN: '${{ secrets.TOKEN }}' }; }],
+      ['job env', (workflow) => {
+        workflow.jobs['registration-quarantine'].env = { TOKEN: '${{ secrets.TOKEN }}' };
+      }],
+      ['step env', (workflow) => {
+        workflow.jobs['registration-quarantine'].steps[0].env = { TOKEN: '${{ secrets.TOKEN }}' };
+      }],
+      ['job outputs', (workflow) => { workflow.jobs['registration-quarantine'].outputs = { x: 'y' }; }],
+      ['job secrets', (workflow) => { workflow.jobs['registration-quarantine'].secrets = 'inherit'; }],
+      ['concurrency', (workflow) => { workflow.concurrency = 'producer'; }],
+      ['container', (workflow) => {
+        workflow.jobs['registration-quarantine'].container = `ubuntu@sha256:${'a'.repeat(64)}`;
+      }],
+      ['services', (workflow) => { workflow.jobs['registration-quarantine'].services = {}; }],
+      ['strategy', (workflow) => {
+        workflow.jobs['registration-quarantine'].strategy = { matrix: { model: ['mace'] } };
+      }],
+    ];
+    for (const [label, mutate] of cases) {
+      expect(inspectMutatedFullCandidateRegistration(mutate), label).not.toEqual([]);
+    }
+  });
+
+  it('rejects command, duplicate-key, path, byte and key-order drift', () => {
+    expect(inspectMutatedFullCandidateRegistration((workflow) => {
+      workflow.jobs['registration-quarantine'].steps[0].run = 'set -euo pipefail\nexit 0\n';
+    })).not.toEqual([]);
+    expect(inspectFullCandidateRegistrationWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      `${fullCandidateRegistrationSource}\npermissions: { contents: read }\n`,
+    ).join('\n')).toMatch(/invalid or contains duplicate keys/);
+    expect(inspectFullCandidateRegistrationWorkflowSource(
+      '.github/workflows/renamed-full-candidate.yml',
+      fullCandidateRegistrationSource,
+    ).join('\n')).toMatch(/reviewed path/);
+    expect(inspectFullCandidateRegistrationWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      `${fullCandidateRegistrationSource}# byte drift\n`,
+    ).join('\n')).toMatch(/complete reviewed.*bytes drifted/);
+
+    const parsed = parseYaml(fullCandidateRegistrationSource);
+    const reordered = {
+      on: parsed.on,
+      name: parsed.name,
+      permissions: parsed.permissions,
+      jobs: parsed.jobs,
+    };
+    expect(inspectFullCandidateRegistrationWorkflow(
+      reordered,
+      fullCandidateRegistrationSource,
+    ).join('\n')).toMatch(/key set or order drifted|exact YAML shape/);
+  });
+
+  it('returns a structured failure for cyclic YAML aliases', () => {
+    const cyclicSource = 'name: cyclic\n"on": push\njobs:\n  loop: &loop\n    self: *loop\n';
+    expect(inspectWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      cyclicSource,
+    )).toEqual([
+      `${FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH}: cyclic YAML aliases are forbidden.`,
+    ]);
+    expect(inspectFullCandidateRegistrationWorkflowSource(
+      FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH,
+      cyclicSource,
+    ).join('\n')).toMatch(/cyclic YAML aliases are forbidden/);
+    expect(inspectFullCandidateRegistrationWorkflow(
+      parseYaml(cyclicSource),
+      cyclicSource,
+    ).join('\n')).toMatch(/cyclic YAML aliases are forbidden/);
   });
 });
 

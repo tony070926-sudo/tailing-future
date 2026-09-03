@@ -7,7 +7,9 @@ import {
   lstat,
   mkdir,
   mkdtemp,
+  open,
   readFile,
+  realpath,
   rm,
   symlink,
   unlink,
@@ -20,7 +22,10 @@ import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { canonicalJsonBytes } from './runtime-input-contract.mjs';
 import {
+  EXPECTED_RUNTIME_FREEZE_GH_CLI,
   MINIMUM_SYSTEM_PATH,
+  RUNTIME_FREEZE_GH_CHILD_PATH,
+  RUNTIME_FREEZE_GH_PATH_ENV,
   RUNTIME_FREEZE_ATTESTATION_PATH,
   RUNTIME_FREEZE_EVIDENCE_DIRECTORY,
   RUNTIME_FREEZE_RECEIPT_PATH,
@@ -29,6 +34,7 @@ import {
   inspectRuntimeFreezeReceiptBytes,
   parseSingleBundle,
   readExactEvidenceFiles,
+  runPinnedGhOfflineVerifier,
   validateRawBundleProjection,
   validateRuntimeFreezeEvidence,
   validateRuntimeFreezeProjection,
@@ -54,9 +60,8 @@ beforeAll(async () => {
   integrationResult = await validateRuntimeFreezeEvidence(lock, {
     root,
     runGh: async (args, options) => {
-      const result = await execFile('gh', args, options);
-      verifiedGhOutput = result.stdout;
-      return result;
+      verifiedGhOutput = await runPinnedGhOfflineVerifier(args, options);
+      return verifiedGhOutput;
     },
   });
 }, 30_000);
@@ -188,11 +193,13 @@ describe('externally attested runtime-freeze evidence', () => {
 
   it('invokes offline gh verification with all identity pins and accepts exactly one result', async () => {
     const expectedFlags = [
-      '--repo', '--bundle', '--custom-trusted-root', '--cert-identity', '--cert-oidc-issuer',
+      '--repo', '--hostname', '--bundle', '--custom-trusted-root', '--cert-identity', '--cert-oidc-issuer',
       '--deny-self-hosted-runners', '--predicate-type', '--signer-digest', '--source-digest', '--source-ref', '--format',
     ];
     const args = attestationVerificationArguments(root);
     for (const flag of expectedFlags) expect(args).toContain(flag);
+    expect(args.slice(args.indexOf('--hostname'), args.indexOf('--hostname') + 2))
+      .toEqual(['--hostname', 'github.com']);
     expect(args).not.toContain('--signer-workflow');
     let called = 0;
     let temporaryStateRoot;
@@ -201,16 +208,25 @@ describe('externally attested runtime-freeze evidence', () => {
       expect(options.env.TZ).toBe('UTC');
       temporaryStateRoot = path.dirname(options.env.GH_CONFIG_DIR);
       expect(temporaryStateRoot.startsWith(path.join(tmpdir(), 'tf-gh-offline-'))).toBe(true);
+      expect(options.cwd).toBe(temporaryStateRoot);
+      expect(options.timeout).toBe(30_000);
+      expect(options.killSignal).toBe('SIGKILL');
+      expect(options.shell).toBe(false);
       expect(options.env.XDG_STATE_HOME).toBe(path.join(temporaryStateRoot, 'state'));
       expect(options.env.XDG_CACHE_HOME).toBe(path.join(temporaryStateRoot, 'cache'));
       expect(options.env.GH_CONFIG_DIR).toBe(path.join(temporaryStateRoot, 'config'));
       expect(temporaryStateRoot.startsWith(path.join(root, '.git'))).toBe(false);
       expect(Object.hasOwn(options.env, 'HOME')).toBe(false);
-      expect(options.env.PATH).toBe(MINIMUM_SYSTEM_PATH);
+      expect(options.env.PATH).toBe(RUNTIME_FREEZE_GH_CHILD_PATH);
+      expect(options.env.PATH).toBe('/usr/bin:/bin');
       expect(options.env.PATH).not.toContain('node_modules');
       expect(options.env.PATH).not.toContain(root);
       expect(options.env.GH_TELEMETRY).toBe('0');
       expect(options.env.HTTPS_PROXY).toBe('http://127.0.0.1:1');
+      for (const name of [
+        'GH_TOKEN', 'GITHUB_TOKEN', 'GH_HOST', 'GH_REPO', 'GH_PAGER',
+        'PAGER', 'EDITOR', 'VISUAL',
+      ]) expect(Object.hasOwn(options.env, name), name).toBe(false);
 
       const temporaryPaths = {
         receipt: actualArgs[2],
@@ -233,11 +249,170 @@ describe('externally attested runtime-freeze evidence', () => {
       expect(stateMetadata.mode & 0o777).toBe(0o700);
       await mkdir(options.env.XDG_STATE_HOME, { recursive: true });
       await writeFile(path.join(options.env.XDG_STATE_HOME, 'cleanup-sentinel'), 'owned temporary state\n');
-      return { stdout: verifiedGhOutput };
+      return verifiedGhOutput;
     });
     expect(called).toBe(1);
     expect(failures).toEqual([]);
     await expect(access(temporaryStateRoot)).rejects.toThrow();
+  });
+
+  it('executes only the fixed absolute digest-pinned gh copy and ignores PATH decoys', async () => {
+    expect(EXPECTED_RUNTIME_FREEZE_GH_CLI).toEqual({
+      version: '2.98.0',
+      releasedAt: '2026-08-20',
+      releaseUrl: 'https://github.com/cli/cli/releases/tag/v2.98.0',
+      releaseTagCommit: 'a255baf71d13fe5947a4eb7ad521ffd412d64cee',
+      checksums: {
+        url: 'https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_checksums.txt',
+        sizeBytes: 1_950,
+        sha256: 'sha256:275b90ae8a642fb8bdf4f21d7673e34643a445f7993f1821ac917ff8a2cc4db9',
+      },
+      platforms: {
+        'darwin-arm64': {
+          defaultPath: null,
+          archiveName: 'gh_2.98.0_macOS_arm64.zip',
+          archiveSha256: 'sha256:8cfb027cc5310675f2b830eac8f9865c1155a45ffcf9757f699fdd5a22046ca4',
+          executableSizeBytes: 39_256_176,
+          executableSha256: 'sha256:eedbfd5b8071027fe6326826eded48d274f1ec9d93f9239d9ba778ea1f479ac9',
+        },
+        'linux-x64': {
+          defaultPath: '/usr/bin/gh',
+          archiveName: 'gh_2.98.0_linux_amd64.deb',
+          archiveSha256: 'sha256:f65a3fa2fa0eb2e97c445ee3f5e087a40aae03b64847f45a8f13805e504535d6',
+          executableSizeBytes: 41_377_954,
+          executableSha256: 'sha256:62885b97de6a0cd85e616cdd94bcda908bf5cf1018094385892b05cea3537163',
+        },
+      },
+    });
+    const platformKey = `${process.platform}-${process.arch}`;
+    const platformLock = EXPECTED_RUNTIME_FREEZE_GH_CLI.platforms[platformKey];
+    expect(platformLock).toBeDefined();
+    expect(platformLock.executableSha256).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(platformLock.archiveSha256).toMatch(/^sha256:[0-9a-f]{64}$/);
+
+    const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'tf-gh-path-decoy-'));
+    const decoy = path.join(temporaryRoot, 'gh');
+    const previousPath = process.env.PATH;
+    try {
+      await writeFile(decoy, '#!/bin/sh\nexit 89\n');
+      await chmod(decoy, 0o700);
+      process.env.PATH = temporaryRoot;
+      const result = await validateRuntimeFreezeEvidence(lock, { root });
+      expect(result.failures).toEqual([]);
+      expect(result.ok).toBe(true);
+    } finally {
+      if (previousPath === undefined) delete process.env.PATH;
+      else process.env.PATH = previousPath;
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects a same-size wrong gh binary before execution', async () => {
+    const platformKey = `${process.platform}-${process.arch}`;
+    const configuredPath = process.env[RUNTIME_FREEZE_GH_PATH_ENV]
+      ?? EXPECTED_RUNTIME_FREEZE_GH_CLI.platforms[platformKey]?.defaultPath;
+    expect(path.isAbsolute(configuredPath)).toBe(true);
+    const temporaryRoot = await mkdtemp(path.join(await realpath(tmpdir()), 'tf-gh-wrong-binary-'));
+    const wrongPath = path.join(temporaryRoot, 'gh');
+    try {
+      await copyFile(configuredPath, wrongPath);
+      await chmod(wrongPath, 0o755);
+      const handle = await open(wrongPath, 'r+');
+      try {
+        const firstByte = Buffer.alloc(1);
+        expect((await handle.read(firstByte, 0, 1, 0)).bytesRead).toBe(1);
+        firstByte[0] ^= 1;
+        expect((await handle.write(firstByte, 0, 1, 0)).bytesWritten).toBe(1);
+        await handle.sync();
+      } finally {
+        await handle.close();
+      }
+      const failures = await verifyAttestationOffline(root, lock, (args, options) => (
+        runPinnedGhOfflineVerifier(args, options, wrongPath)
+      ));
+      expect(failures.join('\n')).toMatch(/offline gh verification failed.*digest differs from the exact platform lock/);
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects relative, wrong-mode, symlinked, symlink-ancestor, and hard-linked gh locators', async () => {
+    const platformKey = `${process.platform}-${process.arch}`;
+    const configuredPath = process.env[RUNTIME_FREEZE_GH_PATH_ENV]
+      ?? EXPECTED_RUNTIME_FREEZE_GH_CLI.platforms[platformKey]?.defaultPath;
+    expect(path.isAbsolute(configuredPath)).toBe(true);
+    const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'tf-gh-locator-negative-'));
+    const finalSymlink = path.join(temporaryRoot, 'gh-symlink');
+    const directorySymlink = path.join(temporaryRoot, 'bin-link');
+    const wrongMode = path.join(temporaryRoot, 'gh-wrong-mode');
+    const hardLinkBacking = path.join(temporaryRoot, 'gh-backing');
+    const hardLink = path.join(temporaryRoot, 'gh-hardlink');
+    try {
+      await symlink(configuredPath, finalSymlink);
+      await symlink(path.dirname(configuredPath), directorySymlink);
+      await copyFile(configuredPath, wrongMode);
+      await chmod(wrongMode, 0o700);
+      await copyFile(configuredPath, hardLinkBacking);
+      await chmod(hardLinkBacking, 0o755);
+      await link(hardLinkBacking, hardLink);
+      const cases = [
+        ['relative', 'gh', /normalized absolute path/],
+        ['wrong mode', wrongMode, /regular single-link executable/],
+        ['final symlink', finalSymlink, /regular single-link executable/],
+        [
+          'symlink ancestor',
+          path.join(directorySymlink, path.basename(configuredPath)),
+          /canonical and contain no symlink locator/,
+        ],
+        ['hard link', hardLink, /regular single-link executable/],
+      ];
+      for (const [label, candidatePath, expectedFailure] of cases) {
+        const failures = await verifyAttestationOffline(root, lock, (args, options) => (
+          runPinnedGhOfflineVerifier(args, options, candidatePath)
+        ));
+        expect(failures.join('\n'), label).toMatch(expectedFailure);
+      }
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects non-byte injected verifier outputs instead of unwrapping command objects', async () => {
+    for (const [index, output] of [
+      null,
+      2,
+      {},
+      { stdout: verifiedGhOutput },
+      [verifiedGhOutput],
+    ].entries()) {
+      const failures = await verifyAttestationOffline(root, lock, async () => output);
+      expect(failures.join('\n'), `non-byte verifier output ${index}`)
+        .toMatch(/offline gh verification failed.*must be bytes or a string/);
+    }
+  });
+
+  it('accepts only the three explicit byte/string verifier output representations', async () => {
+    for (const output of [
+      verifiedGhOutput,
+      new Uint8Array(verifiedGhOutput),
+      verifiedGhOutput.toString('utf8'),
+    ]) {
+      expect(await verifyAttestationOffline(root, lock, async () => output)).toEqual([]);
+    }
+  });
+
+  it('snapshots an injected Uint8Array before its caller can mutate the backing bytes', async () => {
+    const transient = new Uint8Array(verifiedGhOutput);
+    let mutated = false;
+    const verification = verifyAttestationOffline(root, lock, async () => {
+      setTimeout(() => {
+        transient.fill(0);
+        mutated = true;
+      }, 0);
+      return transient;
+    });
+    expect(await verification).toEqual([]);
+    expect(mutated).toBe(true);
   });
 
   it('fails closed if gh-time code mutates or truncates a private snapshot and always removes its root', async () => {
@@ -260,7 +435,7 @@ describe('externally attested runtime-freeze evidence', () => {
         await chmod(receiptPath, 0o600);
         await mutate(receiptPath);
         await chmod(receiptPath, 0o400);
-        return { stdout: verifiedGhOutput };
+        return verifiedGhOutput;
       });
       expect(failures.join('\n'), `temporary snapshot mutation ${index}`).toMatch(/offline gh verification failed.*temporary snapshot (?:digest|size) changed/);
       await expect(access(temporaryStateRoot)).rejects.toThrow();
@@ -279,7 +454,7 @@ describe('externally attested runtime-freeze evidence', () => {
       await writeFile(trustedRootPath, bytes);
       const failures = await verifyAttestationOffline(temporaryRoot, lock, async () => {
         called += 1;
-        return { stdout: verifiedGhOutput };
+        return verifiedGhOutput;
       }, callerSuppliedSnapshot);
       expect(called).toBe(0);
       expect(failures.join('\n')).toMatch(/exact evidence validation failed.*byte digest mismatch/);
@@ -309,7 +484,7 @@ describe('externally attested runtime-freeze evidence', () => {
           expect(worktreeChanged).toBe(true);
           expect(await readFile(args[2])).toEqual(receiptBytes);
           expect(args[2].startsWith(temporaryRoot)).toBe(false);
-          return { stdout: verifiedGhOutput };
+          return verifiedGhOutput;
         },
       });
       expect(result.failures).toEqual([]);
@@ -331,11 +506,18 @@ describe('externally attested runtime-freeze evidence', () => {
     await expect(access(temporaryStateRoot)).rejects.toThrow();
   });
 
-  it('rejects zero/multiple results and every certificate, subject, predicate, runner, invocation, and tlog-time drift', async () => {
+  it('rejects wrapper, bundle, media type, certificate, subject, predicate, runner, invocation, and tlog-time drift', async () => {
     const verified = JSON.parse(verifiedGhOutput.toString('utf8'));
     const mutations = [
       (candidate) => { candidate.splice(0); },
       (candidate) => { candidate.push(structuredClone(candidate[0])); },
+      (candidate) => { candidate[0].unexpected = false; },
+      (candidate) => { candidate[0].attestation.unexpected = false; },
+      (candidate) => { candidate[0].attestation.bundle_url = 'https://example.invalid/bundle'; },
+      (candidate) => { candidate[0].attestation.initiator = 'forged'; },
+      (candidate) => { candidate[0].attestation.bundle.mediaType = 'application/example'; },
+      (candidate) => { candidate[0].verificationResult.unexpected = false; },
+      (candidate) => { candidate[0].verificationResult.mediaType = 'application/example'; },
       (candidate) => { candidate[0].verificationResult.signature.certificate.githubWorkflowSHA = 'f'.repeat(40); },
       (candidate) => { candidate[0].verificationResult.signature.certificate.subjectAlternativeName = 'https://example.invalid/forged'; },
       (candidate) => { candidate[0].verificationResult.statement.subject[0].digest.sha256 = '0'.repeat(64); },
@@ -347,7 +529,7 @@ describe('externally attested runtime-freeze evidence', () => {
     for (const [index, mutate] of mutations.entries()) {
       const candidate = structuredClone(verified);
       mutate(candidate);
-      const failures = await verifyAttestationOffline(root, lock, async () => ({ stdout: Buffer.from(JSON.stringify(candidate)) }));
+      const failures = await verifyAttestationOffline(root, lock, async () => Buffer.from(JSON.stringify(candidate)));
       expect(failures, `gh result mutation ${index}`).not.toEqual([]);
     }
   });

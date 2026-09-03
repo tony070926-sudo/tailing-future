@@ -1,11 +1,19 @@
 import { createHash } from 'node:crypto';
 import { load as parseYaml } from 'js-yaml';
+import { FULL_CANDIDATE_PRODUCER_WORKFLOW } from './atomistic/full-candidate-github-evidence-policy.mjs';
 
 export const PINNED_DOCKERFILE_FRONTEND = 'docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e';
 export const ATOMISTIC_BOOTSTRAP_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap.yml';
 export const ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH = '.github/workflows/atomistic-bootstrap-verify.yml';
 export const OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH = '.github/workflows/openmm-tip3p-protected.yml';
 export const OPENMM_TIP3P_PROTECTED_WORKFLOW_SHA256 = '1e709fd989d30908df269ed236af00b7d94f3b77e8945cccdb3f45622bf87810';
+export const FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH =
+  FULL_CANDIDATE_PRODUCER_WORKFLOW.path;
+export const FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME =
+  FULL_CANDIDATE_PRODUCER_WORKFLOW.name;
+export const FULL_CANDIDATE_REGISTRATION_WORKFLOW_SIZE_BYTES = 520;
+export const FULL_CANDIDATE_REGISTRATION_WORKFLOW_SHA256 =
+  'e578459f2c46e77d10f3fd944984daa01f845219921454c3095b9852e4074cc0';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_PATH = 'evaluation/atomistic/bootstrap-quarantine.json';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINE_SHA256 = '65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3';
 export const ATOMISTIC_BOOTSTRAP_QUARANTINED_RUNNER_DIGEST = 'sha256:2c708fc0220808cc4b2e2f3043623f604793f7bd8a5913472440f91f17a3987c';
@@ -278,6 +286,7 @@ export function inspectWorkflowSource(relativePath, source) {
     return [`${relativePath}: workflow YAML is invalid or contains duplicate keys (${error instanceof Error ? error.message : String(error)}).`];
   }
   if (!workflow || typeof workflow !== 'object' || Array.isArray(workflow)) return [`${relativePath}: workflow root must be a mapping.`];
+  if (hasObjectCycle(workflow)) return [`${relativePath}: cyclic YAML aliases are forbidden.`];
   const triggers = workflow.on;
   if (triggers && typeof triggers === 'object' && !Array.isArray(triggers) && Object.hasOwn(triggers, 'pull_request_target')) failures.push(`${relativePath}: pull_request_target is forbidden.`);
   if (triggers === 'pull_request_target' || (Array.isArray(triggers) && triggers.includes('pull_request_target'))) failures.push(`${relativePath}: pull_request_target is forbidden.`);
@@ -313,6 +322,110 @@ export function inspectWorkflowSource(relativePath, source) {
   if (relativePath === ATOMISTIC_BOOTSTRAP_VERIFY_WORKFLOW_PATH) failures.push(...inspectAtomisticBootstrapVerifyWorkflow(workflow));
   if (relativePath === OPENMM_TIP3P_PROTECTED_WORKFLOW_PATH) {
     failures.push(...inspectOpenMmTip3pProtectedWorkflow(workflow, source));
+  }
+  if (relativePath === FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH) {
+    failures.push(...inspectFullCandidateRegistrationWorkflow(workflow, source));
+  }
+  return failures;
+}
+
+export function inspectFullCandidateRegistrationWorkflowSource(relativePath, source) {
+  if (relativePath !== FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH) {
+    return [
+      `${relativePath}: registration-only workflow must use the reviewed path ${FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH}.`,
+    ];
+  }
+  let workflow;
+  try {
+    workflow = parseYaml(source);
+  } catch (error) {
+    return [
+      `${relativePath}: workflow YAML is invalid or contains duplicate keys (${error instanceof Error ? error.message : String(error)}).`,
+    ];
+  }
+  return inspectFullCandidateRegistrationWorkflow(workflow, source);
+}
+
+export function inspectFullCandidateRegistrationWorkflow(workflow, source = '') {
+  const failures = [];
+  const prefix = `${FULL_CANDIDATE_REGISTRATION_WORKFLOW_PATH}:`;
+  const expectedTrigger = {
+    push: {
+      'branches-ignore': ['**'],
+      'tags-ignore': ['**'],
+    },
+  };
+  const expectedStep = {
+    name: 'Unreachable registration quarantine',
+    shell: 'bash',
+    run: "set -euo pipefail\nprintf '%s\\n' 'UNREACHABLE: registration-only workflow has no producer execution.'\nexit 1\n",
+  };
+  const expectedJob = {
+    if: '${{ false }}',
+    'runs-on': 'ubuntu-24.04',
+    'timeout-minutes': 1,
+    permissions: {},
+    steps: [expectedStep],
+  };
+  const expectedWorkflow = {
+    name: FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME,
+    on: expectedTrigger,
+    permissions: {},
+    jobs: { 'registration-quarantine': expectedJob },
+  };
+
+  if (sha256(source) !== `sha256:${FULL_CANDIDATE_REGISTRATION_WORKFLOW_SHA256}`
+      || Buffer.byteLength(source) !== FULL_CANDIDATE_REGISTRATION_WORKFLOW_SIZE_BYTES) {
+    failures.push(`${prefix} complete reviewed registration-only workflow bytes drifted.`);
+  }
+  if (!workflow || typeof workflow !== 'object' || Array.isArray(workflow)) {
+    return [...failures, `${prefix} workflow root must be a mapping.`];
+  }
+  if (hasObjectCycle(workflow)) {
+    return [...failures, `${prefix} cyclic YAML aliases are forbidden.`];
+  }
+  if (!sameJson(Object.keys(workflow), ['name', 'on', 'permissions', 'jobs'])) {
+    failures.push(`${prefix} top-level key set or order drifted.`);
+  }
+  if (workflow.name !== FULL_CANDIDATE_REGISTRATION_WORKFLOW_NAME) {
+    failures.push(`${prefix} workflow name differs from the unconfigured producer identity.`);
+  }
+  if (!sameJson(workflow.on, expectedTrigger)) {
+    failures.push(`${prefix} only push with exact all-branch and all-tag ignore filters is allowed.`);
+  }
+  if (!sameJson(workflow.permissions, {})) {
+    failures.push(`${prefix} top-level token permissions must remain empty.`);
+  }
+
+  const jobs = workflow.jobs && typeof workflow.jobs === 'object' && !Array.isArray(workflow.jobs)
+    ? workflow.jobs
+    : {};
+  if (!sameJson(Object.keys(jobs), ['registration-quarantine'])) {
+    failures.push(`${prefix} exactly one registration-quarantine job is allowed.`);
+  }
+  const job = jobs['registration-quarantine'];
+  if (!job || typeof job !== 'object' || Array.isArray(job)) {
+    return [...failures, `${prefix} registration-quarantine job is missing.`];
+  }
+  if (!sameJson(Object.keys(job), [
+    'if', 'runs-on', 'timeout-minutes', 'permissions', 'steps',
+  ])) {
+    failures.push(`${prefix} registration-quarantine job key set or order drifted.`);
+  }
+  if (job.if !== '${{ false }}') {
+    failures.push(`${prefix} registration-quarantine job must use the literal-false expression.`);
+  }
+  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 1) {
+    failures.push(`${prefix} future runner selector or one-minute bound drifted.`);
+  }
+  if (!sameJson(job.permissions, {})) {
+    failures.push(`${prefix} job token permissions must remain empty.`);
+  }
+  if (!sameJson(job.steps, [expectedStep])) {
+    failures.push(`${prefix} unreachable canary must remain the sole exact bash step.`);
+  }
+  if (!sameJson(workflow, expectedWorkflow)) {
+    failures.push(`${prefix} exact YAML shape or order-relevant semantics drifted.`);
   }
   return failures;
 }
@@ -1657,6 +1770,30 @@ function hasAll(value, fragments) {
 
 function sameJson(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function hasObjectCycle(root) {
+  const active = new WeakSet();
+  const complete = new WeakSet();
+  const stack = [{ exit: false, value: root }];
+  while (stack.length) {
+    const { exit, value } = stack.pop();
+    if (!value || typeof value !== 'object') continue;
+    if (exit) {
+      active.delete(value);
+      complete.add(value);
+      continue;
+    }
+    if (active.has(value)) return true;
+    if (complete.has(value)) continue;
+    active.add(value);
+    stack.push({ exit: true, value });
+    const children = Array.isArray(value) ? value : Object.values(value);
+    for (let index = children.length - 1; index >= 0; index -= 1) {
+      stack.push({ exit: false, value: children[index] });
+    }
+  }
+  return false;
 }
 
 function sha256(value) {

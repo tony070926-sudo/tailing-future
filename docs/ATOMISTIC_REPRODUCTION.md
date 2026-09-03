@@ -126,6 +126,34 @@ that would create a self-referential hash cycle. A locally observed Docker
 image `.Id` remains run-specific evidence unless independent OCI builds prove
 the same manifest digest.
 
+The historical runtime-freeze validator now executes only
+[GitHub CLI 2.98.0](https://github.com/cli/cli/releases/tag/v2.98.0) bytes fixed
+by platform size and SHA-256. Its source locator must be a
+canonical absolute path to a regular `0755`, single-link file; `PATH`, symlink
+and hard-link locators fail closed. The validator copies the checked bytes into
+its private `0700` evidence state as a `0500`, single-link executable, checks
+its identity and digest around both calls, and accepts only byte or string
+verifier output. Supported hosts are currently `darwin-arm64` and `linux-x64`;
+all other operating-system/architecture combinations are excluded. Linux uses
+the exact `/usr/bin/gh` identity by default. Darwin has no default and requires
+an explicitly provisioned canonical locator, for example:
+
+```bash
+TAILING_RUNTIME_FREEZE_GH_PATH=/canonical/absolute/path/to/gh npm run atomistic:validate
+```
+
+The executable's archive, checksum-list and extracted-binary digests are
+runtime-integrity quantities measured in bytes and SHA-256, not physical
+observables or scientific validation. Copy-and-recheck hardening does not
+provide formal isolation from another process running as the same operating-
+system user. The
+[fixed `ubuntu-24.04` runner-image inventory](https://github.com/actions/runner-images/blob/73a898e845210ee1565a4bb3328897e152dd73ae/images/ubuntu/Ubuntu2404-Readme.md?plain=1)
+supports the 2.98.0 Linux identity, but an inventory alone does not prove which
+image served a particular job; that remains candidate-CI evidence to capture.
+This historical 2.98.0 verifier contract is separate from R7b2's future 2.99.0
+restricted-handoff design target below, and their binaries are not
+interchangeable.
+
 The canary passes the immutable P runtime-source timestamp through BuildKit's special
 `SOURCE_DATE_EPOCH` build argument and verifies the resulting image/config
 timestamp against `docker image inspect`; when Buildx emits a true manifest
@@ -197,24 +225,123 @@ states, rejects cross-field evidence for skipped or failed stages, freezes the
 schema bytes and keeps every positive claim false.
 
 The future verifier workflow must not accept caller-reported provenance. It
-must fetch GitHub run/job/artifact metadata, hash actual archive members, derive
-`tf.git-source-tree/v1` from the commit object database, and then project an
-exact two-file byte map into the label-bearing verifier. The current source-tree
+must derive the source and first dispatch from complete GitHub observations,
+bind attempt one, preserve failed/cancelled/timed-out/not-started terminal
+states, derive `tf.git-source-tree/v1` from Git objects and pass only observed
+scientific bytes into the label-bearing verifier. The current source-tree
 utility SHA-256-binds every regular blob and every raw tree object, including
-empty-subtree topology, but it is not yet connected to a branded GitHub API
-observation. Therefore R7b1 remains **NOT RUN / NO AUTHORITATIVE RECEIPT / NO
-PUBLIC PRODUCER ARTIFACT**.
+empty-subtree topology, but it is not yet connected to an operational
+full-candidate GitHub adapter. Therefore R7b1 remains **NOT RUN / NO
+AUTHORITATIVE RECEIPT / NO PRODUCER ARTIFACT**.
 
-The future full-promotion guard must verify the GitHub artifact attestation
-cryptographically outside the candidate receipt. Its trusted observation must
-bind the certificate issuer and subject alternative name, repository and
-repository ID, signer workflow and signer digest, source digest/ref, run
-ID/attempt, hosted-runner class, raw bundle bytes and verified transparency-log
-or timestamp-authority time. The equivalent CLI policy is a pinned repository
-plus `--signer-workflow`, `--signer-digest`, `--source-digest`, `--source-ref`,
-the SLSA provenance predicate and `--deny-self-hosted-runners`. Decoded
-predicate fields alone are not a trust root. No `atomistic-full.yml` promotion
-workflow exists yet, so a registry edit to `reproduced` remains fail-closed.
+Independent review rejected the first R7b2 draft because it tried to make a
+public GitHub Actions ciphertext artifact part of the scientific path before a
+producer workflow, locked workflow ID, redistribution decision or real signed
+fixture existed. The revised R7b2 scope withdraws that path. It contains only
+pure control-plane policy for complete run-history selection, attempt-one
+binding, exact protected-main Sentinel/job/check binding, zero Actions
+artifacts and terminal evidence projection. The executable readiness command
+accepts no run ID, token, artifact or scientific claim and currently returns
+the schema-bound, test-validated machine rejection
+`producer-workflow-not-pinned`.
+
+The producer identity remains frozen as `configured:false` and `id:null`.
+This candidate adds only a registration-only workflow at
+`.github/workflows/atomistic-full-candidate.yml`; it does not add an executable
+producer. Under [GitHub's documented event-filter semantics](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
+as observed on 2026-09-03, its sole `push` event excludes both every branch and
+every tag with the quoted `**` pattern. It declares no `workflow_dispatch`,
+`workflow_call`, `repository_dispatch` or `schedule` entry, so the exact source
+contract has no matching event. Empty workflow- and job-level permissions plus
+a job-level literal-false expression are a second defense: if GitHub ever
+creates an unexpected run despite the filter contract, the sole job is skipped
+and its canary step cannot execute. The canary itself only prints an unreachable
+marker and exits nonzero. There is no checkout, action, environment, output,
+artifact, credential, secret, OIDC, API call, network access, Random-TP access,
+model run or scientific payload in this workflow.
+
+`npm run atomistic:validate` binds that source contract to the repository
+object that would be submitted: every path component must be real, the target
+must be one single-link regular file with exact mode `0644`, and the bytes are
+read through `O_NOFOLLOW` with pre/open/post identity checks. Those captured
+bytes must equal the stage-zero mode-`100644` Git index blob and the same blob
+in a freshly derived staged tree. An untracked file, symlink at the target or
+an ancestor, hard link, executable bit, byte drift or detected read/index race
+fails closed. This is a pre-commit source-integrity check only; it does not show
+default-branch registration, a workflow ID, a run, runner allocation or any
+scientific result.
+
+The `ubuntu-24.04` value is only a future runner selector inside the skipped
+job. It is not evidence of an allocated runner, actual `ImageVersion`, runner
+inventory, architecture or GitHub CLI 2.99.0. GitHub does not document an exact
+workflow-ID allocation time or stability SLA. Tailing Future must therefore
+wait until this file is ingested from the default branch, observe the numeric
+workflow ID through complete read-only REST listings, and lock that observed ID
+in a separate reviewed candidate. Any observed run history at that point must
+fail closed. Until the second candidate, readiness continues to exit nonzero
+with `producer-workflow-not-pinned` and all six claims false.
+
+The existing control-plane policy requires workflow run number one, binds its
+redundant summary fields to attempt one and rejects equal-time or earlier
+dispatches relative to the successful Sentinel. A later success cannot replace
+the first dispatch, and attempt two cannot pass either the private handoff or
+core campaign admission. The handoff requires a process-local proof for the
+exact model job, binding workflow run, attempt, job, model, source revision,
+status and conclusion. Only a `completed/success` model job may carry a
+complete private scientific handoff; failed, cancelled, timed-out and
+not-started model states remain empty terminal evidence. A workflow may fail
+overall while one model job succeeds, but that job must still have its own
+exact proof. Without a future authenticated GitHub adapter, none of these
+process-local proofs is authoritative control-plane evidence.
+
+Because Random-TP has no dataset-specific redistribution grant, every GitHub
+Actions artifact is forbidden in this scope, including ciphertext. The
+AES-256-GCM codec remains only a restricted-private-storage format: encrypted
+and plaintext payload publication eligibility are both false, access-control,
+deletion, maximum 24-hour retention and per-model/per-run key-rotation evidence
+are required, and encryption grants no publication or redistribution right.
+Its mutable Node.js buffers are cleared on a best-effort basis. Immutable
+Base64/JSON strings, native/runtime copies and garbage-collected memory cannot
+be proven erased; any stronger disposal requirement needs a short-lived
+isolated process whose termination is part of the boundary.
+The current zero-artifact predicate checks the supplied live listing only; it
+cannot prove that an earlier artifact was deleted. Before any producer workflow
+is enabled, the future adapter must add an independently auditable no-deletion
+boundary or equivalent external commitment.
+
+No `gh` or Sigstore operation is reachable in R7b2. A future restricted
+handoff adapter must use an absolute digest-pinned verifier (the current design
+target is GitHub CLI 2.99.0), fixed trusted-root bytes, both `--bundle` and
+`--custom-trusted-root`, and an offline test that ignores `PATH`. For the 2.99.0
+JSON wrapper the bundle is `result.attestation.bundle`, while `bundle_url` and
+`initiator` are wrapper metadata; verified timestamp types are `Tlog` or
+`TimestampAuthority`, not `TSA`. These are pending design requirements, not
+evidence that a full-candidate signature or receipt has been verified.
+
+The released Random-TP file is frozen here as 693 structures with 16 atoms per
+structure. MatterSim paper S6 instead states that 50 random initial structures
+contain 20 atoms each and that five frames are sampled from each trajectory.
+Therefore `250×20` is an inference from `50×5`, not a directly reported dataset
+count. Its relationship to the published `693×16` file is unexplained, so the
+two bases are not treated as interchangeable. Neither basis is used to
+manufacture a like-for-like MACE comparison or data-leakage certification.
+
+This bridge does not transform, average or reinterpret scientific quantities.
+Prediction energy remains in eV, force in eV/Å and ASE stress in eV/Å³; the
+independent metric layer retains eV/atom, eV/Å and GPa on the frozen 693-frame
+basis. Envelope and archive quantities are byte counts and SHA-256 digests, not
+physical observables. As of this candidate there is still **NO EXECUTABLE FULL
+PRODUCER / NO 693×2 RUN / NO AUTHORITATIVE FULL RECEIPT / NO PUBLIC SCIENTIFIC
+PAYLOAD**.
+
+Inspect the current fail-closed readiness result with:
+
+```bash
+npm run atomistic:inspect-full-github-readiness
+```
+
+The command exits nonzero because rejection is the expected state; its JSON
+output is not a scientific receipt.
 
 Run the manifest gate with:
 
@@ -230,13 +357,15 @@ TAILING_ATOMISTIC_CACHE=/absolute/cache node scripts/validate-atomistic-plan.mjs
 
 ## Promotion boundary
 
-MatterSim must reproduce its official Random-TP means—0.199 eV/atom energy,
-0.824 eV/Å force and 1.999 GPa stress—within the preregistered tolerances in the
-manifest. MACE has no locked official Random-TP target: its first complete
-blind run may establish an engineering baseline, but cannot be used to claim
-superiority. Until the separate runtime lock is independently replicated and
-the full 693-record verifier passes, both models remain `AUDITABLE`, never
-`REPRODUCED` or numerically comparable.
+The fixed MatterSim 5M model card publishes external `AUDITABLE` Random-TP
+reference targets—0.199 eV/atom energy, 0.824 eV/Å force and 1.999 GPa stress.
+They have not been reproduced locally. A future MatterSim run must reproduce
+those model-card targets within the preregistered tolerances in the manifest.
+MACE has no locked official Random-TP target: its first complete blind run may
+establish an engineering baseline, but cannot be used to claim superiority.
+Until the separate runtime lock is independently replicated and the full
+693-record verifier passes, both models remain `AUDITABLE`, never `REPRODUCED`
+or numerically comparable.
 
 Twelve protected-main bootstrap dispatches are preserved. The first stopped during
 wheelhouse construction; the second and third passed wheelhouse construction

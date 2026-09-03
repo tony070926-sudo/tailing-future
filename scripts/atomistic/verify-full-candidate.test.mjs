@@ -7,6 +7,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { inspectRandomTp } from './dataset-manifest.mjs';
+import {
+  FULL_CANDIDATE_PRODUCER_WORKFLOW,
+  FULL_CANDIDATE_REPOSITORY,
+  FULL_CANDIDATE_REPOSITORY_ID,
+  selectFirstProducerDispatch,
+  terminalPartitionEvidenceFromGitHub,
+  validateFirstProducerAttempt,
+  validateFirstProducerJob,
+} from './full-candidate-github-evidence-policy.mjs';
 import { evaluateFullCandidateMetrics } from './full-candidate-metrics.mjs';
 import { canonicalJsonBytes } from './write-container-observation.mjs';
 import {
@@ -61,6 +70,11 @@ const MODEL = Object.freeze({
     checkpoint: 'sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638',
     package: 'sha256:b80407edf6b2a1ec8523668c2a36852d20927ce1c3c56b70983a9f2dc53233ad',
   }),
+});
+const TEST_PRODUCER_WORKFLOW = Object.freeze({
+  ...FULL_CANDIDATE_PRODUCER_WORKFLOW,
+  configured: true,
+  id: 900_001,
 });
 
 function digest(value) {
@@ -127,6 +141,48 @@ function producer(jobId, runId = 101, runAttempt = 1) {
     jobId,
     hardwareId: 'github-hosted-' + jobId,
   };
+}
+
+function verifiedTerminalJob(conclusion, model, jobId) {
+  const repository = {
+    full_name: FULL_CANDIDATE_REPOSITORY,
+    id: FULL_CANDIDATE_REPOSITORY_ID,
+  };
+  const run = {
+    created_at: '2026-08-30T11:00:00Z',
+    event: 'workflow_dispatch',
+    head_branch: 'main',
+    head_repository: repository,
+    head_sha: SOURCE_REVISION,
+    id: 101,
+    name: TEST_PRODUCER_WORKFLOW.name,
+    path: TEST_PRODUCER_WORKFLOW.path,
+    repository,
+    run_number: 1,
+    workflow_id: TEST_PRODUCER_WORKFLOW.id,
+  };
+  const selected = selectFirstProducerDispatch({
+    total_count: 1,
+    workflow_runs: [run],
+  }, TEST_PRODUCER_WORKFLOW, SOURCE_REVISION).selected;
+  const attempt = validateFirstProducerAttempt(selected, {
+    ...run,
+    conclusion,
+    run_attempt: 1,
+    run_started_at: '2026-08-30T11:00:01Z',
+    status: 'completed',
+    updated_at: '2026-08-30T11:02:00Z',
+  });
+  return validateFirstProducerJob(attempt, {
+    conclusion,
+    head_sha: SOURCE_REVISION,
+    id: jobId,
+    name: model,
+    run_attempt: 1,
+    run_id: run.id,
+    status: 'completed',
+    workflow_name: run.name,
+  }, model);
 }
 
 function producerScientificPayloadFiles(predictionBytes, manifestBytes = FAKE_MANIFEST_BYTES) {
@@ -345,6 +401,52 @@ describe('R7b1 v0.2 frozen verifier and failure receipts', () => {
     expect(receipt.partitions.map((partition) => partition.status)).toEqual(['failed', 'failed']);
     expect(receipt.verification.integrityErrors.join('\n')).toMatch(/status is missing or unsupported/);
     expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options).ok).toBe(true);
+  });
+
+  it('rejects attempt two at core campaign admission even when both models agree', () => {
+    const options = invalidVerificationOptions();
+    for (const partition of options.partitionEvidence) partition.producer.runAttempt = 2;
+    const receipt = verifyFullCandidate(options);
+
+    expect(receipt.outcome).toBe('incomplete');
+    expect(receipt.verification.integrityErrors.join('\n')).toMatch(
+      /producer identity is malformed/,
+    );
+    expect(receipt.partitions.every((partition) => partition.producer === undefined)).toBe(true);
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options)).toEqual({
+      errors: [],
+      ok: true,
+    });
+  });
+
+  it.each([
+    ['failure', 'failed', 'github-job-failure-before-restricted-handoff'],
+    ['cancelled', 'cancelled', 'github-job-cancelled-before-restricted-handoff'],
+    ['timed_out', 'failed', 'github-job-timed-out-before-restricted-handoff'],
+    ['not-started', 'not-started', 'github-job-not-started'],
+  ])('exactly recomputes GitHub %s terminal evidence as incomplete', (origin, expectedStatus, expectedCode) => {
+    const observation = origin === 'not-started'
+      ? null
+      : verifiedTerminalJob(origin, 'mattersim', 11);
+    const options = invalidVerificationOptions({
+      partitionEvidence: [
+        terminalPartitionEvidenceFromGitHub({ conclusion: origin, model: 'mattersim', observation }),
+        terminalPartitionEvidenceFromGitHub({ conclusion: 'not-started', model: 'mace', observation: null }),
+      ],
+    });
+    const receipt = verifyFullCandidate(options);
+
+    expect(receipt.outcome).toBe('incomplete');
+    expect(receipt.partitions.map(({ status }) => status)).toEqual([expectedStatus, 'not-started']);
+    expect(receipt.partitions[0].termination.code).toBe(expectedCode);
+    expect(receipt.partitions[0].rejectedProducerScientificPayload.observedFileCount).toBe(0);
+    expect(receipt).not.toHaveProperty('metrics');
+    expect(receipt).not.toHaveProperty('assessments');
+    expect(receipt).not.toHaveProperty('evidenceBundleDigest');
+    expect(validateFullCandidateReceipt(receipt, receiptSchemaBytes, options)).toEqual({
+      errors: [],
+      ok: true,
+    });
   });
 
   it('retains failed and cancelled producer provenance plus rejected payload observations', () => {
@@ -694,6 +796,15 @@ describe('R7b1 v0.2 receipt schema and semantic validator', () => {
     const errors = validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes).errors.join('\n');
     expect(errors).toMatch(/producer provenance/);
     expect(errors).toMatch(/job IDs are not distinct/);
+  });
+
+  it('rejects an envelope whose coherent producer provenance uses attempt two', () => {
+    const receipt = completeReceipt();
+    for (const partition of receipt.partitions) partition.producer.runAttempt = 2;
+    receipt.evidenceBundleDigest = computeCandidateEvidenceBundleDigest(receipt);
+    expect(validateFullCandidateReceiptEnvelope(receipt, receiptSchemaBytes).errors.join('\n')).toMatch(
+      /not bound to workflow attempt one/,
+    );
   });
 
   it('binds verifier, termination and exact producer-payload evidence digests', () => {

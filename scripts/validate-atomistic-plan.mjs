@@ -9,14 +9,28 @@ import {
   validateFullCandidatePlanRepository,
 } from './atomistic/full-candidate-plan-policy.mjs';
 import { validateFrozenAtomisticPlan, validateFrozenAtomisticPlanBytes } from './atomistic/plan-policy.mjs';
+import {
+  validateFullCandidateRegistrationWorkflowRepository,
+} from './atomistic/full-candidate-registration-source-policy.mjs';
 
 const root = process.cwd();
+const registrationValidation = await validateFullCandidateRegistrationWorkflowRepository(root);
+if (process.argv.includes('--registration-workflow-only')) {
+  if (registrationValidation.failures.length) {
+    console.error(registrationValidation.failures.join('\n'));
+    process.exit(1);
+  }
+  console.log(
+    `Full-candidate registration workflow: VALID · staged tree ${registrationValidation.stagedTreeOid} · blob ${registrationValidation.gitBlobOid} · REGISTRATION ONLY — NO PRODUCER EXECUTION`,
+  );
+  process.exit(0);
+}
 const readJson = async (relativePath) => JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
 const planBytes = await readFile(path.join(root, 'evaluation/atomistic/reproduction-plan.json'));
 const plan = JSON.parse(planBytes.toString('utf8'));
 const schema = await readJson('schemas/atomistic-reproduction.schema.json');
 const catalog = await readJson('evaluation/data/datasets.json');
-const failures = [];
+const failures = [...registrationValidation.failures];
 const candidatePlanBytes = await readFile(path.join(root, FULL_CANDIDATE_PLAN_PATH));
 const candidateValidation = await validateFullCandidatePlanRepository(candidatePlanBytes, { root });
 const candidatePlan = candidateValidation.plan;

@@ -1,0 +1,24 @@
+name: Atomistic full candidate private producer (non-promotional)
+
+"on":
+  push:
+    branches-ignore:
+      - '**'
+    tags-ignore:
+      - '**'
+
+permissions: {}
+
+jobs:
+  registration-quarantine:
+    if: ${{ false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions: {}
+    steps:
+      - name: Unreachable registration quarantine
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' 'UNREACHABLE: registration-only workflow has no producer execution.'
+          exit 1
