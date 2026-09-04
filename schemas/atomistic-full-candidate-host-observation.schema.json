@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-host-observation/0.1",
+  "title": "Tailing Future atomistic full-candidate fixture host observation",
+  "description": "A fixture-only, non-scientific and non-promotional receipt. It records contract arithmetic while explicitly abstaining from any host, container or model execution claim.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "evidenceClass",
+    "hypothesisId",
+    "fixtureEpoch",
+    "contract",
+    "execution",
+    "scientificDecision",
+    "abstentionReasons",
+    "workflowObservation",
+    "plannedAccounting",
+    "contractChecks",
+    "hostObservation",
+    "resourceProvenance",
+    "rights",
+    "applicability",
+    "claims",
+    "publication"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-host-observation/0.1" },
+    "evidenceClass": { "const": "synthetic-contract-fixture-not-model-output" },
+    "hypothesisId": { "const": "H-vNext-Observer/0.1" },
+    "fixtureEpoch": { "const": "2026-09-04T00:00:00Z" },
+    "contract": {
+      "type": "object",
+      "required": ["path", "schemaVersion", "rawDigest"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/full-candidate-observer-contract-vnext.json" },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-observer-contract/0.1" },
+        "rawDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "execution": { "const": "not-run" },
+    "scientificDecision": { "const": "abstain" },
+    "abstentionReasons": {
+      "const": [
+        "synthetic-contract-fixture-only",
+        "dispatch-disabled",
+        "model-execution-not-observed",
+        "host-resource-provenance-not-observed",
+        "rights-not-cleared"
+      ]
+    },
+    "workflowObservation": {
+      "type": "object",
+      "required": ["path", "registeredUnderGithubWorkflows", "dispatchReachable", "allJobGuardsLiteralFalse", "permissionsEmpty", "secretsPresent", "artifactUploadPresent", "containerOrModelDispatchPresent", "sourceDigest"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/full-candidate-observer-vnext.workflow.yml" },
+        "registeredUnderGithubWorkflows": { "const": false },
+        "dispatchReachable": { "const": false },
+        "allJobGuardsLiteralFalse": { "const": true },
+        "permissionsEmpty": { "const": true },
+        "secretsPresent": { "const": false },
+        "artifactUploadPresent": { "const": false },
+        "containerOrModelDispatchPresent": { "const": false },
+        "sourceDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "plannedAccounting": {
+      "type": "object",
+      "required": ["freshContainerExecutions", "authoritativeRecordsPerModel", "repeatRecordsPerModel", "invarianceCasesPerModel", "forceFiniteDifferenceCasesPerModel", "forceFiniteDifferenceEnergyProbesPerModel", "stressFiniteDifferenceCasesPerModel", "stressFiniteDifferenceEnergyProbesPerModel", "adapterRequestsTotal", "metricDenominatorPerModel", "determinismDenominatorPerModel", "probeRecordsExcludedFromMetricAndDeterminism", "authoritativeOrdinal", "repeatMayReplaceAuthority"],
+      "properties": {
+        "freshContainerExecutions": { "$ref": "#/$defs/countGate" },
+        "authoritativeRecordsPerModel": { "$ref": "#/$defs/countGate" },
+        "repeatRecordsPerModel": { "$ref": "#/$defs/countGate" },
+        "invarianceCasesPerModel": { "$ref": "#/$defs/countGate" },
+        "forceFiniteDifferenceCasesPerModel": { "$ref": "#/$defs/countGate" },
+        "forceFiniteDifferenceEnergyProbesPerModel": { "$ref": "#/$defs/countGate" },
+        "stressFiniteDifferenceCasesPerModel": { "$ref": "#/$defs/countGate" },
+        "stressFiniteDifferenceEnergyProbesPerModel": { "$ref": "#/$defs/countGate" },
+        "adapterRequestsTotal": { "$ref": "#/$defs/countGate" },
+        "metricDenominatorPerModel": { "$ref": "#/$defs/countGate" },
+        "determinismDenominatorPerModel": { "$ref": "#/$defs/countGate" },
+        "probeRecordsExcludedFromMetricAndDeterminism": { "const": true },
+        "authoritativeOrdinal": { "const": 0 },
+        "repeatMayReplaceAuthority": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "contractChecks": {
+      "type": "object",
+      "required": ["evidenceClass", "accountingCasesChecked", "stressSymmetryBoundary", "forceFiniteDifferenceOracle", "stressFiniteDifferenceOracle", "syntheticCampaignAccepted"],
+      "properties": {
+        "evidenceClass": { "const": "synthetic-contract-arithmetic-checks-not-scientific-validation" },
+        "accountingCasesChecked": {
+          "type": "object",
+          "required": ["models", "benchmarkRecordsPerModelPerExecution", "invarianceCasesTotal", "forceFiniteDifferenceCasesTotal", "forceFiniteDifferenceEnergyProbesTotal", "stressFiniteDifferenceCasesTotal", "stressFiniteDifferenceEnergyProbesTotal", "adapterRequestsTotal"],
+          "properties": {
+            "models": { "$ref": "#/$defs/countGate" },
+            "benchmarkRecordsPerModelPerExecution": { "$ref": "#/$defs/countGate" },
+            "invarianceCasesTotal": { "$ref": "#/$defs/countGate" },
+            "forceFiniteDifferenceCasesTotal": { "$ref": "#/$defs/countGate" },
+            "forceFiniteDifferenceEnergyProbesTotal": { "$ref": "#/$defs/countGate" },
+            "stressFiniteDifferenceCasesTotal": { "$ref": "#/$defs/countGate" },
+            "stressFiniteDifferenceEnergyProbesTotal": { "$ref": "#/$defs/countGate" },
+            "adapterRequestsTotal": { "$ref": "#/$defs/countGate" }
+          },
+          "additionalProperties": false
+        },
+        "stressSymmetryBoundary": { "$ref": "#/$defs/stressBoundary" },
+        "forceFiniteDifferenceOracle": { "$ref": "#/$defs/numericOracleForce" },
+        "stressFiniteDifferenceOracle": { "$ref": "#/$defs/numericOracleStress" },
+        "syntheticCampaignAccepted": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "hostObservation": {
+      "type": "object",
+      "required": ["status", "observerClass", "observedContainerExecutions", "requiredIdentityFields", "fieldProvenance", "identityAssignmentAuthority", "lifecycleOrdering", "measuredValues", "containerSelfReportTrusted", "durableIndependentAttestationPresent"],
+      "properties": {
+        "status": { "const": "not-observed-fixture-only" },
+        "observerClass": { "const": "same-job-label-separated-host-observer-not-independent-job-or-hardware" },
+        "observedContainerExecutions": { "$ref": "#/$defs/countGate" },
+        "requiredIdentityFields": {
+          "const": ["repositoryId", "revision", "workflowPath", "workflowBlobDigest", "workflowRunId", "runAttempt", "jobId", "runnerOs", "runnerArchitecture", "runnerImage", "dockerServerVersion", "imagePlatformManifestDigest", "imageConfigDigest", "sequence", "model", "modelId", "ordinal", "role", "containerId", "outputDirectory", "startedAtMonotonicNs", "endedAtMonotonicNs", "exitCode", "argv", "mounts", "environmentKeyAllowlist", "networkMode", "readonlyRootfs", "user", "capDrop", "securityOpt", "cpuQuotaCores", "memoryLimitBytes", "memoryPeakBytes", "pidsLimit", "cpuTimeSeconds"]
+        },
+        "fieldProvenance": {
+          "const": {
+            "repositoryId": "host-control-plane",
+            "revision": "host-control-plane",
+            "workflowPath": "host-control-plane",
+            "workflowBlobDigest": "host-control-plane",
+            "workflowRunId": "host-control-plane",
+            "runAttempt": "host-control-plane",
+            "jobId": "host-control-plane",
+            "runnerOs": "host-control-plane",
+            "runnerArchitecture": "host-control-plane",
+            "runnerImage": "host-control-plane",
+            "dockerServerVersion": "host-control-plane",
+            "imagePlatformManifestDigest": "host-lifecycle-observer",
+            "imageConfigDigest": "host-lifecycle-observer",
+            "sequence": "host-assigned-execution-plan",
+            "model": "host-assigned-execution-plan",
+            "modelId": "host-assigned-execution-plan",
+            "ordinal": "host-assigned-execution-plan",
+            "role": "host-assigned-execution-plan",
+            "containerId": "host-lifecycle-observer",
+            "outputDirectory": "host-assigned-execution-plan",
+            "startedAtMonotonicNs": "host-lifecycle-observer",
+            "endedAtMonotonicNs": "host-lifecycle-observer",
+            "exitCode": "host-lifecycle-observer",
+            "argv": "host-lifecycle-observer",
+            "mounts": "host-lifecycle-observer",
+            "environmentKeyAllowlist": "host-lifecycle-observer",
+            "networkMode": "host-lifecycle-observer",
+            "readonlyRootfs": "host-lifecycle-observer",
+            "user": "host-lifecycle-observer",
+            "capDrop": "host-lifecycle-observer",
+            "securityOpt": "host-lifecycle-observer",
+            "cpuQuotaCores": "host-lifecycle-observer",
+            "memoryLimitBytes": "host-lifecycle-observer",
+            "memoryPeakBytes": "host-lifecycle-observer",
+            "pidsLimit": "host-lifecycle-observer",
+            "cpuTimeSeconds": "host-lifecycle-observer"
+          }
+        },
+        "identityAssignmentAuthority": { "const": "host-observer-from-frozen-execution-order-not-container-self-report/v1" },
+        "lifecycleOrdering": { "const": "each-start-before-own-end-and-each-prior-end-not-after-next-start-on-one-host-monotonic-clock/v1" },
+        "measuredValues": { "type": "null" },
+        "containerSelfReportTrusted": { "const": false },
+        "durableIndependentAttestationPresent": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "resourceProvenance": {
+      "type": "object",
+      "required": ["status", "finiteLimitsRequiredBeforeDispatch", "limitsStatus", "measurements", "performanceThresholdClaimAllowed", "throughputComparisonClaimAllowed"],
+      "properties": {
+        "status": { "const": "not-observed-fixture-only" },
+        "finiteLimitsRequiredBeforeDispatch": { "const": true },
+        "limitsStatus": { "const": "unresolved-dispatch-blocking" },
+        "measurements": { "type": "array", "maxItems": 0 },
+        "performanceThresholdClaimAllowed": { "const": false },
+        "throughputComparisonClaimAllowed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "rights": { "$ref": "#/$defs/rightsPolicy" },
+    "applicability": { "$ref": "#/$defs/applicability" },
+    "claims": { "$ref": "#/$defs/claims" },
+    "publication": { "$ref": "#/$defs/publication" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "countGate": {
+      "type": "object",
+      "required": ["value", "unit", "dimension", "basis"],
+      "properties": {
+        "value": { "type": "integer", "minimum": 0 },
+        "unit": { "type": "string", "minLength": 1 },
+        "dimension": { "const": "count" },
+        "basis": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "boundaryPoint": {
+      "type": "object",
+      "required": ["value", "accepted"],
+      "properties": {
+        "value": { "type": "number" },
+        "accepted": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "stressBoundary": {
+      "type": "object",
+      "required": ["unit", "dimension", "basis", "nextDown", "equal", "nextUp"],
+      "properties": {
+        "unit": { "const": "eV/angstrom^3" },
+        "dimension": { "const": "energy-per-volume" },
+        "basis": { "const": "raw full-3x3 maximum antisymmetric component before symmetrization or conversion" },
+        "nextDown": {
+          "allOf": [
+            { "$ref": "#/$defs/boundaryPoint" },
+            { "type": "object", "properties": { "accepted": { "const": true } } }
+          ]
+        },
+        "equal": {
+          "allOf": [
+            { "$ref": "#/$defs/boundaryPoint" },
+            { "type": "object", "properties": { "value": { "const": 1e-10 }, "accepted": { "const": true } } }
+          ]
+        },
+        "nextUp": {
+          "allOf": [
+            { "$ref": "#/$defs/boundaryPoint" },
+            { "type": "object", "properties": { "accepted": { "const": false } } }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "numericOracleForce": {
+      "type": "object",
+      "required": ["unit", "dimension", "basis", "analytic", "richardson", "accepted"],
+      "properties": {
+        "unit": { "const": "eV/angstrom" },
+        "dimension": { "const": "energy-per-length" },
+        "basis": { "const": "closed-form synthetic polynomial derivative versus central Richardson" },
+        "analytic": { "type": "number" },
+        "richardson": { "type": "number" },
+        "accepted": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "numericOracleStress": {
+      "type": "object",
+      "required": ["unit", "dimension", "basis", "analytic", "richardson", "accepted"],
+      "properties": {
+        "unit": { "const": "eV/angstrom^3" },
+        "dimension": { "const": "energy-per-volume" },
+        "basis": { "const": "closed-form synthetic strain-polynomial derivative at fixed reference volume versus central Richardson" },
+        "analytic": { "const": 0.9 },
+        "richardson": { "type": "number" },
+        "accepted": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "const": {
+        "fullInferenceRun": false,
+        "claimEligible": false,
+        "comparisonEligible": false,
+        "promotionEligible": false,
+        "publicationEligible": false,
+        "reproductionEligible": false,
+        "reproduced": false,
+        "sota": false,
+        "dataLeakageCertified": false,
+        "causalClaimAllowed": false,
+        "industrialFitness": false
+      }
+    },
+    "rightsPolicy": {
+      "type": "object",
+      "required": ["status", "privateExecutionAllowed", "aggregatePublicationAllowed", "runtimeRedistributionAllowed", "independenceRule", "privateExecutionBasis", "aggregatePublicationBasis", "runtimeRedistributionBasis", "richBundleRedactionMaySubstituteForAggregateProjection", "evidenceBindings"],
+      "properties": {
+        "status": { "const": "rights-not-cleared" },
+        "privateExecutionAllowed": { "const": false },
+        "aggregatePublicationAllowed": { "const": false },
+        "runtimeRedistributionAllowed": { "const": false },
+        "independenceRule": { "const": "private-execution-aggregate-publication-and-runtime-redistribution-are-three-independent-default-deny-decisions/v1" },
+        "privateExecutionBasis": { "type": "string", "minLength": 32 },
+        "aggregatePublicationBasis": { "type": "string", "minLength": 32 },
+        "runtimeRedistributionBasis": { "type": "string", "minLength": 32 },
+        "richBundleRedactionMaySubstituteForAggregateProjection": { "const": false },
+        "evidenceBindings": {
+          "const": {
+            "datasetCatalog": {"path": "evaluation/data/datasets.json", "schemaVersion": "tf.dataset-catalog/0.1", "rawDigest": "sha256:ca6e7ca0187cf5584806f2684611b2b813b46bd7c434741d756df7947aef8fe7", "datasetId": "mattersim-random-tp", "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9", "licenseStatus": "NOASSERTION: the file is in the MIT-licensed MatterSim repository, but no dataset-specific provenance or redistribution grant is supplied", "redistribute": false},
+            "reproductionPlan": {"path": "evaluation/atomistic/reproduction-plan.json", "schemaVersion": "tf.atomistic-reproduction/0.2", "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2", "mattersim": {"modelId": "mattersim-v1.0.0-5m", "packageVersion": "1.2.5", "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647", "codeAndModelLicense": "MIT", "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5"}, "mace": {"modelId": "mace-mpa-0-medium", "packageVersion": "0.3.16", "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e", "codeAndModelLicense": "MIT", "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638"}},
+            "runtimeLock": {"path": "evaluation/atomistic/runtime-lock.json", "schemaVersion": "tf.atomistic-runtime-lock/0.3", "rawDigest": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1", "state": "bootstrap-runtime-frozen-not-reproduced", "mattersimDependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b", "maceDependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"},
+            "maceRuntimeLicenseNotice": {"path": "atomistic/locks/README.md", "rawDigest": "sha256:65abe1d5c48185090a1b1a96cfa813f3b8eb88a25cf10f59798798db5ae36a03", "dependency": "python-hostlist==2.3.0", "license": "GPL-2.0-or-later", "distributionObligationsReviewed": false}
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "applicability": {
+      "type": "object",
+      "required": ["benchmark", "datasetDigest", "systemBoundary", "runtimeBoundary", "observables", "horizon", "excludedRegimes"],
+      "properties": {
+        "benchmark": { "const": "frozen-random-tp-693x16-only" },
+        "datasetDigest": { "$ref": "#/$defs/digest" },
+        "systemBoundary": { "const": "one static 16-atom three-dimensionally periodic frame per observation" },
+        "runtimeBoundary": { "const": "linux-amd64-cpu-float32-batch1-one-thread-same-runner-repeat" },
+        "observables": { "const": ["total-energy", "cartesian-force", "cauchy-stress"] },
+        "horizon": { "const": "single-point-no-dynamics-or-future-rollout" },
+        "excludedRegimes": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "publication": {
+      "const": {
+        "enabled": false,
+        "allowedArtifactPaths": [],
+        "artifactUploadAllowed": false,
+        "privateExecutionAllowed": false,
+        "aggregatePublicationAllowed": false,
+        "runtimeRedistributionAllowed": false,
+        "aggregateReceiptRightsDispositionRecorded": false
+      }
+    }
+  }
+}

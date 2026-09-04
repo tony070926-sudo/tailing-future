@@ -36,6 +36,8 @@
 /evaluation/baselines/registry.json @tony070926-sudo
 /evaluation/atomistic/evidence/ @tony070926-sudo
 /evaluation/atomistic/full-candidate-plan.json @tony070926-sudo
+/evaluation/atomistic/full-candidate-observer-contract-vnext.json @tony070926-sudo
+/evaluation/atomistic/full-candidate-observer-vnext.workflow.yml @tony070926-sudo
 /evaluation/atomistic/reproduction-plan.json @tony070926-sudo
 /evaluation/atomistic/runtime-lock.json @tony070926-sudo
 /evaluation/data/datasets.json @tony070926-sudo
@@ -60,6 +62,8 @@
 /schemas/atomistic-full-candidate-plan.schema.json @tony070926-sudo
 /schemas/atomistic-full-candidate-producer-outcome.schema.json @tony070926-sudo
 /schemas/atomistic-full-candidate-receipt.schema.json @tony070926-sudo
+/schemas/atomistic-full-candidate-observer-contract.schema.json @tony070926-sudo
+/schemas/atomistic-full-candidate-host-observation.schema.json @tony070926-sudo
 /schemas/atomistic-runtime-lock.schema.json @tony070926-sudo
 /schemas/evaluation-report.schema.json @tony070926-sudo
 /schemas/openmm-tip3p-artifact-manifest.schema.json @tony070926-sudo

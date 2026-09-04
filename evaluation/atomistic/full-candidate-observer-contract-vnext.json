@@ -1,0 +1,915 @@
+{
+  "schemaVersion": "tf.atomistic-full-candidate-observer-contract/0.1",
+  "status": "executable-definition-fixture-only-dispatch-disabled",
+  "frozenAt": "2026-09-04",
+  "hypothesisId": "H-vNext-Observer/0.1",
+  "purpose": "Define and test a fixture-only execution planner, host-observer and receipt boundary for the frozen full-candidate topology without dispatching containers or models.",
+  "predecessor": {
+    "path": "evaluation/atomistic/full-candidate-execution-preflight.json",
+    "schemaVersion": "tf.atomistic-full-candidate-execution-preflight/0.1",
+    "rawDigest": "sha256:886cf305df9418386c3087bf066cd8e9b83b316c127eaa41965c606b82f602aa"
+  },
+  "legacyReceiptBoundary": {
+    "path": "schemas/atomistic-full-candidate-receipt.schema.json",
+    "schemaVersion": "tf.atomistic-full-candidate-receipt/0.2",
+    "rawDigest": "sha256:f6dfdec4d81bd1467ec459f6e0153dee5fe877a17819de4704c0ae189dcc70aa",
+    "reinterpreted": false
+  },
+  "frontendBoundary": {
+    "world": "tf.world/0.3",
+    "action": "tf.action/0.3",
+    "observation": "tf.observation/0.3",
+    "migrationAllowed": false,
+    "frontendIntegrationAllowed": false
+  },
+  "workflow": {
+    "path": "evaluation/atomistic/full-candidate-observer-vnext.workflow.yml",
+    "profile": "fixture-only-unreachable-observer/v1",
+    "pushBranchesIgnore": ["**"],
+    "pushTagsIgnore": ["**"],
+    "forbiddenEvents": ["workflow_dispatch", "workflow_call", "repository_dispatch", "pull_request", "pull_request_target", "schedule"],
+    "jobCount": {
+      "value": 1,
+      "unit": "job",
+      "dimension": "count",
+      "basis": "the sole unreachable fixture-observer job in this unregistered workflow source"
+    },
+    "allJobGuardsLiteralFalse": true,
+    "workflowPermissionsEmpty": true,
+    "jobPermissionsEmpty": true,
+    "secretsAllowed": false,
+    "artifactUploadAllowed": false,
+    "containerDispatchAllowed": false,
+    "modelInvocationAllowed": false,
+    "fixtureCommand": "node scripts/atomistic/full-candidate-observer-vnext.mjs --emit-fixture"
+  },
+  "topology": {
+    "profile": "single-shared-host-sequential-isolated-model-lanes-central-verifier/v1",
+    "sharedHost": true,
+    "producerJobCount": {
+      "value": 1,
+      "unit": "job",
+      "dimension": "count",
+      "basis": "one planned shared-host producer job; no job is registered or dispatched by this fixture"
+    },
+    "sequential": true,
+    "requiredFreshContainerExecutions": {
+      "value": 4,
+      "unit": "container-execution",
+      "dimension": "count",
+      "basis": "one fresh authoritative and one fresh repeat execution for each of two fixed model lanes"
+    },
+    "executionOrder": [
+      {
+        "sequence": 0,
+        "model": "mattersim",
+        "modelId": "mattersim-v1.0.0-5m",
+        "ordinal": 0,
+        "role": "authoritative",
+        "benchmarkPredictionRecords": {
+          "value": 693,
+          "unit": "prediction-record/execution",
+          "dimension": "count",
+          "basis": "one batch-1 authoritative prediction for every frozen ASCII-ordered Random-TP ID"
+        },
+        "invarianceProbeRecords": {
+          "value": 40,
+          "unit": "probe-record/execution",
+          "dimension": "count",
+          "basis": "10 fixed structures times four preregistered invariance transformations"
+        },
+        "forceFiniteDifferenceEnergyProbeRecords": {
+          "value": 356,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "89 fixed element cases times four central-Richardson energy evaluations"
+        },
+        "stressFiniteDifferenceEnergyProbeRecords": {
+          "value": 240,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "10 fixed structures times six strain modes times four central-Richardson energy evaluations"
+        },
+        "adapterRequests": {
+          "value": 1329,
+          "unit": "batch-1-adapter-request/execution",
+          "dimension": "count",
+          "basis": "693 benchmark plus 40 invariance plus 356 force-FD plus 240 stress-FD requests"
+        },
+        "freshContainerRequired": true
+      },
+      {
+        "sequence": 1,
+        "model": "mattersim",
+        "modelId": "mattersim-v1.0.0-5m",
+        "ordinal": 1,
+        "role": "repeat-validation",
+        "benchmarkPredictionRecords": {
+          "value": 693,
+          "unit": "prediction-record/execution",
+          "dimension": "count",
+          "basis": "one batch-1 repeat-validation prediction for every frozen ASCII-ordered Random-TP ID"
+        },
+        "invarianceProbeRecords": {
+          "value": 0,
+          "unit": "probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no invariance probes"
+        },
+        "forceFiniteDifferenceEnergyProbeRecords": {
+          "value": 0,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no force finite-difference probes"
+        },
+        "stressFiniteDifferenceEnergyProbeRecords": {
+          "value": 0,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no stress finite-difference probes"
+        },
+        "adapterRequests": {
+          "value": 693,
+          "unit": "batch-1-adapter-request/execution",
+          "dimension": "count",
+          "basis": "693 benchmark requests and zero validation-probe requests"
+        },
+        "freshContainerRequired": true
+      },
+      {
+        "sequence": 2,
+        "model": "mace",
+        "modelId": "mace-mpa-0-medium",
+        "ordinal": 0,
+        "role": "authoritative",
+        "benchmarkPredictionRecords": {
+          "value": 693,
+          "unit": "prediction-record/execution",
+          "dimension": "count",
+          "basis": "one batch-1 authoritative prediction for every frozen ASCII-ordered Random-TP ID"
+        },
+        "invarianceProbeRecords": {
+          "value": 40,
+          "unit": "probe-record/execution",
+          "dimension": "count",
+          "basis": "10 fixed structures times four preregistered invariance transformations"
+        },
+        "forceFiniteDifferenceEnergyProbeRecords": {
+          "value": 356,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "89 fixed element cases times four central-Richardson energy evaluations"
+        },
+        "stressFiniteDifferenceEnergyProbeRecords": {
+          "value": 240,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "10 fixed structures times six strain modes times four central-Richardson energy evaluations"
+        },
+        "adapterRequests": {
+          "value": 1329,
+          "unit": "batch-1-adapter-request/execution",
+          "dimension": "count",
+          "basis": "693 benchmark plus 40 invariance plus 356 force-FD plus 240 stress-FD requests"
+        },
+        "freshContainerRequired": true
+      },
+      {
+        "sequence": 3,
+        "model": "mace",
+        "modelId": "mace-mpa-0-medium",
+        "ordinal": 1,
+        "role": "repeat-validation",
+        "benchmarkPredictionRecords": {
+          "value": 693,
+          "unit": "prediction-record/execution",
+          "dimension": "count",
+          "basis": "one batch-1 repeat-validation prediction for every frozen ASCII-ordered Random-TP ID"
+        },
+        "invarianceProbeRecords": {
+          "value": 0,
+          "unit": "probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no invariance probes"
+        },
+        "forceFiniteDifferenceEnergyProbeRecords": {
+          "value": 0,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no force finite-difference probes"
+        },
+        "stressFiniteDifferenceEnergyProbeRecords": {
+          "value": 0,
+          "unit": "energy-probe-record/execution",
+          "dimension": "count",
+          "basis": "repeat-validation executions run no stress finite-difference probes"
+        },
+        "adapterRequests": {
+          "value": 693,
+          "unit": "batch-1-adapter-request/execution",
+          "dimension": "count",
+          "basis": "693 benchmark requests and zero validation-probe requests"
+        },
+        "freshContainerRequired": true
+      }
+    ],
+    "recordsPerModel": {
+      "authoritative": {
+        "value": 693,
+        "unit": "prediction-record/model",
+        "dimension": "count",
+        "basis": "the authoritative ordinal-0 execution for one fixed model"
+      },
+      "repeatValidation": {
+        "value": 693,
+        "unit": "prediction-record/model",
+        "dimension": "count",
+        "basis": "the repeat-validation ordinal-1 execution for one fixed model"
+      },
+      "metricDenominator": {
+        "value": 693,
+        "unit": "structure/model",
+        "dimension": "count",
+        "basis": "exactly the authoritative ASCII-ordered benchmark structures; all probes and repeats excluded"
+      },
+      "determinismDenominator": {
+        "value": 693,
+        "unit": "structure-pair/model",
+        "dimension": "count",
+        "basis": "one authoritative/repeat scientific-payload pair for every benchmark ID; all probes excluded"
+      }
+    },
+    "totals": {
+      "authoritativeBenchmarkPredictionRecords": {
+        "value": 1386,
+        "unit": "prediction-record",
+        "dimension": "count",
+        "basis": "693 authoritative benchmark records for each of two fixed models"
+      },
+      "repeatValidationBenchmarkPredictionRecords": {
+        "value": 1386,
+        "unit": "prediction-record",
+        "dimension": "count",
+        "basis": "693 repeat-validation benchmark records for each of two fixed models"
+      },
+      "invarianceProbeRecords": {
+        "value": 80,
+        "unit": "probe-record",
+        "dimension": "count",
+        "basis": "40 authoritative invariance probes for each of two fixed models"
+      },
+      "forceFiniteDifferenceEnergyProbeRecords": {
+        "value": 712,
+        "unit": "energy-probe-record",
+        "dimension": "count",
+        "basis": "89 element cases times four energy probes for each of two fixed models"
+      },
+      "stressFiniteDifferenceEnergyProbeRecords": {
+        "value": 480,
+        "unit": "energy-probe-record",
+        "dimension": "count",
+        "basis": "10 structures times six strain modes times four energy probes for each of two fixed models"
+      },
+      "adapterRequests": {
+        "value": 4044,
+        "unit": "batch-1-adapter-request",
+        "dimension": "count",
+        "basis": "4*693 benchmark plus 2*40 invariance plus 2*89*4 force-FD plus 2*60*4 stress-FD requests"
+      }
+    },
+    "probeRecordsExcludedFromMetricDenominator": true,
+    "probeRecordsExcludedFromDeterminismDenominator": true,
+    "authoritativeExecutionOrdinal": 0,
+    "repeatMayReplaceAuthority": false,
+    "independentJobClaimAllowed": false,
+    "independentHardwareClaimAllowed": false,
+    "independentReplicaClaimAllowed": false
+  },
+  "validation": {
+    "completeness": {
+      "exactIdsPerModelPerExecution": {
+        "value": 693,
+        "unit": "structure-id/model/execution",
+        "dimension": "count",
+        "basis": "the complete frozen ASCII-ordered Random-TP ID manifest"
+      },
+      "atomsPerFrame": {
+        "value": 16,
+        "unit": "atom/frame",
+        "dimension": "count",
+        "basis": "the byte-frozen Random-TP 693x16 artifact"
+      },
+      "allowedMissing": {
+        "value": 0,
+        "unit": "prediction-record/model/execution",
+        "dimension": "count",
+        "basis": "no frozen benchmark ID may be missing"
+      },
+      "allowedExtra": {
+        "value": 0,
+        "unit": "prediction-record/model/execution",
+        "dimension": "count",
+        "basis": "no prediction outside the frozen benchmark ID set is allowed"
+      },
+      "allowedDuplicate": {
+        "value": 0,
+        "unit": "prediction-record/model/execution",
+        "dimension": "count",
+        "basis": "every frozen benchmark ID must occur exactly once"
+      },
+      "allowedFailed": {
+        "value": 0,
+        "unit": "prediction-record/model/execution",
+        "dimension": "count",
+        "basis": "no adapter request may fail in a complete execution"
+      },
+      "allowedNonfinite": {
+        "value": 0,
+        "unit": "scientific-value/model/execution",
+        "dimension": "count",
+        "basis": "all required energy, force and stress values must be finite"
+      },
+      "allowedMalformed": {
+        "value": 0,
+        "unit": "prediction-record/model/execution",
+        "dimension": "count",
+        "basis": "no prediction row may violate the frozen record contract"
+      },
+      "asciiIdOrderRequired": true
+    },
+    "invariancePerModel": {
+      "structureIds": [
+        "random-TP-000000",
+        "random-TP-000005",
+        "random-TP-000010",
+        "random-TP-000095",
+        "random-TP-000125",
+        "random-TP-000135",
+        "random-TP-000200",
+        "random-TP-000220",
+        "random-TP-000369",
+        "random-TP-000555"
+      ],
+      "transformations": ["translation", "permutation", "proper-rotation", "periodic-image"],
+      "requiredCases": {
+        "value": 40,
+        "unit": "transformed-case/model",
+        "dimension": "count",
+        "basis": "10 fixed structure IDs times four preregistered transformations"
+      },
+      "translationFractionalShift": {
+        "value": [0.173, 0.271, 0.389],
+        "unit": "1",
+        "dimension": "dimensionless-fractional-coordinate",
+        "basis": "fractional coefficients multiplying the three row vectors of the unchanged periodic cell A0"
+      },
+      "translationConvention": "row-cell-r-prime=r+[0.173,0.271,0.389]@A0-no-wrap-cell-unchanged/v1",
+      "permutation": "reverse-atom-order/v1",
+      "permutationComparison": "inverse-permute-forces-energy-and-stress-unchanged/v1",
+      "properRotation": {
+        "value": [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
+        "unit": "1",
+        "dimension": "dimensionless-linear-transform",
+        "basis": "right-handed orthogonal Cartesian rotation matrix R with determinant +1 under the declared row-vector convention"
+      },
+      "rotationConvention": "column-vector-R-row-positions-and-cell-right-multiply-R-transpose/v1",
+      "rotationComparison": "force-back=F_rot@R-stress-back=R-transpose@S_rot@R-energy-unchanged/v1",
+      "periodicImageShift": "zero-based-atom-i-r_i-prime=r_i+A0[i-mod-3]-cell-unchanged-no-wrap/v1",
+      "periodicImageComparison": "energy-force-and-stress-unchanged/v1",
+      "maximumEnergyError": {
+        "value": 0.0001,
+        "unit": "eV",
+        "dimension": "energy",
+        "basis": "maximum absolute total-energy difference per transformed case"
+      },
+      "maximumForceVectorError": {
+        "value": 0.0001,
+        "unit": "eV/angstrom",
+        "dimension": "energy-per-length",
+        "basis": "maximum per-atom Cartesian vector error after preregistered inverse mapping"
+      },
+      "maximumStressFrobeniusError": {
+        "value": 0.00001,
+        "unit": "eV/angstrom^3",
+        "dimension": "energy-per-volume",
+        "basis": "maximum full-3x3 Frobenius error after preregistered rotation back"
+      },
+      "allCasesMustPass": true,
+      "dropRetryOrReselectionAllowed": false
+    },
+    "forceFiniteDifferencePerModel": {
+      "requiredElements": {
+        "value": 89,
+        "unit": "element",
+        "dimension": "count",
+        "basis": "every distinct element in the frozen Random-TP structure manifest"
+      },
+      "requiredCases": {
+        "value": 89,
+        "unit": "force-finite-difference-case/model",
+        "dimension": "count",
+        "basis": "one preregistered atom/component case for each frozen element"
+      },
+      "energyProbesPerCase": {
+        "value": 4,
+        "unit": "energy-probe-record/case",
+        "dimension": "count",
+        "basis": "plus/minus h and plus/minus h/2 evaluations for central Richardson extrapolation"
+      },
+      "requiredEnergyProbes": {
+        "value": 356,
+        "unit": "energy-probe-record/model",
+        "dimension": "count",
+        "basis": "89 force finite-difference cases times four energy evaluations"
+      },
+      "selection": "for-each-element-in-frozen-set-lexicographically-first-id-containing-element-lowest-zero-based-atom-index-axis-Z-modulo-3/v1",
+      "axisConvention": "zero-based-x0-y1-z2",
+      "displacement": "cartesian-coordinate-plus-minus-h-fixed-cell-and-other-coordinates/v1",
+      "steps": {
+        "values": [0.01, 0.005],
+        "unit": "angstrom",
+        "dimension": "length",
+        "basis": "Cartesian plus/minus h at fixed cell and fixed other coordinates"
+      },
+      "centralDifference": "F_h=-(E(q+h)-E(q-h))/(2h)",
+      "richardson": "F_R=(4F_h_over_2-F_h)/3",
+      "absoluteTolerance": {
+        "value": 0.02,
+        "unit": "eV/angstrom",
+        "dimension": "energy-per-length",
+        "basis": "absolute analytic-component versus Richardson finite-difference residual"
+      },
+      "relativeTolerance": {
+        "value": 0.01,
+        "unit": "1",
+        "dimension": "dimensionless",
+        "basis": "multiplier on max absolute analytic and Richardson components"
+      },
+      "comparison": "abs(analytic-F_R)<=absoluteTolerance+relativeTolerance*max(abs(analytic),abs(F_R))",
+      "allCasesMustPass": true,
+      "dropRetryOrReselectionAllowed": false
+    },
+    "stressFiniteDifferencePerModel": {
+      "structureIds": [
+        "random-TP-000000",
+        "random-TP-000005",
+        "random-TP-000010",
+        "random-TP-000095",
+        "random-TP-000125",
+        "random-TP-000135",
+        "random-TP-000200",
+        "random-TP-000220",
+        "random-TP-000369",
+        "random-TP-000555"
+      ],
+      "voigtModes": ["xx", "yy", "zz", "yz", "xz", "xy"],
+      "requiredCases": {
+        "value": 60,
+        "unit": "stress-finite-difference-case/model",
+        "dimension": "count",
+        "basis": "10 fixed structures times six fixed Voigt strain modes"
+      },
+      "energyProbesPerCase": {
+        "value": 4,
+        "unit": "energy-probe-record/case",
+        "dimension": "count",
+        "basis": "plus/minus h and plus/minus h/2 evaluations for central Richardson extrapolation"
+      },
+      "requiredEnergyProbes": {
+        "value": 240,
+        "unit": "energy-probe-record/model",
+        "dimension": "count",
+        "basis": "60 stress finite-difference cases times four energy evaluations"
+      },
+      "deformation": "A_plus_minus=A0@(I_plus_minus_hE_mode)",
+      "coordinateConvention": "fixed-fractional-coordinates",
+      "strainBasis": "diagonal-one-engineering-shear-symmetric-one-half",
+      "referenceVolume": "V0=abs(det(A0))",
+      "strainSteps": {
+        "values": [0.002, 0.001],
+        "unit": "1",
+        "dimension": "dimensionless-strain",
+        "basis": "plus/minus engineering strain with one-half off-diagonal shear basis"
+      },
+      "centralDifference": "sigma_h=(E(+h)-E(-h))/(2hV0)",
+      "richardson": "sigma_R=(4sigma_h_over_2-sigma_h)/3",
+      "absoluteTolerance": {
+        "value": 0.005,
+        "unit": "eV/angstrom^3",
+        "dimension": "energy-per-volume",
+        "basis": "absolute same-sign ASE component versus Richardson energy-derivative residual"
+      },
+      "relativeTolerance": {
+        "value": 0.02,
+        "unit": "1",
+        "dimension": "dimensionless",
+        "basis": "multiplier on max absolute analytic and Richardson components"
+      },
+      "comparison": "abs(analytic-sigma_R)<=absoluteTolerance+relativeTolerance*max(abs(analytic),abs(sigma_R))",
+      "postHocSignSelectionAllowed": false,
+      "allCasesMustPass": true,
+      "dropRetryOrReselectionAllowed": false
+    },
+    "stressSymmetry": {
+      "representation": "raw-full-3x3-before-symmetrization-or-unit-conversion",
+      "residual": "max_i_j_abs(sigma_i_j-sigma_j_i)",
+      "absoluteTolerance": {
+        "value": 1e-10,
+        "ieee754Binary64Hex": "0x3ddb7cdfd9d7bdbb",
+        "unit": "eV/angstrom^3",
+        "dimension": "energy-per-volume",
+        "basis": "inclusive maximum raw antisymmetric component before any averaging or GPa conversion"
+      },
+      "relativeTolerance": {
+        "value": 0,
+        "unit": "1",
+        "dimension": "dimensionless",
+        "basis": "no relative relaxation"
+      },
+      "comparison": "residual<=absoluteTolerance",
+      "symmetrizationBeforeGateAllowed": false,
+      "appliesToPredictionAndReferenceTensors": true,
+      "sourceContract": {
+        "requiredPath": "atoms.calc.results['stress']-immediately-after-calculation-before-Atoms.get_stress-or-any-Voigt-conversion/v1",
+        "acceptedRepresentation": "calculator-native-full-3x3-nine-finite-binary64-components",
+        "nativeVoigt6Disposition": "raw-symmetry-unavailable-incomplete-abstain",
+        "aseAtomsGetStressVoigtFalseAcceptedAsRawSource": false,
+        "currentRunnerStatus": "not-wired-policy-and-synthetic-oracle-only-dispatch-blocking"
+      }
+    },
+    "determinismPerModel": {
+      "authoritativeOrdinal": 0,
+      "repeatOrdinal": 1,
+      "recordsCompared": {
+        "value": 693,
+        "unit": "structure-pair/model",
+        "dimension": "count",
+        "basis": "one canonical authoritative/repeat payload pair for every frozen benchmark ID"
+      },
+      "sameRunnerRequired": true,
+      "freshDistinctContainerIdsRequired": true,
+      "separateWritableOutputsRequired": true,
+      "canonicalScientificPayloadBytesMustMatch": true,
+      "canonicalScientificPayloadRootMustMatch": true,
+      "signedZeroNormalization": "negative-zero-to-zero",
+      "runContainerTimingAndResourceFieldsExcluded": true,
+      "probeRecordsExcluded": true,
+      "crossRunnerBitExactRequired": false,
+      "numericToleranceAllowed": false,
+      "repeatMayReplaceAuthority": false
+    }
+  },
+  "quantityContract": {
+    "coordinate": {
+      "quantity": "Cartesian position",
+      "unit": "angstrom",
+      "dimension": "length",
+      "basis": "ASE Cartesian coordinates in a three-dimensional periodic row-cell"
+    },
+    "cell": {
+      "quantity": "periodic lattice cell",
+      "unit": "angstrom",
+      "dimension": "length",
+      "basis": "ASE 3x3 row vectors with three-dimensional PBC"
+    },
+    "energy": {
+      "quantity": "total potential energy",
+      "unit": "eV",
+      "dimension": "energy",
+      "basis": "one 16-atom frame; no fitted offset or scale"
+    },
+    "energyError": {
+      "quantity": "absolute per-atom energy error",
+      "unit": "eV/atom",
+      "dimension": "energy-per-atom",
+      "basis": "absolute total-energy difference divided by exactly 16 atoms"
+    },
+    "force": {
+      "quantity": "Cartesian atomic force",
+      "unit": "eV/angstrom",
+      "dimension": "energy-per-length",
+      "basis": "F=-dE/dr at fixed cell"
+    },
+    "forceError": {
+      "quantity": "per-frame force vector error",
+      "unit": "eV/angstrom",
+      "dimension": "energy-per-length",
+      "basis": "arithmetic mean of exactly 16 per-atom Cartesian force-vector L2 errors"
+    },
+    "stress": {
+      "quantity": "Cauchy stress",
+      "unit": "eV/angstrom^3",
+      "dimension": "energy-per-volume",
+      "basis": "raw ASE tensile-positive full 3x3 tensor; pressure=-trace(stress)/3; Voigt order xx,yy,zz,yz,xz,xy"
+    },
+    "stressError": {
+      "quantity": "per-frame full-tensor stress error",
+      "unit": "GPa",
+      "dimension": "energy-per-volume",
+      "basis": "full 3x3 Frobenius error in eV/angstrom^3 converted exactly once"
+    },
+    "stressUnitConversion": {
+      "quantity": "stress unit conversion factor",
+      "value": 160.21766208,
+      "unit": "GPa/(eV/angstrom^3)",
+      "dimension": "unit-conversion",
+      "basis": "applied exactly once after computing an eV/angstrom^3 stress error"
+    },
+    "displacement": {
+      "quantity": "finite-difference Cartesian displacement",
+      "unit": "angstrom",
+      "dimension": "length",
+      "basis": "signed displacement of one selected Cartesian component"
+    },
+    "strain": {
+      "quantity": "engineering strain",
+      "unit": "1",
+      "dimension": "dimensionless-strain",
+      "basis": "fixed-fractional-coordinate cell deformation with half off-diagonal shear"
+    },
+    "wallTime": {
+      "quantity": "container wall duration",
+      "unit": "s",
+      "dimension": "time",
+      "basis": "host monotonic end minus start; unavailable in fixture-only receipt"
+    },
+    "monotonicTimestamp": {
+      "quantity": "host lifecycle monotonic timestamp",
+      "unit": "ns",
+      "dimension": "time",
+      "basis": "integer nanoseconds on one host monotonic clock; meaningful only for ordering and differences within the job"
+    },
+    "exitCode": {
+      "quantity": "container process exit status",
+      "unit": "1",
+      "dimension": "dimensionless-status-code",
+      "basis": "host-observed process exit code; zero denotes normal process completion but never scientific acceptance by itself"
+    },
+    "cpuTime": {
+      "quantity": "container CPU time",
+      "unit": "s",
+      "dimension": "time",
+      "basis": "host-observed cgroup-v2 cpu.stat usage; unavailable in fixture-only receipt"
+    },
+    "memory": {
+      "quantity": "container memory bytes",
+      "unit": "byte",
+      "dimension": "information-storage",
+      "basis": "host-observed finite cgroup-v2 memory.max and memory.peak; unavailable in fixture-only receipt"
+    },
+    "cpuQuota": {
+      "quantity": "container CPU quota",
+      "unit": "core",
+      "dimension": "compute-capacity",
+      "basis": "host-observed finite cgroup quota divided by period; unavailable in fixture-only receipt"
+    },
+    "processLimit": {
+      "quantity": "container process limit",
+      "unit": "process",
+      "dimension": "count",
+      "basis": "host-observed finite cgroup-v2 pids.max; unavailable in fixture-only receipt"
+    },
+    "throughput": {
+      "quantity": "benchmark prediction throughput",
+      "unit": "structure/s",
+      "dimension": "count-per-time",
+      "basis": "exactly 693 benchmark records divided by host-observed core inference wall duration; excludes load and validation probes"
+    },
+    "aggregation": {
+      "quantity": "per-model metric aggregation",
+      "unit": "structure-weight",
+      "dimension": "dimensionless-weighting",
+      "basis": "equal-weight structure mean over exactly 693 ASCII-ordered authoritative IDs only"
+    }
+  },
+  "isolationContract": {
+    "network": "none",
+    "rootFilesystem": "read-only",
+    "user": "65532:65532",
+    "capabilities": "drop-all",
+    "noNewPrivileges": true,
+    "hostSocketsMounted": false,
+    "hostSecretsMounted": false,
+    "referenceLabelsMounted": false,
+    "sharedWritableMountBetweenExecutions": false,
+    "perExecutionWritableOutputDirectoryOnly": true,
+    "exactArgvMountAndEnvironmentObservationRequired": true,
+    "hostObservationRequired": true,
+    "containerSelfReportTrusted": false,
+    "containerReadDenialProbeRequired": true,
+    "canaryAbsenceRequiredInEnvironmentStdoutStderrPredictionsAndReceipt": true,
+    "canonicalDevice": "cpu",
+    "gpuDeviceRequestsAllowed": false
+  },
+  "hostObservationContract": {
+    "observerClass": "same-job-label-separated-host-observer-not-independent-job-or-hardware",
+    "requiredIdentityFields": [
+      "repositoryId",
+      "revision",
+      "workflowPath",
+      "workflowBlobDigest",
+      "workflowRunId",
+      "runAttempt",
+      "jobId",
+      "runnerOs",
+      "runnerArchitecture",
+      "runnerImage",
+      "dockerServerVersion",
+      "imagePlatformManifestDigest",
+      "imageConfigDigest",
+      "sequence",
+      "model",
+      "modelId",
+      "ordinal",
+      "role",
+      "containerId",
+      "outputDirectory",
+      "startedAtMonotonicNs",
+      "endedAtMonotonicNs",
+      "exitCode",
+      "argv",
+      "mounts",
+      "environmentKeyAllowlist",
+      "networkMode",
+      "readonlyRootfs",
+      "user",
+      "capDrop",
+      "securityOpt",
+      "cpuQuotaCores",
+      "memoryLimitBytes",
+      "memoryPeakBytes",
+      "pidsLimit",
+      "cpuTimeSeconds"
+    ],
+    "requiredObservationCount": {
+      "value": 4,
+      "unit": "host-observation",
+      "dimension": "count",
+      "basis": "one host lifecycle observation for every entry in the frozen four-execution sequence"
+    },
+    "fieldProvenance": {
+      "repositoryId": "host-control-plane",
+      "revision": "host-control-plane",
+      "workflowPath": "host-control-plane",
+      "workflowBlobDigest": "host-control-plane",
+      "workflowRunId": "host-control-plane",
+      "runAttempt": "host-control-plane",
+      "jobId": "host-control-plane",
+      "runnerOs": "host-control-plane",
+      "runnerArchitecture": "host-control-plane",
+      "runnerImage": "host-control-plane",
+      "dockerServerVersion": "host-control-plane",
+      "imagePlatformManifestDigest": "host-lifecycle-observer",
+      "imageConfigDigest": "host-lifecycle-observer",
+      "sequence": "host-assigned-execution-plan",
+      "model": "host-assigned-execution-plan",
+      "modelId": "host-assigned-execution-plan",
+      "ordinal": "host-assigned-execution-plan",
+      "role": "host-assigned-execution-plan",
+      "containerId": "host-lifecycle-observer",
+      "outputDirectory": "host-assigned-execution-plan",
+      "startedAtMonotonicNs": "host-lifecycle-observer",
+      "endedAtMonotonicNs": "host-lifecycle-observer",
+      "exitCode": "host-lifecycle-observer",
+      "argv": "host-lifecycle-observer",
+      "mounts": "host-lifecycle-observer",
+      "environmentKeyAllowlist": "host-lifecycle-observer",
+      "networkMode": "host-lifecycle-observer",
+      "readonlyRootfs": "host-lifecycle-observer",
+      "user": "host-lifecycle-observer",
+      "capDrop": "host-lifecycle-observer",
+      "securityOpt": "host-lifecycle-observer",
+      "cpuQuotaCores": "host-lifecycle-observer",
+      "memoryLimitBytes": "host-lifecycle-observer",
+      "memoryPeakBytes": "host-lifecycle-observer",
+      "pidsLimit": "host-lifecycle-observer",
+      "cpuTimeSeconds": "host-lifecycle-observer"
+    },
+    "identityAssignmentAuthority": "host-observer-from-frozen-execution-order-not-container-self-report/v1",
+    "lifecycleOrdering": "each-start-before-own-end-and-each-prior-end-not-after-next-start-on-one-host-monotonic-clock/v1",
+    "finiteResourceLimitsRequiredBeforeDispatch": true,
+    "resourceLimitsStatus": "unresolved-dispatch-blocking",
+    "performanceThresholdClaimAllowed": false,
+    "throughputComparisonClaimAllowed": false,
+    "durableIndependentAttestationPresent": false
+  },
+  "rightsPolicy": {
+    "status": "rights-not-cleared",
+    "privateExecutionAllowed": false,
+    "aggregatePublicationAllowed": false,
+    "runtimeRedistributionAllowed": false,
+    "independenceRule": "private-execution-aggregate-publication-and-runtime-redistribution-are-three-independent-default-deny-decisions/v1",
+    "privateExecutionBasis": "GPL does not by itself forbid private execution, but this project has not recorded a dataset-specific Random-TP use decision; private execution remains blocked",
+    "aggregatePublicationBasis": "aggregate-only output rights and a safe projection from a validated aggregate receipt have not been reviewed; publication remains blocked",
+    "runtimeRedistributionBasis": "container-wheelhouse-derived-wheel redistribution remains blocked until GPL source-notice-distribution duties, all package notices and a complete SBOM are reviewed",
+    "richBundleRedactionMaySubstituteForAggregateProjection": false,
+    "evidenceBindings": {
+      "datasetCatalog": {
+        "path": "evaluation/data/datasets.json",
+        "schemaVersion": "tf.dataset-catalog/0.1",
+        "rawDigest": "sha256:ca6e7ca0187cf5584806f2684611b2b813b46bd7c434741d756df7947aef8fe7",
+        "datasetId": "mattersim-random-tp",
+        "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+        "licenseStatus": "NOASSERTION: the file is in the MIT-licensed MatterSim repository, but no dataset-specific provenance or redistribution grant is supplied",
+        "redistribute": false
+      },
+      "reproductionPlan": {
+        "path": "evaluation/atomistic/reproduction-plan.json",
+        "schemaVersion": "tf.atomistic-reproduction/0.2",
+        "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2",
+        "mattersim": {
+          "modelId": "mattersim-v1.0.0-5m",
+          "packageVersion": "1.2.5",
+          "sourceCommit": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "codeAndModelLicense": "MIT",
+          "checkpointDigest": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5"
+        },
+        "mace": {
+          "modelId": "mace-mpa-0-medium",
+          "packageVersion": "0.3.16",
+          "sourceCommit": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+          "codeAndModelLicense": "MIT",
+          "checkpointDigest": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638"
+        }
+      },
+      "runtimeLock": {
+        "path": "evaluation/atomistic/runtime-lock.json",
+        "schemaVersion": "tf.atomistic-runtime-lock/0.3",
+        "rawDigest": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1",
+        "state": "bootstrap-runtime-frozen-not-reproduced",
+        "mattersimDependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+        "maceDependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+      },
+      "maceRuntimeLicenseNotice": {
+        "path": "atomistic/locks/README.md",
+        "rawDigest": "sha256:65abe1d5c48185090a1b1a96cfa813f3b8eb88a25cf10f59798798db5ae36a03",
+        "dependency": "python-hostlist==2.3.0",
+        "license": "GPL-2.0-or-later",
+        "distributionObligationsReviewed": false
+      }
+    }
+  },
+  "outcomePolicy": {
+    "allowedExecutionScientificDecisionPairs": [
+      ["not-run", "abstain"],
+      ["incomplete", "abstain"],
+      ["complete", "fail"],
+      ["complete", "pass"]
+    ],
+    "fixtureExecution": "not-run",
+    "fixtureScientificDecision": "abstain",
+    "fixtureAbstentionReasons": [
+      "synthetic-contract-fixture-only",
+      "dispatch-disabled",
+      "model-execution-not-observed",
+      "host-resource-provenance-not-observed",
+      "rights-not-cleared"
+    ],
+    "evidenceOrIsolationFailureDecision": ["incomplete", "abstain"],
+    "completeNumericalGateFailureDecision": ["complete", "fail"],
+    "fixtureMayProduceScientificPassOrFail": false,
+    "claims": {
+      "fullInferenceRun": false,
+      "claimEligible": false,
+      "comparisonEligible": false,
+      "promotionEligible": false,
+      "publicationEligible": false,
+      "reproductionEligible": false,
+      "reproduced": false,
+      "sota": false,
+      "dataLeakageCertified": false,
+      "causalClaimAllowed": false,
+      "industrialFitness": false
+    }
+  },
+  "applicability": {
+    "benchmark": "frozen-random-tp-693x16-only",
+    "datasetDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+    "systemBoundary": "one static 16-atom three-dimensionally periodic frame per observation",
+    "runtimeBoundary": "linux-amd64-cpu-float32-batch1-one-thread-same-runner-repeat",
+    "observables": ["total-energy", "cartesian-force", "cauchy-stress"],
+    "horizon": "single-point-no-dynamics-or-future-rollout",
+    "excludedRegimes": [
+      "matbench-wbm-or-any-other-dataset",
+      "training-data-leakage-certification",
+      "thermodynamic-envelope-claims-without-per-frame-temperature-and-pressure",
+      "surfaces-interfaces-nonperiodic-or-unknown-charge-regimes",
+      "unvalidated-long-range-interactions-polymers-or-strain-regimes",
+      "molecular-dynamics-trajectories-or-future-state-rollouts",
+      "electronic-density-orbitals-charge-or-dft-claims",
+      "cross-runner-gpu-or-independent-replica-determinism",
+      "experimental-ground-truth-or-current-sota-claims",
+      "causal-counterfactual-process-or-industrial-control-claims",
+      "runtime-checkpoint-dataset-or-aggregate-receipt-publication"
+    ]
+  },
+  "publication": {
+    "enabled": false,
+    "allowedArtifactPaths": [],
+    "artifactUploadAllowed": false,
+    "privateExecutionAllowed": false,
+    "aggregatePublicationAllowed": false,
+    "runtimeRedistributionAllowed": false,
+    "aggregateReceiptRightsDispositionRecorded": false
+  }
+}
