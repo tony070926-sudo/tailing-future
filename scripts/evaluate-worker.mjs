@@ -765,7 +765,18 @@ try {
   if (!schemaVerification.naclWaterInterfaceImportContract) {
     hardGateFailures.push('NaCl-water interface v0.4.11 cross-language semantic-import contract is incomplete.');
   }
-  if (!schemaVerification.atomisticPlan) hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${JSON.stringify(validateAtomisticPlan.errors ?? validateAtomisticCandidatePlan.errors)}.`);
+  if (!schemaVerification.atomisticPlan) {
+    const validationErrors = validateAtomisticPlan.errors ?? validateAtomisticCandidatePlan.errors;
+    let detail = validationErrors
+      ? JSON.stringify(validationErrors)
+      : 'semantic identity or dependency check failed';
+    if (candidateExecutionPreflightValidation.failures.length > 0) {
+      detail = 'dependent candidate execution preflight validation failed';
+    } else if (observerContractValidation.failures.length > 0) {
+      detail = 'dependent observer contract validation failed';
+    }
+    hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${detail}.`);
+  }
   if (!schemaVerification.datasetCatalog) hardGateFailures.push('Dataset provenance and license catalog validation failed.');
   if (!schemaVerification.workflowPolicy) hardGateFailures.push('Workflow and atomistic build policy coverage is incomplete.');
   if (!schemaVerification.comparatorReceipts) hardGateFailures.push('Comparator receipt promotion policy rejected the registry.');

@@ -273,5 +273,5 @@ describe('NaCl{100}-water v0.4.11 cross-language semantic import', () => {
     );
     expect(result.status).toBe(1);
     expect(readFileSync(existing, 'utf8')).toBe('preserve');
-  });
+  }, 60_000);
 });

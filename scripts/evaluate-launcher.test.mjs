@@ -96,6 +96,12 @@ async function runLauncher(root, { behavior = 'stable', environment = {} } = {})
 }
 
 describe('two-stage evaluator launcher', () => {
+  it('keeps the evaluator worker timeout explicit and bounded', () => {
+    const source = launcherBytes.toString('utf8');
+    expect(source).toContain('const EVALUATOR_WORKER_TIMEOUT_MS = 18 * 60 * 1000;');
+    expect(source).toContain('timeout: EVALUATOR_WORKER_TIMEOUT_MS,');
+  });
+
   it('publishes only a worker report bound to the exact frozen source', async () => {
     const root = await fixture();
     const result = await runLauncher(root);

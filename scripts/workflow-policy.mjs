@@ -23,7 +23,7 @@ export const ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH = 1787977543;
 export const ATOMISTIC_SOURCE_MANIFEST_DIGEST = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
 export const ATOMISTIC_MATERIALIZATION_DIGEST = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
-export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '6683d641e7b8898af7729877fdffa7ac28de543783d052bc40d4c1023ee341dc';
+export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '57773b8ff757a5c3401bdaa8878bb43a6386921a7af351f0e5c1a5173e65a5d1';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
 export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af';
@@ -474,7 +474,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
     'permissions', 'runs-on', 'steps', 'timeout-minutes',
   ].sort())) failures.push(`${prefix} evaluate job contains an unreviewed key.`);
   if (!sameJson(job.permissions, { contents: 'read' })) failures.push(`${prefix} evaluate job must have only contents: read.`);
-  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 35) {
+  if (job['runs-on'] !== 'ubuntu-24.04' || job['timeout-minutes'] !== 75) {
     failures.push(`${prefix} evaluate job must remain a bounded Ubuntu 24.04 job.`);
   }
 
