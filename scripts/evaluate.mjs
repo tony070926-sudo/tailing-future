@@ -20,6 +20,7 @@ const MAX_REPORT_JSON_BYTES = 16 * 1024 * 1024;
 const MAX_REPORT_MARKDOWN_BYTES = 2 * 1024 * 1024;
 const MAX_PUBLIC_SUMMARY_BYTES = 4 * 1024;
 const MAX_PUBLIC_PRODUCT_EVALUATION_BYTES = 32 * 1024;
+const EVALUATOR_WORKER_TIMEOUT_MS = 18 * 60 * 1000;
 const PUBLIC_PRODUCT_EVALUATION_VERSION = 'tf.public-product-evaluation/0.1';
 const PUBLIC_SCORECARD_DIMENSION_IDS = Object.freeze([
   'contract',
@@ -147,7 +148,7 @@ try {
     cwd: snapshotRoot,
     env: workerEnvironment,
     stdio: 'inherit',
-    timeout: 10 * 60 * 1000,
+    timeout: EVALUATOR_WORKER_TIMEOUT_MS,
   });
   if (worker.error) throw worker.error;
   if (worker.signal) throw new Error(`Evaluator worker ended with signal ${worker.signal}.`);
