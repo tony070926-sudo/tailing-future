@@ -20,6 +20,9 @@ import { validateFrozenAtomisticPlan, validateFrozenAtomisticPlanBytes } from '.
 import {
   validateFullCandidateRegistrationWorkflowRepository,
 } from './atomistic/full-candidate-registration-source-policy.mjs';
+import {
+  validateCheckedInRandomTpRightsDisposition,
+} from './atomistic/random-tp-rights-disposition-policy.mjs';
 
 const root = process.cwd();
 const registrationValidation = await validateFullCandidateRegistrationWorkflowRepository(root);
@@ -55,6 +58,9 @@ const observerValidation = await validateObserverContractRepository(observerCont
   requireWorkflowGitIndex: true,
 });
 failures.push(...observerValidation.failures);
+const rightsDispositionValidation =
+  await validateCheckedInRandomTpRightsDisposition({ root });
+failures.push(...rightsDispositionValidation.failures);
 
 const ajv = new Ajv2020({ allErrors: true, validateFormats: false });
 const validate = ajv.compile(schema);
@@ -172,5 +178,5 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
+  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · RANDOM-TP RIGHTS 3/3 ABSTAIN · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
 }
