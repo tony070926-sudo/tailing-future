@@ -1,0 +1,541 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/atomistic-random-tp-rights-disposition/0.1",
+  "title": "Tailing Future Random-TP Rights Disposition",
+  "description": "Exact versioned, claim-negative rights abstention for one byte-frozen Random-TP dataset, two checkpoints and their runtime closures. Version 0.1 contains no granting state.",
+  "type": "object",
+  "const": {
+    "schemaVersion": "tf.atomistic-random-tp-rights-disposition/0.1",
+    "status": "reviewed-abstention-all-rights-not-cleared",
+    "asOf": "2026-09-04",
+    "legalAdvice": false,
+    "purpose": "Record a versioned, machine-readable and fail-closed disposition for the exact Random-TP benchmark, two frozen checkpoints and two frozen runtime closures without authorizing execution, publication, redistribution, workflow dispatch or scientific promotion.",
+    "bindings": {
+      "dataset": {
+        "id": "mattersim-random-tp",
+        "repository": "microsoft/mattersim",
+        "revision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+        "path": "data/benchmarks/random-TP.xyz",
+        "contentsApiUrl": "https://api.github.com/repos/microsoft/mattersim/contents/data/benchmarks/random-TP.xyz?ref=40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+        "contentsApiType": "file",
+        "contentsApiEncoding": "none",
+        "contentsApiResponseDigest": null,
+        "contentsApiSha256FieldPresent": false,
+        "gitObjectFormat": "sha1",
+        "gitBlobOid": "79bddf16aac8f8f5559fe2218867a7817fad4219",
+        "gitBlobOidIsSha256": false,
+        "sizeBytes": 1514015,
+        "projectFrozenSha256": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+        "frames": 693,
+        "atomsPerFrame": 16,
+        "idSetSha256": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
+        "structureManifestSha256": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7",
+        "labelManifestSha256": "sha256:a0eda4ac1c7720002a32f42f91c635bf8398b93c02846fb83ae97437e3e8422f",
+        "licenseStatus": "NOASSERTION: the file is in the MIT-licensed MatterSim repository, but no dataset-specific provenance or redistribution grant is supplied",
+        "redistributionCleared": false
+      },
+      "checkpoints": {
+        "mattersim": {
+          "modelId": "mattersim-v1.0.0-5m",
+          "packageName": "mattersim",
+          "packageVersion": "1.2.5",
+          "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "url": "https://raw.githubusercontent.com/microsoft/mattersim/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/pretrained_models/mattersim-v1.0.0-5M.pth",
+          "sizeBytes": 91176875,
+          "sha256": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5"
+        },
+        "mace": {
+          "modelId": "mace-mpa-0-medium",
+          "packageName": "mace-torch",
+          "packageVersion": "0.3.16",
+          "sourceRevision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+          "foundationRepository": "ACEsuit/mace-foundations",
+          "foundationRevision": "6de003bb29db05f451051c30ce809fad522d26da",
+          "releaseTag": "mace_mpa_0",
+          "releaseId": 191152959,
+          "assetId": 213937064,
+          "assetName": "mace-mpa-0-medium.model",
+          "officialAssetDigest": null,
+          "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mpa_0/mace-mpa-0-medium.model",
+          "sizeBytes": 79462305,
+          "sha256": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638"
+        }
+      },
+      "runtime": {
+        "platform": "linux/amd64",
+        "python": "3.12.13",
+        "device": "cpu",
+        "precision": "float32",
+        "batchSize": 1,
+        "threads": 1,
+        "baseImageIndexDigest": "sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+        "baseImagePlatformManifestDigest": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+        "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+        "sourceManifestDigest": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1",
+        "materializationDigest": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721",
+        "ociPromotionTrustRootsAvailable": false,
+        "mattersim": {
+          "dependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+          "runtimeInputManifestDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+          "dependencyGraphDigest": "sha256:089b3a59daaf10fef45086ea5e8d63a7bf143d2d99aefef6cb7451e34dc50da0",
+          "installedPathDigest": "sha256:cf12e368061c2420f802592a8b732e4f510e15129144c4a56161766a0e5bb321",
+          "runtimeInstalledPathDigest": "sha256:3c393f19d748b945a77683d5e722f3a3b49d49415652ba4c78380bc1c175d873"
+        },
+        "mace": {
+          "dependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33",
+          "runtimeInputManifestDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47",
+          "dependencyGraphDigest": "sha256:27045fc8bfc4bf841b6164f1360c71450753329db1aa8e61e22cf0963f82246b",
+          "installedPathDigest": "sha256:e880ee162447820b350b0056700656f903bb6ff782bea9b15fd0be24bc08e290",
+          "runtimeInstalledPathDigest": "sha256:cc7c3b47516ab8d80d96243c14a648f39bc89ce9ae3b8ad894868fab2c9029e5",
+          "pythonHostlist": {
+            "version": "2.3.0",
+            "upstreamLicenseRaw": "GPL2+",
+            "upstreamLicenseExpression": null,
+            "normalizedLicense": "GPL-2.0-or-later",
+            "sourceDistributionFilename": "python_hostlist-2.3.0.tar.gz",
+            "sourceDistributionSizeBytes": 37326,
+            "sourceDistributionSha256": "sha256:e1a0b18e525a5fca573cb9862799f11b3f2bd3ba7aec70c4ecd8b95341bb71ea",
+            "derivedWheelSha256": "sha256:498c59026aec1015aa07f970423d4b655ac45f5108bbc900f40f8afd3593ad1c",
+            "derivedWheelProvenanceManifestDigest": "sha256:1b2796e8419a6eeaf1bfaacd3942c266ca1316d2975afb040d718a8edd9b1d59",
+            "distributionObligationsReviewed": false
+          }
+        }
+      },
+      "localEvidence": {
+        "datasetCatalog": {
+          "path": "evaluation/data/datasets.json",
+          "schemaVersion": "tf.dataset-catalog/0.1",
+          "rawDigest": "sha256:ca6e7ca0187cf5584806f2684611b2b813b46bd7c434741d756df7947aef8fe7"
+        },
+        "reproductionPlan": {
+          "path": "evaluation/atomistic/reproduction-plan.json",
+          "schemaVersion": "tf.atomistic-reproduction/0.2",
+          "rawDigest": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+        },
+        "runtimeLock": {
+          "path": "evaluation/atomistic/runtime-lock.json",
+          "schemaVersion": "tf.atomistic-runtime-lock/0.3",
+          "rawDigest": "sha256:b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1",
+          "semanticDigest": "sha256:3f817d5536589d7d1eaeda32d27917ba590d517ee8172d6572b4bee90cc1193a",
+          "state": "bootstrap-runtime-frozen-not-reproduced"
+        },
+        "mattersimRuntimeInputs": {
+          "path": "evaluation/atomistic/runtime-inputs/mattersim.runtime-inputs.json",
+          "schemaVersion": "tf.atomistic-runtime-inputs/0.2",
+          "rawDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53"
+        },
+        "maceRuntimeInputs": {
+          "path": "evaluation/atomistic/runtime-inputs/mace.runtime-inputs.json",
+          "schemaVersion": "tf.atomistic-runtime-inputs/0.2",
+          "rawDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+        },
+        "maceRuntimeLicenseNotice": {
+          "path": "atomistic/locks/README.md",
+          "rawDigest": "sha256:65abe1d5c48185090a1b1a96cfa813f3b8eb88a25cf10f59798798db5ae36a03"
+        },
+        "executionPreflight": {
+          "path": "evaluation/atomistic/full-candidate-execution-preflight.json",
+          "schemaVersion": "tf.atomistic-full-candidate-execution-preflight/0.1",
+          "rawDigest": "sha256:886cf305df9418386c3087bf066cd8e9b83b316c127eaa41965c606b82f602aa"
+        },
+        "observerContract": {
+          "path": "evaluation/atomistic/full-candidate-observer-contract-vnext.json",
+          "schemaVersion": "tf.atomistic-full-candidate-observer-contract/0.1",
+          "rawDigest": "sha256:9fd93ded20bd013a0c6d61dfec48368fc7957725ee4f95f4fafa242c7f7f0759"
+        },
+        "legacyReceiptSchema": {
+          "path": "schemas/atomistic-full-candidate-receipt.schema.json",
+          "schemaVersion": "tf.atomistic-full-candidate-receipt/0.2",
+          "rawDigest": "sha256:f6dfdec4d81bd1467ec459f6e0153dee5fe877a17819de4704c0ae189dcc70aa"
+        }
+      }
+    },
+    "evidenceReview": {
+      "asOf": "2026-09-04",
+      "evidenceClass": "auditable-primary-source-review-not-legal-advice",
+      "reviewerClass": "independent-read-only-sota-rights-scout",
+      "implementedCandidate": false,
+      "qualifiedRightsAuthority": false,
+      "approvalAuthority": false,
+      "sources": [
+        {
+          "id": "mattersim-license-40a1eb8",
+          "kind": "repository-license",
+          "url": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/LICENSE.txt",
+          "revision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "contentDigest": "sha256:fd532481d828e13a0b13ccb598e02338a3617740675a862ee6bdc1541b68e93d",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "random-tp-contents-api-40a1eb8",
+          "kind": "upstream-file-identity",
+          "url": "https://api.github.com/repos/microsoft/mattersim/contents/data/benchmarks/random-TP.xyz?ref=40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "revision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "contentDigest": null,
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "random-tp-file-40a1eb8",
+          "kind": "upstream-dataset-file",
+          "url": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/data/benchmarks/random-TP.xyz",
+          "revision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "contentDigest": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mattersim-model-card-40a1eb8",
+          "kind": "model-card",
+          "url": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/MODEL_CARD.md",
+          "revision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "contentDigest": "sha256:9f48dffafb55f0700bbc2d180ce8f7b5bc28decac1de43c3058c323a7c0dc5b7",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mattersim-paper-2405.04967v2",
+          "kind": "primary-paper",
+          "url": "https://arxiv.org/html/2405.04967v2#S6",
+          "revision": "2405.04967v2",
+          "contentDigest": null,
+          "evidenceClass": "reference"
+        },
+        {
+          "id": "mace-readme-4d2da09",
+          "kind": "official-model-repository",
+          "url": "https://github.com/ACEsuit/mace/blob/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/README.md",
+          "revision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+          "contentDigest": "sha256:1ef0c309a49cf7d1035ab581b1ddc8284c678658ba375a132c4d5fcefd833038",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mace-setup-cfg-4d2da09",
+          "kind": "official-dependency-declaration",
+          "url": "https://raw.githubusercontent.com/ACEsuit/mace/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/setup.cfg",
+          "revision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+          "contentDigest": "sha256:3b279d3b2abaf74b1107c7af244d48a7c6d7eba0c7525434328055efd58ddf12",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mace-license-4d2da09",
+          "kind": "repository-license",
+          "url": "https://github.com/ACEsuit/mace/blob/4d2da09413ac1407f37cdbb6b81fa28e4c15655e/LICENSE.md",
+          "revision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+          "contentDigest": "sha256:42137790f854ae2b9d29a0a72a4da3f6fb9a21d820b3f276f23b0575af72e86e",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mace-foundations-license-6de003b",
+          "kind": "checkpoint-repository-license",
+          "url": "https://github.com/ACEsuit/mace-foundations/blob/6de003bb29db05f451051c30ce809fad522d26da/LICENSE",
+          "revision": "6de003bb29db05f451051c30ce809fad522d26da",
+          "contentDigest": "sha256:31ea0ccf7bc19797081bff51c7eff3a3927c8cb6c1d7a726dec3d157b436da1c",
+          "evidenceClass": "auditable"
+        },
+        {
+          "id": "mace-mpa-0-release",
+          "kind": "official-checkpoint-release",
+          "url": "https://github.com/ACEsuit/mace-foundations/releases/tag/mace_mpa_0",
+          "revision": "mace_mpa_0",
+          "contentDigest": null,
+          "evidenceClass": "reference"
+        },
+        {
+          "id": "python-hostlist-pypi-2.3.0",
+          "kind": "official-package-index-metadata",
+          "url": "https://pypi.org/pypi/python-hostlist/2.3.0/json",
+          "revision": "2.3.0",
+          "contentDigest": null,
+          "evidenceClass": "reference"
+        }
+      ]
+    },
+    "intendedPrivateComputeScope": {
+      "status": "proposed-not-authorized",
+      "scopeDigest": "sha256:c73cbb22ae3f7c57579d55c1242f6a0434eb79fb0489cd8799fceff67b8e3c91",
+      "contract": {
+        "purposeId": "private-random-tp-foundation-model-evaluation-only",
+        "benchmark": {
+          "datasetId": "mattersim-random-tp",
+          "datasetSha256": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+          "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+          "gitBlobOid": "79bddf16aac8f8f5559fe2218867a7817fad4219",
+          "idSetSha256": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
+          "structureManifestSha256": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7",
+          "labelManifestSha256": "sha256:a0eda4ac1c7720002a32f42f91c635bf8398b93c02846fb83ae97437e3e8422f",
+          "frameCount": {
+            "value": 693,
+            "unit": "frame",
+            "dimension": "count",
+            "basis": "every frozen ASCII-ordered Random-TP identifier"
+          },
+          "atomsPerFrame": {
+            "value": 16,
+            "unit": "atom/frame",
+            "dimension": "count",
+            "basis": "the byte-frozen Random-TP artifact"
+          }
+        },
+        "models": [
+          {
+            "modelId": "mattersim-v1.0.0-5m",
+            "packageVersion": "1.2.5",
+            "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+            "checkpointSha256": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5",
+            "checkpointSizeBytes": 91176875,
+            "dependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+            "runtimeInputManifestDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+            "dependencyGraphDigest": "sha256:089b3a59daaf10fef45086ea5e8d63a7bf143d2d99aefef6cb7451e34dc50da0",
+            "installedPathDigest": "sha256:cf12e368061c2420f802592a8b732e4f510e15129144c4a56161766a0e5bb321",
+            "runtimeInstalledPathDigest": "sha256:3c393f19d748b945a77683d5e722f3a3b49d49415652ba4c78380bc1c175d873"
+          },
+          {
+            "modelId": "mace-mpa-0-medium",
+            "packageVersion": "0.3.16",
+            "sourceRevision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+            "foundationRevision": "6de003bb29db05f451051c30ce809fad522d26da",
+            "checkpointSha256": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638",
+            "checkpointSizeBytes": 79462305,
+            "dependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33",
+            "runtimeInputManifestDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47",
+            "dependencyGraphDigest": "sha256:27045fc8bfc4bf841b6164f1360c71450753329db1aa8e61e22cf0963f82246b",
+            "installedPathDigest": "sha256:e880ee162447820b350b0056700656f903bb6ff782bea9b15fd0be24bc08e290",
+            "runtimeInstalledPathDigest": "sha256:cc7c3b47516ab8d80d96243c14a648f39bc89ce9ae3b8ad894868fab2c9029e5"
+          }
+        ],
+        "runtime": {
+          "platform": "linux/amd64",
+          "python": "3.12.13",
+          "device": "cpu",
+          "precision": "float32",
+          "batchSize": 1,
+          "threads": 1,
+          "baseImageIndexDigest": "sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+          "baseImagePlatformManifestDigest": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+          "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+          "sourceManifestDigest": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1",
+          "materializationDigest": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721"
+        },
+        "requestBudget": {
+          "authoritativePredictions": {
+            "value": 1386,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "693 frames for each of two models"
+          },
+          "repeatPredictions": {
+            "value": 1386,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "one same-runner fresh-container repeat for every authoritative request"
+          },
+          "invariancePredictions": {
+            "value": 80,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "40 preregistered transformed cases for each model"
+          },
+          "forceFiniteDifferencePredictions": {
+            "value": 712,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "89 element cases times two displacement magnitudes times plus/minus displacement times two models"
+          },
+          "stressFiniteDifferencePredictions": {
+            "value": 480,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "60 strain cases times two strain magnitudes times plus/minus strain times two models"
+          },
+          "totalMaximumRequests": {
+            "value": 4044,
+            "unit": "prediction-request",
+            "dimension": "count",
+            "basis": "sum of the five exact preregistered request classes"
+          }
+        },
+        "environment": {
+          "host": "one-private-ephemeral-linux-amd64-cpu-runner",
+          "producerJobs": 1,
+          "freshSequentialModelContainers": 4,
+          "networkDuringModelExecution": "none",
+          "rootFilesystem": "read-only",
+          "user": "65532:65532",
+          "capabilities": "drop-all",
+          "noNewPrivileges": true,
+          "hostSocketsMounted": false,
+          "hostSecretsMounted": false,
+          "referenceLabelsMountedInModelContainers": false,
+          "sharedWritableMountsBetweenExecutions": false
+        },
+        "access": {
+          "currentlyAuthorizedPrincipals": [],
+          "rawDatasetRoles": [
+            "trusted-private-preprocessor",
+            "producer-independent-label-bearing-host-verifier"
+          ],
+          "structureProjectionRoles": [
+            "isolated-mattersim-container",
+            "isolated-mace-container"
+          ],
+          "referenceLabelRoles": [
+            "producer-independent-label-bearing-host-verifier"
+          ],
+          "modelContainersMayAccessReferenceLabels": false,
+          "publicBrowserAccessAllowed": false,
+          "thirdPartyServiceAccessAllowed": false,
+          "publicRepositoryAccessAllowed": false
+        },
+        "retention": {
+          "basis": "single-private-ephemeral-runner-lifetime-only",
+          "persistentDatasetCopyAllowed": false,
+          "persistentReferenceLabelCopyAllowed": false,
+          "persistentPerRecordPredictionCopyAllowed": false,
+          "checkpointOrRuntimeBundlePublicationAllowed": false,
+          "publicArtifactUploadAllowed": false,
+          "publicLogDisclosureAllowed": false,
+          "encryptedCopyChangesRightsStatus": false,
+          "deleteBeforeRunnerTeardownRequired": true,
+          "independentDeletionEvidenceRequired": true
+        },
+        "excludedUses": [
+          "training-or-finetuning",
+          "any-dataset-other-than-the-frozen-random-tp-bytes",
+          "gpu-or-non-linux-amd64-execution",
+          "public-artifact-or-log-publication",
+          "runtime-or-checkpoint-redistribution",
+          "browser-or-frontend-ingestion",
+          "scientific-promotion-or-sota-ranking",
+          "data-leakage-certification",
+          "dynamics-future-rollout-causal-or-industrial-control-use"
+        ]
+      }
+    },
+    "authorityGate": {
+      "status": "qualified-rights-review-not-recorded",
+      "authorizationRecord": null,
+      "requiredAuthorityClasses": [
+        "dataset-rightsholder",
+        "documented-rightsholder-delegate",
+        "qualified-rights-reviewer-with-recorded-mandate"
+      ],
+      "authorizationMustBeIndependentFromImplementation": true,
+      "authorizationMustBeTrusted": true,
+      "authorizationMustBeUnexpiredAtUse": true,
+      "authorizationScopeMustEqualPrivateComputeScopeDigest": true,
+      "selfAuthoredAuthorityAccepted": false
+    },
+    "decisions": {
+      "privateExecution": {
+        "rightId": "private-execution",
+        "allowed": false,
+        "disposition": "abstain",
+        "effect": "dispatch-blocking",
+        "reasonCodes": [
+          "RANDOM_TP_DATASET_LICENSE_SCOPE_UNRESOLVED",
+          "RANDOM_TP_DATASET_PROVENANCE_NOT_DATASET_SPECIFICALLY_ATTESTED",
+          "QUALIFIED_RIGHTS_REVIEW_NOT_RECORDED"
+        ]
+      },
+      "aggregatePublication": {
+        "rightId": "aggregate-publication",
+        "allowed": false,
+        "disposition": "abstain",
+        "effect": "publication-blocking",
+        "reasonCodes": [
+          "PRIVATE_EXECUTION_NOT_CLEARED",
+          "RANDOM_TP_DERIVED_AGGREGATE_PUBLICATION_RIGHTS_UNRESOLVED",
+          "AGGREGATE_ONLY_PROJECTION_NOT_RIGHTS_VALIDATED"
+        ]
+      },
+      "runtimeRedistribution": {
+        "rightId": "runtime-redistribution",
+        "allowed": false,
+        "disposition": "abstain",
+        "effect": "redistribution-blocking",
+        "reasonCodes": [
+          "COMPLETE_RUNTIME_SBOM_LICENSE_MATRIX_NOT_REVIEWED",
+          "PYTHON_HOSTLIST_GPL2PLUS_DERIVED_WHEEL_OBLIGATIONS_UNREVIEWED",
+          "CORRESPONDING_SOURCE_NOTICE_DISTRIBUTION_BUNDLE_UNVERIFIED"
+        ]
+      }
+    },
+    "reasonEvidence": {
+      "RANDOM_TP_DATASET_LICENSE_SCOPE_UNRESOLVED": [
+        "mattersim-license-40a1eb8",
+        "random-tp-contents-api-40a1eb8",
+        "random-tp-file-40a1eb8"
+      ],
+      "RANDOM_TP_DATASET_PROVENANCE_NOT_DATASET_SPECIFICALLY_ATTESTED": [
+        "random-tp-contents-api-40a1eb8",
+        "random-tp-file-40a1eb8",
+        "mattersim-model-card-40a1eb8",
+        "mattersim-paper-2405.04967v2"
+      ],
+      "QUALIFIED_RIGHTS_REVIEW_NOT_RECORDED": [],
+      "PRIVATE_EXECUTION_NOT_CLEARED": [],
+      "RANDOM_TP_DERIVED_AGGREGATE_PUBLICATION_RIGHTS_UNRESOLVED": [
+        "mattersim-license-40a1eb8",
+        "random-tp-file-40a1eb8"
+      ],
+      "AGGREGATE_ONLY_PROJECTION_NOT_RIGHTS_VALIDATED": [
+        "random-tp-file-40a1eb8"
+      ],
+      "COMPLETE_RUNTIME_SBOM_LICENSE_MATRIX_NOT_REVIEWED": [
+        "mace-readme-4d2da09",
+        "mace-setup-cfg-4d2da09",
+        "mace-license-4d2da09",
+        "mace-foundations-license-6de003b",
+        "python-hostlist-pypi-2.3.0"
+      ],
+      "PYTHON_HOSTLIST_GPL2PLUS_DERIVED_WHEEL_OBLIGATIONS_UNREVIEWED": [
+        "mace-setup-cfg-4d2da09",
+        "python-hostlist-pypi-2.3.0"
+      ],
+      "CORRESPONDING_SOURCE_NOTICE_DISTRIBUTION_BUNDLE_UNVERIFIED": [
+        "mace-license-4d2da09",
+        "mace-foundations-license-6de003b",
+        "mace-mpa-0-release",
+        "python-hostlist-pypi-2.3.0"
+      ]
+    },
+    "independence": {
+      "protocol": "private-execution-aggregate-publication-and-runtime-redistribution-are-three-independent-default-deny-decisions/v1",
+      "representation": "three-named-nonsubstitutable-slots",
+      "decisionSwappingAllowed": false,
+      "decisionSubstitutionAllowed": false,
+      "crossDecisionGrantPropagationAllowed": false,
+      "privateExecutionMayImplyAggregatePublication": false,
+      "privateExecutionMayImplyRuntimeRedistribution": false,
+      "aggregatePublicationMayImplyRuntimeRedistribution": false
+    },
+    "effects": {
+      "privateModelExecutionAuthorized": false,
+      "workflowRegistrationAuthorized": false,
+      "workflowDispatchAuthorized": false,
+      "aggregateArtifactPublicationAuthorized": false,
+      "runtimeOrCheckpointPublicationAuthorized": false,
+      "frontendIngestionAuthorized": false,
+      "scorePromotionEligible": false,
+      "scientificClaimEligible": false
+    },
+    "compatibility": {
+      "frontendContractVersionsChanged": false,
+      "observerContractChanged": false,
+      "observerRightsRemainDefaultDeny": true,
+      "legacyReceiptSchemaChanged": false,
+      "legacyReceiptSchemaReinterpreted": false,
+      "futureGrantRequiresVersionedMigration": true
+    },
+    "claims": {
+      "rightsCleared": false,
+      "fullInferenceRun": false,
+      "modelExecutionPerformed": false,
+      "reproduced": false,
+      "comparisonEligible": false,
+      "promotionEligible": false,
+      "sota": false,
+      "dataLeakageCertified": false,
+      "causalClaimAllowed": false,
+      "industrialFitness": false
+    }
+  }
+}

@@ -48,6 +48,11 @@ const mutations = [
     hardGate: 'observer.receipt.schema.rawDigest: exact reviewed bytes differ',
     syntax: 'json',
   },
+  {
+    path: 'evaluation/atomistic/random-tp-rights-disposition-v0.1.json',
+    hardGate: 'rights-disposition.rawDigest: exact reviewed bytes differ',
+    syntax: 'json',
+  },
 ];
 const temporaryRoots = [];
 
@@ -59,7 +64,7 @@ afterEach(async () => {
 });
 
 describe('observer source snapshot evaluator binding', () => {
-  it('rejects the four enumerated pre-capture reviewed-source mutations without score promotion', async () => {
+  it('rejects the five enumerated pre-capture reviewed-source mutations without score promotion', async () => {
     const scorecard = JSON.parse(await readFile(
       path.join(repositoryRoot, 'evaluation/current-scorecard.json'),
       'utf8',
@@ -110,6 +115,7 @@ describe('observer source snapshot evaluator binding', () => {
     const expectedMutationGates = [
       ...mutations.map(({ hardGate }) => hardGate),
       'Atomistic reproduction/candidate plan validation failed: dependent observer contract validation failed.',
+      'rights-disposition.localEvidence.observerContract.rawDigest: exact bound bytes differ',
       `observer.receipt.workflowObservation.sourceDigest: expected "${baseline.report.sourceManifest[workflowPath]}"; received "${mutationDigests.get(workflowPath)}"`,
       'observer.workflow.sizeBytes: exact reviewed byte length differs',
     ];
@@ -122,7 +128,10 @@ describe('observer source snapshot evaluator binding', () => {
       /^(?:observer\.contract(?:\.schema)?|observer\.workflow|observer\.receipt\.schema)\.rawDigest:/.test(
         failure,
       )
-    )).sort()).toEqual(mutations.map(({ hardGate }) => hardGate).sort());
+    )).sort()).toEqual(mutations
+      .filter(({ hardGate }) => hardGate.startsWith('observer.'))
+      .map(({ hardGate }) => hardGate)
+      .sort());
 
     for (const mutation of mutations) {
       expect(mutationResult.report.sourceManifest[mutation.path])
@@ -142,6 +151,30 @@ describe('observer source snapshot evaluator binding', () => {
     expect(mutationResult.publicProduct.scorecard.dimensions).toEqual(
       baseline.publicProduct.scorecard.dimensions,
     );
+
+    const rightsMutation = mutations.find(({ hardGate }) => (
+      hardGate.startsWith('rights-disposition.')
+    ));
+    const rightsMutationRoot = await copyCandidateRepository();
+    const rightsTarget = path.join(rightsMutationRoot, rightsMutation.path);
+    const rightsBefore = await readFile(rightsTarget);
+    await appendFile(rightsTarget, Buffer.from(' ', 'utf8'));
+    const rightsAfter = await readFile(rightsTarget);
+    expect(JSON.parse(rightsAfter.toString('utf8'))).toEqual(
+      JSON.parse(rightsBefore.toString('utf8')),
+    );
+    const rightsMutationResult = await runEvaluator(rightsMutationRoot);
+    expect(rightsMutationResult.code).toBe(1);
+    expect(rightsMutationResult.report.verdict).toBe('reject');
+    expect(rightsMutationResult.report.hardGateFailures).toEqual([
+      rightsMutation.hardGate,
+      'Atomistic reproduction/candidate plan validation failed: dependent Random-TP rights disposition validation failed.',
+    ]);
+    expect(rightsMutationResult.report.weightedScore).toBe(41);
+    expect(changedManifestPaths(
+      baseline.report.sourceManifest,
+      rightsMutationResult.report.sourceManifest,
+    )).toEqual([rightsMutation.path]);
 
     for (const [relativePath, originalBytes] of originalPublishedReports) {
       expect(await readFile(path.join(repositoryRoot, relativePath))).toEqual(originalBytes);

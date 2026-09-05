@@ -26,6 +26,7 @@ const projectSpecifiers = [
   './atomistic/full-candidate-plan-policy.mjs',
   './atomistic/full-candidate-execution-preflight-policy.mjs',
   './atomistic/full-candidate-observer-vnext.mjs',
+  './atomistic/random-tp-rights-disposition-policy.mjs',
   './workflow-policy.mjs',
   './comparator-evidence-policy.mjs',
   './source-snapshot.mjs',
@@ -82,6 +83,12 @@ const [
     OBSERVER_WORKFLOW_SOURCE_PATH,
     validateObserverContractRepository,
   },
+  {
+    EXPECTED_LOCAL_EVIDENCE,
+    RANDOM_TP_RIGHTS_DISPOSITION_PATH,
+    RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
+    validateRandomTpRightsDispositionRepository,
+  },
   { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource },
   { validateComparatorEvidenceRegistry },
   { captureProjectSourceSnapshot },
@@ -99,6 +106,7 @@ const [
   import('./atomistic/full-candidate-plan-policy.mjs'),
   import('./atomistic/full-candidate-execution-preflight-policy.mjs'),
   import('./atomistic/full-candidate-observer-vnext.mjs'),
+  import('./atomistic/random-tp-rights-disposition-policy.mjs'),
   import('./workflow-policy.mjs'),
   import('./comparator-evidence-policy.mjs'),
   import('./source-snapshot.mjs'),
@@ -670,6 +678,22 @@ try {
     },
   );
   hardGateFailures.push(...observerContractValidation.failures);
+  const rightsDispositionFileOverrides = Object.fromEntries([
+    RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
+    ...Object.values(EXPECTED_LOCAL_EVIDENCE).map(({ path: relativePath }) => relativePath),
+  ].map((relativePath) => [
+    relativePath,
+    Buffer.from(readSnapshotText(relativePath), 'utf8'),
+  ]));
+  const rightsDispositionValidation =
+    await validateRandomTpRightsDispositionRepository(
+      Buffer.from(readSnapshotText(RANDOM_TP_RIGHTS_DISPOSITION_PATH), 'utf8'),
+      {
+        root,
+        fileOverrides: rightsDispositionFileOverrides,
+      },
+    );
+  hardGateFailures.push(...rightsDispositionValidation.failures);
   const randomTpCatalog = datasetCatalog.datasets.find((dataset) => dataset.id === 'mattersim-random-tp');
   const candidateBenchmark = atomisticCandidatePlan.bindings?.benchmark;
   const candidateContractValid = validateAtomisticCandidatePlan(atomisticCandidatePlan)
@@ -690,6 +714,7 @@ try {
     && atomisticCandidatePlan.claimBoundaries.currentSotaClaimAllowed === false
     && candidateExecutionPreflightValidation.failures.length === 0
     && observerContractValidation.failures.length === 0
+    && rightsDispositionValidation.failures.length === 0
     && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
     && randomTpCatalog?.redistribute === false
     && randomTpCatalog?.license?.startsWith('NOASSERTION:')
@@ -774,6 +799,8 @@ try {
       detail = 'dependent candidate execution preflight validation failed';
     } else if (observerContractValidation.failures.length > 0) {
       detail = 'dependent observer contract validation failed';
+    } else if (rightsDispositionValidation.failures.length > 0) {
+      detail = 'dependent Random-TP rights disposition validation failed';
     }
     hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${detail}.`);
   }
