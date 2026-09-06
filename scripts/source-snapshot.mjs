@@ -93,11 +93,15 @@ export async function captureProjectSourceSnapshot(root, relativePaths) {
   const frozenPaths = Object.freeze(paths);
   return Object.freeze({
     paths: frozenPaths,
-    artifactDigest() {
+    artifactDigest(sourceModeManifest = null) {
+      if (sourceModeManifest !== null) validateSourceModeManifest(frozenPaths, sourceModeManifest);
       const digest = createHash('sha256');
       for (const relativePath of frozenPaths) {
         const entry = entries.get(relativePath);
-        digest.update(`${relativePath.length}:${relativePath}:${entry.byteLength}:${entry.digest}\n`);
+        const mode = sourceModeManifest === null
+          ? ''
+          : `${formatMode(sourceModeManifest[relativePath])}:`;
+        digest.update(`${relativePath.length}:${relativePath}:${mode}${entry.byteLength}:${entry.digest}\n`);
       }
       return `sha256:${digest.digest('hex')}`;
     },
@@ -122,6 +126,24 @@ export async function captureProjectSourceSnapshot(root, relativePaths) {
       return entry.content.toString('utf8');
     },
   });
+}
+
+function validateSourceModeManifest(relativePaths, sourceModeManifest) {
+  if (sourceModeManifest === null
+    || typeof sourceModeManifest !== 'object'
+    || Array.isArray(sourceModeManifest)
+    || Object.keys(sourceModeManifest).length !== relativePaths.length
+    || relativePaths.some((relativePath) => !Object.hasOwn(sourceModeManifest, relativePath))) {
+    throw new Error('Project source mode manifest does not match the captured path set');
+  }
+  for (const relativePath of relativePaths) formatMode(sourceModeManifest[relativePath]);
+}
+
+function formatMode(mode) {
+  if (!Number.isInteger(mode) || mode < 0 || mode > 0o7777) {
+    throw new Error(`Invalid project source mode: ${String(mode)}`);
+  }
+  return mode.toString(8).padStart(4, '0');
 }
 
 export function diffProjectSourceSnapshots(expected, actual) {

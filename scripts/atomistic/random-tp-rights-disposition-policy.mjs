@@ -1118,7 +1118,7 @@ async function readBoundedRegularFile(
   if (await realpath(absolute) !== absolute) throw new Error('bound file crosses a symlink boundary');
   const before = await lstat(absolute, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1n
-      || (before.mode & 0o777n) !== EXPECTED_FILE_MODE
+      || (before.mode & 0o7777n) !== EXPECTED_FILE_MODE
       || before.size < 1n || before.size > BigInt(maximumBytes)) {
     throw new Error('bound file must be one mode-0644, singly linked, bounded regular file');
   }

@@ -11,6 +11,7 @@ import {
   realpath,
   rm,
   symlink,
+  writeFile,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -114,6 +115,7 @@ describe('observer source snapshot evaluator binding', () => {
     const workflowPath = mutations.find(({ syntax }) => syntax === 'yaml').path;
     const expectedMutationGates = [
       ...mutations.map(({ hardGate }) => hardGate),
+      'authority-request.binding.rights-disposition.rawDigest: exact reviewed bytes differ',
       'Atomistic reproduction/candidate plan validation failed: dependent observer contract validation failed.',
       'rights-disposition.localEvidence.observerContract.rawDigest: exact bound bytes differ',
       `observer.receipt.workflowObservation.sourceDigest: expected "${baseline.report.sourceManifest[workflowPath]}"; received "${mutationDigests.get(workflowPath)}"`,
@@ -168,6 +170,7 @@ describe('observer source snapshot evaluator binding', () => {
     expect(rightsMutationResult.report.verdict).toBe('reject');
     expect(rightsMutationResult.report.hardGateFailures).toEqual([
       rightsMutation.hardGate,
+      'authority-request.binding.rights-disposition.rawDigest: exact reviewed bytes differ',
       'Atomistic reproduction/candidate plan validation failed: dependent Random-TP rights disposition validation failed.',
     ]);
     expect(rightsMutationResult.report.weightedScore).toBe(41);
@@ -179,6 +182,85 @@ describe('observer source snapshot evaluator binding', () => {
     for (const [relativePath, originalBytes] of originalPublishedReports) {
       expect(await readFile(path.join(repositoryRoot, relativePath))).toEqual(originalBytes);
     }
+  }, 45 * 60 * 1000);
+
+  it('rejects a request-only authorization injection without score promotion', async () => {
+    const requestPath =
+      'evaluation/atomistic/random-tp-private-execution-authority-request-v0.1.json';
+    const baselineRoot = await copyCandidateRepository();
+    const baseline = await runEvaluator(baselineRoot);
+    expect(baseline.code).toBe(0);
+    expect(baseline.report.verdict).toBe('conditional');
+    expect(baseline.report.weightedScore).toBe(41);
+    expect(baseline.report.hardGateFailures).toEqual([]);
+
+    const mutationRoot = await copyCandidateRepository();
+    const target = path.join(mutationRoot, requestPath);
+    const candidate = JSON.parse(await readFile(target, 'utf8'));
+    candidate.authorizationState.authorizationRecord = {
+      principalId: 'self-authored-forgery',
+      signature: 'not-verified',
+    };
+    candidate.effects.privateModelExecutionAuthorized = true;
+    candidate.requestSemantics.requestMayDispatchWorkflow = true;
+    await writeFile(target, `${JSON.stringify(candidate, null, 2)}\n`, { mode: 0o644 });
+
+    const mutation = await runEvaluator(mutationRoot);
+    expect(mutation.code).toBe(1);
+    expect(mutation.report.verdict).toBe('reject');
+    expect(mutation.report.weightedScore).toBe(41);
+    expect(mutation.report.dimensions).toEqual(baseline.report.dimensions);
+    expect(mutation.publicProduct.scorecard.dimensions)
+      .toEqual(baseline.publicProduct.scorecard.dimensions);
+    const schemaFailures = mutation.report.hardGateFailures.filter((failure) => (
+      failure.startsWith('authority-request.schema: ')
+    ));
+    expect(schemaFailures).toHaveLength(1);
+    const expectedAuthorizationMutationGates = [
+      'authority-request.rawDigest: exact reviewed bytes differ',
+      'authority-request.semanticDigest: exact reviewed semantics differ',
+      'authority-request.semantic: exact frozen v0.1 contract digest mismatch',
+      'authority-request.requestSemantics: exact contract mismatch',
+      'authority-request.authorizationState: exact contract mismatch',
+      'authority-request.effects: every value must remain false',
+      schemaFailures[0],
+      'Atomistic reproduction/candidate plan validation failed: dependent Random-TP authority request validation failed.',
+    ];
+    expect([...mutation.report.hardGateFailures].sort())
+      .toEqual([...expectedAuthorizationMutationGates].sort());
+    expect(mutation.publicSummary).toEqual({
+      artifactDigest: mutation.report.artifactDigest,
+      verdict: 'reject',
+      gaps: mutation.report.gaps.map(({ severity, dimension }) => ({ severity, dimension })),
+    });
+    expect(changedManifestPaths(
+      baseline.report.sourceManifest,
+      mutation.report.sourceManifest,
+    )).toEqual([requestPath]);
+
+    const modeMutationRoot = await copyCandidateRepository();
+    await chmod(path.join(modeMutationRoot, requestPath), 0o755);
+    const modeMutation = await runEvaluator(modeMutationRoot);
+    expect(modeMutation.code).toBe(1);
+    expect(modeMutation.report.verdict).toBe('reject');
+    expect(modeMutation.report.weightedScore).toBe(41);
+    expect(modeMutation.report.dimensions).toEqual(baseline.report.dimensions);
+    expect(modeMutation.publicProduct.scorecard.dimensions)
+      .toEqual(baseline.publicProduct.scorecard.dimensions);
+    expect(modeMutation.report.hardGateFailures).toEqual([
+      `authority-request.sourceMode.${requestPath}: exact mode 0644 required; received 0755`,
+      'Atomistic reproduction/candidate plan validation failed: dependent Random-TP authority-request source mode validation failed.',
+    ]);
+    expect(changedManifestPaths(
+      baseline.report.sourceManifest,
+      modeMutation.report.sourceManifest,
+    )).toEqual([]);
+    expect(modeMutation.report.artifactDigest).not.toBe(baseline.report.artifactDigest);
+    expect(modeMutation.publicSummary).toEqual({
+      artifactDigest: modeMutation.report.artifactDigest,
+      verdict: 'reject',
+      gaps: modeMutation.report.gaps.map(({ severity, dimension }) => ({ severity, dimension })),
+    });
   }, 45 * 60 * 1000);
 });
 
@@ -263,6 +345,10 @@ async function runEvaluator(root) {
       report: JSON.parse(await readFile(path.join(root, 'evaluation/latest-report.json'), 'utf8')),
       publicProduct: JSON.parse(await readFile(
         path.join(root, 'evaluation/public-product-evaluation.json'),
+        'utf8',
+      )),
+      publicSummary: JSON.parse(await readFile(
+        path.join(root, 'evaluation/public-summary.json'),
         'utf8',
       )),
     };
