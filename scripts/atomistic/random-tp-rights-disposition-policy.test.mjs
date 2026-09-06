@@ -246,6 +246,13 @@ describe('Random-TP rights disposition v0.1', () => {
     }
   });
 
+  it('rejects special permission bits on the checked-in disposition', async () => {
+    const temporaryRoot = await copyBoundPolicyFiles();
+    await chmod(path.join(temporaryRoot, RANDOM_TP_RIGHTS_DISPOSITION_PATH), 0o4644);
+    await expect(validateCheckedInRandomTpRightsDisposition({ root: temporaryRoot }))
+      .rejects.toThrow(/mode-0644/);
+  });
+
   it('re-audits every file identity after cross-file validation to close TOCTOU drift', async () => {
     const temporaryRoot = await copyBoundPolicyFiles();
     const targetPath = path.join(

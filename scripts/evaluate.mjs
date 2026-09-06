@@ -113,6 +113,10 @@ const sourceFiles = selectProjectSourceFiles(rawPaths);
 const captured = await captureSource(root, sourceFiles);
 assertCiCommitBinding(root, sourceFiles, captured);
 const sourceManifest = Object.fromEntries(sourceFiles.map((relativePath) => [relativePath, captured.get(relativePath).digest]));
+const sourceModeManifest = Object.fromEntries(sourceFiles.map((relativePath) => [
+  relativePath,
+  captured.get(relativePath).mode,
+]));
 const artifactDigest = computeArtifactDigest(sourceFiles, captured);
 let snapshotRoot;
 
@@ -121,10 +125,11 @@ try {
   await chmod(snapshotRoot, 0o700);
   await materializeSnapshot(snapshotRoot, sourceFiles, captured);
   const control = {
-    schemaVersion: 'tf.evaluator-snapshot/0.1',
+    schemaVersion: 'tf.evaluator-snapshot/0.2',
     rawPaths,
     sourceFiles,
     sourceManifest,
+    sourceModeManifest,
     artifactDigest,
   };
   await writeExclusive(path.join(snapshotRoot, '.tailing-sentinel-control.json'), Buffer.from(`${JSON.stringify(control)}\n`), 0o400);
@@ -357,7 +362,7 @@ async function captureSource(repositoryRoot, relativePaths) {
         byteLength: content.length,
         content,
         digest: `sha256:${createHash('sha256').update(content).digest('hex')}`,
-        mode: Number(before.mode & 0o777n),
+        mode: Number(before.mode & 0o7777n),
       });
     } finally {
       await handle.close();
@@ -370,9 +375,16 @@ function computeArtifactDigest(relativePaths, entries) {
   const digest = createHash('sha256');
   for (const relativePath of relativePaths) {
     const entry = entries.get(relativePath);
-    digest.update(`${relativePath.length}:${relativePath}:${entry.byteLength}:${entry.digest}\n`);
+    digest.update(`${relativePath.length}:${relativePath}:${formatMode(entry.mode)}:${entry.byteLength}:${entry.digest}\n`);
   }
   return `sha256:${digest.digest('hex')}`;
+}
+
+function formatMode(mode) {
+  if (!Number.isInteger(mode) || mode < 0 || mode > 0o7777) {
+    throw new Error(`Evaluator source mode is invalid: ${String(mode)}.`);
+  }
+  return mode.toString(8).padStart(4, '0');
 }
 
 async function materializeSnapshot(destinationRoot, relativePaths, entries) {

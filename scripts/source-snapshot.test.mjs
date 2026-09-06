@@ -36,6 +36,20 @@ describe('project source snapshot', () => {
     expect(snapshot.digest('README.md')).toBe(alphaDigest);
     expect(snapshot.sourceManifest()['README.md']).toBe(alphaDigest);
     expect(snapshot.artifactDigest()).toBe('sha256:388ab983746ed941098187eb35b5a21a5b6f991d924cdf57620050fe885dc032');
+    const sourceModeManifest = {
+      'COPYING.txt': 0o644,
+      'README.md': 0o644,
+      'docs/note.md': 0o644,
+    };
+    expect(snapshot.artifactDigest(sourceModeManifest)).not.toBe(snapshot.artifactDigest());
+    expect(snapshot.artifactDigest({ ...sourceModeManifest, 'README.md': 0o755 }))
+      .not.toBe(snapshot.artifactDigest(sourceModeManifest));
+    expect(() => snapshot.artifactDigest({ 'README.md': 0o644 }))
+      .toThrow(/mode manifest/);
+    expect(() => snapshot.artifactDigest({ ...sourceModeManifest, 'extra.txt': 0o644 }))
+      .toThrow(/mode manifest/);
+    expect(() => snapshot.artifactDigest({ ...sourceModeManifest, 'README.md': 0o10000 }))
+      .toThrow(/Invalid project source mode/);
   });
 
   it('detects added, removed and byte-changed paths between snapshots', async () => {

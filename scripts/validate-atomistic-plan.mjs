@@ -23,6 +23,9 @@ import {
 import {
   validateCheckedInRandomTpRightsDisposition,
 } from './atomistic/random-tp-rights-disposition-policy.mjs';
+import {
+  validateCheckedInRandomTpAuthorityRequest,
+} from './atomistic/random-tp-authority-request-policy.mjs';
 
 const root = process.cwd();
 const registrationValidation = await validateFullCandidateRegistrationWorkflowRepository(root);
@@ -61,6 +64,9 @@ failures.push(...observerValidation.failures);
 const rightsDispositionValidation =
   await validateCheckedInRandomTpRightsDisposition({ root });
 failures.push(...rightsDispositionValidation.failures);
+const authorityRequestValidation =
+  await validateCheckedInRandomTpAuthorityRequest({ root });
+failures.push(...authorityRequestValidation.failures);
 
 const ajv = new Ajv2020({ allErrors: true, validateFormats: false });
 const validate = ajv.compile(schema);
@@ -178,5 +184,5 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · RANDOM-TP RIGHTS 3/3 ABSTAIN · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
+  console.log(`Atomistic plan: VALID · ${plan.models.length} pinned models · ${plan.benchmarks.length} benchmarks · ${unresolved.length} intentionally blocked artifact(s) · FULL CANDIDATE FROZEN ${candidatePlan.bindings.benchmark.frames}×${candidatePlan.execution.partitioning.partitions.length} — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · RANDOM-TP RIGHTS 3/3 ABSTAIN · AUTHORITY REQUEST VALID — NOT AUTHORIZATION · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · ${process.argv.includes('--verify-cache') ? 'CACHE + DATASET RECORDS VERIFIED' : 'PLAN ONLY — NO INFERENCE'}`);
 }

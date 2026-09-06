@@ -1,0 +1,296 @@
+{
+  "schemaVersion": "tf.atomistic-random-tp-private-execution-authority-request/0.1",
+  "requestId": "random-tp-private-execution-exact-scope-v0.1",
+  "status": "draft-routing-only-not-authorization",
+  "asOf": "2026-09-06",
+  "legalAdvice": false,
+  "purpose": "Ask a qualified rights authority for a dataset-specific determination covering only the exact proposed private Random-TP computation. This checked-in request is not a grant, permission, dispatch instruction, workflow registration or scientific result.",
+  "requestSemantics": {
+    "rightId": "private-execution",
+    "decisionRequested": "dataset-specific-authority-determination-for-the-exact-bound-scope",
+    "currentRightAllowed": false,
+    "requestIsAuthorization": false,
+    "requestCreatesPermission": false,
+    "requestMayRegisterWorkflow": false,
+    "requestMayDispatchWorkflow": false,
+    "requestMayExecuteModels": false,
+    "requestMayPublishArtifacts": false,
+    "requestMayRedistributeRuntimeOrCheckpoints": false
+  },
+  "rightsDispositionBinding": {
+    "path": "evaluation/atomistic/random-tp-rights-disposition-v0.1.json",
+    "schemaVersion": "tf.atomistic-random-tp-rights-disposition/0.1",
+    "rawDigest": "sha256:32e0134c25553ab7a415ffab526b4bb82a81e487f1dae3424c25b841faf9962f",
+    "semanticDigest": "sha256:edfaf76141afd65221f674f55c806568f3b7aab57eea9b62d2dabc9c67866cd3",
+    "schemaPath": "schemas/atomistic-random-tp-rights-disposition.schema.json",
+    "schemaRawDigest": "sha256:7c1f5c781c87cc3dfbfa0349be3b77a0529e23f569b1b4a213595bc0d606297c",
+    "currentStatus": "reviewed-abstention-all-rights-not-cleared",
+    "privateExecutionAllowed": false,
+    "aggregatePublicationAllowed": false,
+    "runtimeRedistributionAllowed": false
+  },
+  "exactPrivateComputeScope": {
+    "scopeDigest": "sha256:c73cbb22ae3f7c57579d55c1242f6a0434eb79fb0489cd8799fceff67b8e3c91",
+    "canonicalContractPath": "evaluation/atomistic/random-tp-rights-disposition-v0.1.json#/intendedPrivateComputeScope/contract",
+    "status": "proposed-not-authorized",
+    "purposeId": "private-random-tp-foundation-model-evaluation-only",
+    "benchmark": {
+      "datasetId": "mattersim-random-tp",
+      "repository": "microsoft/mattersim",
+      "sourcePath": "data/benchmarks/random-TP.xyz",
+      "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "gitObjectFormat": "sha1",
+      "gitBlobOid": "79bddf16aac8f8f5559fe2218867a7817fad4219",
+      "projectFrozenSha256": "sha256:c14473dcf4bd71e1ed11556ac9ff12b68e7a423d813f939bc9eedaef663054d9",
+      "idSetSha256": "sha256:4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91",
+      "structureManifestSha256": "sha256:b0a94b5424f9d4a2be7519265b8dbe89a478fa5b21a6c956c70ffe0c705078f7",
+      "labelManifestSha256": "sha256:a0eda4ac1c7720002a32f42f91c635bf8398b93c02846fb83ae97437e3e8422f",
+      "frameCount": {
+        "value": 693,
+        "unit": "frame",
+        "dimension": "count",
+        "basis": "every frozen ASCII-ordered Random-TP identifier"
+      },
+      "atomsPerFrame": {
+        "value": 16,
+        "unit": "atom/frame",
+        "dimension": "count",
+        "basis": "the byte-frozen Random-TP artifact"
+      }
+    },
+    "models": [
+      {
+        "modelId": "mattersim-v1.0.0-5m",
+        "packageName": "mattersim",
+        "packageVersion": "1.2.5",
+        "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+        "checkpointSize": {
+          "value": 91176875,
+          "unit": "byte",
+          "dimension": "information",
+          "basis": "frozen MatterSim checkpoint asset"
+        },
+        "checkpointSha256": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5",
+        "dependencyLockDigest": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b",
+        "runtimeInputManifestDigest": "sha256:203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53",
+        "dependencyGraphDigest": "sha256:089b3a59daaf10fef45086ea5e8d63a7bf143d2d99aefef6cb7451e34dc50da0",
+        "installedPathDigest": "sha256:cf12e368061c2420f802592a8b732e4f510e15129144c4a56161766a0e5bb321",
+        "runtimeInstalledPathDigest": "sha256:3c393f19d748b945a77683d5e722f3a3b49d49415652ba4c78380bc1c175d873"
+      },
+      {
+        "modelId": "mace-mpa-0-medium",
+        "packageName": "mace-torch",
+        "packageVersion": "0.3.16",
+        "sourceRevision": "4d2da09413ac1407f37cdbb6b81fa28e4c15655e",
+        "foundationRevision": "6de003bb29db05f451051c30ce809fad522d26da",
+        "checkpointSize": {
+          "value": 79462305,
+          "unit": "byte",
+          "dimension": "information",
+          "basis": "frozen MACE checkpoint asset"
+        },
+        "checkpointSha256": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638",
+        "dependencyLockDigest": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33",
+        "runtimeInputManifestDigest": "sha256:6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47",
+        "dependencyGraphDigest": "sha256:27045fc8bfc4bf841b6164f1360c71450753329db1aa8e61e22cf0963f82246b",
+        "installedPathDigest": "sha256:e880ee162447820b350b0056700656f903bb6ff782bea9b15fd0be24bc08e290",
+        "runtimeInstalledPathDigest": "sha256:cc7c3b47516ab8d80d96243c14a648f39bc89ce9ae3b8ad894868fab2c9029e5"
+      }
+    ],
+    "runtime": {
+      "platform": "linux/amd64",
+      "python": "3.12.13",
+      "device": "cpu",
+      "precision": "float32",
+      "batchSize": 1,
+      "threads": 1,
+      "baseImageIndexDigest": "sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+      "baseImagePlatformManifestDigest": "sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+      "runnerDigest": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+      "sourceManifestDigest": "sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1",
+      "materializationDigest": "sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721"
+    },
+    "requestBudget": {
+      "authoritativePredictions": {
+        "value": 1386,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "693 frames for each of two models"
+      },
+      "repeatPredictions": {
+        "value": 1386,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "one same-runner fresh-container repeat for every authoritative request"
+      },
+      "invariancePredictions": {
+        "value": 80,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "40 preregistered transformed cases for each model"
+      },
+      "forceFiniteDifferencePredictions": {
+        "value": 712,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "89 element cases times two displacement magnitudes times plus/minus displacement times two models"
+      },
+      "stressFiniteDifferencePredictions": {
+        "value": 480,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "60 strain cases times two strain magnitudes times plus/minus strain times two models"
+      },
+      "totalMaximumRequests": {
+        "value": 4044,
+        "unit": "prediction-request",
+        "dimension": "count",
+        "basis": "sum of the five exact preregistered request classes"
+      }
+    },
+    "environmentAndAccess": {
+      "host": "one-private-ephemeral-linux-amd64-cpu-runner",
+      "producerJobs": 1,
+      "freshSequentialModelContainers": 4,
+      "networkDuringModelExecution": "none",
+      "rootFilesystem": "read-only",
+      "runtimeUser": "65532:65532",
+      "capabilities": "drop-all",
+      "noNewPrivileges": true,
+      "hostSocketsMounted": false,
+      "hostSecretsMounted": false,
+      "referenceLabelsMountedInModelContainers": false,
+      "sharedWritableMountsBetweenExecutions": false,
+      "modelContainersMayAccessReferenceLabels": false,
+      "publicBrowserAccessAllowed": false,
+      "thirdPartyServiceAccessAllowed": false,
+      "publicRepositoryAccessAllowed": false
+    },
+    "retention": {
+      "basis": "single-private-ephemeral-runner-lifetime-only",
+      "persistentDatasetCopyAllowed": false,
+      "persistentReferenceLabelCopyAllowed": false,
+      "persistentPerRecordPredictionCopyAllowed": false,
+      "checkpointOrRuntimeBundlePublicationAllowed": false,
+      "publicArtifactUploadAllowed": false,
+      "publicLogDisclosureAllowed": false,
+      "encryptedCopyChangesRightsStatus": false,
+      "deleteBeforeRunnerTeardownRequired": true,
+      "independentDeletionEvidenceRequired": true
+    },
+    "excludedUses": [
+      "training-or-finetuning",
+      "any-dataset-other-than-the-frozen-random-tp-bytes",
+      "gpu-or-non-linux-amd64-execution",
+      "public-artifact-or-log-publication",
+      "runtime-or-checkpoint-redistribution",
+      "browser-or-frontend-ingestion",
+      "scientific-promotion-or-sota-ranking",
+      "data-leakage-certification",
+      "dynamics-future-rollout-causal-or-industrial-control-use"
+    ]
+  },
+  "rightsIndependence": {
+    "privateExecutionRequested": true,
+    "aggregatePublicationRequested": false,
+    "runtimeRedistributionRequested": false,
+    "crossDecisionGrantPropagationAllowed": false,
+    "privateExecutionMayImplyAggregatePublication": false,
+    "privateExecutionMayImplyRuntimeRedistribution": false,
+    "aggregatePublicationMayImplyRuntimeRedistribution": false
+  },
+  "routingCandidates": [
+    {
+      "id": "mattersim-readme-email",
+      "kind": "official-project-email",
+      "route": "ai4s-materials@microsoft.com",
+      "sourceUrl": "https://github.com/microsoft/mattersim/blob/40a1eb8f1189a53af310957b4f2c5dfbfe68d647/README.md#researcher-and-developers",
+      "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "sourceContentDigest": "sha256:b222a569a01bc94712f2385661cb3d6294ec8bedff7aa8ec93b902f4a1005d95",
+      "routingOnly": true,
+      "authorityVerified": false,
+      "contactAttempted": false,
+      "responseReceived": false
+    },
+    {
+      "id": "mattersim-official-issues",
+      "kind": "official-project-issue-tracker",
+      "route": "https://github.com/microsoft/mattersim/issues",
+      "sourceUrl": "https://github.com/microsoft/mattersim",
+      "sourceRevision": "40a1eb8f1189a53af310957b4f2c5dfbfe68d647",
+      "sourceContentDigest": null,
+      "routingOnly": true,
+      "authorityVerified": false,
+      "contactAttempted": false,
+      "responseReceived": false
+    },
+    {
+      "id": "microsoft-copyright-permissions",
+      "kind": "official-corporate-permissions-route",
+      "route": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/permissions",
+      "sourceUrl": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/permissions",
+      "sourceRevision": null,
+      "sourceContentDigest": null,
+      "routingOnly": true,
+      "authorityVerified": false,
+      "contactAttempted": false,
+      "responseReceived": false
+    }
+  ],
+  "authorityEvidenceRequiredForAnyFutureMigration": {
+    "requiredAuthorityClasses": [
+      "dataset-rightsholder",
+      "documented-rightsholder-delegate",
+      "qualified-rights-reviewer-with-recorded-mandate"
+    ],
+    "mustIdentifyExactDatasetAndRightsHolder": true,
+    "mustDocumentDelegateOrReviewerMandate": true,
+    "mustBindExactScopeDigest": true,
+    "mustStateDecisionForPrivateExecution": true,
+    "mustStateIssuanceAndExpiry": true,
+    "mustProvideStableDocumentDigest": true,
+    "mustPassIndependentTrustAndSignatureVerification": true,
+    "mustBeIndependentFromImplementation": true,
+    "selfAuthoredAuthorityAccepted": false,
+    "unsignedOrSelfAssertedResponseAccepted": false,
+    "requestArtifactAcceptedAsAuthority": false,
+    "futureGrantRequiresSeparateVersionedMigration": true
+  },
+  "outboundAction": {
+    "performed": false,
+    "authorizedByUser": false,
+    "messageDispatched": false,
+    "issueCreated": false,
+    "externalRecordId": null
+  },
+  "authorizationState": {
+    "authorizationRecord": null,
+    "qualifiedAuthorityIdentified": false,
+    "datasetRightsholderIdentified": false,
+    "mandateChainVerified": false,
+    "trustVerified": false,
+    "authorizationUsable": false
+  },
+  "effects": {
+    "privateModelExecutionAuthorized": false,
+    "workflowRegistrationAuthorized": false,
+    "workflowDispatchAuthorized": false,
+    "aggregateArtifactPublicationAuthorized": false,
+    "runtimeOrCheckpointPublicationAuthorized": false,
+    "frontendIngestionAuthorized": false,
+    "scorePromotionEligible": false,
+    "scientificClaimEligible": false
+  },
+  "claims": {
+    "rightsCleared": false,
+    "fullInferenceRun": false,
+    "modelExecutionPerformed": false,
+    "reproduced": false,
+    "comparisonEligible": false,
+    "promotionEligible": false,
+    "sota": false,
+    "dataLeakageCertified": false,
+    "causalClaimAllowed": false,
+    "industrialFitness": false
+  }
+}

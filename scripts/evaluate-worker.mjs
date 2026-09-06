@@ -27,6 +27,7 @@ const projectSpecifiers = [
   './atomistic/full-candidate-execution-preflight-policy.mjs',
   './atomistic/full-candidate-observer-vnext.mjs',
   './atomistic/random-tp-rights-disposition-policy.mjs',
+  './atomistic/random-tp-authority-request-policy.mjs',
   './workflow-policy.mjs',
   './comparator-evidence-policy.mjs',
   './source-snapshot.mjs',
@@ -89,6 +90,12 @@ const [
     RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
     validateRandomTpRightsDispositionRepository,
   },
+  {
+    RANDOM_TP_AUTHORITY_REQUEST_MARKDOWN_PATH,
+    RANDOM_TP_AUTHORITY_REQUEST_PATH,
+    RANDOM_TP_AUTHORITY_REQUEST_SCHEMA_PATH,
+    validateRandomTpAuthorityRequestRepository,
+  },
   { inspectDockerfileSource, inspectDockerignoreSource, inspectWorkflowSource },
   { validateComparatorEvidenceRegistry },
   { captureProjectSourceSnapshot },
@@ -107,6 +114,7 @@ const [
   import('./atomistic/full-candidate-execution-preflight-policy.mjs'),
   import('./atomistic/full-candidate-observer-vnext.mjs'),
   import('./atomistic/random-tp-rights-disposition-policy.mjs'),
+  import('./atomistic/random-tp-authority-request-policy.mjs'),
   import('./workflow-policy.mjs'),
   import('./comparator-evidence-policy.mjs'),
   import('./source-snapshot.mjs'),
@@ -116,7 +124,7 @@ const control = await readSnapshotControl(root);
 const sourceFiles = control.sourceFiles;
 const sourceSnapshot = await captureProjectSourceSnapshot(root, sourceFiles);
 const sourceManifest = sourceSnapshot.sourceManifest();
-const artifactDigest = sourceSnapshot.artifactDigest();
+const artifactDigest = sourceSnapshot.artifactDigest(control.sourceModeManifest);
 if (JSON.stringify(sourceManifest) !== JSON.stringify(control.sourceManifest)
   || artifactDigest !== control.artifactDigest) {
   throw new Error('Materialized evaluator source does not match the launcher snapshot.');
@@ -678,22 +686,58 @@ try {
     },
   );
   hardGateFailures.push(...observerContractValidation.failures);
-  const rightsDispositionFileOverrides = Object.fromEntries([
+  const authorityRequestBoundPaths = [
+    RANDOM_TP_AUTHORITY_REQUEST_PATH,
+    RANDOM_TP_AUTHORITY_REQUEST_SCHEMA_PATH,
+    RANDOM_TP_AUTHORITY_REQUEST_MARKDOWN_PATH,
+    RANDOM_TP_RIGHTS_DISPOSITION_PATH,
     RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
-    ...Object.values(EXPECTED_LOCAL_EVIDENCE).map(({ path: relativePath }) => relativePath),
-  ].map((relativePath) => [
-    relativePath,
-    Buffer.from(readSnapshotText(relativePath), 'utf8'),
-  ]));
-  const rightsDispositionValidation =
-    await validateRandomTpRightsDispositionRepository(
+  ];
+  const authorityRequestSourceModeFailures = authorityRequestBoundPaths
+    .filter((relativePath) => control.sourceModeManifest[relativePath] !== 0o644)
+    .map((relativePath) => (
+      `authority-request.sourceMode.${relativePath}: exact mode 0644 required; received ${control.sourceModeManifest[relativePath].toString(8).padStart(4, '0')}`
+    ));
+  const authorityRequestSourceModesValid = authorityRequestSourceModeFailures.length === 0;
+  hardGateFailures.push(...authorityRequestSourceModeFailures);
+  let rightsDispositionValidation = { failures: [] };
+  let authorityRequestValidation = { failures: [] };
+  if (authorityRequestSourceModesValid) {
+    const rightsDispositionFileOverrides = Object.fromEntries([
+      RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
+      ...Object.values(EXPECTED_LOCAL_EVIDENCE).map(({ path: relativePath }) => relativePath),
+    ].map((relativePath) => [
+      relativePath,
+      Buffer.from(readSnapshotText(relativePath), 'utf8'),
+    ]));
+    rightsDispositionValidation = await validateRandomTpRightsDispositionRepository(
       Buffer.from(readSnapshotText(RANDOM_TP_RIGHTS_DISPOSITION_PATH), 'utf8'),
       {
         root,
         fileOverrides: rightsDispositionFileOverrides,
       },
     );
-  hardGateFailures.push(...rightsDispositionValidation.failures);
+    hardGateFailures.push(...rightsDispositionValidation.failures);
+    const authorityRequestFileOverrides = Object.fromEntries([
+      RANDOM_TP_AUTHORITY_REQUEST_SCHEMA_PATH,
+      RANDOM_TP_AUTHORITY_REQUEST_MARKDOWN_PATH,
+      RANDOM_TP_RIGHTS_DISPOSITION_PATH,
+      RANDOM_TP_RIGHTS_DISPOSITION_SCHEMA_PATH,
+    ].map((relativePath) => [
+      relativePath,
+      Buffer.from(readSnapshotText(relativePath), 'utf8'),
+    ]));
+    authorityRequestValidation = await validateRandomTpAuthorityRequestRepository(
+      Buffer.from(readSnapshotText(RANDOM_TP_AUTHORITY_REQUEST_PATH), 'utf8'),
+      {
+        root,
+        fileOverrides: authorityRequestFileOverrides,
+        fileOverrideModes: control.sourceModeManifest,
+        requestFileMode: control.sourceModeManifest[RANDOM_TP_AUTHORITY_REQUEST_PATH],
+      },
+    );
+    hardGateFailures.push(...authorityRequestValidation.failures);
+  }
   const randomTpCatalog = datasetCatalog.datasets.find((dataset) => dataset.id === 'mattersim-random-tp');
   const candidateBenchmark = atomisticCandidatePlan.bindings?.benchmark;
   const candidateContractValid = validateAtomisticCandidatePlan(atomisticCandidatePlan)
@@ -714,7 +758,9 @@ try {
     && atomisticCandidatePlan.claimBoundaries.currentSotaClaimAllowed === false
     && candidateExecutionPreflightValidation.failures.length === 0
     && observerContractValidation.failures.length === 0
+    && authorityRequestSourceModesValid
     && rightsDispositionValidation.failures.length === 0
+    && authorityRequestValidation.failures.length === 0
     && datasetCatalog.frozenAt === FULL_CANDIDATE_DATASET_CATALOG_FROZEN_AT
     && randomTpCatalog?.redistribute === false
     && randomTpCatalog?.license?.startsWith('NOASSERTION:')
@@ -795,12 +841,16 @@ try {
     let detail = validationErrors
       ? JSON.stringify(validationErrors)
       : 'semantic identity or dependency check failed';
-    if (candidateExecutionPreflightValidation.failures.length > 0) {
+    if (!authorityRequestSourceModesValid) {
+      detail = 'dependent Random-TP authority-request source mode validation failed';
+    } else if (candidateExecutionPreflightValidation.failures.length > 0) {
       detail = 'dependent candidate execution preflight validation failed';
     } else if (observerContractValidation.failures.length > 0) {
       detail = 'dependent observer contract validation failed';
     } else if (rightsDispositionValidation.failures.length > 0) {
       detail = 'dependent Random-TP rights disposition validation failed';
+    } else if (authorityRequestValidation.failures.length > 0) {
+      detail = 'dependent Random-TP authority request validation failed';
     }
     hardGateFailures.push(`Atomistic reproduction/candidate plan validation failed: ${detail}.`);
   }
@@ -952,7 +1002,7 @@ async function readSnapshotControl(snapshotRoot) {
   const bytes = await readFile(controlPath);
   if (bytes.length < 2 || bytes.length > 1024 * 1024) throw new Error('Evaluator snapshot control size is invalid.');
   const parsed = JSON.parse(bytes.toString('utf8'));
-  if (parsed?.schemaVersion !== 'tf.evaluator-snapshot/0.1'
+  if (parsed?.schemaVersion !== 'tf.evaluator-snapshot/0.2'
     || !Array.isArray(parsed.rawPaths)
     || !Array.isArray(parsed.sourceFiles)
     || parsed.rawPaths.length > 4096
@@ -960,6 +1010,9 @@ async function readSnapshotControl(snapshotRoot) {
     || !parsed.sourceManifest
     || typeof parsed.sourceManifest !== 'object'
     || Array.isArray(parsed.sourceManifest)
+    || !parsed.sourceModeManifest
+    || typeof parsed.sourceModeManifest !== 'object'
+    || Array.isArray(parsed.sourceModeManifest)
     || !/^sha256:[0-9a-f]{64}$/.test(parsed.artifactDigest ?? '')) {
     throw new Error('Evaluator snapshot control is malformed.');
   }
@@ -970,6 +1023,13 @@ async function readSnapshotControl(snapshotRoot) {
   if (Object.keys(parsed.sourceManifest).length !== selected.length
     || selected.some((relativePath) => !/^sha256:[0-9a-f]{64}$/.test(parsed.sourceManifest[relativePath] ?? ''))) {
     throw new Error('Evaluator snapshot control manifest is inconsistent.');
+  }
+  if (Object.keys(parsed.sourceModeManifest).length !== selected.length
+    || selected.some((relativePath) => !Object.hasOwn(parsed.sourceModeManifest, relativePath)
+      || !Number.isInteger(parsed.sourceModeManifest[relativePath])
+      || parsed.sourceModeManifest[relativePath] < 0
+      || parsed.sourceModeManifest[relativePath] > 0o7777)) {
+    throw new Error('Evaluator snapshot control mode manifest is inconsistent.');
   }
   return parsed;
 }
