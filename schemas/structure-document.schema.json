@@ -1,0 +1,372 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailing.future/schemas/structure-document/0.1",
+  "title": "Tailing Future native structure document 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "documentId", "title", "topology", "classification",
+    "coordinateFrame", "connectionImageShiftFrame", "boundary", "finiteSystem", "periodicCellFormalCharge",
+    "atoms", "connections", "provenance", "semanticDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.structure-document/0.1" },
+    "documentId": { "$ref": "#/$defs/stableId" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "topology": { "enum": ["finite", "periodic-3d"] },
+    "classification": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/classificationDeclaration" }
+      ]
+    },
+    "coordinateFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coordinateSystem", "dimension", "unit", "basis", "inputTransform"],
+      "properties": {
+        "coordinateSystem": { "const": "cartesian" },
+        "dimension": { "const": "length" },
+        "unit": { "const": "angstrom" },
+        "basis": { "const": "structure-local" },
+        "inputTransform": { "const": "none-preserve-input" }
+      }
+    },
+    "connectionImageShiftFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "unit", "basis", "applicability", "finitePolicy", "endpoint", "equation"],
+      "properties": {
+        "dimension": { "const": "dimensionless" },
+        "unit": { "const": "cell-lattice-coefficient" },
+        "basis": { "const": "integer-coefficients-of-declared-cell-columns" },
+        "applicability": { "const": "periodic-3d-only" },
+        "finitePolicy": { "const": "zero-required-not-applied" },
+        "endpoint": { "const": "B" },
+        "equation": { "const": "r_image=r_B+H*n" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["periodicAxes", "cell"],
+      "properties": {
+        "periodicAxes": { "$ref": "#/$defs/pbc" },
+        "cell": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/cell" }
+          ]
+        }
+      }
+    },
+    "finiteSystem": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/finiteSystem" }
+      ]
+    },
+    "periodicCellFormalCharge": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/periodicCellFormalCharge" }
+      ]
+    },
+    "atoms": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": { "$ref": "#/$defs/atom" }
+    },
+    "connections": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 8192,
+      "items": { "$ref": "#/$defs/connection" }
+    },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "semanticDigest": { "$ref": "#/$defs/sha256Digest" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "topology": { "const": "finite" } }, "required": ["topology"] },
+      "then": {
+        "properties": {
+          "boundary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["periodicAxes", "cell"],
+            "properties": {
+              "periodicAxes": { "const": [false, false, false] },
+              "cell": { "type": "null" }
+            }
+          },
+          "finiteSystem": { "$ref": "#/$defs/finiteSystem" },
+          "periodicCellFormalCharge": { "type": "null" }
+        }
+      },
+      "else": {
+        "properties": {
+          "boundary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["periodicAxes", "cell"],
+            "properties": {
+              "periodicAxes": { "const": [true, true, true] },
+              "cell": { "$ref": "#/$defs/cell" }
+            }
+          },
+          "finiteSystem": { "type": "null" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,63}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "lengthAngstrom": {
+      "type": "number",
+      "minimum": -10000,
+      "maximum": 10000
+    },
+    "vector3Length": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "$ref": "#/$defs/lengthAngstrom" },
+        { "$ref": "#/$defs/lengthAngstrom" },
+        { "$ref": "#/$defs/lengthAngstrom" }
+      ]
+    },
+    "pbc": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [{ "type": "boolean" }, { "type": "boolean" }, { "type": "boolean" }]
+    },
+    "imageShift": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "type": "integer", "minimum": -16, "maximum": 16 },
+        { "type": "integer", "minimum": -16, "maximum": 16 },
+        { "type": "integer", "minimum": -16, "maximum": 16 }
+      ]
+    },
+    "classificationDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "status", "projectVerified"],
+      "properties": {
+        "value": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["convention", "dimension", "unit", "basis", "vectors"],
+      "properties": {
+        "convention": { "const": "H=[a b c]-column-vectors" },
+        "dimension": { "const": "length" },
+        "unit": { "const": "angstrom" },
+        "basis": { "const": "structure-local-cartesian" },
+        "vectors": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "$ref": "#/$defs/vector3Length" },
+            { "$ref": "#/$defs/vector3Length" },
+            { "$ref": "#/$defs/vector3Length" }
+          ]
+        }
+      }
+    },
+    "isotope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["massNumber", "dimension", "basis", "status", "projectVerified"],
+      "properties": {
+        "massNumber": { "type": "integer", "minimum": 1, "maximum": 400 },
+        "dimension": { "const": "dimensionless" },
+        "basis": { "const": "nucleon-count" },
+        "status": { "const": "user-declared-existence-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "atomicFormalCharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "dimension", "basis", "status", "projectVerified"],
+      "properties": {
+        "value": { "$ref": "#/$defs/safeInteger" },
+        "unit": { "const": "elementary-charge" },
+        "dimension": { "const": "electric-charge" },
+        "basis": { "const": "formal-bookkeeping" },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "$ref": "#/$defs/lengthAngstrom" },
+        "y": { "$ref": "#/$defs/lengthAngstrom" },
+        "z": { "$ref": "#/$defs/lengthAngstrom" }
+      }
+    },
+    "elementPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atomicNumber", "symbol"],
+      "properties": {
+        "atomicNumber": { "type": "integer", "minimum": 1, "maximum": 118 },
+        "symbol": { "type": "string", "pattern": "^[A-Z][a-z]?$" }
+      }
+    },
+    "atom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "element", "position", "isotope", "formalCharge"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "element": { "$ref": "#/$defs/elementPair" },
+        "position": { "$ref": "#/$defs/position" },
+        "isotope": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/isotope" }] },
+        "formalCharge": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/atomicFormalCharge" }] }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "atomAId", "atomBId", "order", "provenance", "role",
+        "energeticInteraction", "imageShiftForB"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "atomAId": { "$ref": "#/$defs/stableId" },
+        "atomBId": { "$ref": "#/$defs/stableId" },
+        "order": { "enum": ["unknown", "single", "double", "triple", "aromatic"] },
+        "provenance": { "enum": ["user-declared", "explicit-import"] },
+        "role": { "const": "display-only" },
+        "energeticInteraction": { "const": false },
+        "imageShiftForB": { "$ref": "#/$defs/imageShift" }
+      }
+    },
+    "finiteNetCharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "dimension", "basis", "signConvention", "status", "projectVerified"],
+      "properties": {
+        "value": { "$ref": "#/$defs/safeInteger" },
+        "unit": { "const": "elementary-charge" },
+        "dimension": { "const": "electric-charge" },
+        "basis": { "const": "finite-system-electron-deficit" },
+        "signConvention": { "const": "Q=+1-means-one-electron-fewer-than-nuclear-charge" },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "spinMultiplicity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "dimension", "basis", "status", "projectVerified"],
+      "properties": {
+        "value": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "dimension": { "const": "dimensionless" },
+        "basis": { "const": "finite-system-2S-plus-1" },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "finiteSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["netCharge", "spinMultiplicity"],
+      "properties": {
+        "netCharge": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/finiteNetCharge" }] },
+        "spinMultiplicity": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/spinMultiplicity" }] }
+      }
+    },
+    "periodicCellFormalCharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "dimension", "basis", "limitations", "status", "projectVerified"],
+      "properties": {
+        "value": { "$ref": "#/$defs/safeInteger" },
+        "unit": { "const": "elementary-charge" },
+        "dimension": { "const": "electric-charge" },
+        "basis": { "const": "formal-bookkeeping-per-declared-cell" },
+        "limitations": {
+          "const": "not-physical-partial-charge-background-electrostatic-solvability-electron-count-or-spin"
+        },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "sourceDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "revision", "status", "projectVerified"],
+      "properties": {
+        "identity": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "revision": { "anyOf": [{ "type": "null" }, { "type": "string", "minLength": 1, "maxLength": 256 }] },
+        "status": { "const": "user-declared-unverified" },
+        "projectVerified": { "const": false }
+      }
+    },
+    "licenseDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spdxExpression", "attribution", "redistribution", "status", "projectVerified"],
+      "properties": {
+        "spdxExpression": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "attribution": { "anyOf": [{ "type": "null" }, { "type": "string", "minLength": 1, "maxLength": 2048 }] },
+        "redistribution": { "enum": ["unknown", "user-declared-allowed", "user-declared-prohibited"] },
+        "status": { "enum": ["not-provided", "user-declared-unverified"] },
+        "projectVerified": { "const": false }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "not-provided" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "spdxExpression": { "const": "NOASSERTION" },
+              "attribution": { "type": "null" },
+              "redistribution": { "const": "unknown" }
+            }
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "license"],
+      "properties": {
+        "source": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/sourceDeclaration" }] },
+        "license": { "$ref": "#/$defs/licenseDeclaration" }
+      }
+    }
+  }
+}
