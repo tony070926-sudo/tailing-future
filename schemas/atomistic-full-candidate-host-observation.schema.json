@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tailing.future/schemas/atomistic-full-candidate-host-observation/0.1",
+  "$id": "https://tailing.future/schemas/atomistic-full-candidate-host-observation/0.2",
   "title": "Tailing Future atomistic full-candidate fixture host observation",
   "description": "A fixture-only, non-scientific and non-promotional receipt. It records contract arithmetic while explicitly abstaining from any host, container or model execution claim.",
   "type": "object",
@@ -10,6 +10,7 @@
     "hypothesisId",
     "fixtureEpoch",
     "contract",
+    "determinismRootsContract",
     "execution",
     "scientificDecision",
     "abstentionReasons",
@@ -24,10 +25,10 @@
     "publication"
   ],
   "properties": {
-    "schemaVersion": { "const": "tf.atomistic-full-candidate-host-observation/0.1" },
+    "schemaVersion": { "const": "tf.atomistic-full-candidate-host-observation/0.2" },
     "evidenceClass": { "const": "synthetic-contract-fixture-not-model-output" },
-    "hypothesisId": { "const": "H-vNext-Observer/0.1" },
-    "fixtureEpoch": { "const": "2026-09-04T00:00:00Z" },
+    "hypothesisId": { "const": "H-vNext-Scientific-Provenance-Roots/0.1" },
+    "fixtureEpoch": { "const": "2026-09-07T00:00:00Z" },
     "contract": {
       "type": "object",
       "required": ["path", "schemaVersion", "rawDigest"],
@@ -35,6 +36,16 @@
         "path": { "const": "evaluation/atomistic/full-candidate-observer-contract-vnext.json" },
         "schemaVersion": { "const": "tf.atomistic-full-candidate-observer-contract/0.1" },
         "rawDigest": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "determinismRootsContract": {
+      "type": "object",
+      "required": ["path", "schemaVersion", "rawDigest"],
+      "properties": {
+        "path": { "const": "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json" },
+        "schemaVersion": { "const": "tf.atomistic-full-candidate-determinism-roots/0.1" },
+        "rawDigest": { "const": "sha256:fa5a83d70e499bc2419b63300d24e46a802406b78d2fa4406e93a7e0a0f01735" }
       },
       "additionalProperties": false
     },
@@ -88,7 +99,7 @@
     },
     "contractChecks": {
       "type": "object",
-      "required": ["evidenceClass", "accountingCasesChecked", "stressSymmetryBoundary", "forceFiniteDifferenceOracle", "stressFiniteDifferenceOracle", "syntheticCampaignAccepted"],
+      "required": ["evidenceClass", "accountingCasesChecked", "stressSymmetryBoundary", "forceFiniteDifferenceOracle", "stressFiniteDifferenceOracle", "determinismRootSeparation", "syntheticCampaignAccepted"],
       "properties": {
         "evidenceClass": { "const": "synthetic-contract-arithmetic-checks-not-scientific-validation" },
         "accountingCasesChecked": {
@@ -109,6 +120,7 @@
         "stressSymmetryBoundary": { "$ref": "#/$defs/stressBoundary" },
         "forceFiniteDifferenceOracle": { "$ref": "#/$defs/numericOracleForce" },
         "stressFiniteDifferenceOracle": { "$ref": "#/$defs/numericOracleStress" },
+        "determinismRootSeparation": { "$ref": "#/$defs/determinismRootSeparation" },
         "syntheticCampaignAccepted": { "const": true }
       },
       "additionalProperties": false
@@ -263,6 +275,67 @@
         "analytic": { "const": 0.9 },
         "richardson": { "type": "number" },
         "accepted": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "determinismRootSeparation": {
+      "type": "object",
+      "required": ["evidenceClass", "executionObserved", "models"],
+      "properties": {
+        "evidenceClass": { "const": "synthetic-projection-fixture-not-observed-execution" },
+        "executionObserved": { "const": false },
+        "models": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [
+                { "$ref": "#/$defs/determinismRootModel" },
+                { "type": "object", "properties": { "model": { "const": "mattersim" } } }
+              ]
+            },
+            {
+              "allOf": [
+                { "$ref": "#/$defs/determinismRootModel" },
+                { "type": "object", "properties": { "model": { "const": "mace" } } }
+              ]
+            }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "determinismRootModel": {
+      "type": "object",
+      "required": ["model", "scientific", "provenance"],
+      "properties": {
+        "model": { "enum": ["mattersim", "mace"] },
+        "scientific": {
+          "type": "object",
+          "required": ["schemaVersion", "authoritativeRoot", "repeatRoot", "canonicalBytesEqual", "rootsEqual"],
+          "properties": {
+            "schemaVersion": { "const": "tf.atomistic-full-candidate-scientific-projection/0.1" },
+            "authoritativeRoot": { "$ref": "#/$defs/digest" },
+            "repeatRoot": { "$ref": "#/$defs/digest" },
+            "canonicalBytesEqual": { "const": true },
+            "rootsEqual": { "const": true }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "required": ["schemaVersion", "authoritativeRoot", "repeatRoot", "canonicalBytesEqual", "rootsEqual"],
+          "properties": {
+            "schemaVersion": { "const": "tf.atomistic-full-candidate-provenance-projection/0.1" },
+            "authoritativeRoot": { "$ref": "#/$defs/digest" },
+            "repeatRoot": { "$ref": "#/$defs/digest" },
+            "canonicalBytesEqual": { "const": false },
+            "rootsEqual": { "const": false }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     },

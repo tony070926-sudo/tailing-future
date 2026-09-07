@@ -83,6 +83,55 @@ aggregate-receipt rights disposition, and OCI manifest/config trust roots.
 MACE's `python-hostlist` GPL-2.0-or-later closure remains private-evaluation
 only until binary-distribution obligations are closed.
 
+The fixture-only
+`tf.atomistic-full-candidate-determinism-roots/0.1` companion contract extends
+the unchanged, rights-bound vNext observer v0.1 without reinterpreting it. Its
+closed scientific projection commits the prediction schema/status, ordered
+Random-TP ID, input-structure digest, 16-atom count and atomic-number sequence,
+model/checkpoint/package/runner identities, total energy, all 16×3 Cartesian
+forces and the full 3×3 ASE-sign stress tensor. Energy is total frame energy in
+eV; force components are eV/Å; stress components are eV/Å³; atom count is
+atom/prediction-record; atomic number is dimensionless Z. Those quantities
+retain the single static 16-atom, three-dimensionally periodic frame boundary
+and do not establish dynamics, uncertainty, causality, real-material validity
+or industrial fitness.
+
+Execution provenance is not discarded. Every prediction must still carry one
+finite-format `environmentSha256`, all 693 values must agree, and that digest
+must equal SHA-256 over the exact canonical closed `environmentBinding`
+preimage emitted by the frozen v2 runner. That rich preimage binds the plan and
+runner digests; Python/platform/numeric runtime; model adapter, installed-
+distribution digest and dependency lock; run-scoped image-config identity;
+workflow/runtime revisions; non-promotional claims; structure bundle and
+manifest; and complete start/end network proofs. The separate closed host
+observation must agree with the runner-bound image-config digest and both
+runner network-namespace observations. The fresh-container ID is separately
+validated host lifecycle evidence because the v2 runner does not self-report a
+container ID; it is never presented as a runner/host agreement field. A
+separate versioned provenance projection then commits the scientific root
+together with the validated environment digest, image-config digest,
+host-observed container ID and agreed namespace. The scientific projection
+explicitly excludes only the enumerated provenance paths. Consequently an
+otherwise identical fresh-container run has identical scientific canonical
+bytes and root, while a coherently rebound environment, container, image or
+namespace changes the provenance bytes and root; changing only one side of a
+shared binding fails closed.
+
+Both projections use recursively key-sorted JSON, strict array order, UTF-8 and
+one terminal LF, followed by SHA-256. Every negative zero is normalized to
+positive zero before encoding. Input is bounded to 8 MiB, requires exactly 693
+strictly parsed records in the frozen order, and rejects duplicate JSON
+members, missing/extra/duplicate records, schema drift, unexpected fields,
+wrong shapes, non-finite values and unfrozen model identities. The scientific
+projection is bounded to 8 MiB, raw execution provenance to 16 KiB and the
+provenance projection to 4 KiB. Both raw inputs require strict UTF-8 and reject
+duplicate decoded JSON members before semantic validation. The
+synthetic `tf.atomistic-full-candidate-host-observation/0.2` fixture reports
+both root pairs only as
+`synthetic-projection-fixture-not-observed-execution`; it remains `not-run`,
+abstains scientifically and leaves every dispatch, publication, comparison
+and promotion claim false.
+
 ## Fail-closed runner contract
 
 1. Download into an untrusted staging area and verify each pinned wheel, checkpoint and dataset byte length and SHA-256 before installation or deserialization.

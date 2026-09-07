@@ -78,6 +78,8 @@ const [
     validateFullCandidateExecutionPreflightRepository,
   },
   {
+    DETERMINISM_ROOTS_CONTRACT_PATH,
+    DETERMINISM_ROOTS_CONTRACT_SCHEMA_PATH,
     OBSERVER_CONTRACT_PATH,
     OBSERVER_CONTRACT_SCHEMA_PATH,
     OBSERVER_RECEIPT_SCHEMA_PATH,
@@ -676,6 +678,14 @@ try {
       ),
       receiptSchemaBytes: Buffer.from(
         readSnapshotText(OBSERVER_RECEIPT_SCHEMA_PATH),
+        'utf8',
+      ),
+      determinismContractBytes: Buffer.from(
+        readSnapshotText(DETERMINISM_ROOTS_CONTRACT_PATH),
+        'utf8',
+      ),
+      determinismSchemaBytes: Buffer.from(
+        readSnapshotText(DETERMINISM_ROOTS_CONTRACT_SCHEMA_PATH),
         'utf8',
       ),
       workflowBytes: Buffer.from(
