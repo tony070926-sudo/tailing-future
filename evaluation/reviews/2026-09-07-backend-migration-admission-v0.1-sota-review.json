@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "tf.backend-migration-sota-review/0.1",
+  "date": "2026-09-07",
+  "reviewer": "/root/admission_sota_review",
+  "readOnly": true,
+  "initialReview": {
+    "candidateSha256": "14e272dd48b134fda469776d9dc6fc3957b8fd05f7c73c814491c53b349c562e",
+    "canonicalBytes": 697,
+    "decision": "PASS_FOR_BOUNDED_PROVENANCE_CLAIM_INTEGRITY",
+    "counts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 3
+    },
+    "ledgerEntriesVerified": 939,
+    "mainFilesCompared": 449,
+    "mainIdentityDrift": 0,
+    "newScientificCapabilitiesAdmitted": 0,
+    "r12ExcludedRightsUnresolved": 9,
+    "pendingLegacyOnly": 481,
+    "historicalR18aApprovalTransferred": false,
+    "actualGate": {
+      "status": "pass-preparation-only",
+      "currentPathCount": 456,
+      "releaseEligible": false
+    },
+    "runtime": "Node 24.16.0"
+  },
+  "boundary": "Dated task-appropriate method comparison, not a comprehensive physics-model SOTA ranking. This provenance-only candidate adds no physics, materials, trajectory, causal or industrial validation.",
+  "evidencePolicy": {
+    "externalEvidenceClass": "reference",
+    "externalResultsReproduced": false,
+    "numericalRankingEligible": false,
+    "evidenceScoreIncrease": false
+  },
+  "findings": [
+    {
+      "id": "SOTA-P2-FULL-PFHUB7A",
+      "severity": "P2",
+      "disposition": "Accepted residual outside this candidate",
+      "nextTask": "Preregister full PFHub7(a) to t=8 with space/time/algebraic error control, samples and fits. Keep official-literal boundary discrepancy distinct from strict MMS."
+    },
+    {
+      "id": "SOTA-P2-SAME-CHEMISTRY-VALIDATION",
+      "severity": "P2",
+      "disposition": "Accepted residual outside this candidate",
+      "nextTask": "Freeze one legally usable complete same-chemistry network, same-source thermochemistry and a single validation domain, then independently validate one bounded trajectory. Pure oxide bookkeeping is not a real vanadium active-phase model."
+    },
+    {
+      "id": "SOTA-P2-CROSS-SCALE-AND-IDENTIFIED-EFFECT",
+      "severity": "P2",
+      "disposition": "Accepted residual outside this candidate",
+      "nextTask": "Calibrate one explicit cross-scale map with units, basis, boundary, averaging, conservation, information loss and parameter evidence. Keep quantitative interventions unavailable until identification and execution boundaries are independently verified."
+    }
+  ],
+  "sources": [
+    {
+      "id": "PFHUB7",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "byteSize": 90735,
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+    },
+    {
+      "id": "CANTERA32",
+      "url": "https://raw.githubusercontent.com/Cantera/cantera/4a8358eb80cfeb50474386b5f9ec0b3a83519889/doc/sphinx/reference/kinetics/reaction-rates.md",
+      "revision": "4a8358eb80cfeb50474386b5f9ec0b3a83519889",
+      "byteSize": 10163,
+      "sha256": "3f4c0d93d7c7c2089781a67fe4e9bbab7c5c78c2233596f5edccafb761428c92"
+    },
+    {
+      "id": "MOOSE_EQUATIONS",
+      "url": "https://raw.githubusercontent.com/idaholab/moose/ef08c963330b623c0fbd693b318322c783382540/modules/phase_field/doc/content/modules/phase_field/Phase_Field_Equations.md",
+      "revision": "ef08c963330b623c0fbd693b318322c783382540",
+      "revisionType": "pinned development snapshot, not release",
+      "byteSize": 13040,
+      "sha256": "92ea2a37b4f4ac9de75796efe72e265fef90479b8d9e9a3a170c766dd2bddc01"
+    },
+    {
+      "id": "MOOSE_UNITS",
+      "url": "https://raw.githubusercontent.com/idaholab/moose/ef08c963330b623c0fbd693b318322c783382540/modules/phase_field/doc/content/modules/phase_field/Phase_Field_Model_Units.md",
+      "revision": "ef08c963330b623c0fbd693b318322c783382540",
+      "byteSize": 4586,
+      "sha256": "37a9a78cfd2b8081a2bfae2710b97cf446ce9fe083f01f1020a4f0e09fb64537"
+    },
+    {
+      "id": "PEARL2009",
+      "url": "https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf",
+      "revision": "UCLA R-350 September 2009; DOI 10.1214/09-SS057",
+      "identityNote": "Observed 2026-09-07 snapshot at mutable URL",
+      "byteSize": 593923,
+      "sha256": "1a5ecb7cb7c55a9b4f2c09aac091bc01a3eabfc94fc55ee692efbc013a8b7581"
+    },
+    {
+      "id": "VANADIUM1989",
+      "url": "https://pubs.rsc.org/en/content/articlelanding/1989/dc/dc9898700133",
+      "revision": "DOI 10.1039/DC9898700133",
+      "identityNote": "Publisher abstract only; no locked full text or transcribed parameters",
+      "byteSize": null,
+      "sha256": null
+    }
+  ],
+  "postFixVerification": {
+    "reviewer": "/root/admission_sota_review",
+    "date": "2026-09-07",
+    "candidateSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+    "canonicalBytes": 697,
+    "decision": "PASS_FOR_BOUNDED_PROVENANCE_CLAIM_INTEGRITY",
+    "identityIndependentlyRecomputed": true,
+    "ledgerAndSchemaUnchanged": true,
+    "scientificClaimsUnchanged": true,
+    "scientificCapabilitiesAdmitted": 0,
+    "r12RightsStatus": "unresolved",
+    "r12Licensed": false,
+    "r12PayloadPresent": false,
+    "historicalApprovalTransferred": false,
+    "releaseEligible": false,
+    "deploymentEligible": false,
+    "originalReviewStillApplicable": true,
+    "softwareClosureAuthority": "/root/admission_software_review",
+    "externalSourcesRequeried": false,
+    "newFindings": [],
+    "retainedP2Findings": [
+      "SOTA-P2-FULL-PFHUB7A",
+      "SOTA-P2-SAME-CHEMISTRY-VALIDATION",
+      "SOTA-P2-CROSS-SCALE-AND-IDENTIFIED-EFFECT"
+    ]
+  },
+  "releaseEligible": false,
+  "scientificPromotionAuthorized": false
+}

@@ -1,0 +1,3194 @@
+{
+  "schemaVersion": "tf.backend-migration-admission/0.3",
+  "state": "frozen-for-independent-review",
+  "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+  "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+  "previousCandidate": {
+    "recordCount": 25,
+    "canonicalByteSize": 4209,
+    "sha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+    "fullGateInputPathCount": 489,
+    "fullGateInputSha256": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+    "approvalTransferred": false
+  },
+  "previousFinalReview": {
+    "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+    "mode": 420,
+    "size": 101840,
+    "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+  },
+  "baseRecords": [
+    {
+      "path": ".dockerignore",
+      "mode": 420,
+      "size": 338,
+      "sha256": "9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3"
+    },
+    {
+      "path": ".github/CODEOWNERS",
+      "mode": 420,
+      "size": 4355,
+      "sha256": "6c6d291738c5a6a5f4a0c7f6d03d7a930b5ed02963de2aa7a6c548887d15963c"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/gap.yml",
+      "mode": 420,
+      "size": 909,
+      "sha256": "1bb098efada033d9dc069a8083115488861cc8d4ac24f130d3f7e31b3835c8b1"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "mode": 420,
+      "size": 570,
+      "sha256": "ccc7bac029108b664d18031021c9c367bdd9251c71a54c893d534c32b50906a2"
+    },
+    {
+      "path": ".github/workflows/atomistic-bootstrap-verify.yml",
+      "mode": 420,
+      "size": 11808,
+      "sha256": "39a2ebedeaf136b127cb66c20e89f121e211085985b14d3c40fd7dc9eb5626eb"
+    },
+    {
+      "path": ".github/workflows/atomistic-bootstrap.yml",
+      "mode": 420,
+      "size": 98535,
+      "sha256": "e2e05d7e52c9f3ebb67bf067e388382c87d0dc68a7cf54acb4791615bbe8a001"
+    },
+    {
+      "path": ".github/workflows/atomistic-full-candidate.yml",
+      "mode": 420,
+      "size": 520,
+      "sha256": "e578459f2c46e77d10f3fd944984daa01f845219921454c3095b9852e4074cc0"
+    },
+    {
+      "path": ".github/workflows/comparator-refresh.yml",
+      "mode": 420,
+      "size": 1405,
+      "sha256": "abf1f3672af5515241eaa76818fef9be182efb062c9d7c7ea7f8772cbf4dd986"
+    },
+    {
+      "path": ".github/workflows/evaluate.yml",
+      "mode": 420,
+      "size": 4282,
+      "sha256": "57773b8ff757a5c3401bdaa8878bb43a6386921a7af351f0e5c1a5173e65a5d1"
+    },
+    {
+      "path": ".github/workflows/openmm-tip3p-protected.yml",
+      "mode": 420,
+      "size": 68552,
+      "sha256": "1e709fd989d30908df269ed236af00b7d94f3b77e8945cccdb3f45622bf87810"
+    },
+    {
+      "path": ".github/workflows/sentinel-report.yml",
+      "mode": 420,
+      "size": 27294,
+      "sha256": "9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d"
+    },
+    {
+      "path": ".gitignore",
+      "mode": 420,
+      "size": 478,
+      "sha256": "db60593548fb82833134148fefb780591e1e6dd8882b31cc0076d37572b0ca28"
+    },
+    {
+      "path": ".openai/hosting.json",
+      "mode": 420,
+      "size": 31,
+      "sha256": "d532abb65cf9ae20634b464d954cb4a08a0de9f3cd3cdf7f9c3ec8948826d947"
+    },
+    {
+      "path": "README.md",
+      "mode": 420,
+      "size": 23197,
+      "sha256": "ab99c4b19d139231bcec73499353661aa956bdcc0077f392fa373fa43d108621"
+    },
+    {
+      "path": "app/components/aqueous-dynamics-lab.tsx",
+      "mode": 420,
+      "size": 24832,
+      "sha256": "a8bd960ab56d4788a75ae4a218ff6038b561455bdfdf4addc34b1d55306c63f9"
+    },
+    {
+      "path": "app/components/aqueous-dynamics-webgl.tsx",
+      "mode": 420,
+      "size": 30828,
+      "sha256": "9368a465d7f1754e099f3dbda6ad0628ad3bd471af7b5504230dcbe83ebe42c3"
+    },
+    {
+      "path": "app/components/custom-structure-webgl.tsx",
+      "mode": 420,
+      "size": 19214,
+      "sha256": "88db9dd77af3c756e79c1e72f817984ea14fb4e0d70ca52bb945f3a4aacdaaaa"
+    },
+    {
+      "path": "app/components/custom-structure-workbench.tsx",
+      "mode": 420,
+      "size": 31775,
+      "sha256": "8789b04d18db21d929ce818034de2974c49245a6f5efc3c1711702441b6a3f7e"
+    },
+    {
+      "path": "app/components/molecular-canvas.tsx",
+      "mode": 420,
+      "size": 30430,
+      "sha256": "e4d1aa219e895a8fe3e050c529a0f95791406ae6fd3c0614665d14efcf74006f"
+    },
+    {
+      "path": "app/components/molecular-lab.tsx",
+      "mode": 420,
+      "size": 56179,
+      "sha256": "0aad0c089905e0425c5580335f9205d6cccbc523ba19b87ad1c998b057a27798"
+    },
+    {
+      "path": "app/components/molecular-visual-guides.test.ts",
+      "mode": 420,
+      "size": 5969,
+      "sha256": "0c45dd8fc690d4bbfa44d210c085d959a01718a60773220b7c6a925bab16186f"
+    },
+    {
+      "path": "app/components/molecular-visual-guides.ts",
+      "mode": 420,
+      "size": 9191,
+      "sha256": "939babc3fb0eeacd99c8d041c6551d68a6010a77c4482dd89e88067cc80091a1"
+    },
+    {
+      "path": "app/components/periodic-atomistic-canvas.tsx",
+      "mode": 420,
+      "size": 17038,
+      "sha256": "d70ffd424ba204b44856a6b0d4645a0c1a6831b415e5f7cd7c86bd2fc4df05c6"
+    },
+    {
+      "path": "app/components/periodic-atomistic-lab.tsx",
+      "mode": 420,
+      "size": 15145,
+      "sha256": "4e6825dfa8885f303686e0905f27abf2d9e69c1b80b2fc971a0eacd9ea26aede"
+    },
+    {
+      "path": "app/globals.css",
+      "mode": 420,
+      "size": 131152,
+      "sha256": "e8ba938bde0529b37b6870b2f75aa4cdaa9e0f4c3509fd9a2e51113b80883708"
+    },
+    {
+      "path": "app/icon.svg",
+      "mode": 420,
+      "size": 426,
+      "sha256": "5288615b4c7fbb4a10479cfccf92cc2172d1b11fbd7a9c7184c4c86bbdea394e"
+    },
+    {
+      "path": "app/layout.tsx",
+      "mode": 420,
+      "size": 1224,
+      "sha256": "b32ab07743fb667a33818f6107f335b436bce408cb3051f53a9873a53bebf932"
+    },
+    {
+      "path": "app/page.tsx",
+      "mode": 420,
+      "size": 67719,
+      "sha256": "a24618209e79d40f32b2d96b0cccf3c96938096cf72794557ffa3777c14ef176"
+    },
+    {
+      "path": "atomistic/containers/README.md",
+      "mode": 420,
+      "size": 5806,
+      "sha256": "fd21f13debde87f13e382c4111c241e629702db9681b20411ea3b5310cfdde24"
+    },
+    {
+      "path": "atomistic/containers/mace.Dockerfile",
+      "mode": 420,
+      "size": 3338,
+      "sha256": "d97f48e8d8d75c2b4d22acf46ec5aa7ba21cb2acd59db7a4745e2021f4438b5f"
+    },
+    {
+      "path": "atomistic/containers/mattersim.Dockerfile",
+      "mode": 420,
+      "size": 3533,
+      "sha256": "d672230adbc540391e8be4424aca24c50e473ca46a5a244d06838f55cc288455"
+    },
+    {
+      "path": "atomistic/containers/openmm-water.Dockerfile",
+      "mode": 420,
+      "size": 5507,
+      "sha256": "939e5358108493c6b0e03f2f177a3de88bbe0d8e013d1d615a52d27a6f185884"
+    },
+    {
+      "path": "atomistic/containers/openmm-water.Dockerfile.dockerignore",
+      "mode": 420,
+      "size": 534,
+      "sha256": "1a30b44539518f67e8c6ebd6ad4f5cacc01f094da57d139b7269dff07ea4aeb8"
+    },
+    {
+      "path": "atomistic/locks/README.md",
+      "mode": 420,
+      "size": 9522,
+      "sha256": "65abe1d5c48185090a1b1a96cfa813f3b8eb88a25cf10f59798798db5ae36a03"
+    },
+    {
+      "path": "atomistic/locks/mace.bootstrap.in",
+      "mode": 420,
+      "size": 460,
+      "sha256": "8cf1b3fbed74c0f9f6f0ff070f4189c0280f87a39762cf611cd69c7166adc2cb"
+    },
+    {
+      "path": "atomistic/locks/mace.requirements.lock",
+      "mode": 420,
+      "size": 4612,
+      "sha256": "ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+    },
+    {
+      "path": "atomistic/locks/mattersim.bootstrap.in",
+      "mode": 420,
+      "size": 887,
+      "sha256": "4ac7c003925368ca75c125b768720ff622b873513b765bf98fcc703a6c6654a6"
+    },
+    {
+      "path": "atomistic/locks/mattersim.requirements.lock",
+      "mode": 420,
+      "size": 16233,
+      "sha256": "9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b"
+    },
+    {
+      "path": "atomistic/locks/openmm-water.requirements.lock",
+      "mode": 420,
+      "size": 494,
+      "sha256": "0ac51574b68c86046254d37bb73a57e3104d6ffec1c3f98b07a8593dcb546c6b"
+    },
+    {
+      "path": "atomistic/locks/python-hostlist-build.requirements.lock",
+      "mode": 420,
+      "size": 362,
+      "sha256": "dffc06ecc2faab2b6e0fe729ac1c16dda524edff76297a06e20b839832e1e120"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "mode": 420,
+      "size": 32449,
+      "sha256": "61931114b38da4200d9ca8e75401b138956c589a36f90d55fe2a39efa475f2b4"
+    },
+    {
+      "path": "docs/ATOMISTIC_REPRODUCTION.md",
+      "mode": 420,
+      "size": 40982,
+      "sha256": "86f6e88c1807bd8daa8b63b9969789695090464f932f5b5caf233efdf7df7767"
+    },
+    {
+      "path": "docs/EVALUATION_LOOP.md",
+      "mode": 420,
+      "size": 12322,
+      "sha256": "1522b917022933106a4a78f6d6fb74a1731afe8787da5effdd3dd619ee5f74f5"
+    },
+    {
+      "path": "docs/MOLECULAR_DYNAMICS.md",
+      "mode": 420,
+      "size": 21957,
+      "sha256": "38b3a6048e6b6358a627393c2106ba99eb53459c919797e48b89c03f47e5f923"
+    },
+    {
+      "path": "docs/NACL_WATER_INTERFACE_V0410_CONTRACT.md",
+      "mode": 420,
+      "size": 15146,
+      "sha256": "f884d5a1f491e3bd5b61b1075b8b4b8e4433fe50f48db4963293ef7389f2b3e6"
+    },
+    {
+      "path": "docs/NACL_WATER_INTERFACE_V0411_IMPORT_CONTRACT.md",
+      "mode": 420,
+      "size": 8116,
+      "sha256": "c5b68a8ca7ca1950c397eaa19e21e7cf1790a0c96ebcd4290220c3886ffd2f06"
+    },
+    {
+      "path": "docs/NACL_WATER_V042_CONTRACT.md",
+      "mode": 420,
+      "size": 16030,
+      "sha256": "1c876526ea68c00ba23407a04b4fb2af7e4ab8da3c6b8375bc5325edf6f991d0"
+    },
+    {
+      "path": "docs/RESEARCH_BASELINE.md",
+      "mode": 420,
+      "size": 13986,
+      "sha256": "ca8f3339065737a34d6faa5f4600b5bb6077ecd86634eddffe61b8a022ec94e4"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "mode": 420,
+      "size": 4062,
+      "sha256": "a5a7a472e749ad0bf6086230891f5b7d5c720cb48177d8cdef0e0d8ebe0ee7d9"
+    },
+    {
+      "path": "docs/SAFETY.md",
+      "mode": 420,
+      "size": 1478,
+      "sha256": "36e6f5fb4a8a29c6675dba7dc96ddbd9a49af9474d6681a1758bfe6d85ab7929"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "mode": 420,
+      "size": 345,
+      "sha256": "5c697206f302dadc0c8b7b2f7a707257dab15129a2149872b0f84ea1ac17d263"
+    },
+    {
+      "path": "evaluation/agent-contracts/builder.md",
+      "mode": 420,
+      "size": 263,
+      "sha256": "09a208eaebfa78ed5a9e2b86869bc66acb526a548777e06871360166d695eb9b"
+    },
+    {
+      "path": "evaluation/agent-contracts/evaluator.md",
+      "mode": 420,
+      "size": 366,
+      "sha256": "aa88228362db081b2eda50233d60358434c810a2d91a137f433fe87e5f402990"
+    },
+    {
+      "path": "evaluation/agent-contracts/gap-planner.md",
+      "mode": 420,
+      "size": 361,
+      "sha256": "5eaa4572fc502ea0fb0e1bffd59dbfbc5d93636482850b11c127f3ffad1d6dc5"
+    },
+    {
+      "path": "evaluation/agent-contracts/sota-scout.md",
+      "mode": 420,
+      "size": 633,
+      "sha256": "8437c3736e2b2b7e1b0e0d1d89627cd62f15b2b47dac9f25597cbe2cebf38529"
+    },
+    {
+      "path": "evaluation/atomistic/bootstrap-quarantine.json",
+      "mode": 420,
+      "size": 4568,
+      "sha256": "65af8aae9d84281899116cca55dd883611a28eae453d0b190c737ec29bcd13a3"
+    },
+    {
+      "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/atomistic-bootstrap-replica-receipt.json",
+      "mode": 420,
+      "size": 27676,
+      "sha256": "d12b91beb970df2212a3cc69c58b044f9bd4059d13cf435cd23e608c55ad19c4"
+    },
+    {
+      "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/receipt-attestation.sigstore.jsonl",
+      "mode": 420,
+      "size": 11787,
+      "sha256": "2200a92fadbb596e5b16ee7b66b097f2aa3fa7f756ff15066d2d2b4a4b85b542"
+    },
+    {
+      "path": "evaluation/atomistic/evidence/r6e-verifier-33296529694/trusted-root.jsonl",
+      "mode": 420,
+      "size": 34634,
+      "sha256": "65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c"
+    },
+    {
+      "path": "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+      "mode": 420,
+      "size": 11395,
+      "sha256": "fa5a83d70e499bc2419b63300d24e46a802406b78d2fa4406e93a7e0a0f01735"
+    },
+    {
+      "path": "evaluation/atomistic/full-candidate-execution-preflight.json",
+      "mode": 420,
+      "size": 19986,
+      "sha256": "886cf305df9418386c3087bf066cd8e9b83b316c127eaa41965c606b82f602aa"
+    },
+    {
+      "path": "evaluation/atomistic/full-candidate-observer-contract-vnext.json",
+      "mode": 420,
+      "size": 36794,
+      "sha256": "9fd93ded20bd013a0c6d61dfec48368fc7957725ee4f95f4fafa242c7f7f0759"
+    },
+    {
+      "path": "evaluation/atomistic/full-candidate-observer-vnext.workflow.yml",
+      "mode": 420,
+      "size": 641,
+      "sha256": "70732b76447b339decf5a1a8296e59c9186377f64bd4cfb59e81f4cd405f265c"
+    },
+    {
+      "path": "evaluation/atomistic/full-candidate-plan.json",
+      "mode": 420,
+      "size": 9160,
+      "sha256": "22a32d92a2c094c86f1978f066b631c503a8775e6e846831dcca5dde4376fe4b"
+    },
+    {
+      "path": "evaluation/atomistic/random-tp-id-manifest.txt",
+      "mode": 420,
+      "size": 11781,
+      "sha256": "4df1ba7cda1b0a31cdb0b3e2281ed535327d7b92ce381cd930c781cc8b800f91"
+    },
+    {
+      "path": "evaluation/atomistic/random-tp-private-execution-authority-request-v0.1.json",
+      "mode": 420,
+      "size": 13017,
+      "sha256": "e3d8d7cca9b83c2ff10d85c0411e88f2b98628cf41113ead86e0b2fdcda91049"
+    },
+    {
+      "path": "evaluation/atomistic/random-tp-private-execution-authority-request-v0.1.md",
+      "mode": 420,
+      "size": 5143,
+      "sha256": "f4f534ee5af4953ab413231deab8419c56e7aa995656bd0596c20894ca3e1078"
+    },
+    {
+      "path": "evaluation/atomistic/random-tp-rights-disposition-v0.1.json",
+      "mode": 420,
+      "size": 24755,
+      "sha256": "32e0134c25553ab7a415ffab526b4bb82a81e487f1dae3424c25b841faf9962f"
+    },
+    {
+      "path": "evaluation/atomistic/reproduction-plan.json",
+      "mode": 420,
+      "size": 19023,
+      "sha256": "d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2"
+    },
+    {
+      "path": "evaluation/atomistic/runtime-inputs/mace.runtime-inputs.json",
+      "mode": 420,
+      "size": 55251,
+      "sha256": "6bb7f79c5380bb54b0d5ff972c3f22cc27623d131291d3a7c1b2c4efff826f47"
+    },
+    {
+      "path": "evaluation/atomistic/runtime-inputs/mattersim.runtime-inputs.json",
+      "mode": 420,
+      "size": 157190,
+      "sha256": "203acc5ec09c2e76a819ff384573c2c0aca1316f90c53f2e735c98e9daab5c53"
+    },
+    {
+      "path": "evaluation/atomistic/runtime-lock.json",
+      "mode": 420,
+      "size": 12558,
+      "sha256": "b8c352aacfef3f74210d2dbf2002400887e35d21670f5f93da6a8003670bafa1"
+    },
+    {
+      "path": "evaluation/baselines/registry.json",
+      "mode": 420,
+      "size": 10251,
+      "sha256": "883c59c2e9c826c80a12b854f10ab7fd479138e97cebc2b14a6079349865d0ed"
+    },
+    {
+      "path": "evaluation/current-scorecard.json",
+      "mode": 420,
+      "size": 19570,
+      "sha256": "ff0f47dd69ff3832468dc489119a59e5d42afff9c95ff6d16ba98fbc9dfb96a7"
+    },
+    {
+      "path": "evaluation/data/datasets.json",
+      "mode": 420,
+      "size": 3538,
+      "sha256": "ca6e7ca0187cf5584806f2684611b2b813b46bd7c434741d756df7947aef8fe7"
+    },
+    {
+      "path": "evaluation/latest-report.json",
+      "mode": 420,
+      "size": 125658,
+      "sha256": "8d50c338ca12083896595febbe7f0ec343ce8a36a6ab5d06d9c80d86042fa6ac"
+    },
+    {
+      "path": "evaluation/latest-report.md",
+      "mode": 420,
+      "size": 5045,
+      "sha256": "9f73bd6bd28448ee0be769496e07e2006f51d2bfe3b17a3bd32b09abfcfd0d55"
+    },
+    {
+      "path": "evaluation/public-product-evaluation.json",
+      "mode": 420,
+      "size": 4804,
+      "sha256": "58a121badc7c38d679e7950492bda577be08c9b06c698b441547052a4641b03d"
+    },
+    {
+      "path": "evaluation/public-summary.json",
+      "mode": 420,
+      "size": 344,
+      "sha256": "a0d99afdfb8e9e9f4924026e8103c70df96094011065bff208dfeb72cbaf59c8"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-28-r2-release-review.md",
+      "mode": 420,
+      "size": 3111,
+      "sha256": "48f0b5b32397ef850903c4c5a8ee88d69ae5fcf3de96f0cc37944480800de346"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r3-protocol-review.md",
+      "mode": 420,
+      "size": 17005,
+      "sha256": "46f96227a04a7e4ae117154c4e5515f6534f663c0ecbffb1b416747f70a91370"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r4-bootstrap-review.md",
+      "mode": 420,
+      "size": 7303,
+      "sha256": "67b47d0f3beeadfdbd67e454c30680aaced88d8103c63a2c0a38d6cb9db2cab1"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r5-dual-smoke-review.md",
+      "mode": 420,
+      "size": 9338,
+      "sha256": "d46773fcacc990bf536fff709b199ed8b245a29042c7b4ac19370f17084f449f"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r6a-runtime-discovery-failure-review.md",
+      "mode": 420,
+      "size": 5079,
+      "sha256": "4f40e9aa482ab2a5c2559a6cc6a0e0c05d2c1659ea3ffb58baec0cf7ae96fc29"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r6b-successful-execution-claim-conflict-review.md",
+      "mode": 420,
+      "size": 5844,
+      "sha256": "39be758ebe51b1f184f347c4749743565d895066699e1800aea08feb6548aca6"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-29-r6c-quarantine-enforcement-review.md",
+      "mode": 420,
+      "size": 2856,
+      "sha256": "95a1b8c5d55979f0decf02cd13d77dfecc297412df9d0b3607e3b2c4a674b563"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-30-r6e-bootstrap-verifier-review.md",
+      "mode": 420,
+      "size": 6938,
+      "sha256": "3da8c8db398b17a00f4ec00216dc9c70f71993d6dc223edd9fe8c89354b36cc2"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-30-r6f-runtime-freeze-review.md",
+      "mode": 420,
+      "size": 5406,
+      "sha256": "9407b0e4387ee4ec74316681b83ccb4c968adbbedf266d3a7275ff0c6383f2b8"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-30-r7a-full-candidate-contract-review.md",
+      "mode": 420,
+      "size": 6753,
+      "sha256": "cb15f4366ec56629f00e41b192dda7f9c23f3a3d479e9e13ce0e0059d82dd731"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-30-r7b1-evidence-boundary-review.md",
+      "mode": 420,
+      "size": 6198,
+      "sha256": "870e8922f2e435c27886dc82ebf82c7bd7a62731726be25c83c9e9517be62c79"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-31-aido-inspired-material-visual-review.md",
+      "mode": 420,
+      "size": 5746,
+      "sha256": "e2284ba87bc34ad785cb3a49f59acbd9700ad1f4fb518a5e7d3c8d8563185b9a"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-31-molecular-3d-interactions-review.md",
+      "mode": 420,
+      "size": 6112,
+      "sha256": "5dc1d0ce8d0d39eff29521cbe3b38fa957dfb7611fb1f8fe0674df509f82c040"
+    },
+    {
+      "path": "evaluation/reviews/2026-08-31-r8-atomistic-dynamics-foundation-review.md",
+      "mode": 420,
+      "size": 11631,
+      "sha256": "e3331c3931ecdf19a8a4fdeb2023e094151d12334ead106745ede97a7d4a9e84"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-01-v042-aqueous-foundation-review.md",
+      "mode": 420,
+      "size": 4022,
+      "sha256": "337e6f3e485e9cdf1035ffdc6286c9cc2f8377a2d065538b56dc1898519fe959"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v0410-nacl-water-interface-review.md",
+      "mode": 420,
+      "size": 6895,
+      "sha256": "2149daf11af1e9982c840a5d5a1b01634dce263d7554fb2c953ac33abbf5a08e"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v0411-semantic-import-release-review.md",
+      "mode": 420,
+      "size": 4252,
+      "sha256": "7b6476bee31d065804488281a6514084e9c68e84caa462a5ddde58f93715d929"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v046-owner-revocation-filesystem-fault-review.md",
+      "mode": 420,
+      "size": 5207,
+      "sha256": "33e7745fd3cdaf1950b220d43035d6352997058488e1870cf677c8b323410fab"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v046-presentation-instancing-review.md",
+      "mode": 420,
+      "size": 5392,
+      "sha256": "73088fca593a87cf2d2bb505514314684088132705319c32d2e72a063c66e6ca"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v046-private-artifact-frame-adapter-review.md",
+      "mode": 420,
+      "size": 3373,
+      "sha256": "6beb378d140823a0ddebefb96eb3f5fc05372d65d1bd06e7552d539f9006ac54"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v048-single-snapshot-position-trajectory-review.md",
+      "mode": 420,
+      "size": 7021,
+      "sha256": "67be78b7e50d62bc3305956d27fafb9b53c91201672186c8d824b4565336dd8b"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v049-chromium-acquisition-review.md",
+      "mode": 420,
+      "size": 4814,
+      "sha256": "712961393bc9cd02437fa16c6e926cf324baa375217bf5e4bd9a5dbd91b124ca"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v049-private-browser-trajectory-review.md",
+      "mode": 420,
+      "size": 9874,
+      "sha256": "0ebb26db03dcaa96141aac6e212df536eb7cae43486388c6411824af1899ac0f"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-02-v049-protected-main-source-contract-review.md",
+      "mode": 420,
+      "size": 5179,
+      "sha256": "b1ead60b01055068f7275773d2ef086860bbcd27be64176fb7aae3e3f00d1ee1"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-full-candidate-registration-lifecycle-review.md",
+      "mode": 420,
+      "size": 17361,
+      "sha256": "b29cb4a969aa8fe1032c080af6ff7d52cf209c458c609c2c905e686ab2972b26"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-full-candidate-registration-observer-review.md",
+      "mode": 420,
+      "size": 17176,
+      "sha256": "a20d65585f6aa883a2c17dc27832c566a36c4d28858252df5b3266410ca9a7d4"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-full-candidate-registration-source-integrity-review.md",
+      "mode": 420,
+      "size": 17170,
+      "sha256": "4642213df792a6f35a865ae854dea396b26e61f276905ee367515541c05df2d8"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-r7b2-github-readiness-private-handoff-review.md",
+      "mode": 420,
+      "size": 16639,
+      "sha256": "d473fc14529b469f29c1fa924dff5cec5c7906cf498489c82dbdac109d0d60a7"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-registration-compare-null-head-review.md",
+      "mode": 420,
+      "size": 10060,
+      "sha256": "f260d6fe48c975a1d36a48f8005c7af77129b8157d6ecfd59292164706e5c5e8"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-03-runtime-freeze-gh-toolchain-repair-review.md",
+      "mode": 420,
+      "size": 20566,
+      "sha256": "a8332652a65083ab71df33be9963f33f47f73fbf3e1e936a4e49b0ba32194ae0"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-04-full-candidate-execution-preflight-review.md",
+      "mode": 420,
+      "size": 20040,
+      "sha256": "6dd27327c25554049b8b6ef2c36f0b9a9b73702e85b0f5e3f561f8e18b93d993"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-04-full-candidate-observer-contract-review.md",
+      "mode": 420,
+      "size": 18952,
+      "sha256": "c9a60bc4095f25a1d8c2a737396aae1feeba41d175b7ceed13283868be742042"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-04-observer-snapshot-evaluator-review.md",
+      "mode": 420,
+      "size": 24248,
+      "sha256": "0ce7e7aa1dd36c65fd5201eabd67a99e4dec03163624e3cbee8b1b798463ef2d"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-04-random-tp-rights-disposition-review.md",
+      "mode": 420,
+      "size": 21610,
+      "sha256": "d75b5e25f0ea73f013de22047ba03d0eb13c0e9eee2cf94f0fbf01d9111c033e"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-06-custom-structure-workbench-review.md",
+      "mode": 420,
+      "size": 39495,
+      "sha256": "6b5fff69ffe2c6e14086b71ffd50456717884cc9aead35b6757853e946438e42"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-06-random-tp-authority-request-review.md",
+      "mode": 420,
+      "size": 17516,
+      "sha256": "f6d40941e876c686c94f8b37591854deaa1c4bfcd384795bcc8f42766ffcf98e"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+      "mode": 420,
+      "size": 19526,
+      "sha256": "df553e1cd16d3f77e2177b12d403da916240ef36931467211c83354b9133c6d4"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-lab-component.test.ts",
+      "mode": 420,
+      "size": 9772,
+      "sha256": "220406a2f98aad659121b78a8501168af8c00705e60e089ffdaf85897afd36be"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-render-frame.test.ts",
+      "mode": 420,
+      "size": 15099,
+      "sha256": "b7fe5a418833a983720e27dcf61ae3002853ef15d20db4498b7a6416cba3865b"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-render-frame.ts",
+      "mode": 420,
+      "size": 47089,
+      "sha256": "44eb1d0a1868bf4146c9da748d8be031d24842cfebdf2ba5ac8a9396e0464564"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-render-trajectory.test.ts",
+      "mode": 420,
+      "size": 15843,
+      "sha256": "c6801f1c963c01b167494dfb64b4661deb441b80f57f84299cb824f092f7ead1"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-webgl-scene.test.ts",
+      "mode": 420,
+      "size": 18396,
+      "sha256": "c61780b3eff9c597d52083308d999b40c1a014af8a46b5b8551486a20fc81655"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-webgl-scene.ts",
+      "mode": 420,
+      "size": 34998,
+      "sha256": "8c8866cfcd1442c05e433734479a870f316f17a58247da5a0e4488c4ed4b9310"
+    },
+    {
+      "path": "lib/molecular/aqueous-dynamics-webgl-trajectory-scene.test.ts",
+      "mode": 420,
+      "size": 7117,
+      "sha256": "1154d95d86929e6f05f671907badcd3faca327f809391fd25deac954c53807d0"
+    },
+    {
+      "path": "lib/molecular/aqueous-webgl-runtime-policy.test.ts",
+      "mode": 420,
+      "size": 4180,
+      "sha256": "6af818fb95d8a2543f2104e731349181b6af70c096d7871cc8f6c401b52931a7"
+    },
+    {
+      "path": "lib/molecular/aqueous-webgl-runtime-policy.ts",
+      "mode": 420,
+      "size": 3702,
+      "sha256": "e6aaf15ec30afa41c5b0430548ef5faa2a571a0720d658947e841ec0feb3c8ff"
+    },
+    {
+      "path": "lib/molecular/atomistic-instancing-core-v046.test.ts",
+      "mode": 420,
+      "size": 13339,
+      "sha256": "ce0fdc0fcbd2554015ceaf3f2c50eac645a8afecab54841b58c467f5d4039889"
+    },
+    {
+      "path": "lib/molecular/atomistic-instancing-core-v046.ts",
+      "mode": 420,
+      "size": 48505,
+      "sha256": "26c0741c19f31494f1eb31f91751389a4412677c6d187e8a02305de3fea33370"
+    },
+    {
+      "path": "lib/molecular/atomistic-instancing-v046.test-fixture.ts",
+      "mode": 420,
+      "size": 11443,
+      "sha256": "19d03157fa8a3eba90f3617bf784e7169dd2a0a71fb1c2320aed8a81981a05e3"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-browser-trajectory-instancing-runtime-v049.test.ts",
+      "mode": 420,
+      "size": 16509,
+      "sha256": "079473563e6b52c7d890e858225b5947fc847832a873614efd7650f9a392b7e9"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-browser-trajectory-instancing-runtime-v049.ts",
+      "mode": 420,
+      "size": 25587,
+      "sha256": "10f4fa1f6d928e06e86591c187f1dc16e2bb44554788e5b86fa6d9682e9ca123"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-instancing-core-v047.test.ts",
+      "mode": 420,
+      "size": 9653,
+      "sha256": "c1e94fb61e7a079a66605364b6ec0208d00a45261495c0e272cd01ccf1d3f746"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-instancing-runtime-v047.ts",
+      "mode": 420,
+      "size": 25954,
+      "sha256": "9bc18cca7713a7b097f75e37496b4f21f9cc2370002119f3e4cc15beeec6eb63"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-trajectory-instancing-runtime-v048.test.ts",
+      "mode": 420,
+      "size": 9053,
+      "sha256": "b87974eedf81e3f5c82e776129cd653eec84ac38420d869cadb7f8fe0b026814"
+    },
+    {
+      "path": "lib/molecular/atomistic-private-trajectory-instancing-runtime-v048.ts",
+      "mode": 420,
+      "size": 22583,
+      "sha256": "0cbae0ad83e1255b480b193182573dc467c0eeb17363b3dafde70f1182a2d8cb"
+    },
+    {
+      "path": "lib/molecular/atomistic-three-instanced-runtime-v046.test.ts",
+      "mode": 420,
+      "size": 14193,
+      "sha256": "423bcb6fef362dc4c18ed1dc8601c4919187b17369042427feeb3550877fc48b"
+    },
+    {
+      "path": "lib/molecular/atomistic-three-instanced-runtime-v046.ts",
+      "mode": 420,
+      "size": 13499,
+      "sha256": "3f4027a1b45aded6928211427fd36345ae04c5c2ce958d851a7b8cf31111f128"
+    },
+    {
+      "path": "lib/molecular/molecular-interactions.test.ts",
+      "mode": 420,
+      "size": 8314,
+      "sha256": "9c9ca9d65658b519b6a286850f1229d786bf61a128b1045ec74ea8b8679fa03d"
+    },
+    {
+      "path": "lib/molecular/molecular-interactions.ts",
+      "mode": 420,
+      "size": 23646,
+      "sha256": "31174d60fca0b1ff071f22207ca23e1e4722e222a17e128a0b5d37e2378ab7e0"
+    },
+    {
+      "path": "lib/molecular/periodic-atomistic-render-frame.test.ts",
+      "mode": 420,
+      "size": 2393,
+      "sha256": "5394c310bb472cdb157b5550ad4e7d7f88ac7ff0b7ff7e4984c9ca1925e1d5e0"
+    },
+    {
+      "path": "lib/molecular/periodic-atomistic-render-frame.ts",
+      "mode": 420,
+      "size": 5534,
+      "sha256": "a3b8a332cd15839f990282829145eca59f8ec26cd56a4ba3493537eb43c230a8"
+    },
+    {
+      "path": "lib/simulation/amber14-tip3p-parameters.test.ts",
+      "mode": 420,
+      "size": 3191,
+      "sha256": "00c71b6e07723ecdb9bd2be3e64e0e9a8b76913d6422aacc36bb070ab2b935a7"
+    },
+    {
+      "path": "lib/simulation/amber14-tip3p-parameters.ts",
+      "mode": 420,
+      "size": 3938,
+      "sha256": "9ed7e10633e984df7fa848641643b672a55ca36b881cf0eda7c5f6c4483dfa92"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-convergence.test.ts",
+      "mode": 420,
+      "size": 10186,
+      "sha256": "726c808718d40647da6c84af9b33e806380445890f16908c4a3cb591bd9f2a13"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-convergence.ts",
+      "mode": 420,
+      "size": 50060,
+      "sha256": "111650463fec9858151f61091e215f80bb049d1ab87d55d42784743137e97270"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-long-verification.test.ts",
+      "mode": 420,
+      "size": 41556,
+      "sha256": "139c31a3bb0ce932040281eaf0e61f8cbe882d78bc7a6ffbf6de6a608ab8545b"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-long-verification.ts",
+      "mode": 420,
+      "size": 93001,
+      "sha256": "d8e4f886d64100d21e51eec9b1c10c1154cd31456bf4704c30fcda37c7c3c876"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-schemas.test.ts",
+      "mode": 420,
+      "size": 18543,
+      "sha256": "ffc5a00cf8c6d9141c949d78a9146b05a344aa6a005757eb028d75d3a730f9ab"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-world.test.ts",
+      "mode": 420,
+      "size": 17469,
+      "sha256": "09dd6addca31af109383e0833dee6ffaef3f63818c7eac512e5fa949e79766cf"
+    },
+    {
+      "path": "lib/simulation/aqueous-dynamics-world.ts",
+      "mode": 420,
+      "size": 80062,
+      "sha256": "e07cdcbc60d5d49c1af7fad8bc96b7602c815732b3c6ed941dd1b95b3322e6f9"
+    },
+    {
+      "path": "lib/simulation/aqueous-force-field.test.ts",
+      "mode": 420,
+      "size": 17393,
+      "sha256": "b06182c1ec24e686934fb55c72c8de7e0e115899245bfef2d6b24787f78e3230"
+    },
+    {
+      "path": "lib/simulation/aqueous-force-field.ts",
+      "mode": 420,
+      "size": 29080,
+      "sha256": "aa0e0c9f3e6d90eb1a5111baa0bdd6fb0fa2e77153eaa26bb19dafec12a5318f"
+    },
+    {
+      "path": "lib/simulation/aqueous-foundation-verification.test.ts",
+      "mode": 420,
+      "size": 5872,
+      "sha256": "b6ae352fcf4b7b64ba0e591273c1153115948756c4d39d523ed0919a07e9e2e2"
+    },
+    {
+      "path": "lib/simulation/aqueous-foundation-verification.ts",
+      "mode": 420,
+      "size": 29766,
+      "sha256": "1a1e17dd560b425c227240bac446e067e9fea3289ed673502763920ebfa8778d"
+    },
+    {
+      "path": "lib/simulation/aqueous-schemas.test.ts",
+      "mode": 420,
+      "size": 8110,
+      "sha256": "2f055ae79f63d05ef9579baf2d370168543e919fe6bb123d3463c4887d77bea1"
+    },
+    {
+      "path": "lib/simulation/aqueous-system-spec-schemas.test.ts",
+      "mode": 420,
+      "size": 22586,
+      "sha256": "995466a6bd83504d640469ad665f708f3ba0268244c229eb383e3e5279894762"
+    },
+    {
+      "path": "lib/simulation/aqueous-system-spec.test.ts",
+      "mode": 420,
+      "size": 42481,
+      "sha256": "525d19d33309df3643eae156cc97a79c53167d5f364554ad87dd9b94c67c2f3d"
+    },
+    {
+      "path": "lib/simulation/aqueous-system-spec.ts",
+      "mode": 420,
+      "size": 93657,
+      "sha256": "e75eee63c61872a2d14d83654e02478b20be17454cd19a06d6c6aaed24306655"
+    },
+    {
+      "path": "lib/simulation/aqueous-topology.test.ts",
+      "mode": 420,
+      "size": 14692,
+      "sha256": "e86407b3a3c18c219eb97af6d5d74514d5491611149c307ad6815f4eed32d779"
+    },
+    {
+      "path": "lib/simulation/aqueous-topology.ts",
+      "mode": 420,
+      "size": 49324,
+      "sha256": "3650aba53e3e467db0718a3834607473ae0a7d63f4b1242cb27b5ce0792209a5"
+    },
+    {
+      "path": "lib/simulation/atomistic-presentation-frame.test.ts",
+      "mode": 420,
+      "size": 26191,
+      "sha256": "30363f74a10b588c05b0e3f778b6c2d272ee1cf9584b58ead001d032420819be"
+    },
+    {
+      "path": "lib/simulation/atomistic-presentation-frame.ts",
+      "mode": 420,
+      "size": 32409,
+      "sha256": "5f680d2fcd04e626d0cd36ad49f7462ebadb47779794729adc952eae5e249ad5"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-browser-position-trajectory-v049-projector.server.ts",
+      "mode": 420,
+      "size": 4985,
+      "sha256": "5d0df94e14524957d55f7110e6dba3f91f93683457468202f20d0be9b08590cc"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-browser-position-trajectory-v049.test.ts",
+      "mode": 420,
+      "size": 16288,
+      "sha256": "1f4399ff3105b4391a9688e0f26a573ff2c3e7a3b9c76785648955c4ab826231"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-browser-position-trajectory-v049.ts",
+      "mode": 420,
+      "size": 23438,
+      "sha256": "77e93f7f4ec8b7805fe5d33880c52a1b94703059c8f9527df3a423be4c9c1475"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-frame-v047.test.ts",
+      "mode": 420,
+      "size": 7013,
+      "sha256": "ae885cf7ab7f52314ba12ae82975798446202e4e44798f0b85051579f5c590d9"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-frame-v047.ts",
+      "mode": 420,
+      "size": 18763,
+      "sha256": "42b8e43837c0fc0539a46d5327be72c279c91782fb06e428e086de18f024d86b"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.test-fixture.ts",
+      "mode": 420,
+      "size": 11324,
+      "sha256": "a0832649ec949f0ee12333f8535facc93c76244456779494e2115ee5565eacca"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.test.ts",
+      "mode": 420,
+      "size": 7867,
+      "sha256": "535d6d5ae38bef9a3e489fd89e8822075d1e71a516e6a81e9171dfaacb00a3c1"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.ts",
+      "mode": 420,
+      "size": 42604,
+      "sha256": "c539b0a9a2c1bfd1cfb773f5113e9d38f6e496734d4afb54125f3ada74e1b4d2"
+    },
+    {
+      "path": "lib/simulation/atomistic-trajectory-chunk.test.ts",
+      "mode": 420,
+      "size": 17841,
+      "sha256": "b6eb011c3a1b13b9e93634ee3509893b470da93123672e1b53d39f3218cec5b9"
+    },
+    {
+      "path": "lib/simulation/atomistic-trajectory-chunk.ts",
+      "mode": 420,
+      "size": 61401,
+      "sha256": "3aff02438139aa620e0b3eb97762aee0d1e80c5e4771d26117ec5830fc0d858b"
+    },
+    {
+      "path": "lib/simulation/atomistic-world-session.test.ts",
+      "mode": 420,
+      "size": 17005,
+      "sha256": "83af6fd515438482f9ddcc496f70ada991e5cd5ec124d408d2d0f521dd341265"
+    },
+    {
+      "path": "lib/simulation/atomistic-world-session.ts",
+      "mode": 420,
+      "size": 45977,
+      "sha256": "7f2f9b3c1b38bc5b841ff1275771e23d5eba5612e415b32fb6ee88cb09fb8bb3"
+    },
+    {
+      "path": "lib/simulation/constrained-velocity-verlet.test.ts",
+      "mode": 420,
+      "size": 34422,
+      "sha256": "ebeb3a181f84a9160fae7afcee88c06d31ae5b7ca0e63057dc8db831520f3716"
+    },
+    {
+      "path": "lib/simulation/constrained-velocity-verlet.ts",
+      "mode": 420,
+      "size": 57216,
+      "sha256": "66030c04b503284eb07a57456bea12e84d99e7197c4ecf6479e30c57f48b34d0"
+    },
+    {
+      "path": "lib/simulation/digest.test.ts",
+      "mode": 420,
+      "size": 3350,
+      "sha256": "5e913703dff5c366e51867bc5d50e4eb19ed797f235e9b4324fca953d6e4ea73"
+    },
+    {
+      "path": "lib/simulation/digest.ts",
+      "mode": 420,
+      "size": 3601,
+      "sha256": "a671ae7c6b0d2dc34fa97f19f4ac677c8e97337ea46ca0cf760420b67fe74cc0"
+    },
+    {
+      "path": "lib/simulation/lennard-jones.test.ts",
+      "mode": 420,
+      "size": 7643,
+      "sha256": "0fe9d5028718e5cfaf6dedf229328799efa58b74ddbd335302961519e02306ed"
+    },
+    {
+      "path": "lib/simulation/lennard-jones.ts",
+      "mode": 420,
+      "size": 26113,
+      "sha256": "472a89e9d87e5b8b938e9bbdb76817658cde99eb36debf04ca4c2bd00a5d95da"
+    },
+    {
+      "path": "lib/simulation/molecular-world.test.ts",
+      "mode": 420,
+      "size": 17633,
+      "sha256": "886ba2ec6f92760dc6526dd43c774d1c4eab77cf36b5abc84f1c7f747c7d2918"
+    },
+    {
+      "path": "lib/simulation/molecular-world.ts",
+      "mode": 420,
+      "size": 51194,
+      "sha256": "8b322733f3290cb7d60e3b54487bc570d240591866663fd5edb1d6eb977157fc"
+    },
+    {
+      "path": "lib/simulation/nacl-water-interface-import-receipt-schemas-v0411.test.ts",
+      "mode": 420,
+      "size": 15974,
+      "sha256": "3e6ba5d2163a30eef58d17376a212e6c0d60e8c8032b0a75cc0875d01a596365"
+    },
+    {
+      "path": "lib/simulation/nacl-water-interface-schemas-v0410.test.ts",
+      "mode": 420,
+      "size": 10801,
+      "sha256": "ea78f699bd351c6a6f48dccd0f30fb7c30b3b253c23295ea12c82326d7879140"
+    },
+    {
+      "path": "lib/simulation/nacl-water-interface-system-v0410.test.ts",
+      "mode": 420,
+      "size": 23416,
+      "sha256": "b3e617de4351f64fa3a0bd1dee73ba21c64e00cbb48ba37072271e86cf6cfb97"
+    },
+    {
+      "path": "lib/simulation/nacl-water-interface-system-v0410.ts",
+      "mode": 420,
+      "size": 52001,
+      "sha256": "3248aca37078da145ade85ed06ab0b3acd3361008bb120fdec8a5ba3d33c87a5"
+    },
+    {
+      "path": "lib/simulation/openmm-world-session-loader-implementation.server.mjs",
+      "mode": 420,
+      "size": 58208,
+      "sha256": "34dba3bd06d075a2d981b6624f5e65def79394c14e84c637d4d855cb3abe23be"
+    },
+    {
+      "path": "lib/simulation/openmm-world-session-loader.server.test.ts",
+      "mode": 420,
+      "size": 9506,
+      "sha256": "654d2aab154b90f81154f5bb5b35d2bac374cb58550ce1a7212751974c755f80"
+    },
+    {
+      "path": "lib/simulation/openmm-world-session-loader.server.ts",
+      "mode": 420,
+      "size": 7845,
+      "sha256": "86520dc34899a1eab39e3fd080bea236a7f6d3b9dac864fc11c3d3b9c47900df"
+    },
+    {
+      "path": "lib/simulation/periodic-atomistic-kernel.test.ts",
+      "mode": 420,
+      "size": 11309,
+      "sha256": "957c621f9487e7c55b302bbc63ba7dd4824cee31090b9896e50dd8e731c843ad"
+    },
+    {
+      "path": "lib/simulation/periodic-atomistic-kernel.ts",
+      "mode": 420,
+      "size": 21136,
+      "sha256": "609c3af2438a002dc71d4aab737a59322d79d85e987b5ad9c7c068dbba9a66cb"
+    },
+    {
+      "path": "lib/simulation/periodic-atomistic-schemas.test.ts",
+      "mode": 420,
+      "size": 10168,
+      "sha256": "eeffe8dd1d14b0ad2fba138e0171325b99f0f19b3288de07914b3b25612d4cb6"
+    },
+    {
+      "path": "lib/simulation/periodic-atomistic-world.test.ts",
+      "mode": 420,
+      "size": 16994,
+      "sha256": "a5239d281091226a0ef20d169ff104652b8d9c93e658044f6e4959b00d8722b0"
+    },
+    {
+      "path": "lib/simulation/periodic-atomistic-world.ts",
+      "mode": 420,
+      "size": 57105,
+      "sha256": "7f28838de6b51d56bc0f12f2b88beee3132af669ef774394f9e49907150e27eb"
+    },
+    {
+      "path": "lib/simulation/periodic-cell.test.ts",
+      "mode": 420,
+      "size": 12909,
+      "sha256": "9a3d9a5867d6c1febf0447461186161a8f5b789852e0ee685dcf7d63e570cf07"
+    },
+    {
+      "path": "lib/simulation/periodic-cell.ts",
+      "mode": 420,
+      "size": 23605,
+      "sha256": "20c32556d02220ee678cb010bbc02ff8d353f2c5b76bc27fbdfcbd6b5fdcb0d8"
+    },
+    {
+      "path": "lib/simulation/periodic-coulomb-exceptions.test.ts",
+      "mode": 420,
+      "size": 14538,
+      "sha256": "869789b85c468d471011d6e1338edc5f93c926857e63c76a1554903f6d6af7c5"
+    },
+    {
+      "path": "lib/simulation/periodic-coulomb-exceptions.ts",
+      "mode": 420,
+      "size": 17906,
+      "sha256": "47e2a8bdfe4cdcb0fa5308d4205ac519fd42d587fc66b859853b93519daf5ce7"
+    },
+    {
+      "path": "lib/simulation/periodic-ewald.test.ts",
+      "mode": 420,
+      "size": 15559,
+      "sha256": "4dd99117ac19bd7165063297f63cec2af04f703390a548c7c27e8ae449032838"
+    },
+    {
+      "path": "lib/simulation/periodic-ewald.ts",
+      "mode": 420,
+      "size": 26938,
+      "sha256": "076403b1b0a628ef2ee0ec23786bc7a5450470636633cfaabe777b3c2007086a"
+    },
+    {
+      "path": "lib/simulation/periodic-potentials.test.ts",
+      "mode": 420,
+      "size": 5630,
+      "sha256": "dce7f40db097cf67170dfd6f3694141da38302bb27d8c5d03246b044b30b4d8c"
+    },
+    {
+      "path": "lib/simulation/periodic-potentials.ts",
+      "mode": 420,
+      "size": 9576,
+      "sha256": "fe772e235558d19c4b38efda6bd9936b2c790e7fb8a0bce940d71c7aca944765"
+    },
+    {
+      "path": "lib/simulation/periodic-verification.test.ts",
+      "mode": 420,
+      "size": 3437,
+      "sha256": "a8d3652203670e0b236c971d4d98ca778306dbe0cab00524cb815e4f484252c8"
+    },
+    {
+      "path": "lib/simulation/periodic-verification.ts",
+      "mode": 420,
+      "size": 42204,
+      "sha256": "373b71b44ba1e900b70833e5d059c9258fb1861849d900c8d639ae2448a11ffc"
+    },
+    {
+      "path": "lib/simulation/rigid-constraints.test.ts",
+      "mode": 420,
+      "size": 20598,
+      "sha256": "bb3d0833930e760a1abf2840875f5937fc33f2ccec940e09e952d3e41c511754"
+    },
+    {
+      "path": "lib/simulation/rigid-constraints.ts",
+      "mode": 420,
+      "size": 30873,
+      "sha256": "13602f976bdeae0cf13a2cc8a30ea2f0b08501ec6afe7b3b785265dde53c6142"
+    },
+    {
+      "path": "lib/simulation/thermochemical-world.test.ts",
+      "mode": 420,
+      "size": 28499,
+      "sha256": "29266e8f736220f8054fcd8b6048e2c9588cfaea3cce66d1ac9a6b201776c0b1"
+    },
+    {
+      "path": "lib/simulation/thermochemical-world.ts",
+      "mode": 420,
+      "size": 94517,
+      "sha256": "79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8"
+    },
+    {
+      "path": "lib/structure/canonical-json.ts",
+      "mode": 420,
+      "size": 3383,
+      "sha256": "1124175252d93d02e02aa7ccc8aa7b1f7e57c18b3e89800b856839727596860e"
+    },
+    {
+      "path": "lib/structure/custom-structure-boundary.test.ts",
+      "mode": 420,
+      "size": 4972,
+      "sha256": "1ba4751fa6a7ab701bd3a5291055cffc1302d72ac354603d51b87a391eb25463"
+    },
+    {
+      "path": "lib/structure/custom-structure-webgl-component.test.ts",
+      "mode": 420,
+      "size": 14839,
+      "sha256": "1f3debbcf1ea9dd54e5da35efa7f99123e082a6da675b6f1c842cb7d09764d64"
+    },
+    {
+      "path": "lib/structure/custom-structure-workbench.test.ts",
+      "mode": 420,
+      "size": 11875,
+      "sha256": "167b186cdd8f9c39af5cb78a735bb50c5a6578b434b8722acbc1c94d9c440eb6"
+    },
+    {
+      "path": "lib/structure/data/iupac-element-identities-2022.json",
+      "mode": 420,
+      "size": 8342,
+      "sha256": "333a50d7af252433dca2056bda6db30fca8d53ce908150e1194bca0ab969e668"
+    },
+    {
+      "path": "lib/structure/element-catalog.test.ts",
+      "mode": 420,
+      "size": 2452,
+      "sha256": "9e55a2db578da70f4aa22c326c6abe7f392647a691e6ce8bc467b71f76eedd2d"
+    },
+    {
+      "path": "lib/structure/element-catalog.ts",
+      "mode": 420,
+      "size": 2426,
+      "sha256": "b5af7eb862e08cbe07806ad85ba2c3e8c7431e522c22c3eb46f8aac48d52e44b"
+    },
+    {
+      "path": "lib/structure/strict-json.test.ts",
+      "mode": 420,
+      "size": 3738,
+      "sha256": "9cbf6a561e475a096f027fe8f5085175c1fa5cbacb48b4e7344dd593c78e07af"
+    },
+    {
+      "path": "lib/structure/strict-json.ts",
+      "mode": 420,
+      "size": 8117,
+      "sha256": "aed6b72076d74cc4acfb119b1de852ed9e5ecc27d09f6bea736e3eb18250777f"
+    },
+    {
+      "path": "lib/structure/structure-document-schema.test.ts",
+      "mode": 420,
+      "size": 4012,
+      "sha256": "50466f79559f9fc7045920f183f6d766f488712b2b31e1d22bc53084be6ad13a"
+    },
+    {
+      "path": "lib/structure/structure-document.test.ts",
+      "mode": 420,
+      "size": 20060,
+      "sha256": "272878e2f24417ea53806c01c74245f713b61fac4cdc9e7e99e169da4e0cc8ca"
+    },
+    {
+      "path": "lib/structure/structure-document.ts",
+      "mode": 420,
+      "size": 46148,
+      "sha256": "3b21e7fb07d1681a47ed96d4f4d7d2d10e36657f13b201862d0d452068d1ec3f"
+    },
+    {
+      "path": "lib/structure/structure-render-model.test.ts",
+      "mode": 420,
+      "size": 11755,
+      "sha256": "590898e939c5ee89a8a35a218fbf24737a0ff00ffa795d544e8097df1c907316"
+    },
+    {
+      "path": "lib/structure/structure-render-model.ts",
+      "mode": 420,
+      "size": 15987,
+      "sha256": "6b358c4d1a9697c9d8a1146a236764500de78fcc7c7f4c8a52720b8108b90b1a"
+    },
+    {
+      "path": "lib/structure/structure-webgl-runtime-policy.test.ts",
+      "mode": 420,
+      "size": 1899,
+      "sha256": "023be360691193ea8ab4760ee20799b5adabb7eb5509b5ac550ddb55ffdd58bf"
+    },
+    {
+      "path": "lib/structure/structure-webgl-runtime-policy.ts",
+      "mode": 420,
+      "size": 2204,
+      "sha256": "9d76a04d1d07a105c278c7818b13d63d35ec96c90d707ab8885edcd310e9589d"
+    },
+    {
+      "path": "next.config.ts",
+      "mode": 420,
+      "size": 104,
+      "sha256": "d063bebef3a4878ae82f9f9547c2c9675b8b6945ab23702932dcb63a011a9fc9"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": 420,
+      "size": 386499,
+      "sha256": "159a3c4e740dc206b0e217f21f86dce39198309d116cd74661c816e68ee5d20d"
+    },
+    {
+      "path": "package.json",
+      "mode": 420,
+      "size": 2866,
+      "sha256": "721e32ee361788878f1157ffa10605edd390d7f9f9f6b4e3822cbd8f38b279b2"
+    },
+    {
+      "path": "public/og.png",
+      "mode": 420,
+      "size": 1751905,
+      "sha256": "a6edd893a29c3436f2f0c7919edfd1d2e612ad491b3f63f38e20af9e29c148c6"
+    },
+    {
+      "path": "schemas/action.schema.json",
+      "mode": 420,
+      "size": 2809,
+      "sha256": "f80094a63dc37e10c033b9981cfbbe423182bd4aebcff1e22cfb70cd2dd4aa18"
+    },
+    {
+      "path": "schemas/aqueous-action.schema.json",
+      "mode": 420,
+      "size": 4232,
+      "sha256": "5ff719ac9b04d324ac96d18af986ad3e631093ed8b53367d54e555f33526d7d9"
+    },
+    {
+      "path": "schemas/aqueous-dynamics-action.schema.json",
+      "mode": 420,
+      "size": 378,
+      "sha256": "082809445e5aebd227d648f60216083e84a72d2e9e31a2e8ca81d63ac787ad6d"
+    },
+    {
+      "path": "schemas/aqueous-dynamics-observation.schema.json",
+      "mode": 420,
+      "size": 85084,
+      "sha256": "4d4c9969505e7dace999c00e6035e8b9fdd1e2224e5669ccb0a787666b7b94a4"
+    },
+    {
+      "path": "schemas/aqueous-dynamics-world-state.schema.json",
+      "mode": 420,
+      "size": 42769,
+      "sha256": "0a826bc1084212f99c588fb760438bed2b991d2098a28993827f2542c28ed15f"
+    },
+    {
+      "path": "schemas/aqueous-force-backend-manifest.schema.json",
+      "mode": 420,
+      "size": 18478,
+      "sha256": "3d29d7b79e421e1525a3e06eb045a4f18d6f06cb93b4acec4f53e0b408e0ef03"
+    },
+    {
+      "path": "schemas/aqueous-observation.schema.json",
+      "mode": 420,
+      "size": 6544,
+      "sha256": "abf9e235d7f84f1c84226261ed9f80b2cbd46d4ee8eece5e893ae59abd665cac"
+    },
+    {
+      "path": "schemas/aqueous-system-spec.schema.json",
+      "mode": 420,
+      "size": 44860,
+      "sha256": "f3e9ffcb6b76119d0e830a6b049a3e8dc824e3cb98811c2af95952caf933f8ca"
+    },
+    {
+      "path": "schemas/aqueous-world-state.schema.json",
+      "mode": 420,
+      "size": 19859,
+      "sha256": "2d87c1db28821bf37ba21715ac4d47f1b57d4e457bd89a47503e4466bfcda337"
+    },
+    {
+      "path": "schemas/atomistic-bootstrap-replica-receipt.schema.json",
+      "mode": 420,
+      "size": 21750,
+      "sha256": "6ab3262a7233d254b0f760f72e912b0937c330a22734fa48d92b8622407274b0"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+      "mode": 420,
+      "size": 16437,
+      "sha256": "adf2e8a6a509bc0f79b6ef48b0215e48dc983c1998982f21c4f13ed8504eb891"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-execution-preflight.schema.json",
+      "mode": 420,
+      "size": 27837,
+      "sha256": "43edb990b6a56f4f123c93cf94e71a781be8588c1ada30696b0dd32f33efef55"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-github-readiness.schema.json",
+      "mode": 420,
+      "size": 1555,
+      "sha256": "5b0e8c5c86ae59e8ee466cc9e15915340b5c6158cdde291ea0122c51d79e3404"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-host-observation.schema.json",
+      "mode": 420,
+      "size": 21537,
+      "sha256": "729477cccc0564534b2dad7c3d2bc8ba735aeda369245e9c343987cab90490dd"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-observer-contract.schema.json",
+      "mode": 420,
+      "size": 35375,
+      "sha256": "cf3d5d3d3531d08f17df46f69a78590d656afd80dbbaf2db61bcad6cb9a1eb53"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-plan.schema.json",
+      "mode": 420,
+      "size": 14884,
+      "sha256": "659cd4a6ca3d2cde790fbc9ad199ef6d6b4893ba61442e6809c72f570ba7c474"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-producer-outcome.schema.json",
+      "mode": 420,
+      "size": 34962,
+      "sha256": "e3671d5fee2b68964c19bfac954fe99f9c72801c482008228b7dde4e0df85fa7"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-receipt.schema.json",
+      "mode": 420,
+      "size": 36468,
+      "sha256": "f6dfdec4d81bd1467ec459f6e0153dee5fe877a17819de4704c0ae189dcc70aa"
+    },
+    {
+      "path": "schemas/atomistic-full-candidate-registration-observation.schema.json",
+      "mode": 420,
+      "size": 13933,
+      "sha256": "c5b200c61e8f45130e17f338bdc4f5389d2b761266ddbe4f88b2ec25120ea474"
+    },
+    {
+      "path": "schemas/atomistic-random-tp-private-execution-authority-request.schema.json",
+      "mode": 420,
+      "size": 14124,
+      "sha256": "4330cf199dd2c3e56066ea80932add207aab6ef3abc578f415a9a4f910ec36e5"
+    },
+    {
+      "path": "schemas/atomistic-random-tp-rights-disposition.schema.json",
+      "mode": 420,
+      "size": 26254,
+      "sha256": "7c1f5c781c87cc3dfbfa0349be3b77a0529e23f569b1b4a213595bc0d606297c"
+    },
+    {
+      "path": "schemas/atomistic-reproduction-receipt.schema.json",
+      "mode": 420,
+      "size": 39749,
+      "sha256": "a638cebf555368779c394149c524ba562e88de9ea0f7e315dd7180dfbbc72705"
+    },
+    {
+      "path": "schemas/atomistic-reproduction.schema.json",
+      "mode": 420,
+      "size": 24244,
+      "sha256": "72ec954452c66bbd00691ac9f882b32a05443eac77dc50271804f48d50b56b7a"
+    },
+    {
+      "path": "schemas/atomistic-runtime-lock.schema.json",
+      "mode": 420,
+      "size": 18506,
+      "sha256": "07a508278c45516aaad3c9d64e51ebb42408e60ca5d6db3b10a6682aa6f27fae"
+    },
+    {
+      "path": "schemas/evaluation-report.schema.json",
+      "mode": 420,
+      "size": 19495,
+      "sha256": "40c78fbc4637922f4e52625a26a3cf85225e06ca82145ee1abca92b9f58731d2"
+    },
+    {
+      "path": "schemas/molecular-action.schema.json",
+      "mode": 420,
+      "size": 1587,
+      "sha256": "1f795dd35cb4ba33a256fb7fdf1829b93db81e4356c1af11840f06eb8e342384"
+    },
+    {
+      "path": "schemas/molecular-observation.schema.json",
+      "mode": 420,
+      "size": 11725,
+      "sha256": "006a9425500dfa5a73ea40b56e6869bce5d72def403174b29438c2b0184f3305"
+    },
+    {
+      "path": "schemas/molecular-world-state.schema.json",
+      "mode": 420,
+      "size": 7787,
+      "sha256": "e190b2dd926e5f0c2cc6792705eba19e9eb3fe1bf779fd4deeb34b2d546262ce"
+    },
+    {
+      "path": "schemas/nacl-water-interface-action.schema.json",
+      "mode": 420,
+      "size": 1607,
+      "sha256": "f7ab7b7e3447460a8cc3f35bbc44d2ac0785063c4942526d2834dcf66bb0a35b"
+    },
+    {
+      "path": "schemas/nacl-water-interface-coordinate-seed.schema.json",
+      "mode": 420,
+      "size": 8121,
+      "sha256": "23e66b4429ffabb836fdc69fbb96c92a8ea8bca58bdd0f486984fcc08ed5a843"
+    },
+    {
+      "path": "schemas/nacl-water-interface-import-receipt.schema.json",
+      "mode": 420,
+      "size": 16475,
+      "sha256": "7d832a240e862dd791a3853c0fda8dd01b37ba110f5361c92b3a2534dda4e098"
+    },
+    {
+      "path": "schemas/nacl-water-interface-observation.schema.json",
+      "mode": 420,
+      "size": 4366,
+      "sha256": "fc4f91b2c16a1e34858af684aea5b9db376619e812d8ba832cefae22d25e7a91"
+    },
+    {
+      "path": "schemas/nacl-water-interface-plan.schema.json",
+      "mode": 420,
+      "size": 876,
+      "sha256": "54f6ed9eb14265913fe1819794a416516edda69a3542782aea760573dda4d4a8"
+    },
+    {
+      "path": "schemas/nacl-water-interface-system.schema.json",
+      "mode": 420,
+      "size": 11854,
+      "sha256": "c791a46316303b4b8233a07055b470c3d23b97a402ac814016b756558e2761e3"
+    },
+    {
+      "path": "schemas/openmm-tip3p-artifact-manifest.schema.json",
+      "mode": 420,
+      "size": 3185,
+      "sha256": "150647db21fc3822c7b0584b7174c6543e2eca5c4660c649da28c4e46352b970"
+    },
+    {
+      "path": "schemas/openmm-tip3p-control-receipt.schema.json",
+      "mode": 420,
+      "size": 13876,
+      "sha256": "41b07349219531b17589c9cf5cc510c6e735619a11dbf71ff767821adb6988cc"
+    },
+    {
+      "path": "schemas/openmm-tip3p-producer-outcome.schema.json",
+      "mode": 420,
+      "size": 4379,
+      "sha256": "b9700b8ebbc672c99153e5dca04c0d1b0874c6ad4784de4c19c1dbdffa23329f"
+    },
+    {
+      "path": "schemas/openmm-tip3p-protected-browser-evidence.schema.json",
+      "mode": 420,
+      "size": 11694,
+      "sha256": "641d45a21e2b961e0c97486121bb6838c209a4921c318a8bc1ad4a2aef9e7ff3"
+    },
+    {
+      "path": "schemas/openmm-tip3p-protected-ci-evidence.schema.json",
+      "mode": 420,
+      "size": 10983,
+      "sha256": "4973f6c6e84858780af152b7eb01de215bcb68c305d84517f530d5926b7f4803"
+    },
+    {
+      "path": "schemas/periodic-atomistic-action.schema.json",
+      "mode": 420,
+      "size": 2212,
+      "sha256": "1e279b32d8421c1815f13f04d0eaafcffd14db2ee471d75b74fc60fc115713a2"
+    },
+    {
+      "path": "schemas/periodic-atomistic-observation.schema.json",
+      "mode": 420,
+      "size": 17871,
+      "sha256": "89a1d13aa3b8bb46e26208d24b5168112f64d387f1f124e5375c7b9519488584"
+    },
+    {
+      "path": "schemas/periodic-atomistic-world-state.schema.json",
+      "mode": 420,
+      "size": 17184,
+      "sha256": "a16e2b1f939666bb455e83f56fdcbedc3405fecad3e1ec54e046873d80d5b38e"
+    },
+    {
+      "path": "schemas/structure-document.schema.json",
+      "mode": 420,
+      "size": 13256,
+      "sha256": "04951251b4dabe44b55c560e79ee08a939d32f4b0c7bcf18f0b156f238fef1ce"
+    },
+    {
+      "path": "schemas/world-state.schema.json",
+      "mode": 420,
+      "size": 10838,
+      "sha256": "0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795"
+    },
+    {
+      "path": "scripts/atomistic/artifact-cache.mjs",
+      "mode": 420,
+      "size": 9778,
+      "sha256": "1b0207b7be865cee153e288628a74bf14770540af767c37f7dfde5567a704fa4"
+    },
+    {
+      "path": "scripts/atomistic/artifact-cache.test.mjs",
+      "mode": 420,
+      "size": 4944,
+      "sha256": "bcbf008bc4a170a5d884e3c264fff468e8f79340e5e2a0d52df8b252ee46ef2c"
+    },
+    {
+      "path": "scripts/atomistic/bootstrap-replica-receipt-policy.mjs",
+      "mode": 420,
+      "size": 35024,
+      "sha256": "705674ea788779a821f0cd513953419bff289c0014cc86ff6d2f303424ef66d2"
+    },
+    {
+      "path": "scripts/atomistic/bootstrap-replica-receipt-policy.test.mjs",
+      "mode": 420,
+      "size": 20238,
+      "sha256": "3d8fecd26f1bec64a3686c647bac0986b1435f5c06038e949124402e91c720f4"
+    },
+    {
+      "path": "scripts/atomistic/build_python_hostlist_wheel.sh",
+      "mode": 420,
+      "size": 1306,
+      "sha256": "f004a9c004d4a91f985c0bc87b76e3ad9b7d9cb8a5428413b4732d3ff6d0cb84"
+    },
+    {
+      "path": "scripts/atomistic/dataset-manifest.mjs",
+      "mode": 420,
+      "size": 12729,
+      "sha256": "38c78bef53e876b2cccb1c4fc93677c93e7cad0323d09de269779cdb0dfe6129"
+    },
+    {
+      "path": "scripts/atomistic/dataset-manifest.test.mjs",
+      "mode": 420,
+      "size": 4218,
+      "sha256": "a45e30d4293d3c5e381c567911d988010df49e522361fc6f792d526ae09bfdb5"
+    },
+    {
+      "path": "scripts/atomistic/fetch-assets.mjs",
+      "mode": 420,
+      "size": 3345,
+      "sha256": "87fd090540971eb90b71419248baa203787cace5ae5193d13db10cd912bd7759"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-execution-preflight-policy.mjs",
+      "mode": 420,
+      "size": 44243,
+      "sha256": "52f00060a0afdefc51bfd48cc60a7e2cbe2f0ac1957d25638256eaa169dfdb6d"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-execution-preflight-policy.test.mjs",
+      "mode": 420,
+      "size": 23466,
+      "sha256": "30ec1db72ef6023f3b6bcc03152c9ca381169c5d5f506d0ac83855b3a0c090e6"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-github-evidence-policy.mjs",
+      "mode": 420,
+      "size": 25084,
+      "sha256": "037d215b91010b3e26560d646bc4686b42317ff235c75dfc56c7cb7036cedbee"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-github-evidence-policy.test.mjs",
+      "mode": 420,
+      "size": 15206,
+      "sha256": "391f8f1fffb348cefd719032983a9c3e4e4091b6d71e90abed32979b83da63f0"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-metrics.mjs",
+      "mode": 420,
+      "size": 31108,
+      "sha256": "4c490747c462b077dbeb442a404af0a50add9ef4f372095bfd93c2291c4e25a9"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-metrics.test.mjs",
+      "mode": 420,
+      "size": 16499,
+      "sha256": "6a7298d92045f572170ec5b2e9bac65d0c13864af0d7054213296bc9103a76c7"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-observer-vnext.mjs",
+      "mode": 420,
+      "size": 124052,
+      "sha256": "20ba6cb9e4e4290dbfad18afc4b06e358cc5120664e40d6e2c7106dc49628a8b"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+      "mode": 420,
+      "size": 80214,
+      "sha256": "a0029f7205596332aa3858d50620bb3cb735806e6318253febbb8e06eb7dea07"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-plan-policy.mjs",
+      "mode": 420,
+      "size": 30676,
+      "sha256": "ac9b28c5725bcea42d5e3fba3b7dba4b009b7b33903ec37a0a4f65b980c7b027"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-plan-policy.test.mjs",
+      "mode": 420,
+      "size": 12676,
+      "sha256": "99fdf3b22a221e35ac488a74815e2932e72d49ed5c2df5d1bd0b659b35e0211a"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-producer-outcome-policy.mjs",
+      "mode": 420,
+      "size": 16674,
+      "sha256": "7d4d13c649b7850095a1b26216e8fc25063319b9c2d877655a951012e96b14d0"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-producer-outcome-policy.test.mjs",
+      "mode": 420,
+      "size": 10392,
+      "sha256": "8800bdf2865e7d22ca2674eb9f77c26ff79d9703f652011a0ecae9278575b4c6"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-registration-policy.mjs",
+      "mode": 420,
+      "size": 26755,
+      "sha256": "a1eba4bbf6386a54fcfaa66e5374bb692a8d102ebdc64b1bd8aa389bb4644f1b"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-registration-source-policy.mjs",
+      "mode": 420,
+      "size": 13601,
+      "sha256": "a1dd2e9dffada2821cde2be4e6431ec0217cbc54aa74b4221f5a6171ad367ee2"
+    },
+    {
+      "path": "scripts/atomistic/full-candidate-registration-source-policy.test.mjs",
+      "mode": 420,
+      "size": 9331,
+      "sha256": "60a6f7de7aaa0d45e37b7d3b7a0dcd76edb9f87f4515f408a3d490563ae3edcb"
+    },
+    {
+      "path": "scripts/atomistic/inspect-full-candidate-github-readiness.mjs",
+      "mode": 420,
+      "size": 2114,
+      "sha256": "44e420fc7a8fd3ae3309a92193746b01c776598e9f954d58851759393f60f6df"
+    },
+    {
+      "path": "scripts/atomistic/inspect-full-candidate-github-readiness.test.mjs",
+      "mode": 420,
+      "size": 3182,
+      "sha256": "d998f26e5396e1bfcb813c36afb35c75a30f1b3603974dc4a066ac7921cda1b9"
+    },
+    {
+      "path": "scripts/atomistic/inspect-full-candidate-registration.mjs",
+      "mode": 420,
+      "size": 17615,
+      "sha256": "ad9c44b7a4aa2b8f0bb18d2767bd31f6972cfbee4a9aff43778c802ec2f05ea7"
+    },
+    {
+      "path": "scripts/atomistic/inspect-full-candidate-registration.test.mjs",
+      "mode": 420,
+      "size": 33111,
+      "sha256": "c3a5fd3e968ce59358f480aecf31fe81d5cc01995f648a62f596d77f809b8ca4"
+    },
+    {
+      "path": "scripts/atomistic/openmm/artifact_manifest_test.py",
+      "mode": 420,
+      "size": 6476,
+      "sha256": "969782193d137dd40eebe32be22a9ea8dfd26dd8ecbfaa570b6903ea671ea622"
+    },
+    {
+      "path": "scripts/atomistic/openmm/binary_codec.py",
+      "mode": 420,
+      "size": 6391,
+      "sha256": "ef142564ab151c8a7aecb726b9709f6c8609088de96f06f453d640f2e077f2d3"
+    },
+    {
+      "path": "scripts/atomistic/openmm/container_contract_test.py",
+      "mode": 420,
+      "size": 3244,
+      "sha256": "1196fbcc9b078a8a051b24eb85f451d42a693033747a293e3f7ca535dafd5e78"
+    },
+    {
+      "path": "scripts/atomistic/openmm/contract.py",
+      "mode": 420,
+      "size": 18299,
+      "sha256": "935b477d0f24a622a59933b0c1558266f5d3171a6189b1cee10098218a1b9585"
+    },
+    {
+      "path": "scripts/atomistic/openmm/contract_test.py",
+      "mode": 420,
+      "size": 7819,
+      "sha256": "b0df3529de9d4cec923c56a99442bfb4bac169b739642321eea1b0638f0c82c7"
+    },
+    {
+      "path": "scripts/atomistic/openmm/control-metrics.mjs",
+      "mode": 420,
+      "size": 17623,
+      "sha256": "fa0b3e6278acc28c38a08d04fb1a1543268dcc76970870d61a02f24f6d7f98fd"
+    },
+    {
+      "path": "scripts/atomistic/openmm/control-metrics.test.mjs",
+      "mode": 420,
+      "size": 7749,
+      "sha256": "27b7df105c38598b7c48fe57aa5affb25bdf1de4d3c972495c70acb20c6cab5f"
+    },
+    {
+      "path": "scripts/atomistic/openmm/diagnostics.py",
+      "mode": 420,
+      "size": 10691,
+      "sha256": "f2f4e490494e66a6c1126e871fbf20ecd2dbe2f9320eadcd86db4ac55801f36a"
+    },
+    {
+      "path": "scripts/atomistic/openmm/diagnostics_test.py",
+      "mode": 420,
+      "size": 1567,
+      "sha256": "891f26210277c7770445b14454b03e5293a56f32355d0c679c518f49520d2aef"
+    },
+    {
+      "path": "scripts/atomistic/openmm/engine.py",
+      "mode": 420,
+      "size": 26880,
+      "sha256": "b7ca246db6409c572c0b8876897f7aa5d73fb05c566c7ecbd9c80925f08e9452"
+    },
+    {
+      "path": "scripts/atomistic/openmm/engine_pure_test.py",
+      "mode": 420,
+      "size": 3622,
+      "sha256": "deaa906d6f0f0b62d47868a78ded3733a22654263053caee62e44b6aa606a861"
+    },
+    {
+      "path": "scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.mjs",
+      "mode": 420,
+      "size": 8753,
+      "sha256": "d126b47e3c7a3dda815a27885e0885acb4d304924a425b114f8635cae45a2c50"
+    },
+    {
+      "path": "scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.test.mjs",
+      "mode": 420,
+      "size": 5617,
+      "sha256": "4917b4cb0aeee06d19c95c0761c2dc276bbea9925cfebd5674adf75654cc3aa6"
+    },
+    {
+      "path": "scripts/atomistic/openmm/fetch-ci-assets.mjs",
+      "mode": 420,
+      "size": 20452,
+      "sha256": "d62048152fa314df1d74c1bcc721b8bc2b0d54b78390998ad2ee2bafd4295eac"
+    },
+    {
+      "path": "scripts/atomistic/openmm/fetch-ci-assets.test.mjs",
+      "mode": 420,
+      "size": 12482,
+      "sha256": "f67d20334058dae67161ca1efcda8b511df852643d5ef0f689c11567fd18ab9b"
+    },
+    {
+      "path": "scripts/atomistic/openmm/nacl-water-interface-import-v0411.test.mjs",
+      "mode": 420,
+      "size": 9907,
+      "sha256": "6ea42fd3a6b5370860219d27095344d9c4dc15bb9f0bc0f64d555ee6fffb8e13"
+    },
+    {
+      "path": "scripts/atomistic/openmm/nacl_water_interface_import_v0411.py",
+      "mode": 420,
+      "size": 67452,
+      "sha256": "00d7844d6f18c2b45c8822f68a3f1b176c32d2c947440835001a8a11e747ea48"
+    },
+    {
+      "path": "scripts/atomistic/openmm/nacl_water_interface_import_v0411_test.py",
+      "mode": 420,
+      "size": 13942,
+      "sha256": "c7a1318af240105ca95677b2c2babd50db56b17ef9e687c2d2ec7bbab7affcf9"
+    },
+    {
+      "path": "scripts/atomistic/openmm/openmm-tip3p-producer-directory-fixture.test-support.mjs",
+      "mode": 420,
+      "size": 32008,
+      "sha256": "42fdd8af77e6244745a15b37964d4b32bd1c1dccb7903ee4a29f31e03021bb5d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/openmm-tip3p-schemas.test.mjs",
+      "mode": 420,
+      "size": 10317,
+      "sha256": "6f31c1f3db4296cb385314db1849a01b64544e14b3a4acc58e4fa6e7b1d4f132"
+    },
+    {
+      "path": "scripts/atomistic/openmm/openmm-world-session-loader-faults.test.mjs",
+      "mode": 420,
+      "size": 15725,
+      "sha256": "c798a3e3442e43a83e88a69b6f8616cf6d46668dd3649720e1633e3a1fb78dc7"
+    },
+    {
+      "path": "scripts/atomistic/openmm/outcome.py",
+      "mode": 420,
+      "size": 9306,
+      "sha256": "35f62cb9b3f7191a949f9c0386e1fab00c4b60a12b25e1dc80d490f1a982c3af"
+    },
+    {
+      "path": "scripts/atomistic/openmm/outcome_test.py",
+      "mode": 420,
+      "size": 4729,
+      "sha256": "0ae34067a28e1e819d552a0ebfff9c7e5553e45c585c3b9b9dc7ebd70314c75d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/build-private-browser-client-v046.mjs",
+      "mode": 420,
+      "size": 4881,
+      "sha256": "19bbf0ff9ebf3e846c07432f029d37f18d874a99fcb8fd2f93060c1313188f05"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/build-private-browser-client-v046.test.mjs",
+      "mode": 420,
+      "size": 1287,
+      "sha256": "8175af6748affb17767ee50b4801a0f30abb4abffe02fa1eeb8acd330384b57e"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/build-private-browser-trajectory-client-v049.mjs",
+      "mode": 420,
+      "size": 7914,
+      "sha256": "4ea347708ec79494578daf8773b95a918bc3911d9725a6d698aa30f5a3a4a166"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/build-private-browser-trajectory-client-v049.test.mjs",
+      "mode": 420,
+      "size": 5429,
+      "sha256": "3d4281fa329e40997b51a7f786d4a16ef5dc2ba36aa8830ebc823d5636ab5bdb"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/chromium-v049-lock.mjs",
+      "mode": 420,
+      "size": 9175,
+      "sha256": "0961302adee4da8ac3e240c39d4f8777bbc182a0b18e6873f47dd39f55708da9"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/chromium-v049-lock.test.mjs",
+      "mode": 420,
+      "size": 12641,
+      "sha256": "6bfb64e65b20fa66a615981d663767513d917924b3dfcd2c5d06ab8d40ddfafe"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/client-v049/index.html",
+      "mode": 420,
+      "size": 4444,
+      "sha256": "df89b50fc76ce59a928094953049d48500e274ad7ccb01d648450005fd3fc49b"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/client-v049/main.ts",
+      "mode": 420,
+      "size": 33914,
+      "sha256": "8eb401cda6246e21e672801d3061b0c5cc9681f01a851f73741d2f4e572626bb"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/client/index.html",
+      "mode": 420,
+      "size": 5861,
+      "sha256": "52df2a3dd017701c24a9bdeb505a9d712b58a5d08e10f15de5c5847b8cea03d9"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/client/main.ts",
+      "mode": 420,
+      "size": 18196,
+      "sha256": "c159a33f19362707fdacd7d86cafb64412d960e0d5e923094a5f4d9d2de30762"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/compose-protected-browser-evidence-v049.mjs",
+      "mode": 420,
+      "size": 27593,
+      "sha256": "d9fbe6abb419ca099420e6c2c839601514d6411c52b1878b485f2b94ee4d9b85"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/compose-protected-browser-evidence-v049.test.mjs",
+      "mode": 420,
+      "size": 24571,
+      "sha256": "ffb6b5ecbe80c1badf99c34bb888f9e56a26657c4f8999759ef589315bf3055e"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/fetch-private-chromium-v049.mjs",
+      "mode": 420,
+      "size": 21608,
+      "sha256": "a741e26b89cf048a8aa0a9f8196b16b37aea19d05b18861b06e4572c42725875"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/fetch-private-chromium-v049.test.mjs",
+      "mode": 420,
+      "size": 15508,
+      "sha256": "351c795b40a1f1c5619de526a66457fbd859c1c4b0ee9c0f6f19288717dbd9a1"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/freeze-private-chromium-runtime-v049.py",
+      "mode": 420,
+      "size": 26905,
+      "sha256": "1a5434dfca494a2b1449ab5992646d7e5ca0de4101e3585f287211a33d6cbe4a"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/freeze-private-chromium-runtime-v049_test.py",
+      "mode": 420,
+      "size": 13454,
+      "sha256": "6415f9ac431cc94690e65855089f5fb23bc5c2d1f9b1c26105b195bcc4282f6b"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-production-boundary.test.mjs",
+      "mode": 420,
+      "size": 2494,
+      "sha256": "0b3158178168b47a983419da2d3709b6b4d75fc12f24afab3bd2c7b6982eb94d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-integration-v049.test.mjs",
+      "mode": 420,
+      "size": 5476,
+      "sha256": "44bfcd66947fdb52f0f9123462853d0605512faaef4abd87ee1796d1c0a1ed4d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-observer-v049.mjs",
+      "mode": 420,
+      "size": 32043,
+      "sha256": "767b12429acd401c651f85c759f07b576d8c7cbb0b17f57e20aec0aaabcc62f4"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-observer-v049.test.mjs",
+      "mode": 420,
+      "size": 10706,
+      "sha256": "715784bfe5bd70b7a74bd4b1380674d4bf4a74127105d1ad6076bf0f6c6b8e31"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-manual-launcher-v049.test.mjs",
+      "mode": 420,
+      "size": 2704,
+      "sha256": "9bf8d259f6530462aaa1df46b71bc051789a6b5a230b665bd431b5a73c5853e6"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-production-boundary-v049.test.mjs",
+      "mode": 420,
+      "size": 4837,
+      "sha256": "53681f8a90b7862917bd0aa4b768f1e3b3c7cd3d4339aca9d20a21d9854464bb"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-chromium-runtime-preflight-v049.mjs",
+      "mode": 420,
+      "size": 37426,
+      "sha256": "2754b3ee6cda4fb354e726008a05a24891d6a75d3260b168aacab921f6fc558e"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-chromium-runtime-preflight-v049.test.mjs",
+      "mode": 420,
+      "size": 17966,
+      "sha256": "24c308d2bb6521b32a3d252da33d176e451b4d4270b77d9c79347baa6bf1fbd7"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-harness-v046.server.mjs",
+      "mode": 420,
+      "size": 2791,
+      "sha256": "668e635c7e9fd6de88fb429679a23452786759da0c4962088d1387720ddcd69e"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-harness-v046.server.test.mjs",
+      "mode": 420,
+      "size": 5210,
+      "sha256": "19d6d73acfd68126ac2a0cf25643a80c59d8402ce0cd0044530e75021ccefa82"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-trajectory-harness-v049.server.mjs",
+      "mode": 420,
+      "size": 14604,
+      "sha256": "0c917db10b10b3f4b2165365b1c3fcac3616b83951ae2a3573c3921d403f995e"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-trajectory-harness-v049.server.test.mjs",
+      "mode": 420,
+      "size": 17529,
+      "sha256": "bc303c34a8a7367dd0baab832415c8bc9207c4356d5c180caf0d7069df72019c"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-playwright-package-preflight-v049.mjs",
+      "mode": 420,
+      "size": 22038,
+      "sha256": "b9b3b97ea2a749cae3675efd8681199b0b7b2a34daea960661775c66b002cfb7"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-playwright-package-preflight-v049.test.mjs",
+      "mode": 420,
+      "size": 11528,
+      "sha256": "e3bf0dbcb5763a63c778806e83459ba65a6d75b4a2e36a629972bd36b90e9b3d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-envelope-v046.mjs",
+      "mode": 420,
+      "size": 13624,
+      "sha256": "e15f787b1c3962e13ced616dc948d95aeab09a11289a08ad9beafc2b5eacfd31"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-envelope-v046.test.mjs",
+      "mode": 420,
+      "size": 13296,
+      "sha256": "35ff47a2b1b53398607b17185cd6cf0045d6000b5f049dede5e0037a8548e547"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-export-v046.server.mjs",
+      "mode": 420,
+      "size": 6284,
+      "sha256": "8faeb7284d78c4ea58215362d1a0f31c8406a542e2129e98847a179435e5712c"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-export-v046.server.test.mjs",
+      "mode": 420,
+      "size": 4711,
+      "sha256": "c0da20088efaa4a7c154f8ae6d7d296c8da936204b1698a3bc904e8fee9f2686"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-loopback-server-v046.mjs",
+      "mode": 420,
+      "size": 15502,
+      "sha256": "fccdee97bdc02c29a45b92d89f539fc02bc34b3d7f835bd6cf4c14a2b3403eb4"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-loopback-server-v046.test.mjs",
+      "mode": 420,
+      "size": 13006,
+      "sha256": "4c6ed39a68c92a7051ec3c370d60dd4391b9a2a687ddf677888f8579236f471c"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-envelope-v049.mjs",
+      "mode": 420,
+      "size": 17612,
+      "sha256": "03f5f52d165187ecf477773706a3a8bcd6fc2467bc17a033e11cc8bc81a05773"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-envelope-v049.test.mjs",
+      "mode": 420,
+      "size": 21192,
+      "sha256": "2eb075a7d8dbd9d4c207a07d5f380c89c45b2ae387cbc54e35ca650d57bab883"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.mjs",
+      "mode": 420,
+      "size": 8605,
+      "sha256": "b934de3b4adbe8ab6c0129043139be709fe1bf3b6e4acc702fc07c0312e754d2"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs",
+      "mode": 420,
+      "size": 11400,
+      "sha256": "77ec033e4a4dee68da55dcec992c1006395abdc40bb5e6e0a774313eb9c790ad"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-loopback-server-v049.mjs",
+      "mode": 420,
+      "size": 22490,
+      "sha256": "9cc8e745900155352a255fb7b6a933b6f4bd2627cbd8523dd71e4a9b03f9a868"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-loopback-server-v049.test.mjs",
+      "mode": 420,
+      "size": 19886,
+      "sha256": "3c1917c1453d2f77206c917b555195552b6d7beab202e6a1072650c0c3f27eec"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/run-protected-browser-namespace-v049.sh",
+      "mode": 420,
+      "size": 17878,
+      "sha256": "32a642e7c4046dd9f56cd4259480ecd7aed2e162ecf3509391f1def9653c18ae"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/run-protected-browser-namespace-v049.test.mjs",
+      "mode": 420,
+      "size": 8042,
+      "sha256": "a3aff55f6d00ed71802a3c727eb28727e5e8f4fb56bfaf656f6c46133774f7d7"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/run-protected-private-browser-mode-v049.server.mjs",
+      "mode": 420,
+      "size": 42990,
+      "sha256": "e832ad1fdbde86ad831861f174529a9129bb23d630159e715b31fb27ff05e483"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/run-protected-private-browser-mode-v049.server.test.mjs",
+      "mode": 420,
+      "size": 17321,
+      "sha256": "7f942c05b29e3301e1dc9551de0835e6b4cc385629eafea2d490e4b3861614d0"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/safe_extract_private_chromium_v049.py",
+      "mode": 420,
+      "size": 48707,
+      "sha256": "5168a00b7fab5e08101365ec2ec140a78f35d3e18b74d2a6d851e43e2c7e57cc"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-browser-harness/safe_extract_private_chromium_v049_test.py",
+      "mode": 420,
+      "size": 25978,
+      "sha256": "bf366af10e3cd5457064f28f6397fbe6ef7f84a1c99c830bbcd570d96a909c8f"
+    },
+    {
+      "path": "scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs",
+      "mode": 420,
+      "size": 5232,
+      "sha256": "fc6d5cb973d8611816c6e453bc3fc55a2a9b08aeeb96685278e5450d51a33701"
+    },
+    {
+      "path": "scripts/atomistic/openmm/producer.py",
+      "mode": 420,
+      "size": 12274,
+      "sha256": "5f74525c59f4b813c2ae634af6f9b294b3a863dfa5fee6948e406225df96a967"
+    },
+    {
+      "path": "scripts/atomistic/openmm/producer_test.py",
+      "mode": 420,
+      "size": 4764,
+      "sha256": "bfbfce45b6107724667170aa5815c0836fbbacc7259849abe27cd212c075ed23"
+    },
+    {
+      "path": "scripts/atomistic/openmm/verify-control-cli.mjs",
+      "mode": 420,
+      "size": 4217,
+      "sha256": "ab099e85eb3123247885d5e59afb0653a6e657634b39e3ecb3b87dfda75e17eb"
+    },
+    {
+      "path": "scripts/atomistic/openmm/verify-control-directory.test.mjs",
+      "mode": 420,
+      "size": 54548,
+      "sha256": "a148d05537d818db6e7008ae624855e60a6b4241db2bfa0a4374aabd90e791ab"
+    },
+    {
+      "path": "scripts/atomistic/openmm/verify-control.mjs",
+      "mode": 420,
+      "size": 77264,
+      "sha256": "2f0184fc330dec11b99a4381bab1507dff1e1c93de5b64e99c5166b4a95fbb20"
+    },
+    {
+      "path": "scripts/atomistic/openmm/verify-control.test.mjs",
+      "mode": 420,
+      "size": 10848,
+      "sha256": "0f569dbfba40aa0070c0c26b871f0f17d88febd485a7d1226bc1e23b6cfb1bd9"
+    },
+    {
+      "path": "scripts/atomistic/openmm/verify-nacl-water-interface-import-v0411.mjs",
+      "mode": 420,
+      "size": 17053,
+      "sha256": "565ca2f4f9286c8ae5c5a791b968cd85f629690e12add817f6a57e07c044f9ce"
+    },
+    {
+      "path": "scripts/atomistic/openmm/worker.py",
+      "mode": 420,
+      "size": 46617,
+      "sha256": "303200de9a38aa2255621fcaf587da61ccfa0155803d7fc392790b9496d1c34d"
+    },
+    {
+      "path": "scripts/atomistic/openmm/worker_pure_test.py",
+      "mode": 420,
+      "size": 2152,
+      "sha256": "0ed16bdebda734312d462e7b2fba960eed31c4fc72be76aa3a00c31dda8cfcc1"
+    },
+    {
+      "path": "scripts/atomistic/openmm/write-ci-evidence.mjs",
+      "mode": 420,
+      "size": 46619,
+      "sha256": "ddd1080e14079eea1e1faef3245c2b44e4c179383e49b6039e37b6a12f31ce57"
+    },
+    {
+      "path": "scripts/atomistic/openmm/write-ci-evidence.test.mjs",
+      "mode": 420,
+      "size": 43860,
+      "sha256": "9ad8d456a6ff53edf8864bb7229d85749fe9e89bef7e00db109bb7c68b98f5ea"
+    },
+    {
+      "path": "scripts/atomistic/plan-policy.mjs",
+      "mode": 420,
+      "size": 8856,
+      "sha256": "95afdd889708f1786467bc0ad6f2425e27e9fd44e524049b14474379527f309c"
+    },
+    {
+      "path": "scripts/atomistic/plan-policy.test.mjs",
+      "mode": 420,
+      "size": 4741,
+      "sha256": "1869637095656246f1d148166b0014010f13b98a1cfad1dd2fb5c8d865682b2d"
+    },
+    {
+      "path": "scripts/atomistic/prepare_structures.py",
+      "mode": 420,
+      "size": 7674,
+      "sha256": "e263825577c70a25b576b768de7e0d4011603e058869c7198fedb6abd68fcb2d"
+    },
+    {
+      "path": "scripts/atomistic/prepare_structures_test.py",
+      "mode": 420,
+      "size": 5908,
+      "sha256": "a27e753a60eef31635bb9e7d5fb68f747d4fd221b62199c92dd5cb58c02eb452"
+    },
+    {
+      "path": "scripts/atomistic/private-full-candidate-handoff.mjs",
+      "mode": 420,
+      "size": 22207,
+      "sha256": "19f97a8662b239d9cdb796a3508652a739269c7ff7d90308d1bbfd06619c5342"
+    },
+    {
+      "path": "scripts/atomistic/private-full-candidate-handoff.test.mjs",
+      "mode": 420,
+      "size": 17324,
+      "sha256": "f8ce9c16883a301ae0455282c944bdec372ecbfeec7a2411ea950a1132df79b4"
+    },
+    {
+      "path": "scripts/atomistic/random-tp-authority-request-policy.mjs",
+      "mode": 420,
+      "size": 33050,
+      "sha256": "e3837c14854eb79f4c0b90af28e1f7ef306e203128654ae903a51545c8a4cb95"
+    },
+    {
+      "path": "scripts/atomistic/random-tp-authority-request-policy.test.mjs",
+      "mode": 420,
+      "size": 15146,
+      "sha256": "b6eb61c4458d04b9c2558ccf99ff45f83d251678b00cc6d9329bc4669226f4ee"
+    },
+    {
+      "path": "scripts/atomistic/random-tp-rights-disposition-policy.mjs",
+      "mode": 420,
+      "size": 56930,
+      "sha256": "8261baaf985fc9fa46668f64ab70450a27ca85f4027625337eae02ed974cbfcd"
+    },
+    {
+      "path": "scripts/atomistic/random-tp-rights-disposition-policy.test.mjs",
+      "mode": 420,
+      "size": 21241,
+      "sha256": "f80ca916db4fc30434e0b8d4ab52bc0baa5a0f8cc6b44b6b00bad1212fa0044e"
+    },
+    {
+      "path": "scripts/atomistic/receipt-policy.mjs",
+      "mode": 420,
+      "size": 58820,
+      "sha256": "32ea21aeb009bc0530bf3af46d5bd53c467f724401d23205f33753268bb4b6a5"
+    },
+    {
+      "path": "scripts/atomistic/receipt-policy.test.mjs",
+      "mode": 420,
+      "size": 52080,
+      "sha256": "421110806cc629196ace1ab8108a67440ed57ed42afd7050b0b67a9e28e457a2"
+    },
+    {
+      "path": "scripts/atomistic/resolve_lock.py",
+      "mode": 420,
+      "size": 51229,
+      "sha256": "34fe6bca038dfe80730788105ea88b219c4b037a22b5c2d7a8e3916edeb565ac"
+    },
+    {
+      "path": "scripts/atomistic/resolve_lock_test.py",
+      "mode": 420,
+      "size": 45066,
+      "sha256": "afa880a0cfccec3357da49c7f5b82636ba27bf672b6f5bed2542eb0bd5f81703"
+    },
+    {
+      "path": "scripts/atomistic/run_model.py",
+      "mode": 420,
+      "size": 31874,
+      "sha256": "82704e552e7d5f0a2cdbb0603676429931997653568db70ab016533690c2efd8"
+    },
+    {
+      "path": "scripts/atomistic/runtime-freeze-evidence-policy.mjs",
+      "mode": 420,
+      "size": 55688,
+      "sha256": "8a772e6f7e6888a099d42190a0cbd6011f526871c382273e5cce9935c27edf8b"
+    },
+    {
+      "path": "scripts/atomistic/runtime-freeze-evidence-policy.test.mjs",
+      "mode": 420,
+      "size": 27669,
+      "sha256": "0d8f6f90cf38b8be26c8c5d81222c5b46b42e1018d141444ad4a045cb8911b5f"
+    },
+    {
+      "path": "scripts/atomistic/runtime-input-contract.mjs",
+      "mode": 420,
+      "size": 44050,
+      "sha256": "d5174d4630d959ac3c93d4a75027ac0258e40a776b689d6ac98f62b61f4a5937"
+    },
+    {
+      "path": "scripts/atomistic/runtime-input-contract.test.mjs",
+      "mode": 420,
+      "size": 25231,
+      "sha256": "40494240c71b8504c96704cf3abc5db0d11d64f5af6182588103eb6ecc7326b7"
+    },
+    {
+      "path": "scripts/atomistic/runtime-lock-policy.mjs",
+      "mode": 420,
+      "size": 28695,
+      "sha256": "f482dfdbb03b898d5d5b4966d5e1e35a90e5249e4fb2534480ff972c3007f11d"
+    },
+    {
+      "path": "scripts/atomistic/runtime-lock-policy.test.mjs",
+      "mode": 420,
+      "size": 14842,
+      "sha256": "5d7c3f35c21583867f59b718dda37baf84f6d3bdd2f82e330a1baae2687a3adf"
+    },
+    {
+      "path": "scripts/atomistic/runtime_contract.py",
+      "mode": 420,
+      "size": 47702,
+      "sha256": "d1d94c6ee1b256a16c485e1760ea13ebddf24ef0e34ccde7d3682b9c9ceecc61"
+    },
+    {
+      "path": "scripts/atomistic/runtime_contract_v2_test.py",
+      "mode": 420,
+      "size": 13974,
+      "sha256": "50ea1098623985a5175844d587755bd2b8b4d4767a745731a9a6bec4fdfbfa87"
+    },
+    {
+      "path": "scripts/atomistic/source-tree-identity.mjs",
+      "mode": 420,
+      "size": 22251,
+      "sha256": "e1cc5acb9da09af1ad68041d8ad77271bb335b21e2631ce20e9a00360bf16b97"
+    },
+    {
+      "path": "scripts/atomistic/source-tree-identity.test.mjs",
+      "mode": 420,
+      "size": 13175,
+      "sha256": "0cc46363d9fee58898e2e68d17ee3987db01be9df6b5b8429a227cbd3673cfe4"
+    },
+    {
+      "path": "scripts/atomistic/v2/run_model.py",
+      "mode": 420,
+      "size": 35311,
+      "sha256": "f0f0e2dd09784de064f2ba552a90a390523cd9af4244c0853118317bb42a36bb"
+    },
+    {
+      "path": "scripts/atomistic/v2/runtime_contract.py",
+      "mode": 420,
+      "size": 53577,
+      "sha256": "0a7f2e6e92cfdaeea0a9b532b152fa32c3a562500d7e1962a1573a8b072c34e2"
+    },
+    {
+      "path": "scripts/atomistic/verify-bootstrap-replicas.mjs",
+      "mode": 420,
+      "size": 66134,
+      "sha256": "877e57767b13d52a9abe41236a3ea3ac1f2b41a616b5acac4b891df4e9cb6441"
+    },
+    {
+      "path": "scripts/atomistic/verify-bootstrap-replicas.test.mjs",
+      "mode": 420,
+      "size": 16579,
+      "sha256": "f7cae9a4e07a29a722facd94c175e9b97ab87cfc9f7e05eb45faa0b94cb1a809"
+    },
+    {
+      "path": "scripts/atomistic/verify-full-candidate.mjs",
+      "mode": 420,
+      "size": 64616,
+      "sha256": "de67b41304088272cb3e541ef70a3a02a6ac1940ec7b8fcf34e4735b265851c4"
+    },
+    {
+      "path": "scripts/atomistic/verify-full-candidate.test.mjs",
+      "mode": 420,
+      "size": 45739,
+      "sha256": "72b6aab38359af8e256b882819715c439be9f8ec2271fdfa964bad3ad7d0c91b"
+    },
+    {
+      "path": "scripts/atomistic/verify_derived_wheel.py",
+      "mode": 420,
+      "size": 21813,
+      "sha256": "eb411a80b63e3a98599f07d8275460a44866f1f8d7b13be738686621e311d9e5"
+    },
+    {
+      "path": "scripts/atomistic/verify_derived_wheel_test.py",
+      "mode": 420,
+      "size": 15312,
+      "sha256": "c1b2570377eb39b7c783177a9a8a6803c81c47e0bc2b1767eb3bed57df174661"
+    },
+    {
+      "path": "scripts/atomistic/verify_runtime_inventory.py",
+      "mode": 420,
+      "size": 23086,
+      "sha256": "bf517278cd097517953609e089fd29aae7de5472d5e59a63624eb1bce3f93f5c"
+    },
+    {
+      "path": "scripts/atomistic/verify_runtime_inventory_test.py",
+      "mode": 420,
+      "size": 13844,
+      "sha256": "50b88961dc4b6d5ba95276e80b06b4015630d30b53bb97444eb4ea646e848d8e"
+    },
+    {
+      "path": "scripts/atomistic/write-container-observation.mjs",
+      "mode": 420,
+      "size": 46978,
+      "sha256": "83b33e718297f1a90939e029ddfe407ab6e754b35ac2e5f6a27baf8de0143b18"
+    },
+    {
+      "path": "scripts/atomistic/write-container-observation.test.mjs",
+      "mode": 420,
+      "size": 36594,
+      "sha256": "f4ccc46b1f873e1258cfaf96da563da0a868046b9cec0258f57399f0e376b791"
+    },
+    {
+      "path": "scripts/atomistic/write_bootstrap_outcome.py",
+      "mode": 420,
+      "size": 16647,
+      "sha256": "1f4198da6874f2ad10138c4b7ee030ed8a05f22d6c4d55deab5fe622d3728684"
+    },
+    {
+      "path": "scripts/atomistic/write_bootstrap_outcome_test.py",
+      "mode": 420,
+      "size": 21105,
+      "sha256": "e7ea0cc7f5916cf0cce6bc9458d8726ff9bd76c41777df5a8074e4a25fcf896c"
+    },
+    {
+      "path": "scripts/atomistic/write_full_candidate_outcome.py",
+      "mode": 420,
+      "size": 28402,
+      "sha256": "ad2315337e22006dae48d04cc55fa05d659c24f2ec0dc2ec7e270b00dcc55641"
+    },
+    {
+      "path": "scripts/atomistic/write_full_candidate_outcome_test.py",
+      "mode": 420,
+      "size": 26128,
+      "sha256": "8555c84bb34867a8710e683dafefadd50fc301b57d9013f9628601aa3e973051"
+    },
+    {
+      "path": "scripts/comparator-evidence-policy.mjs",
+      "mode": 420,
+      "size": 2615,
+      "sha256": "bc223f767078b29a63de2265fc98a0488bcfce0e1517e0239916b9675c89c598"
+    },
+    {
+      "path": "scripts/comparator-evidence-policy.test.mjs",
+      "mode": 420,
+      "size": 2716,
+      "sha256": "42cb7bd9846112048ae028a252a4c42e9cd47165209132306d01858e28ca3f4f"
+    },
+    {
+      "path": "scripts/evaluate-launcher.test.mjs",
+      "mode": 420,
+      "size": 17613,
+      "sha256": "3ccca5f37141d0461c0c5e46dad080b995acc810dd5c638b5769b8a1346c614b"
+    },
+    {
+      "path": "scripts/evaluate-observer-snapshot.test.mjs",
+      "mode": 420,
+      "size": 15891,
+      "sha256": "2dbc466a7638dc569f8fdfbdb29ef2a1cbbf3c81d366bcae8f3ff34b66e3d524"
+    },
+    {
+      "path": "scripts/evaluate-worker.mjs",
+      "mode": 420,
+      "size": 68841,
+      "sha256": "31f22211db899c9d42251a34fc40049624cf0ee00d52ca153e9d6f0258997c67"
+    },
+    {
+      "path": "scripts/evaluate.mjs",
+      "mode": 420,
+      "size": 28388,
+      "sha256": "255acdfb30cb8aaa2764d82b178c08ebd517476f23f1d060dcbcfa01f9340883"
+    },
+    {
+      "path": "scripts/evaluation-report-boundary.test.mjs",
+      "mode": 420,
+      "size": 2379,
+      "sha256": "a39e7c301aa7972064f73ca75a5e22df7869f3c7af9bb4730fa23e1eba4f1bcb"
+    },
+    {
+      "path": "scripts/github-release-policy.mjs",
+      "mode": 420,
+      "size": 4093,
+      "sha256": "4e534744a60c6c02302c8ae1f34b6bb3e30804d0173b6205cd6c5d24cc967eea"
+    },
+    {
+      "path": "scripts/github-release-policy.test.mjs",
+      "mode": 420,
+      "size": 3734,
+      "sha256": "c8a49539d3bab740a680dea1312e115fa8b3c88b86a4e2a8f392d8266c1e86cf"
+    },
+    {
+      "path": "scripts/release-artifact.mjs",
+      "mode": 420,
+      "size": 27372,
+      "sha256": "93e171f5ecfca397baa6d19ba4201ebb03680335a73941658f9b4214dadc310c"
+    },
+    {
+      "path": "scripts/release-artifact.test.mjs",
+      "mode": 420,
+      "size": 17364,
+      "sha256": "a3ee8f111c897a8f130ddaabdb49d31594207f07f7cc7094068925321b6801c6"
+    },
+    {
+      "path": "scripts/release-cloudflare.mjs",
+      "mode": 420,
+      "size": 26447,
+      "sha256": "83df33a6ae805ef7830286723991587bfdc4eb9f7504aaca03834f760cd71a9f"
+    },
+    {
+      "path": "scripts/release-cloudflare.test.mjs",
+      "mode": 420,
+      "size": 15101,
+      "sha256": "ac1818a3ccec2d6808b56645296520d63de517d5682f047393e8d159883e99ce"
+    },
+    {
+      "path": "scripts/release-report.mjs",
+      "mode": 420,
+      "size": 11529,
+      "sha256": "66db07001dc6a4f87d33362af679ea236703692f763ffe0489f054bce378a00d"
+    },
+    {
+      "path": "scripts/release-report.test.mjs",
+      "mode": 420,
+      "size": 18479,
+      "sha256": "56bbe63fc293246ce26cc2f9347af98e8bd1226ba8a2faea8f21cc0b31682fb3"
+    },
+    {
+      "path": "scripts/safe_extract_zip.py",
+      "mode": 420,
+      "size": 6042,
+      "sha256": "e6b1a46b1ba471c888402cd75987819b18097d0bc6d2f87f5d1469f3d6a7caa0"
+    },
+    {
+      "path": "scripts/safe_extract_zip_test.py",
+      "mode": 420,
+      "size": 3056,
+      "sha256": "9ce8308a8cbf23d45d34ff66ffbd2905328ce4dbd4eb88241ef5a2ed396e3a59"
+    },
+    {
+      "path": "scripts/source-scope.mjs",
+      "mode": 420,
+      "size": 1489,
+      "sha256": "1e533a10f810d5e80146d57d89a6a503ccdff70d233af670c84fa858f1459d6b"
+    },
+    {
+      "path": "scripts/source-scope.test.mjs",
+      "mode": 420,
+      "size": 1483,
+      "sha256": "307f3da2b545172bef6ea81a6e7c5e09abefc832cdbee7d7f03a1ea68678d767"
+    },
+    {
+      "path": "scripts/source-snapshot.mjs",
+      "mode": 420,
+      "size": 7439,
+      "sha256": "ec1b92bac6418dc0e97a221ca30e7fb65a614ca42fdb4b9f95b8a55678646c7a"
+    },
+    {
+      "path": "scripts/source-snapshot.test.mjs",
+      "mode": 420,
+      "size": 4516,
+      "sha256": "48357836dad1f8a73e382383ab35eeb14be68d86e97e379e032fa7e251add695"
+    },
+    {
+      "path": "scripts/validate-atomistic-plan.mjs",
+      "mode": 420,
+      "size": 14132,
+      "sha256": "c2ab6316fa42a85d1bd471bd6f4e39e7c8b803929e295c5bce165370f15e8be9"
+    },
+    {
+      "path": "scripts/validate-atomistic-runtime-lock.mjs",
+      "mode": 420,
+      "size": 1609,
+      "sha256": "93e2e0e0b222d12072aa83d04db0b791c2bf3fafd23cd9f3e1c1318ea18257f4"
+    },
+    {
+      "path": "scripts/validate-production-isolation.mjs",
+      "mode": 420,
+      "size": 13315,
+      "sha256": "3eaeed5a058579ca5ca3a87f67c0eb2dbf533779b589ba3a92672d2ef0eed19a"
+    },
+    {
+      "path": "scripts/validate-production-isolation.test.mjs",
+      "mode": 420,
+      "size": 6756,
+      "sha256": "f0adaf5e18adf59539741db1fbfbb2c13d25e5b97f45418be75b07a57bc3a6f1"
+    },
+    {
+      "path": "scripts/workflow-policy.mjs",
+      "mode": 420,
+      "size": 101789,
+      "sha256": "56b1404cdeb8527b387758b86ab218c4605dec0bbc48f62933773358a29e80cc"
+    },
+    {
+      "path": "scripts/workflow-policy.test.mjs",
+      "mode": 420,
+      "size": 95280,
+      "sha256": "45efb6869afb8f1bfa31fc28278f102694d9c9d434cf3d86ccb35a32f85cda1b"
+    },
+    {
+      "path": "tsconfig.json",
+      "mode": 420,
+      "size": 758,
+      "sha256": "3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8"
+    },
+    {
+      "path": "vite.config.ts",
+      "mode": 420,
+      "size": 1832,
+      "sha256": "b2fb83fd2abb04241a351a183ee9a7e8dea9d8aa25c795a47829d0d94ae8cbfa"
+    },
+    {
+      "path": "vitest.config.ts",
+      "mode": 420,
+      "size": 1041,
+      "sha256": "c71b966d6c632b94d915fa319f862a16b9e990837efd22134a12080c774226b5"
+    }
+  ],
+  "imports": [
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "mode": 420,
+      "size": 101840,
+      "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+    },
+    {
+      "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+      "mode": 420,
+      "size": 511225,
+      "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+    },
+    {
+      "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+      "mode": 420,
+      "size": 9064,
+      "sha256": "789eb6359676293f165edb7b21d55e6ebdf30366295a97459c38812e2e176011"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+      "mode": 420,
+      "size": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+      "mode": 420,
+      "size": 90735,
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+      "mode": 420,
+      "size": 4303,
+      "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+      "mode": 420,
+      "size": 7411,
+      "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+    },
+    {
+      "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+      "mode": 292,
+      "size": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+      "mode": 420,
+      "size": 20908,
+      "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+      "mode": 420,
+      "size": 7566,
+      "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+      "mode": 420,
+      "size": 81228,
+      "sha256": "8ed096527bc1557a72fca40d0abce06726ca4a05c2936d2e26917243317231f7"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+      "mode": 420,
+      "size": 7584,
+      "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+      "mode": 420,
+      "size": 5167,
+      "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+      "mode": 420,
+      "size": 4806,
+      "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+      "mode": 420,
+      "size": 6330,
+      "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+      "mode": 420,
+      "size": 5705,
+      "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+      "mode": 420,
+      "size": 38058,
+      "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+      "mode": 420,
+      "size": 4065,
+      "sha256": "39e6ce7c29a7f16bfe3b11cae65fe1c7e75aeb2b38141d40d9ede50ba603161a"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+      "mode": 420,
+      "size": 8002,
+      "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+      "mode": 420,
+      "size": 20628,
+      "sha256": "be4d2b39a298ab8ecb15835b4ae6d80aeb440dceddddaf3f5bcc7e24e678278a"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+      "mode": 420,
+      "size": 8746,
+      "sha256": "69d8b377350298c4d6ce62a4e9a981ce335feed1d957dd0ea8bb35111a1ad0d3"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+      "mode": 420,
+      "size": 14074,
+      "sha256": "96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+      "mode": 420,
+      "size": 11467,
+      "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+      "mode": 420,
+      "size": 85182,
+      "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+      "mode": 420,
+      "size": 9803,
+      "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+    },
+    {
+      "path": "schemas/backend-migration-admission-v0.1.schema.json",
+      "mode": 420,
+      "size": 9241,
+      "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+    },
+    {
+      "path": "schemas/backend-migration-admission-v0.2.schema.json",
+      "mode": 420,
+      "size": 3202,
+      "sha256": "df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684"
+    },
+    {
+      "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+      "mode": 420,
+      "size": 36479,
+      "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+      "mode": 420,
+      "size": 12652,
+      "sha256": "ace5b5f4f04e92a7835945686992eac4059eac7efcf00ff6dcf8f834ce6cc558"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+      "mode": 420,
+      "size": 4535,
+      "sha256": "4b30c5cd29764d9dbf452485fbea30f68df843303f80f648575a96748b2b106e"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+      "mode": 420,
+      "size": 24876,
+      "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+      "mode": 420,
+      "size": 15597,
+      "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+      "mode": 420,
+      "size": 18023,
+      "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+      "mode": 420,
+      "size": 8756,
+      "sha256": "4579efa98f0c4435a1609bcbfa38b828eb5090d936b8fa98e6666fca59836404"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+      "mode": 420,
+      "size": 6966,
+      "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+      "mode": 420,
+      "size": 18417,
+      "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+      "mode": 420,
+      "size": 30418,
+      "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+      "mode": 420,
+      "size": 16746,
+      "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+      "mode": 420,
+      "size": 72494,
+      "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+      "mode": 420,
+      "size": 29719,
+      "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+    },
+    {
+      "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+      "mode": 420,
+      "size": 8093,
+      "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+    }
+  ],
+  "reconciled": [
+    {
+      "path": ".gitignore",
+      "mode": 420,
+      "size": 492,
+      "sha256": "31341236431b683b0d8c229dc36c2a8aae2c511c63d067206752f3885ec8e395"
+    },
+    {
+      "path": "package.json",
+      "mode": 420,
+      "size": 3069,
+      "sha256": "b6a2ea54c991b322bf4298a2dd8bdaf843de636139477d2967f5756cf59197f0"
+    },
+    {
+      "path": "vitest.config.ts",
+      "mode": 420,
+      "size": 1406,
+      "sha256": "a42d4133a2c5b755ebcf96b99796ae1e38a07b56e2f19939e82fbc33a1f76643"
+    },
+    {
+      "path": "scripts/source-scope.mjs",
+      "mode": 420,
+      "size": 1699,
+      "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+    },
+    {
+      "path": "scripts/source-scope.test.mjs",
+      "mode": 420,
+      "size": 2001,
+      "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+    },
+    {
+      "path": "scripts/evaluate.mjs",
+      "mode": 420,
+      "size": 22343,
+      "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+    },
+    {
+      "path": "scripts/evaluate-launcher.test.mjs",
+      "mode": 420,
+      "size": 23470,
+      "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+    }
+  ],
+  "additions": [
+    {
+      "path": "schemas/backend-migration-admission-v0.3.schema.json",
+      "mode": 420,
+      "size": 6286,
+      "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+    },
+    {
+      "path": "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+      "mode": 420,
+      "size": 6031,
+      "sha256": "e4d9a458a17cb858f1a3dcf5eb1eff232ece94b7b5dfa759c193d5b9077a2955"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+      "mode": 420,
+      "size": 21510,
+      "sha256": "d86cc3ed051a33284b268d67c3d4c223b4d80c6804e3a4aff1e91ae6ba7b972f"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+      "mode": 420,
+      "size": 11113,
+      "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+      "mode": 420,
+      "size": 6163,
+      "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+      "mode": 420,
+      "size": 9214,
+      "sha256": "1be2b3e55f667e115b9d995faf84129e0db791bb6d59a977978e7f5868e20805"
+    },
+    {
+      "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+      "mode": 420,
+      "size": 143300,
+      "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+    },
+    {
+      "path": "scripts/derived-report-contract.mjs",
+      "mode": 420,
+      "size": 13691,
+      "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+    },
+    {
+      "path": "scripts/derived-report-contract.test.mjs",
+      "mode": 420,
+      "size": 7657,
+      "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+      "mode": 420,
+      "size": 7367,
+      "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+    }
+  ],
+  "controlFiles": [
+    "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+    "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+  ],
+  "reviewOutputs": [
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-science-review.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-software-review.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-sota-review.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json"
+  ],
+  "upstreamPaths": [
+    "docs/ATOMISTIC_REPRODUCTION.md",
+    "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+    "evaluation/latest-report.json",
+    "evaluation/latest-report.md",
+    "evaluation/public-product-evaluation.json",
+    "evaluation/public-summary.json",
+    "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+    "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+    "schemas/atomistic-full-candidate-host-observation.schema.json",
+    "scripts/atomistic/full-candidate-observer-vnext.mjs",
+    "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+    "scripts/evaluate-observer-snapshot.test.mjs",
+    "scripts/evaluate-worker.mjs"
+  ],
+  "receiptPermissionPolicy": {
+    "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+    "historicalMode": 292,
+    "gitMode": "100644",
+    "allowedSourceModes": [
+      292,
+      420
+    ],
+    "runtimeException": false,
+    "generatedReceiptException": false,
+    "byteSize": 248778,
+    "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+  },
+  "claims": {
+    "releaseEligible": false,
+    "migrationComplete": false,
+    "rightsCleared": false,
+    "historicalApprovalTransferred": false,
+    "physicalValidation": false,
+    "convergenceVerified": false,
+    "causalEffectIdentified": false,
+    "scoreIncrease": false,
+    "latestRemoteMainClaimed": false
+  },
+  "lifecycleRevision": "successor-v2",
+  "reviewHistory": [
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "mode": 420,
+      "size": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "mode": 420,
+      "size": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-science-review.json",
+      "mode": 420,
+      "size": 23098,
+      "sha256": "a2cff93fbd0f22b0df719d5f787e45d4db089464283dc938a43b7db9d9ac44ac"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-software-review.json",
+      "mode": 420,
+      "size": 94425,
+      "sha256": "16aa9651d720e2feb7352916cadde2eaa270fc9d0434c69298578d77c164fdbc"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+      "mode": 420,
+      "size": 31464,
+      "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+      "mode": 420,
+      "size": 24740,
+      "sha256": "7634e215ec55d42d382b4efd7e6dfac5641553a799719dbf7e99f318c41fa13f"
+    }
+  ],
+  "derivedReportPolicy": {
+    "derivedOutputPaths": [
+      "evaluation/latest-report.json",
+      "evaluation/latest-report.md",
+      "evaluation/public-product-evaluation.json",
+      "evaluation/public-summary.json"
+    ],
+    "historicalSnapshotPath": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+    "terminalAttestationPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+    "baseReportRecordsAreHistoricalOnly": true,
+    "sourceInputIdentityExcludesOnlyDerivedOutputsAndTerminalAttestation": true,
+    "completeObservedTreeIdentityRetained": true,
+    "generationEvidenceIsSourceInput": false,
+    "sourceAdmissionImpliesReportReadiness": false,
+    "reportConsistencyImpliesReleaseApproval": false
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "tf.review.independent-software/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/admission_software_review",
+  "recordedBy": "/root",
+  "role": "independent read-only software/numerical/evaluator reviewer",
+  "initialReview": {
+    "disposition": "BLOCKED",
+    "candidateSetSha256": "dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b",
+    "candidateFiles": 24,
+    "canonicalBytes": 4014,
+    "manifestSha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82",
+    "builderGateSha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92",
+    "unchangedAfterReview": true,
+    "findings": [
+      {
+        "id": "R18A-SOFTWARE-P1-AGGREGATE-DEADLINE",
+        "priority": "P1",
+        "state": "open-pending-independent-fix-closure",
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "lines": [
+          138,
+          142,
+          143,
+          147,
+          161,
+          165
+        ],
+        "summary": "spawnSync timeout sends SIGTERM but cannot return until the child exits; post-return group SIGKILL cannot enforce independent completion. Final bootstrap/source verification had no final acceptance-budget check.",
+        "observations": {
+          "scaledBudgetMs": 100,
+          "finiteSigtermHandlerElapsedMs": 1324,
+          "finitePipeHolderElapsedMs": 101,
+          "pipeHolderReproduced": false,
+          "combinedProbeStatus": "INCONCLUSIVE",
+          "combinedProbeDisposition": "The original combined predicate required both scenarios to exceed budget. The first confirms the finding; the second did not reproduce. Preserve the original evidence unchanged."
+        },
+        "closureRequirements": [
+          "Independent deadline and bounded stop grace; no dependency on close to return failure.",
+          "Explicit evidence for timeout, output overflow, termination failure and unconfirmed cleanup; none may pass.",
+          "One monotonic budget through preparation, commands and final verification, checked immediately before success; no silent scientific-time increase.",
+          "Executable normal, finite SIGTERM-handler, finite pipe-holder, kill-failure, output-limit, cumulative-exhaustion and final-verification-overrun regressions; retain Python21/Node29 and both exact receipts."
+        ]
+      },
+      {
+        "id": "R18A-SOFTWARE-P2-HISTORICAL-REPLAY-LIFECYCLE",
+        "priority": "P2",
+        "state": "open-pending-independent-fix-closure",
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+        "line": 140,
+        "summary": "Historical replay spawnSync timeout120000 is not a forced completion deadline. This is a separate historical-test reliability limitation, not the scientific600000ms contract finding.",
+        "observedHistoricalFalsePass": false,
+        "recommendedDisposition": "Share the bounded process primitive and independently verify normal historical execution; otherwise retain limitation explicitly."
+      }
+    ],
+    "independentValidation": {
+      "currentContractTests": 8,
+      "historicalTests": 20,
+      "historicalGitBlobs": 449,
+      "historicalAdditionalFiles": 11,
+      "nodeTests": 29,
+      "numericalPythonTests": 21,
+      "numericalNodeTests": 29,
+      "numericalElapsedSeconds": 15.03,
+      "numericalSkips": 0,
+      "matchingReceipts": 2,
+      "receiptBytesEach": 248778,
+      "receiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+      "admissionObservedPaths": 484,
+      "admissionStatus": "pass-bounded-integration-inventory",
+      "legacyImportsByteIdentical": 12,
+      "historicalFilesPreserved": 11,
+      "mainFilesPreserved": 446,
+      "linuxNumericalRunClaimed": false
+    },
+    "rawEvidence": [
+      {
+        "path": "/private/tmp/tf-r18a-candidate-review.0zkxqi/execution-evidence.json",
+        "bytes": 5418,
+        "sha256": "164fe20caff3ebedc458ed01a783f4f061996ea7f2e803ee5fe4a37b6f69ad38",
+        "rawUtf8": "{\n  \"schemaVersion\": \"independent-r18a-software-review-execution/0.1\",\n  \"before\": {\n    \"candidateFiles\": 24,\n    \"candidateCanonicalBytes\": 4014,\n    \"candidateSha256\": \"dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b\",\n    \"byteIdenticalLegacyImports\": 12,\n    \"preservedHistoricalFiles\": 11,\n    \"preservedMainFiles\": 446\n  },\n  \"after\": {\n    \"candidateFiles\": 24,\n    \"candidateCanonicalBytes\": 4014,\n    \"candidateSha256\": \"dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b\",\n    \"byteIdenticalLegacyImports\": 12,\n    \"preservedHistoricalFiles\": 11,\n    \"preservedMainFiles\": 446\n  },\n  \"runs\": [\n    {\n      \"id\": \"targeted-contracts\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"node_modules/vitest/vitest.mjs\",\n        \"run\",\n        \"--config\",\n        \"vitest.config.ts\",\n        \"scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs\",\n        \"scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs\"\n      ],\n      \"elapsedMs\": 11808,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/targeted-contracts.stdout.log\",\n        \"size\": 5345,\n        \"sha256\": \"dd777673496793fea2ff82f9e1262277d3b3e721c7e5b673f6ff2d8ae0ddb586\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/targeted-contracts.stderr.log\",\n        \"size\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    },\n    {\n      \"id\": \"node-29\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"--test\",\n        \"--test-reporter=tap\",\n        \"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs\"\n      ],\n      \"elapsedMs\": 567,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/node-29.stdout.log\",\n        \"size\": 9641,\n        \"sha256\": \"e780eb79cf7c0a44a5c0e53756182adcfce593a9e7664bc26b1304503f89fd92\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/node-29.stderr.log\",\n        \"size\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    },\n    {\n      \"id\": \"actual-admission\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs\"\n      ],\n      \"elapsedMs\": 155,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/actual-admission.stdout.log\",\n        \"size\": 214,\n        \"sha256\": \"ac93476fdc4ac6cbd2dc302bf4449b28bda89e4f5a1a761b042a1fb94a3ba3d9\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/actual-admission.stderr.log\",\n        \"size\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    },\n    {\n      \"id\": \"numerical\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"scripts/mesoscale/pfhub7a_r18a_current_root.mjs\",\n        \"--python-source\",\n        \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee\",\n        \"--wheelhouse\",\n        \"/private/tmp/tf-r18a-fipy-lock.LSDdK2\"\n      ],\n      \"elapsedMs\": 15030,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/numerical.stdout.log\",\n        \"size\": 4794,\n        \"sha256\": \"eb577c25b17493ae9d43ff1d44affbff9c9a187e473c73069b80a5e1e4c0ad93\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-candidate-review.0zkxqi/numerical.stderr.log\",\n        \"size\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    }\n  ],\n  \"executionEvidence\": {\n    \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-XZ8gGm/execution.json\",\n    \"size\": 554260,\n    \"sha256\": \"b3a81017d414357a4575c9f20be14916319b2eff94f0a2a48d57e072c327a0b0\"\n  },\n  \"receipts\": [\n    {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-XZ8gGm/receipt-1.json\",\n      \"size\": 248778,\n      \"sha256\": \"d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"\n    },\n    {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-XZ8gGm/receipt-2.json\",\n      \"size\": 248778,\n      \"sha256\": \"d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"\n    }\n  ],\n  \"numericalStatus\": \"pass-bounded-current-root-execution\",\n  \"numericalReleaseEligible\": false,\n  \"pythonCorpusComplete\": true,\n  \"nodeCorpusComplete\": true,\n  \"boundary\": \"Independent bounded execution evidence, not candidate approval; the new product runner timeout concern is reviewed separately. No published report/source changes.\"\n}\n"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-candidate-review.0zkxqi/timeout-boundary-evidence.json",
+        "bytes": 2606,
+        "sha256": "cc1fe34691ea574c1dbc442eb3a82dd49e52ff4621d1af860e8ba6b76997efe2",
+        "rawUtf8": "{\n  \"scope\": \"Exact reviewed execute function block in a local unit harness with a 100ms injected budget. No production constant or candidate bytes edited, no real solver run in this probe, synthetic child lifetimes fixed at 1300ms. This is not an end-to-end ten-minute execution.\",\n  \"source\": {\n    \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/scripts/mesoscale/pfhub7a_r18a_current_root.mjs\",\n    \"sha256\": \"9129aacd1da0197c62fc3cff205e298dfc73fcae900c19a3283726c1c4134283\",\n    \"lines\": [\n      138,\n      147\n    ],\n    \"extractedBlockSha256\": \"6e3954dad194b792a506ec1c64ab4c23252ed3e506e1d7b536a6e9c9783d64cf\"\n  },\n  \"cases\": [\n    {\n      \"name\": \"finite-sigterm-handler\",\n      \"scaledUnitBudgetMs\": 100,\n      \"observedElapsedMs\": 1324,\n      \"failure\": \"COMMAND_FAILED:finite-sigterm-handler\",\n      \"commands\": [\n        {\n          \"label\": \"finite-sigterm-handler\",\n          \"command\": [\n            \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n            \"-e\",\n            \"process.on('SIGTERM',()=>{});process.stdout.write('finite handler installed\\\\n');setTimeout(()=>process.exit(0),1300);\"\n          ],\n          \"elapsedMs\": 1324,\n          \"exitCode\": 0,\n          \"signal\": null,\n          \"error\": \"spawnSync /private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node ETIMEDOUT\",\n          \"stdout\": \"finite handler installed\\n\",\n          \"stderr\": \"\"\n        }\n      ]\n    },\n    {\n      \"name\": \"finite-descendant-pipe-holder\",\n      \"scaledUnitBudgetMs\": 100,\n      \"observedElapsedMs\": 101,\n      \"failure\": \"COMMAND_FAILED:finite-descendant-pipe-holder\",\n      \"commands\": [\n        {\n          \"label\": \"finite-descendant-pipe-holder\",\n          \"command\": [\n            \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n            \"-e\",\n            \"require('node:child_process').spawn(process.execPath,['-e','setTimeout(()=>process.exit(0),1300)'],{stdio:['ignore','inherit','inherit']});process.stdout.write('finite pipe holder started\\\\n');process.exit(0);\"\n          ],\n          \"elapsedMs\": 101,\n          \"exitCode\": 0,\n          \"signal\": null,\n          \"error\": \"spawnSync /private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node ETIMEDOUT\",\n          \"stdout\": \"finite pipe holder started\\n\",\n          \"stderr\": \"\"\n        }\n      ]\n    }\n  ],\n  \"declaredHistoricalReplayTimeoutMs\": 120000,\n  \"historicalReplayUsesSameSynchronousDefaultKill\": true,\n  \"sourceUnchanged\": true,\n  \"result\": \"INCONCLUSIVE\"\n}\n"
+      }
+    ],
+    "numericalCapture": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-XZ8gGm/execution.json",
+      "bytes": 554260,
+      "sha256": "b3a81017d414357a4575c9f20be14916319b2eff94f0a2a48d57e072c327a0b0"
+    },
+    "primaryReference": {
+      "url": "https://nodejs.org/download/release/v24.16.0/docs/api/child_process.html#child_processspawnsynccommand-args-options",
+      "classification": "reference",
+      "rawDigest": null
+    }
+  },
+  "rootFixCandidate": {
+    "candidateSet": {
+      "recordCount": 25,
+      "canonicalByteSize": 4209,
+      "serialization": "UTF-8 JSON.stringify(records sorted by path; keys path,mode,size,sha256), no newline",
+      "sha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5"
+    },
+    "manifestPath": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+    "builderGatesPath": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+    "independentClosurePending": true
+  },
+  "releaseEligible": false,
+  "goalComplete": false
+}

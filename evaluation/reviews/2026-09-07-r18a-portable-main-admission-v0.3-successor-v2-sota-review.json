@@ -1,0 +1,1013 @@
+{
+  "schemaVersion": "tf.review.independent-sota/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/portable_sota_review",
+  "role": "independent read-only dated SOTA and evidence-discipline reviewer",
+  "round": "report-lifecycle-successor-v2",
+  "candidateRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+  "reviewRecordComplete": true,
+  "disposition": "pass-bounded-sota-and-evidence-discipline-review-with-three-retained-P2",
+  "overallReleaseDisposition": "abstain; full-gate and operational dispositions remain outside this review's approval authority",
+  "releaseEligible": false,
+  "commitApproved": false,
+  "deploymentApproved": false,
+  "hypothesis": "Remove the report/source cycle using exact source/output roles and separate report-consistency evidence while preserving scientific source, equation, dimensionless validation domain, score, projections, runtime lock, timeouts and R12 exclusion.",
+  "frozenIdentity": {
+    "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "latestRemoteMainClaimed": false,
+    "scope": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+      "mode": 420,
+      "size": 7367,
+      "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+    },
+    "manifest": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+      "mode": 420,
+      "size": 24001,
+      "sha256": "26f70ffb560d5f9092b1455360b325f8d0381785979a93f1c9ffcbcd0c1da602"
+    },
+    "builderGates": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+      "mode": 420,
+      "size": 51797,
+      "sha256": "93d1ead54054ad81988d15e4fc77ea73af4862ede045e6323fb7b6f150565081"
+    },
+    "candidate66": {
+      "pathCount": 66,
+      "canonicalBytes": 11583,
+      "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394"
+    },
+    "candidateRecordMismatches": [],
+    "current513Posix": {
+      "pathCount": 513,
+      "canonicalBytes": 84979,
+      "sha256": "6a905cbf7e4b3d6fdfd9aad3f1f4022a4638ffd308e9f5248b9c16b392fd0180"
+    },
+    "preservedPrior507Posix": {
+      "pathCount": 507,
+      "canonicalBytes": 83896,
+      "sha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137"
+    },
+    "deltaFromPrior507": {
+      "pathCount": 14,
+      "canonicalBytes": 2261,
+      "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc"
+    },
+    "removedPriorPaths": [],
+    "independentIdentityRecomputation": {
+      "independentInMemoryGitHashing": true,
+      "noGitObjectWrites": true,
+      "gitModeSemantics": "100644 for ordinary non-executable source; actual POSIX permission policy audited separately",
+      "builderObserved": {
+        "pathCount": 511,
+        "canonicalBytes": 88658,
+        "sha256": "c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35",
+        "gitTreeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf"
+      },
+      "builderInput": {
+        "pathCount": 507,
+        "canonicalBytes": 88054,
+        "sha256": "161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60",
+        "gitTreeOid": "911abbe20373e2b1e4ba9265f43e210bbc6576cc"
+      },
+      "currentObserved": {
+        "pathCount": 513,
+        "canonicalBytes": 89083,
+        "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+        "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+      },
+      "currentInput": {
+        "pathCount": 509,
+        "canonicalBytes": 88479,
+        "sha256": "8a3e97a4910436a2198cdb816e8925c76bb72e0eee4d5529528e4347ae16a31b",
+        "gitTreeOid": "fe1e3eb2ba851c5aa271646ec0d7731c0ffaf497"
+      },
+      "publicConstants": [
+        {
+          "name": "MAX_PUBLIC_SUMMARY_BYTES",
+          "unchanged": true
+        },
+        {
+          "name": "MAX_PUBLIC_PRODUCT_EVALUATION_BYTES",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_PRODUCT_EVALUATION_VERSION",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_SCORECARD_DIMENSION_IDS",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_COMPARATOR_IDS",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_COMPARATOR_EVIDENCE_CLASSES",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_GAP_DIMENSIONS",
+          "unchanged": true
+        },
+        {
+          "name": "PUBLIC_GAP_SEVERITIES",
+          "unchanged": true
+        }
+      ]
+    },
+    "testedWhole511Posix": {
+      "pathCount": 511,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0"
+    },
+    "rule": "The current 513-path tree contains two further immutable review inputs, the manifest and Builder artifact. Its input identity has 509 paths after excluding the exact four derived outputs. Neither current identity is the 511/507 identity used for Builder execution. This reviewer did not execute the 513-path tree.",
+    "previousSotaReview": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+      "bytes": 31464,
+      "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8",
+      "independentlyMatched": true,
+      "historicalObservationsNotNewExecutions": true
+    },
+    "historicalPortableFinalReview": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+      "bytes": 24740,
+      "sha256": "7634e215ec55d42d382b4efd7e6dfac5641553a799719dbf7e99f318c41fa13f",
+      "stillAnInput": true,
+      "approvalTransferred": false
+    }
+  },
+  "reviewerMethod": {
+    "repositoryInstructions": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/AGENTS.md",
+    "readScope": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+    "readManifest": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+    "readBuilderEvidence": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+    "previousReviewRead": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+    "sourceRead": [
+      "scripts/source-scope.mjs",
+      "scripts/derived-report-contract.mjs",
+      "scripts/evaluate.mjs",
+      "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+      "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs"
+    ],
+    "activities": "Read-only source and evidence inspection; independent file/mode/hash comparisons, in-memory Git tree hashing, exact historical Git-blob comparison, primary-source retrieval.",
+    "candidateFilesEdited": false,
+    "priorRootsEdited": false,
+    "testsRunByReviewer": 0,
+    "solversRunByReviewer": 0,
+    "checkoutsRunByReviewer": 0,
+    "dependenciesInstalled": false,
+    "commitsPushesOrDeployment": false,
+    "outputPolicy": "The review JSON is written only to a new private temporary directory outside all candidate roots."
+  },
+  "newVerificationThisRound": {
+    "candidateAndPriorHashes": "Independently recomputed all 66 candidate records, current 513-path POSIX identity, preserved 507-path prior identity and exact 14-path delta. All matched the supplied freeze.",
+    "scientificImports": [
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+        "unchangedAgainstPrior": true
+      }
+    ],
+    "extraRelatedPathsAlsoCompared": [
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "unchangedAgainstPrior": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+        "unchangedAgainstPrior": true
+      }
+    ],
+    "historicalReportSnapshot": {
+      "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+      "bytes": 143300,
+      "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5",
+      "decodedFiles": [
+        {
+          "path": "evaluation/latest-report.json",
+          "mode": 420,
+          "bytes": 125658,
+          "sha256": "8d50c338ca12083896595febbe7f0ec343ce8a36a6ab5d06d9c80d86042fa6ac",
+          "identityMatches": true,
+          "equalsPinnedGitBlob": true
+        },
+        {
+          "path": "evaluation/latest-report.md",
+          "mode": 420,
+          "bytes": 5045,
+          "sha256": "9f73bd6bd28448ee0be769496e07e2006f51d2bfe3b17a3bd32b09abfcfd0d55",
+          "identityMatches": true,
+          "equalsPinnedGitBlob": true
+        },
+        {
+          "path": "evaluation/public-product-evaluation.json",
+          "mode": 420,
+          "bytes": 4804,
+          "sha256": "58a121badc7c38d679e7950492bda577be08c9b06c698b441547052a4641b03d",
+          "identityMatches": true,
+          "equalsPinnedGitBlob": true
+        },
+        {
+          "path": "evaluation/public-summary.json",
+          "mode": 420,
+          "bytes": 344,
+          "sha256": "a0d99afdfb8e9e9f4924026e8103c70df96094011065bff208dfeb72cbaf59c8",
+          "identityMatches": true,
+          "equalsPinnedGitBlob": true
+        }
+      ],
+      "interpretation": "The four fixed-base report payloads are retained as historical provenance. Their successful reconstruction is not a current report pass."
+    },
+    "otherUpstreamNine": [
+      {
+        "path": "docs/ATOMISTIC_REPRODUCTION.md",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "schemas/atomistic-full-candidate-host-observation.schema.json",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "scripts/atomistic/full-candidate-observer-vnext.mjs",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "scripts/evaluate-observer-snapshot.test.mjs",
+        "unchangedAgainstPinnedGit": true
+      },
+      {
+        "path": "scripts/evaluate-worker.mjs",
+        "unchangedAgainstPinnedGit": true
+      }
+    ],
+    "scoreAndRegistry": [
+      {
+        "path": "evaluation/current-scorecard.json",
+        "unchangedAgainstPrior": true,
+        "mode": 420,
+        "size": 19570,
+        "sha256": "ff0f47dd69ff3832468dc489119a59e5d42afff9c95ff6d16ba98fbc9dfb96a7"
+      },
+      {
+        "path": "evaluation/baselines/registry.json",
+        "unchangedAgainstPrior": true,
+        "mode": 420,
+        "size": 10251,
+        "sha256": "883c59c2e9c826c80a12b854f10ab7fd479138e97cebc2b14a6079349865d0ed"
+      }
+    ],
+    "pureHelperFunctionBodies": [
+      {
+        "name": "computeArtifactDigest",
+        "bodyByteIdentical": true
+      },
+      {
+        "name": "formatMode",
+        "bodyByteIdentical": true
+      },
+      {
+        "name": "buildPublicSummary",
+        "bodyByteIdentical": true
+      },
+      {
+        "name": "buildPublicProductEvaluation",
+        "bodyByteIdentical": true
+      },
+      {
+        "name": "isPublicIdentifier",
+        "bodyByteIdentical": true
+      },
+      {
+        "name": "isPublicText",
+        "bodyByteIdentical": true
+      }
+    ],
+    "publicIdentifiersAndLimits": [
+      {
+        "name": "MAX_PUBLIC_SUMMARY_BYTES",
+        "unchanged": true
+      },
+      {
+        "name": "MAX_PUBLIC_PRODUCT_EVALUATION_BYTES",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_PRODUCT_EVALUATION_VERSION",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_SCORECARD_DIMENSION_IDS",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_COMPARATOR_IDS",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_COMPARATOR_EVIDENCE_CLASSES",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_GAP_DIMENSIONS",
+        "unchanged": true
+      },
+      {
+        "name": "PUBLIC_GAP_SEVERITIES",
+        "unchanged": true
+      }
+    ],
+    "primarySources": {
+      "fetchedAgain": 10,
+      "http200": 10,
+      "digestMatches": 10,
+      "round": "report-lifecycle-successor-v2",
+      "classification": "auditable source bytes only"
+    },
+    "builderArtifactsAndReceipts": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/results.json",
+        "mode": 420,
+        "size": 878909,
+        "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+      },
+      {
+        "path": "/private/tmp/tf-report-lifecycle-builder.32Zoja/plan-v1.json",
+        "mode": 420,
+        "size": 244348,
+        "sha256": "8da2ef01ac8cc3ee410b3fe9ee9fad41cf416af0298d64063c13467f8d9869b6"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/execution.json",
+        "mode": 384,
+        "size": 558577,
+        "sha256": "676ab507a7f5405b356793e642568364eb5ef5559c34957be6a7085ae15b4a50"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      }
+    ],
+    "rawGateStreams": [
+      {
+        "id": "admission",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "lint",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "type",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "syntax-strict-json",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "focused-contracts",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "numerical",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      },
+      {
+        "id": "final-admission",
+        "status": "pass",
+        "exitCode": 0,
+        "stdoutMatch": true,
+        "stderrMatch": true
+      }
+    ],
+    "rawNumericalStreams": [
+      {
+        "label": "python-21",
+        "exitCode": 0,
+        "stdoutBytes": 0,
+        "stderrBytes": 3115,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "9fdf09cfcffc17b7f7db95eb3bb365cbf256036ba9d6e170374776cb475af00a",
+        "summary": "est_worker_cli_rejects_duplicate_injection_argument) ... ok\n\n----------------------------------------------------------------------\nRan 21 tests in 21.307s\n\nOK\n"
+      },
+      {
+        "label": "node-29",
+        "exitCode": 0,
+        "stdoutBytes": 9624,
+        "stderrBytes": 0,
+        "stdoutSha256": "ec3b8516120caafe83e9880256dc11c913ef5a340fcdf4d98f0ec6e8fd5ad533",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": "  ---\n  duration_ms: 3.735\n  type: 'test'\n  ...\n1..29\n# tests 29\n# suites 0\n# pass 29\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 557.110708\n"
+      },
+      {
+        "label": "supervisor-1",
+        "exitCode": 0,
+        "stdoutBytes": 248777,
+        "stderrBytes": 0,
+        "stdoutSha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": null
+      },
+      {
+        "label": "schema-1",
+        "exitCode": 0,
+        "stdoutBytes": 56,
+        "stderrBytes": 0,
+        "stdoutSha256": "7b2b84d949dce6c3081d2d9e6138305d0b4c109ebe01ba39d5d9d8fc9cf1ebb2",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": "{\"status\":\"pass\",\"schemaErrors\":[],\"semanticErrors\":[]}\n"
+      },
+      {
+        "label": "supervisor-2",
+        "exitCode": 0,
+        "stdoutBytes": 248777,
+        "stderrBytes": 0,
+        "stdoutSha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": null
+      },
+      {
+        "label": "schema-2",
+        "exitCode": 0,
+        "stdoutBytes": 56,
+        "stderrBytes": 0,
+        "stdoutSha256": "7b2b84d949dce6c3081d2d9e6138305d0b4c109ebe01ba39d5d9d8fc9cf1ebb2",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": "{\"status\":\"pass\",\"schemaErrors\":[],\"semanticErrors\":[]}\n"
+      }
+    ],
+    "numericalExecutionIdentity": {
+      "schemaVersion": "tf.r18a-current-root-execution/0.3",
+      "candidateTreeIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 511,
+        "sha256": "c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35",
+        "gitTreeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf"
+      },
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 507,
+        "sha256": "161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60",
+        "gitTreeOid": "911abbe20373e2b1e4ba9265f43e210bbc6576cc"
+      }
+    },
+    "limits": "These are new independent inspections of recorded execution evidence. No test, evaluator or numerical solver was rerun by this reviewer."
+  },
+  "retainedHistoricalObservations": {
+    "basis": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+      "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8"
+    },
+    "retained": "The three-track interpretation, same-discretization-oracle limitation and three scientific P2 gaps are retained because the 12 scientific imports are unchanged. Historical initial-portable test receipts and 501/503 tree observations remain historical only and are not counted as successor-v2 tests.",
+    "priorPrimaryInterpretations": "The earlier DOLFINx/MPC different-PDE interpretation and MOOSE bulk/interface split remain method references. Their pinned source bytes were independently re-fetched this round; those frameworks were not installed or executed.",
+    "versionMetadata": "The earlier review's release dates and mutable-page digests are historical observations unless explicitly listed below as checked again. No claim that every pinned version is latest or that FiPy/PETSc/FEniCSx/MOOSE form a jointly tested runtime is made.",
+    "scopeOfRegistry": "The existing public comparator registry is unchanged. This bounded review does not reassess unrelated models, physical domains or their external metrics."
+  },
+  "lifecycleEvidenceAssessment": {
+    "sourceRoleSplit": {
+      "derivedOutputs": [
+        "evaluation/latest-report.json",
+        "evaluation/latest-report.md",
+        "evaluation/public-summary.json",
+        "evaluation/public-product-evaluation.json"
+      ],
+      "onlyLateTerminalNonInput": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+      "historicalAndOtherReviewsRemainInput": true,
+      "candidateTreeIdentityMeaning": "Complete observed source tree, including present outputs and any terminal record.",
+      "sourceInputIdentityMeaning": "Explicit Git-mode source input, excluding only the exact four derived reports and one exact terminal path.",
+      "evaluatorDigestMeaning": "Existing mode-sensitive evaluator digest over captured input bytes and actual POSIX modes; distinct from admission Git-mode normalization.",
+      "assessment": "This separation avoids treating generated reports as their own generating input. It does not make omitted outputs or an unsigned terminal record scientifically authenticated."
+    },
+    "sourceAdmission": "Admission reports derived outputs as present-unvalidated, partial or absent. A source-admission pass alone is not a report-consistency pass.",
+    "generationStatement": {
+      "unsigned": true,
+      "executionAuthenticated": false,
+      "releaseEligible": false,
+      "scientificValidation": false,
+      "supportedClaim": "Agreement of captured input identity, revision, declared worker outcome and the four exact output byte identities under the helper's contract.",
+      "unsupportedClaim": "The unsigned workerExitCode/publicationVerified fields cannot prove who executed a worker, that a genuine evaluator ran, that final cleanup succeeded, or that science and release gates passed.",
+      "callerDuty": "Observe the actual command and terminal exit, retain frozen raw logs, and complete the independent evaluator/release gates. Do not infer exit success merely because a generation statement exists."
+    },
+    "projectionAndScore": {
+      "functionsPreserved": true,
+      "constantsPreserved": true,
+      "scorecardAndRegistryPreserved": true,
+      "increaseInEvidenceMaturityScore": false,
+      "interpretation": "Moving functions, adding review documents, taking snapshots and hashing more paths are not new physical validation. Existing evidence classes and public projection restrictions are preserved."
+    },
+    "publication": "The launcher reads all four published files back, rechecks captured input and re-reads the outputs before emitting its statement. Four sequential renames are not an atomic transaction; partial publication must abstain.",
+    "schemaBoundary": "The helper validates bounded report consistency and public projections, not a complete physical schema or execution authenticity. Existing release-artifact schema and protected-CI checks remain required.",
+    "postReviewOrder": "Archive immutable review inputs before final gates and report generation. Keep generation evidence outside the input tree. Afterward only the one named terminal record may be added without changing input identity; any other input change requires regeneration and applicable revalidation.",
+    "modeBoundary": "Builder numerical acceptance ran with source receipt 0444 in a verified source copy. Its ordinary 0644 Git checkout ran admission and Node29, not the full numerical/evaluator suite. The unchanged generated receipts remained strictly 0444."
+  },
+  "builderEvidenceCeiling": {
+    "classification": "auditable",
+    "classificationScope": "Read-only audit of local recorded bounded execution, not reproduced external SOTA or an authenticated full-platform run.",
+    "recordedTopLevelGates": 7,
+    "allRecordedGateExitCodesZero": true,
+    "focusedTests": 75,
+    "historicalV02Tests": 5,
+    "nestedHistoricalV01Tests": 20,
+    "actualGitCheckoutNodeTests": 29,
+    "actualGitCheckoutNumericalRun": false,
+    "numericalPythonTests": 21,
+    "numericalNodeTests": 29,
+    "numericalGeneratedReceipts": 2,
+    "generatedReceiptBytesEach": 248778,
+    "generatedReceiptSha256Each": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+    "generatedReceiptPosixModeEach": "0444",
+    "supervisorStdoutIdentical": true,
+    "scientificAggregateBudgetMs": 600000,
+    "failureOnlyGraceMs": 1000,
+    "fullCoreSuccessorRun": false,
+    "realEvaluatorRun": false,
+    "productionBuildRun": false,
+    "linuxCIRun": false,
+    "current513FullRun": false,
+    "syntheticLauncherTestsArePhysicsEvidence": false,
+    "sourceIntegrityOrHashChecksAuthenticateExecution": false
+  },
+  "scientificInterpretation": {
+    "inheritedFrom": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+    "inheritedSourceBytesRechecked": true,
+    "quantityBasis": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced coordinates, reduced time, scalar eta, source, kappa and cell-quadrature L2; no SI material map. Nx, Ny and stepCount are counts. Byte fields count octets; milliseconds describe computational elapsed time, not physical time."
+    },
+    "currentDomain": {
+      "x": [
+        0,
+        1
+      ],
+      "y": [
+        0,
+        0.5
+      ],
+      "periodicX": true,
+      "Nx": 8,
+      "Ny": 4,
+      "dt": 0.01,
+      "stepCount": 2,
+      "finalTime": 0.02
+    },
+    "equation": "deta/dt = -4*eta*(eta-1)*(eta-1/2) + kappa*(d2eta/dx2+d2eta/dy2) + S(x,y,t)",
+    "timeIntegrator": "First-order semi-implicit Euler; diffusion at n+1, nonlinear reaction and manufactured source at n; companion exact-trace Dirichlet data at n+1.",
+    "boundaryTracks": [
+      {
+        "id": "official-literal",
+        "comparison": "Analytic manufactured-field discrepancy against the official constant-y-boundary BVP.",
+        "strictMms": false,
+        "pfhubComparableDefinition": true,
+        "executedAsFullConvergence": false
+      },
+      {
+        "id": "literal-self",
+        "comparison": "Self-convergence of that same literal BVP under a declared restriction operator; not a third PDE.",
+        "strictMms": false,
+        "executedAsBvpConvergence": false,
+        "currentEvidence": "Synthetic affine restriction preflight only."
+      },
+      {
+        "id": "exact-trace-companion",
+        "comparison": "Same PDE and initial field with manufactured time-dependent y traces; strict MMS verification target.",
+        "strictMms": true,
+        "requiredLabel": "non-PFHub exact-trace companion",
+        "pfhubComparableDefinition": false,
+        "executedAsFullConvergence": false
+      }
+    ],
+    "boundaryMismatchInference": "For finite tanh arguments, the analytic field does not exactly equal the official 1/0 y-face values. The retained three-track separation is therefore necessary. This is a mathematical interpretation of the official equations, not a correction silently applied to PFHub.",
+    "conservativeTailBound": "The retained conservative pointwise boundary-tail bound is neither an attained maximum nor an interior/global numerical-error bound.",
+    "independenceCeiling": "Independently authored assembly of the same finite-volume discretization can detect assembly/implementation discrepancies. It is not independent spatial discretization, convergence verification or physical validation.",
+    "materialCausalAndControlCeiling": "No real material, chemical mechanism, reactor, process model, identified intervention/counterfactual effect, or automatic safety-critical control claim is supported."
+  },
+  "datedLikeForLikeComparison": {
+    "asOf": "2026-09-07",
+    "result": "No scientific SOTA capability or numerical ranking change is supported by this lifecycle repair.",
+    "externalLabels": "Pinned source bytes are auditable; method and benchmark requirements are references. No external result is reproduced, ranked, or imported as a local metric.",
+    "comparisonRows": [
+      {
+        "reference": "PFHub Benchmark 7(a)",
+        "sourceIds": [
+          "pfhub-benchmark7",
+          "nist-pfhub7"
+        ],
+        "sourceUrl": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+        "classification": "reference",
+        "comparableTask": "The declared reduced Allen-Cahn equation, parameter basis, rectangle and official literal y boundaries.",
+        "referenceRequirement": "Separate spatial/time studies at t=8 with nuisance errors controlled and at least three results per study in the stated L2 range [1e-4,5e-3]; report fitted apparent order.",
+        "candidateEvidence": "One 8x4 mesh and two dt=0.01 updates to t=0.02.",
+        "disposition": "Short-horizon acceptance cannot establish the full benchmark convergence requirement. The official discussion of order deviations is not a universal +/-0.2 pass band.",
+        "performanceBoundary": "PFHub parts (b)/(c) change parameters and require resource/error studies; neither is a like-for-like ranking target for this candidate.",
+        "lifecycleRelevance": "The lifecycle-only delta does not implement or evaluate this external method, change the declared physical domain, or extend the unchanged short-horizon receipt.",
+        "observationProvenance": "Pinned bytes re-fetched; relevant official rendered document read again in successor-v2 review."
+      },
+      {
+        "reference": "FiPy 4.0.3 and pinned CHiMaD implementation",
+        "sourceIds": [
+          "fipy-4.0.3-discretization",
+          "historical-chimad-implementation"
+        ],
+        "sourceUrl": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+        "classification": "reference",
+        "comparableTask": "Cell-centered finite-volume assembly provides the directly relevant discretization lineage.",
+        "candidateEvidence": "Locked FiPy runtime and independent construction of the same finite-volume equations on the bounded mesh.",
+        "disposition": "Assembly agreement and receipt identity are useful bounded evidence; an unchanged same-family oracle does not establish an independent discretization or imported external convergence result.",
+        "lifecycleRelevance": "The lifecycle-only delta does not implement or evaluate this external method, change the declared physical domain, or extend the unchanged short-horizon receipt.",
+        "observationProvenance": "Pinned bytes re-fetched; relevant official rendered document read again in successor-v2 review."
+      },
+      {
+        "reference": "DOLFINx 0.10.0 variational demo and pinned dolfinx_mpc periodic demo",
+        "sourceIds": [
+          "dolfinx-0.10.0-variational-demo-different-pde",
+          "dolfinx-mpc-0.10.0-periodic-demo"
+        ],
+        "sourceUrl": "https://docs.fenicsproject.org/dolfinx/v0.10.0/python/demos/demo_cahn-hilliard.html",
+        "classification": "reference",
+        "comparableTask": "Finite-element assembly and explicit periodic constraints are prospective implementation methods.",
+        "mismatch": "The cited DOLFINx demo solves fourth-order Cahn-Hilliard on a unit square; the MPC demo solves Poisson. Neither is a local PFHub7(a) Allen-Cahn run.",
+        "disposition": "An independently authored P1 FEM implementation requires its own equation, forcing, boundary, mass, quadrature and common-observation validation before comparison. Joint runtime compatibility is unverified.",
+        "lifecycleRelevance": "The lifecycle-only delta does not implement or evaluate this external method, change the declared physical domain, or extend the unchanged short-horizon receipt.",
+        "observationProvenance": "Previous method interpretation retained; corresponding pinned source bytes re-fetched in this round."
+      },
+      {
+        "reference": "MOOSE pinned AllenCahn kernel documentation",
+        "sourceIds": [
+          "moose-2025-09-05-allencahn"
+        ],
+        "sourceUrl": "https://raw.githubusercontent.com/idaholab/moose/832d6f35e1f6c687880270d8bcb23156974cc031/modules/phase_field/doc/content/source/kernels/AllenCahn.md",
+        "classification": "reference",
+        "comparableTask": "AllenCahn supplies the mobility-weighted bulk free-energy derivative; its documentation assigns gradient-interface terms to ACInterface.",
+        "disposition": "A potential alternate FEM lane would still need complete time, interface, source and boundary assembly. The kernel documentation is not PFHub performance evidence or physical calibration.",
+        "lifecycleRelevance": "The lifecycle-only delta does not implement or evaluate this external method, change the declared physical domain, or extend the unchanged short-horizon receipt.",
+        "observationProvenance": "Previous method interpretation retained; corresponding pinned source bytes re-fetched in this round."
+      },
+      {
+        "reference": "PETSc pinned ARK source and dated KSP/TS documentation",
+        "sourceIds": [
+          "petsc-3.25.2-ark-source"
+        ],
+        "sourceUrls": [
+          "https://petsc.org/release/manualpages/KSP/KSPSetTolerances/",
+          "https://petsc.org/release/manualpages/TS/TSARKIMEX/",
+          "https://petsc.org/release/manualpages/TS/TSROSW/"
+        ],
+        "classification": "reference",
+        "comparableTask": "Prospective algebraic stopping and time-integration controls.",
+        "disposition": "KSP residual tolerances are not solution-error bounds. ARK use must respect equation-type, mass and stage-boundary assumptions. TSROSW is documented for autonomous systems, so it is not a validated direct replacement for the time-dependent manufactured source.",
+        "versionBoundary": "Pinned ARK source is the prior 3.25.2 reference; fetched release pages identify v3.25.5-9-g933c0de36cc. No version equivalence, latest-version claim or jointly tested runtime is asserted.",
+        "lifecycleRelevance": "The lifecycle-only delta does not implement or evaluate this external method, change the declared physical domain, or extend the unchanged short-horizon receipt.",
+        "observationProvenance": "Pinned ARK source bytes re-fetched; TSROSW autonomous-system restriction read again. Earlier KSP/ARK rendered observations retained, not represented as new runs."
+      }
+    ],
+    "newlyRecheckedRenderedReferences": [
+      {
+        "url": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+        "classification": "reference",
+        "rawDigest": null,
+        "digestExplanation": "Read through rendered web tool this round; use freshly verified pinned notebook byte identities in sources for a locked source.",
+        "checkedRequirement": "Part (a) retains full reduced t=8 space/time refinement and nuisance-error control."
+      },
+      {
+        "url": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+        "classification": "reference",
+        "rawDigest": null,
+        "digestExplanation": "Rendered reference re-read; freshly verified FiPy revision supplies the locked source.",
+        "checkedRequirement": "FiPy documents cell-centered finite-volume control-volume averages."
+      },
+      {
+        "url": "https://petsc.org/release/manualpages/TS/TSROSW/",
+        "classification": "reference",
+        "rawDigest": null,
+        "digestExplanation": "Rendered mutable reference re-read; no new raw response digest claimed in this review.",
+        "checkedRequirement": "Documented autonomous ODE/DAE restriction remains relevant to the explicitly time-dependent manufactured source."
+      }
+    ],
+    "maturityScoreMeaning": "Validation maturity only; not scientific truth, not percent of SOTA, and unchanged by this report lifecycle repair."
+  },
+  "findingCounts": {
+    "newP0": 0,
+    "newP1": 0,
+    "retainedScientificP2": 3
+  },
+  "findings": [
+    {
+      "id": "R18A-PORTABLE-SOTA-01",
+      "priority": "P2",
+      "title": "Full t=8 convergence remains unexecuted",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "Nonblocking only for this frozen mechanical admission hypothesis; blocks any full PFHub7(a) convergence claim.",
+      "nextScientificTask": "Preregister and run separate spatial and temporal refinement studies through reduced t=8, with eligibility/continuation rules and all results retained. Keep literal discrepancy, literal-BVP self-convergence and non-PFHub exact-trace MMS distinct.",
+      "acceptance": "Use the official study and error-range requirements where applicable; control the complementary discretization error and justify apparent-order uncertainty. A literal boundary-tail bound does not substitute for full-study results.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-02",
+      "priority": "P2",
+      "title": "Independent spatial discretization is absent",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "The dense oracle confirms same-discretization assembly only.",
+      "nextScientificTask": "Build an independently authored spatial discretization, such as continuous P1 FEM with consistent mass, checked manufactured forcing, explicit periodic-x and y-trace policies and registered quadrature. Initially preserve the temporal split to isolate spatial differences.",
+      "acceptance": "Compare FEM and FV using a declared common observation operator and norm; do not equate nodal values, cell averages and cell-center samples. Lock runtime and demonstrate its compatibility before numerical comparison.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-03",
+      "priority": "P2",
+      "title": "Full-study error separation and resource calibration remain absent",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "Small bounded residuals, two matched receipts and the current runtime allowance do not calibrate convergence uncertainty or full-study resource feasibility.",
+      "nextScientificTask": "Calibrate temporal, spatial, solver, quadrature and observation errors with paired refinements and tightened-solver comparisons, recording true residuals and convergence reasons alongside measured wall time and peak memory.",
+      "acceptance": "Derive nuisance budgets from intended order precision; preregister resource/continuation limits before larger runs. Keep the dense same-discretization oracle on tiny systems, and do not extrapolate short-run timings into a performance ranking.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    }
+  ],
+  "closureRecommendations": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+      "priority": "P1",
+      "sotaEvidenceDisciplineDisposition": "No remaining SOTA or evidence-claim objection to the bounded lifecycle policy in the frozen candidate.",
+      "fullOperationalClosureByThisReviewer": false,
+      "recommendation": "The source/output distinction and explicit unauthenticated consistency ceiling address the evidence-discipline aspect. Root should use the independent software/evaluator review to determine implementation closure; this statement does not replace executable validation or complete final gates."
+    },
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "disposition": "retain open",
+      "fullOperationalClosureByThisReviewer": false,
+      "reason": "No complete-core successor run exists in the reviewed evidence; focused passes do not supersede the recorded full-core deadline failures."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "disposition": "retain open",
+      "fullOperationalClosureByThisReviewer": false,
+      "reason": "The complete post-review gates, actual evaluator, production build and required ordinary-Git-mode checks remain unexecuted here."
+    }
+  ],
+  "sources": [
+    {
+      "id": "pfhub-benchmark7",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 90735,
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "expectedSha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "digestMatched": true
+    },
+    {
+      "id": "nist-pfhub7",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/benchmarks/benchmark7.ipynb",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 90712,
+      "sha256": "00d15bfa910f111caf6753d1e959990d5e1d432f6630c064bae77b1624007863",
+      "expectedSha256": "00d15bfa910f111caf6753d1e959990d5e1d432f6630c064bae77b1624007863",
+      "digestMatched": true
+    },
+    {
+      "id": "nist-notice",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "expectedSha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "digestMatched": true
+    },
+    {
+      "id": "derivative-license-link",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/myst.yml",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 989,
+      "sha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a",
+      "expectedSha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a",
+      "digestMatched": true
+    },
+    {
+      "id": "fipy-4.0.3-discretization",
+      "url": "https://raw.githubusercontent.com/usnistgov/fipy/64635bf8ed6bc51431edb7d6cf1495ff68ac18a7/docs/source/numerical/discret.rst",
+      "revision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 11615,
+      "sha256": "7c3b38a7042e625baf7239de720a20f2401de3a9e18d6c45a372dfc593e90185",
+      "expectedSha256": "7c3b38a7042e625baf7239de720a20f2401de3a9e18d6c45a372dfc593e90185",
+      "digestMatched": true
+    },
+    {
+      "id": "historical-chimad-implementation",
+      "url": "https://raw.githubusercontent.com/guyer/CHiMaDPhaseFieldVI/adc0b2e992386335d01cb4f6ce9924bf3fceb115/benchmark7a.py",
+      "revision": "adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 3307,
+      "sha256": "4d06657d162572d8c04e26c6776c66e4040b555123bbe0fffb8dd826ebb89026",
+      "expectedSha256": "4d06657d162572d8c04e26c6776c66e4040b555123bbe0fffb8dd826ebb89026",
+      "digestMatched": true
+    },
+    {
+      "id": "dolfinx-0.10.0-variational-demo-different-pde",
+      "url": "https://raw.githubusercontent.com/FEniCS/dolfinx/b8375fa9fb932cbfce43005eeb4a3d52293f428b/python/demo/demo_cahn-hilliard.py",
+      "revision": "b8375fa9fb932cbfce43005eeb4a3d52293f428b",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 11391,
+      "sha256": "a03857a0884957d57e02d6f28a67e4ee4547216774a15117590cc631de9f6806",
+      "expectedSha256": "a03857a0884957d57e02d6f28a67e4ee4547216774a15117590cc631de9f6806",
+      "digestMatched": true
+    },
+    {
+      "id": "dolfinx-mpc-0.10.0-periodic-demo",
+      "url": "https://raw.githubusercontent.com/jorgensd/dolfinx_mpc/f35e025e97d5ce57199ac99545b726abb2898616/python/demos/demo_periodic_geometrical.py",
+      "revision": "f35e025e97d5ce57199ac99545b726abb2898616",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 5788,
+      "sha256": "a8c98d2d99a018ef95784b28c52ada23d203044aae6106fdbcac4c187487f69e",
+      "expectedSha256": "a8c98d2d99a018ef95784b28c52ada23d203044aae6106fdbcac4c187487f69e",
+      "digestMatched": true
+    },
+    {
+      "id": "petsc-3.25.2-ark-source",
+      "url": "https://gitlab.com/petsc/petsc/-/raw/6a3455c81e23ba3f57e5a2b63c12172f50356626/src/ts/impls/arkimex/arkimex.c",
+      "revision": "6a3455c81e23ba3f57e5a2b63c12172f50356626",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 138513,
+      "sha256": "dac622510684bb6dc706e5b8f6a6793db2249edb0be3e06024825472ec3f955e",
+      "expectedSha256": "dac622510684bb6dc706e5b8f6a6793db2249edb0be3e06024825472ec3f955e",
+      "digestMatched": true
+    },
+    {
+      "id": "moose-2025-09-05-allencahn",
+      "url": "https://raw.githubusercontent.com/idaholab/moose/832d6f35e1f6c687880270d8bcb23156974cc031/modules/phase_field/doc/content/source/kernels/AllenCahn.md",
+      "revision": "832d6f35e1f6c687880270d8bcb23156974cc031",
+      "classification": "auditable",
+      "classificationScope": "Source-byte identity only; not an external reproduced result",
+      "retrievedOn": "2026-09-07",
+      "verifiedInRound": "report-lifecycle-successor-v2",
+      "httpStatus": 200,
+      "byteSize": 817,
+      "sha256": "cc5c52a8aa555c4fb7d2a8a0dbcb577f2ecc502e8be2fdabc7ebafcd08f400ab",
+      "expectedSha256": "cc5c52a8aa555c4fb7d2a8a0dbcb577f2ecc502e8be2fdabc7ebafcd08f400ab",
+      "digestMatched": true
+    }
+  ],
+  "residualLimitations": [
+    "The three scientific P2 entries are the only next scientific gap list; this round neither closes them nor adds unrelated research goals.",
+    "All scientific quantities remain in the declared PFHub dimensionless basis; there is no real-material, chemical-mechanism, reactor/process-model, identified causal-effect or automatic-control validation.",
+    "Exact byte identity and unsigned generation consistency support auditability but cannot themselves certify execution authenticity, scientific truth or source-rights clearance.",
+    "The 12 scientific imports, scorecard, registry, historical reviews and R12 exclusion are preserved. Preserving or excluding an artifact does not clear redistribution rights.",
+    "The final gate environment must distinguish source-receipt 0644 from private generated 0444 sealing, and POSIX-sensitive evaluator identity from Git-normalized admission identity.",
+    "Raw execution evidence remains in private scratch paths and must be retained or copied with exact identity before scratch cleanup.",
+    "No test, solver, actual evaluator, checkout, dependency installation, commit or deployment was performed by this reviewer."
+  ],
+  "ceilings": {
+    "releaseEligible": false,
+    "commitApproved": false,
+    "pushApproved": false,
+    "deploymentApproved": false,
+    "goalComplete": false,
+    "executionAuthenticated": false,
+    "reproduced": false,
+    "numericalRanking": false,
+    "scoreIncrease": false,
+    "convergenceVerified": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "automaticControlAuthorized": false,
+    "blanketLegalClearance": false
+  }
+}

@@ -1,0 +1,778 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailingfuture.local/schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+  "title": "Tailing Future PFHub 7(a) R18a preflight receipt successor v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "candidateId",
+    "status",
+    "evidenceClassification",
+    "acceptanceMatrix",
+    "negativeProbes",
+    "frozenInputs",
+    "candidateSources",
+    "runtime",
+    "scientificSemantics",
+    "sourceMetadata",
+    "capabilityCeiling",
+    "crossScaleBridge",
+    "causalPolicy",
+    "globalRepositoryBlockers",
+    "promotionAuthorized",
+    "abstention"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.pfhub7a-r18a-preflight-receipt/0.3" },
+    "candidateId": { "const": "pfhub7a-r18a-independent-solver-semantic-runtime-preflight-v4-successor-v3" },
+    "status": { "const": "pass" },
+    "evidenceClassification": { "const": "auditable" },
+    "acceptanceMatrix": {
+      "type": "array",
+      "minItems": 24,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["acceptanceId", "group", "ordinal", "requirement", "evidenceLocators", "passed"],
+        "properties": {
+          "acceptanceId": { "type": "string", "pattern": "^r18a\\.(?:identityAndIsolation|scientificSemantics|claimAndFailure|resolvedSpecAndCleanRoomOracle)\\.[0-9]{2}$" },
+          "group": { "enum": ["identityAndIsolation", "scientificSemantics", "claimAndFailure", "resolvedSpecAndCleanRoomOracle"] },
+          "ordinal": { "type": "integer", "minimum": 1, "maximum": 8 },
+          "requirement": { "type": "string", "minLength": 1 },
+          "evidenceLocators": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "passed": { "const": true }
+        }
+      }
+    },
+    "negativeProbes": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["probeId", "status", "probeMode", "mutation", "reasonCode"],
+        "properties": {
+          "probeId": { "type": "string", "minLength": 1 },
+          "status": { "const": "expected-abstention" },
+          "probeMode": { "enum": ["in-memory-worker-source-ast-mutant", "executed-full-clean-room-source-mutant", "worker-result-semantic-mutant", "strict-json-byte-mutant", "executed-worker-warning-mutant"] },
+          "mutation": { "type": "string", "minLength": 1 },
+          "mutatedSourceDigest": { "$ref": "#/$defs/digest" },
+          "reasonCode": { "enum": ["WORKER_REACTION_TIME_LEVEL", "ORACLE_ASSEMBLY", "ORACLE_BOUNDARY", "ORACLE_ENDPOINT", "WORKER_TRACK_PROVENANCE", "JSON_DUPLICATE_KEY", "WARNING_NOT_ALLOWLISTED"] },
+          "observation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["maximumMatrixAbsoluteDifference", "maximumRhsAbsoluteDifference", "maximumEndpointAbsoluteDifference", "boundaryDigestMismatchCount"],
+            "properties": {
+              "maximumMatrixAbsoluteDifference": { "$ref": "#/$defs/nonnegativeFinite" },
+              "maximumRhsAbsoluteDifference": { "$ref": "#/$defs/nonnegativeFinite" },
+              "maximumEndpointAbsoluteDifference": { "$ref": "#/$defs/nonnegativeFinite" },
+              "boundaryDigestMismatchCount": { "type": "integer", "minimum": 0, "maximum": 4 }
+            }
+          }
+        }
+      }
+    },
+    "frozenInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preregistration", "runtimeLock", "auditHistoryEffectiveSpecification"],
+      "properties": {
+        "preregistration": {
+          "allOf": [
+            { "$ref": "#/$defs/pathIdentity" },
+            {
+              "type": "object",
+              "properties": {
+                "path": { "const": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json" },
+                "byteSize": { "const": 20908 },
+                "rawDigest": { "const": "sha256:7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253" }
+              }
+            }
+          ]
+        },
+        "runtimeLock": {
+          "allOf": [
+            { "$ref": "#/$defs/pathIdentity" },
+            {
+              "type": "object",
+              "properties": {
+                "path": { "const": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json" },
+                "byteSize": { "const": 7411 },
+                "rawDigest": { "const": "sha256:cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee" }
+              }
+            }
+          ]
+        },
+        "auditHistoryEffectiveSpecification": { "const": false }
+      }
+    },
+    "candidateSources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supervisor", "worker", "oracle", "privateSnapshot"],
+      "properties": {
+        "supervisor": { "$ref": "#/$defs/logicalIdentity" },
+        "worker": { "$ref": "#/$defs/logicalIdentity" },
+        "oracle": {
+          "allOf": [
+            { "$ref": "#/$defs/logicalIdentity" },
+            {
+              "type": "object",
+              "required": ["staticRestrictionPassed"],
+              "properties": { "staticRestrictionPassed": { "const": true } }
+            }
+          ]
+        },
+        "privateSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["addressDigest", "sealedReadOnly", "postRunRepositorySourcesUnchanged"],
+          "properties": {
+            "addressDigest": { "$ref": "#/$defs/digest" },
+            "sealedReadOnly": { "const": true },
+            "postRunRepositorySourcesUnchanged": { "const": true }
+          }
+        }
+      }
+    },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "scientificSemantics": { "$ref": "#/$defs/scientificSemantics" },
+    "sourceMetadata": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["classification", "name", "date", "revision", "url", "rawDigest"],
+        "properties": {
+          "classification": { "const": "reference" },
+          "name": { "type": "string", "minLength": 1 },
+          "date": { "type": "string", "format": "date" },
+          "revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+          "url": { "type": "string", "format": "uri" },
+          "rawDigest": { "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] }
+        }
+      }
+    },
+    "capabilityCeiling": { "$ref": "#/$defs/capabilityCeiling" },
+    "crossScaleBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["present", "reason", "boundariesGeometryAveragingTimeScaleConservationUncertaintyInformationLossReverseUse"],
+      "properties": {
+        "present": { "const": false },
+        "reason": { "type": "string", "minLength": 1 },
+        "boundariesGeometryAveragingTimeScaleConservationUncertaintyInformationLossReverseUse": { "type": "string", "minLength": 1 }
+      }
+    },
+    "causalPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["structuralEquationIdentified", "quantitativeInterventionAllowed", "counterfactualAllowed", "requiredResponse"],
+      "properties": {
+        "structuralEquationIdentified": { "const": false },
+        "quantitativeInterventionAllowed": { "const": false },
+        "counterfactualAllowed": { "const": false },
+        "requiredResponse": { "const": "machine-readable abstention for any causal-effect, intervention or counterfactual request" }
+      }
+    },
+    "globalRepositoryBlockers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "promotionAuthorized": { "const": false },
+    "abstention": { "type": "null" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "nonnegativeFinite": { "type": "number", "minimum": 0 },
+    "pathIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "byteSize", "rawDigest"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "byteSize": { "type": "integer", "minimum": 1 },
+        "rawDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "logicalIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "byteSize", "rawDigest"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\$[A-Z]+$" },
+        "byteSize": { "type": "integer", "minimum": 1 },
+        "rawDigest": { "$ref": "#/$defs/digest" },
+        "staticRestrictionPassed": { "type": "boolean" }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "trackedByGit", "inputVerification", "closure", "requiredFlags", "environment", "workerObservation", "hostBoundary"],
+      "properties": {
+        "address": { "const": "$REPOSITORY/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee" },
+        "trackedByGit": { "const": false },
+        "inputVerification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verifiedBeforeExecution", "pythonSource", "wheelhouse"],
+          "properties": {
+            "verifiedBeforeExecution": { "const": true },
+            "pythonSource": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["logicalRoot", "executable", "canonicalClosure"],
+              "properties": {
+                "logicalRoot": { "const": "$PYTHON_SOURCE_ROOT" },
+                "executable": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "byteSize", "rawDigest"],
+                  "properties": {
+                    "path": { "const": "bin/python3.12" },
+                    "byteSize": { "const": 18041888 },
+                    "rawDigest": { "const": "sha256:ac60cfe0268614638d0ffa35f3b0284fc7b3a11482723793455e17eeb278509e" }
+                  }
+                },
+                "canonicalClosure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["recordShape", "ordering", "serialization", "recordCount", "byteSize", "recordsDigest"],
+                  "properties": {
+                    "recordShape": { "const": ["byteSize", "path", "rawDigest"] },
+                    "ordering": { "type": "string" },
+                    "serialization": { "type": "string" },
+                    "recordCount": { "const": 747 },
+                    "byteSize": { "const": 32153962 },
+                    "recordsDigest": { "const": "sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530" }
+                  }
+                }
+              }
+            },
+            "wheelhouse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["logicalRoot", "wheels", "expandedClosure"],
+              "properties": {
+                "logicalRoot": { "const": "$WHEELHOUSE" },
+                "wheels": {
+                  "type": "array",
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["name", "version", "filename", "byteSize", "rawDigest"],
+                    "properties": {
+                      "name": { "type": "string", "minLength": 1 },
+                      "version": { "type": "string", "minLength": 1 },
+                      "filename": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+\\.whl$" },
+                      "byteSize": { "type": "integer", "minimum": 1 },
+                      "rawDigest": { "$ref": "#/$defs/digest" }
+                    }
+                  }
+                },
+                "expandedClosure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["destinationPrefix", "recordCount", "byteSize", "recordsDigest"],
+                  "properties": {
+                    "destinationPrefix": { "const": "lib/python3.12/site-packages/" },
+                    "recordCount": { "const": 2668 },
+                    "byteSize": { "const": 93182230 },
+                    "recordsDigest": { "const": "sha256:0c68ccb7e085c71a2ab19ec8563af3ff1eba5644598bcd9b863bb738521d1332" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "closure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["recordCount", "byteSize", "recordsDigest", "allRegularFilesLockedReadOnly"],
+          "properties": {
+            "recordCount": { "const": 3415 },
+            "byteSize": { "const": 125336192 },
+            "recordsDigest": { "const": "sha256:55f3f0353e053a0eca5cf92af57019c16cdf33f50a126922993ed8cdbf2a2b7c" },
+            "allRegularFilesLockedReadOnly": { "const": true }
+          }
+        },
+        "requiredFlags": { "const": ["-I", "-B", "-W", "error"] },
+        "environment": { "$ref": "#/$defs/environment" },
+        "workerObservation": { "$ref": "#/$defs/workerObservation" },
+        "hostBoundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["classification", "callerSuppliedCpythonSource", "description", "byteLocked"],
+          "properties": {
+            "classification": { "const": "residual-P2" },
+            "callerSuppliedCpythonSource": { "const": true },
+            "description": { "type": "string", "minLength": 1 },
+            "byteLocked": { "const": false }
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["LANG", "LC_ALL", "TZ", "FIPY_SOLVERS", "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "VECLIB_MAXIMUM_THREADS", "NUMEXPR_NUM_THREADS"],
+      "properties": {
+        "LANG": { "const": "C" },
+        "LC_ALL": { "const": "C" },
+        "TZ": { "const": "UTC" },
+        "FIPY_SOLVERS": { "const": "scipy" },
+        "OMP_NUM_THREADS": { "const": "1" },
+        "OPENBLAS_NUM_THREADS": { "const": "1" },
+        "MKL_NUM_THREADS": { "const": "1" },
+        "VECLIB_MAXIMUM_THREADS": { "const": "1" },
+        "NUMEXPR_NUM_THREADS": { "const": "1" }
+      }
+    },
+    "workerObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prefix", "basePrefix", "executable", "searchPath", "flags", "worker", "versions", "environment", "warningPolicy", "moduleInventory", "dyldInventory"],
+      "properties": {
+        "prefix": { "const": "$RUNTIME" },
+        "basePrefix": { "const": "$RUNTIME" },
+        "executable": { "const": "$RUNTIME/bin/python3.12" },
+        "searchPath": { "const": ["$RUNTIME/lib/python312.zip", "$RUNTIME/lib/python3.12", "$RUNTIME/lib/python3.12/lib-dynload", "$RUNTIME/lib/python3.12/site-packages"] },
+        "flags": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["isolated", "dontWriteBytecode", "warningsAsErrors"],
+          "properties": {
+            "isolated": { "const": true },
+            "dontWriteBytecode": { "const": true },
+            "warningsAsErrors": { "const": true }
+          }
+        },
+        "worker": { "$ref": "#/$defs/logicalIdentity" },
+        "versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["python", "fipy", "numpy", "scipy", "packaging", "solverSuite"],
+          "properties": {
+            "python": { "const": "3.12.14" },
+            "fipy": { "const": "4.0.3" },
+            "numpy": { "const": "2.5.3" },
+            "scipy": { "const": "1.18.1" },
+            "packaging": { "const": "26.3" },
+            "solverSuite": { "const": "scipy" }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "darwinInjected"],
+          "properties": {
+            "required": { "$ref": "#/$defs/environment" },
+            "darwinInjected": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "__CF_USER_TEXT_ENCODING": { "const": "0x1F5:0x0:0x0" } }
+            }
+          }
+        },
+        "warningPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["defaultAction", "allowlistedObservedCount", "records"],
+          "properties": {
+            "defaultAction": { "const": "error" },
+            "allowlistedObservedCount": { "const": 2 },
+            "records": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["category", "message", "origin", "line"],
+                "properties": {
+                  "category": { "const": "DeprecationWarning" },
+                  "message": { "type": "string", "pattern": "^numpy\\.core is deprecated" },
+                  "origin": { "const": "$RUNTIME/lib/python3.12/site-packages/fipy/tools/numerix.py" },
+                  "line": { "const": 61 }
+                }
+              }
+            }
+          }
+        },
+        "moduleInventory": { "$ref": "#/$defs/moduleInventory" },
+        "dyldInventory": { "$ref": "#/$defs/dyldInventory" }
+      }
+    },
+    "moduleInventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recordCount", "recordsDigest", "records"],
+      "properties": {
+        "recordCount": { "type": "integer", "minimum": 1 },
+        "recordsDigest": { "$ref": "#/$defs/digest" },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["module", "classification"],
+                "properties": {
+                  "module": { "type": "string" },
+                  "classification": { "enum": ["built-in", "frozen"] }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["module", "classification", "locations"],
+                "properties": {
+                  "module": { "type": "string" },
+                  "classification": { "const": "namespace" },
+                  "locations": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^\\$RUNTIME(?:/|$)" }, "uniqueItems": true }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["module", "classification", "basis"],
+                "properties": {
+                  "module": { "type": "string" },
+                  "classification": { "const": "registered-synthetic-no-origin" },
+                  "basis": { "const": "exact-name allowlist for a runtime-created module object with no origin or search location" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["module", "classification", "origin", "byteSize", "rawDigest"],
+                "properties": {
+                  "module": { "type": "string" },
+                  "classification": { "enum": ["runtime", "worker"] },
+                  "origin": { "type": "string", "pattern": "^\\$(?:RUNTIME(?:/|$)|WORKER$)" },
+                  "byteSize": { "type": "integer", "minimum": 0 },
+                  "rawDigest": { "$ref": "#/$defs/digest" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dyldInventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recordCount", "recordsDigest", "records"],
+      "properties": {
+        "recordCount": { "type": "integer", "minimum": 1 },
+        "recordsDigest": { "$ref": "#/$defs/digest" },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["index", "classification", "path", "byteSize", "rawDigest"],
+                "properties": {
+                  "index": { "type": "integer", "minimum": 0 },
+                  "classification": { "const": "runtime" },
+                  "path": { "type": "string", "pattern": "^\\$RUNTIME/" },
+                  "byteSize": { "type": "integer", "minimum": 1 },
+                  "rawDigest": { "$ref": "#/$defs/digest" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["index", "classification", "path"],
+                "properties": {
+                  "index": { "type": "integer", "minimum": 0 },
+                  "classification": { "const": "host-system-boundary" },
+                  "path": { "type": "string", "pattern": "^/(?:usr/lib|System/Library)/" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "scientificSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["equation", "timeIntegrator", "preflightMatrix", "linearSolver", "matrixNormalization", "trackRegistry", "boundaryCompatibility", "executedTracks", "literalSelfPreflight", "cleanRoomOracle", "diagnostics", "quantityRegistry"],
+      "properties": {
+        "equation": { "type": "string", "minLength": 1 },
+        "timeIntegrator": { "const": "first-order semi-implicit Euler: diffusion at n+1; nonlinear reaction and manufactured source at n; exact-trace Dirichlet data at n+1" },
+        "preflightMatrix": {
+          "const": { "Nx": 8, "Ny": 4, "dx": 0.125, "dy": 0.125, "dt": 0.01, "stepCount": 2, "finalTime": 0.02 }
+        },
+        "linearSolver": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class", "criterion", "tolerance", "absoluteTolerance", "iterations", "preconditioner", "solveCountPerStep"],
+          "properties": {
+            "class": { "const": "FiPy LinearPCGSolver" },
+            "criterion": { "const": "RHS" },
+            "tolerance": { "const": 1e-12 },
+            "absoluteTolerance": { "const": 1e-14 },
+            "iterations": { "const": 2000 },
+            "preconditioner": { "type": "null" },
+            "solveCountPerStep": { "const": 1 }
+          }
+        },
+        "matrixNormalization": { "const": "multiply FiPy A and b by dt/cellVolume" },
+        "trackRegistry": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/track" } },
+        "boundaryCompatibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["initialBoundaryCompatibility", "alphaConservativeIntervalForT0To8", "conservativeBoundaryTraceMismatchUpperBound", "upperBoundInterpretation"],
+          "properties": {
+            "initialBoundaryCompatibility": { "const": false },
+            "alphaConservativeIntervalForT0To8": { "const": ["4/25", "17/50"] },
+            "conservativeBoundaryTraceMismatchUpperBound": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["exact", "decimalOutwardUpper", "attainedMaximum", "globalOrInteriorErrorBound"],
+              "properties": {
+                "exact": { "const": "1/(exp(2*((4/25)/sqrt(2/2500)))+1)" },
+                "decimalOutwardUpper": { "const": "0.000012204318378838" },
+                "attainedMaximum": { "const": false },
+                "globalOrInteriorErrorBound": { "const": false }
+              }
+            },
+            "upperBoundInterpretation": { "type": "string", "minLength": 1 }
+          }
+        },
+        "executedTracks": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/executedTrack" } },
+        "literalSelfPreflight": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["executedAsBvpConvergence", "syntheticAffineRestrictionOnly", "maximumAbsoluteError"],
+          "properties": {
+            "executedAsBvpConvergence": { "const": false },
+            "syntheticAffineRestrictionOnly": { "const": true },
+            "maximumAbsoluteError": { "type": "number", "minimum": 0, "maximum": 2e-15 }
+          }
+        },
+        "cleanRoomOracle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dependencies", "runtimeImportSentinelPassed", "comparisons"],
+          "properties": {
+            "dependencies": {
+              "allOf": [
+                { "$ref": "#/$defs/logicalIdentity" },
+                { "type": "object", "required": ["staticRestrictionPassed"], "properties": { "staticRestrictionPassed": { "const": true } } }
+              ]
+            },
+            "runtimeImportSentinelPassed": { "const": true },
+            "comparisons": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/comparison" } }
+          }
+        },
+        "diagnostics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["constantTwoDiscreteL2", "trackEndpointDifferenceL2", "analyticBoundaryTailMismatchAtExecutedFaces", "initialBoundaryCompatibility", "convergenceFitEligible", "rankingEligible"],
+          "properties": {
+            "constantTwoDiscreteL2": { "type": "number", "minimum": 1.414213562373093, "maximum": 1.414213562373097 },
+            "trackEndpointDifferenceL2": { "$ref": "#/$defs/nonnegativeFinite" },
+            "analyticBoundaryTailMismatchAtExecutedFaces": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 0.000012204318378838 },
+            "initialBoundaryCompatibility": { "const": false },
+            "convergenceFitEligible": { "const": false },
+            "rankingEligible": { "const": false }
+          }
+        },
+        "quantityRegistry": { "type": "object", "minProperties": 10, "additionalProperties": { "$ref": "#/$defs/quantity" } }
+      }
+    },
+    "track": {
+      "type": "object",
+      "required": ["trackId", "problem", "futureMetricName", "allowedFutureInterpretation", "strictMms", "problemUsesOfficialLiteralBoundary", "metricSpecifiedByPfhub"],
+      "properties": {
+        "trackId": { "enum": ["official-literal", "literal-self", "exact-trace-companion"] },
+        "problem": { "type": "string", "minLength": 1 },
+        "futureMetricName": { "type": "string", "minLength": 1 },
+        "allowedFutureInterpretation": { "type": "string", "minLength": 1 },
+        "strictMms": { "type": "boolean" },
+        "problemUsesOfficialLiteralBoundary": { "type": "boolean" },
+        "metricSpecifiedByPfhub": { "type": "boolean" },
+        "restriction": { "type": "string" },
+        "requiredLabel": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "executedTrack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trackId", "requiredLabel", "boundaryDefinition", "problemUsesOfficialLiteralBoundary", "metricSpecifiedByPfhub", "strictMms", "mesh", "initialDigest", "endpointDigest", "diagnosticDiscreteL2", "steps"],
+      "properties": {
+        "trackId": { "enum": ["official-literal", "exact-trace-companion"] },
+        "requiredLabel": { "type": ["string", "null"] },
+        "boundaryDefinition": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "bottom", "top", "evaluationTime"],
+              "properties": {
+                "type": { "const": "literal Dirichlet face values" },
+                "bottom": { "const": 1 },
+                "top": { "const": 0 },
+                "evaluationTime": { "const": "all registered times" }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "evaluationTime", "requiredLabel"],
+              "properties": {
+                "type": { "const": "manufactured-field face traces" },
+                "evaluationTime": { "const": "t_(n+1)" },
+                "requiredLabel": { "const": "non-PFHub exact-trace companion" }
+              }
+            }
+          ]
+        },
+        "problemUsesOfficialLiteralBoundary": { "type": "boolean" },
+        "metricSpecifiedByPfhub": { "type": "boolean" },
+        "strictMms": { "type": "boolean" },
+        "mesh": { "$ref": "#/$defs/mesh" },
+        "initialDigest": { "$ref": "#/$defs/digest" },
+        "endpointDigest": { "$ref": "#/$defs/digest" },
+        "diagnosticDiscreteL2": { "$ref": "#/$defs/nonnegativeFinite" },
+        "steps": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/step" } }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stepIndex", "timeOld", "timeNew", "oldStateDigest", "oldStateSummary", "sourceSummary", "newStateSummary", "preSolveResidualL2", "postSolveResidualL2", "independentPostSolveResidualL2", "actualIterations", "solveCount", "bottomFaceMaximumAbsoluteError", "topFaceMaximumAbsoluteError", "matrixDigest", "rhsDigest", "endpointDigest", "boundaryDigest"],
+      "properties": {
+        "stepIndex": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "timeOld": { "type": "number", "minimum": 0, "maximum": 0.01 },
+        "timeNew": { "type": "number", "minimum": 0.01, "maximum": 0.02 },
+        "oldStateDigest": { "$ref": "#/$defs/digest" },
+        "oldStateSummary": { "$ref": "#/$defs/summary" },
+        "sourceSummary": { "$ref": "#/$defs/summary" },
+        "newStateSummary": { "$ref": "#/$defs/summary" },
+        "preSolveResidualL2": { "$ref": "#/$defs/nonnegativeFinite" },
+        "postSolveResidualL2": { "type": "number", "minimum": 0, "maximum": 1e-10 },
+        "independentPostSolveResidualL2": { "type": "number", "minimum": 0, "maximum": 1e-10 },
+        "actualIterations": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "solveCount": { "const": 1 },
+        "bottomFaceMaximumAbsoluteError": { "type": "number", "minimum": 0, "maximum": 2e-15 },
+        "topFaceMaximumAbsoluteError": { "type": "number", "minimum": 0, "maximum": 2e-15 },
+        "matrixDigest": { "$ref": "#/$defs/digest" },
+        "rhsDigest": { "$ref": "#/$defs/digest" },
+        "endpointDigest": { "$ref": "#/$defs/digest" },
+        "boundaryDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "mesh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Nx", "Ny", "cellCount", "uniqueCellCentreCount", "dx", "dy", "xPeriodic", "duplicatePeriodicEndpoint", "exteriorFaceCount", "pairedPeriodicFaceIds", "redundantRightFaceIds", "pairedPeriodicFacesConnectOppositeCells", "redundantRightFacesAbsentFromCellFaceIds"],
+      "properties": {
+        "Nx": { "const": 8 },
+        "Ny": { "const": 4 },
+        "cellCount": { "const": 32 },
+        "uniqueCellCentreCount": { "const": 32 },
+        "dx": { "const": 0.125 },
+        "dy": { "const": 0.125 },
+        "xPeriodic": { "const": true },
+        "duplicatePeriodicEndpoint": { "const": false },
+        "exteriorFaceCount": { "const": 20 },
+        "pairedPeriodicFaceIds": { "const": [40, 49, 58, 67] },
+        "redundantRightFaceIds": { "const": [48, 57, 66, 75] },
+        "pairedPeriodicFacesConnectOppositeCells": { "const": true },
+        "redundantRightFacesAbsentFromCellFaceIds": { "const": true }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximum"],
+      "properties": { "minimum": { "type": "number" }, "maximum": { "type": "number" } }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trackId", "steps", "endpointMaximumAbsoluteDifference", "endpointThreshold", "workerInitialDigest", "oracleInitialDigest", "workerEndpointDigest", "oracleEndpointDigest"],
+      "properties": {
+        "trackId": { "enum": ["official-literal", "exact-trace-companion"] },
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["stepIndex", "matrixMaximumAbsoluteDifference", "rhsMaximumAbsoluteDifference", "matrixThreshold", "rhsThreshold", "boundaryDigestMatched", "workerOldStateDigest", "oracleOldStateDigest", "workerMatrixDigest", "oracleMatrixDigest", "workerRhsDigest", "oracleRhsDigest", "workerEndpointDigest", "oracleEndpointDigest", "workerBoundaryDigest", "oracleBoundaryDigest"],
+            "properties": {
+              "stepIndex": { "type": "integer", "minimum": 1, "maximum": 2 },
+              "matrixMaximumAbsoluteDifference": { "type": "number", "minimum": 0, "maximum": 2e-13 },
+              "rhsMaximumAbsoluteDifference": { "type": "number", "minimum": 0, "maximum": 2e-13 },
+              "matrixThreshold": { "const": 2e-13 },
+              "rhsThreshold": { "const": 2e-13 },
+              "boundaryDigestMatched": { "const": true },
+              "workerOldStateDigest": { "$ref": "#/$defs/digest" },
+              "oracleOldStateDigest": { "$ref": "#/$defs/digest" },
+              "workerMatrixDigest": { "$ref": "#/$defs/digest" },
+              "oracleMatrixDigest": { "$ref": "#/$defs/digest" },
+              "workerRhsDigest": { "$ref": "#/$defs/digest" },
+              "oracleRhsDigest": { "$ref": "#/$defs/digest" },
+              "workerEndpointDigest": { "$ref": "#/$defs/digest" },
+              "oracleEndpointDigest": { "$ref": "#/$defs/digest" },
+              "workerBoundaryDigest": { "$ref": "#/$defs/digest" },
+              "oracleBoundaryDigest": { "$ref": "#/$defs/digest" }
+            }
+          }
+        },
+        "endpointMaximumAbsoluteDifference": { "type": "number", "minimum": 0, "maximum": 2e-12 },
+        "endpointThreshold": { "const": 2e-12 },
+        "workerInitialDigest": { "$ref": "#/$defs/digest" },
+        "oracleInitialDigest": { "$ref": "#/$defs/digest" },
+        "workerEndpointDigest": { "$ref": "#/$defs/digest" },
+        "oracleEndpointDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "dimension", "basis"],
+      "properties": {
+        "unit": { "type": "string", "minLength": 1 },
+        "dimension": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 }
+      }
+    },
+    "capabilityCeiling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fullPartAConvergenceExecuted", "convergenceVerified", "strictOfficialMms", "physicalModelValidated", "realMaterialMapped", "crossScaleBridgeValidated", "causalEffectIdentified", "industrialRecommendationAuthorized", "automaticControlAuthorized", "reproduced", "rankingEligible", "evidenceScoreIncreaseAuthorized"],
+      "properties": {
+        "fullPartAConvergenceExecuted": { "const": false },
+        "convergenceVerified": { "const": false },
+        "strictOfficialMms": { "const": false },
+        "physicalModelValidated": { "const": false },
+        "realMaterialMapped": { "const": false },
+        "crossScaleBridgeValidated": { "const": false },
+        "causalEffectIdentified": { "const": false },
+        "industrialRecommendationAuthorized": { "const": false },
+        "automaticControlAuthorized": { "const": false },
+        "reproduced": { "const": false },
+        "rankingEligible": { "const": false },
+        "evidenceScoreIncreaseAuthorized": { "const": false }
+      }
+    }
+  }
+}

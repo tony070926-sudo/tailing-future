@@ -1,0 +1,1582 @@
+{
+  "schemaVersion": "tf.r18a-report-lifecycle-science-review/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/lifecycle_science_review",
+  "role": "Independent read-only mechanism/scientific-validity reviewer; not Builder, not release approver",
+  "verdict": "pass-bounded-scientific-boundary-review",
+  "overallDisposition": "abstain-release",
+  "releaseEligible": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false,
+  "scope": {
+    "hypothesis": "Separate fixed scientific/source inputs, four derived reports, and one precisely named future terminal attestation without changing scientific equations, thresholds, contracts, evidence scoring or historical provenance.",
+    "candidateRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+    "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "boundedReviewOnly": true,
+    "notClaimed": [
+      "new physical validation",
+      "identified causal effect",
+      "full PFHub part A convergence",
+      "independent spatial-discretization reproduction",
+      "real-material or reactor/process model",
+      "engineering/control authorization",
+      "latest remote main or candidate CI success"
+    ]
+  },
+  "candidateIdentity": {
+    "whole513": {
+      "pathCount": 513,
+      "canonicalBytes": 84979,
+      "sha256": "6a905cbf7e4b3d6fdfd9aad3f1f4022a4638ffd308e9f5248b9c16b392fd0180"
+    },
+    "delta66FromIntegrationBase": {
+      "pathCount": 66,
+      "canonicalBytes": 11583,
+      "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394",
+      "matchesManifest": true
+    },
+    "delta14FromPriorPortable": {
+      "pathCount": 14,
+      "canonicalBytes": 2261,
+      "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc",
+      "matchesManifest": true
+    },
+    "immutableArtifacts": [
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+        "mode": 420,
+        "size": 7367,
+        "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+        "mode": 420,
+        "size": 24001,
+        "sha256": "26f70ffb560d5f9092b1455360b325f8d0381785979a93f1c9ffcbcd0c1da602"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+        "mode": 420,
+        "size": 51797,
+        "sha256": "93d1ead54054ad81988d15e4fc77ea73af4862ede045e6323fb7b6f150565081"
+      }
+    ],
+    "builderSource511": {
+      "pathCount": 511,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0",
+      "matchesPlanRows": true
+    },
+    "current513WasNotBuilderTestedAsWhole": true,
+    "postReviewInputRequiresFreshApplicableValidation": true,
+    "shaCanonicalization": "SHA256 of UTF-8 JSON.stringify(sorted records); field order path, mode, size, sha256; modes are actual POSIX permission bits. Not the evaluator artifact digest or Git-mode-normalized admission identity."
+  },
+  "documentsReadCompletely": [
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/AGENTS.md",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+    "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+    "scripts/derived-report-contract.mjs",
+    "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+    "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+    "scripts/source-scope.mjs",
+    "scripts/derived-report-contract.test.mjs",
+    "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+    "scripts/source-scope.test.mjs"
+  ],
+  "additionalInspection": [
+    "Complete evaluator delta against the preserved prior portable worktree.",
+    "Complete runner-v2 delta against the preserved prior portable worktree.",
+    "All 452 integration-base blob identities compared read-only with Git tree a63415c; exact historical report bytes additionally obtained with git show.",
+    "Formal scientific receipt parsed for capability ceiling, causal policy, cross-scale policy, units/dimensions/bases, preflight matrix, tolerances, boundary interpretation and track separation.",
+    "Builder result and plan files independently hashed; all 14 stdout/stderr files independently hashed; focused nested historical/Git records and numerical execution records parsed.",
+    "No complete physical re-derivation of unchanged scientific imports, no solver execution, and no external SOTA retrieval in this review. Dated SOTA comparison is a separate independent review."
+  ],
+  "newInScopeFindings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "findings": []
+  },
+  "findings": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+      "priority": "P1",
+      "origin": "predecessor",
+      "status": "scientific-boundary-consistent-software-closure-pending",
+      "assessment": "The source-role split is scientifically coherent. Historical report bytes are fixed provenance, not evidence for the new source. Generated-report consistency is separate and cannot promote science. The exact new terminal exception does not exclude the previous final review or arbitrary review inputs. Independent software closure and final executable gates remain necessary; this science review alone does not close the release blocker.",
+      "closureRequirements": [
+        "Relevant independent software reviewer verifies the implemented source/report lifecycle and failure behavior.",
+        "Archive all nonterminal review inputs, freeze the resulting exact input identity, then run applicable complete gates and actual evaluator in ordinary Git modes.",
+        "Verify actual terminal exit/log evidence and report consistency; add only the exact terminal attestation after generation."
+      ]
+    },
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "origin": "predecessor",
+      "status": "open",
+      "assessment": "Builder explicitly records no complete-core successor run. Focused 75 and bounded numerical successes do not supersede the old complete-core deadline failures.",
+      "closureRequirements": [
+        "Obtain a relevant complete-core pass on the final post-review candidate without silently relaxing historical limits or hiding failed/unexecuted assertions."
+      ]
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "origin": "predecessor",
+      "status": "open",
+      "assessment": "Builder explicitly records no full Python, observer, real evaluator, production build, Linux CI or fresh npm-ci run. The full release sequence remains incomplete.",
+      "closureRequirements": [
+        "Execute all applicable final lint, type, numerical, schema, evaluator, production-build and protected-main release gates on the exact final input; preserve failures and distinguish local copied dependencies from fresh dependency resolution."
+      ]
+    }
+  ],
+  "scientificAssessment": {
+    "scientificInputsPreserved": {
+      "count": 12,
+      "allExpectedAndPriorAndOriginalIdentityMatches": true,
+      "consequence": "Byte/mode preservation establishes that this candidate does not alter those preregistered equations, numerical thresholds, source/provenance, runtime lock or formal receipt. It does not certify all underlying physics."
+    },
+    "formalReceipt": {
+      "identity": {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      "classification": "auditable",
+      "promotionAuthorized": false,
+      "capabilityCeiling": {
+        "automaticControlAuthorized": false,
+        "causalEffectIdentified": false,
+        "convergenceVerified": false,
+        "crossScaleBridgeValidated": false,
+        "evidenceScoreIncreaseAuthorized": false,
+        "fullPartAConvergenceExecuted": false,
+        "industrialRecommendationAuthorized": false,
+        "physicalModelValidated": false,
+        "rankingEligible": false,
+        "realMaterialMapped": false,
+        "reproduced": false,
+        "strictOfficialMms": false
+      },
+      "causalPolicy": {
+        "counterfactualAllowed": false,
+        "quantitativeInterventionAllowed": false,
+        "requiredResponse": "machine-readable abstention for any causal-effect, intervention or counterfactual request",
+        "structuralEquationIdentified": false
+      },
+      "preflightMatrix": {
+        "Nx": 8,
+        "Ny": 4,
+        "dt": 0.01,
+        "dx": 0.125,
+        "dy": 0.125,
+        "finalTime": 0.02,
+        "stepCount": 2
+      },
+      "interpretation": "The 8-by-4 cell-centred grid and two reduced-time steps from 0 to 0.02 are bounded numerical preflight data, not t=8 convergence, calibrated physical prediction or a material/process model. Numerical source receipt 0444 and fresh-runtime output 0444 checks are distinct from portable source Git mode 0644.",
+      "boundaryInterpretation": "Official-literal and non-PFHub exact-trace companion remain separate; the official literal track is not strict MMS. An analytic conservative pointwise boundary-tail bound is not an interior/global error bound. Literal-self preflight is synthetic affine restriction only, not executed BVP self-convergence."
+    },
+    "quantityAndScaleBoundary": {
+      "existingQuantityRegistryPreserved": true,
+      "basis": "Coordinates, order parameter, source, time, kappa and discrete L2 remain declared reduced/dimensionless quantities with unit 1 and no SI dimensional map.",
+      "crossScaleBridge": {
+        "boundariesGeometryAveragingTimeScaleConservationUncertaintyInformationLossReverseUse": "not-applicable because no cross-scale bridge is asserted",
+        "present": false,
+        "reason": "This is a single reduced PDE numerical preflight. It establishes no mapping to atomistic, molecular, microstructural, reactor or plant scales."
+      },
+      "noNewScientificQuantityOrBridgeIntroduced": true
+    },
+    "causalAndMechanismBoundary": {
+      "graphOrTaxonomyPromotedToEffect": false,
+      "structuralEquationForInterventionIdentified": false,
+      "quantitativeCounterfactualOrInterventionAuthorized": false,
+      "machineReadableAbstentionRetained": true,
+      "explanation": "The implementation changes source and report consistency, not material/chemical mechanism inference. It does not assert heterogeneous/homogeneous catalyst equivalence or an industrial effect."
+    },
+    "scoreAndPublicProjection": {
+      "scorecardAndComparatorRegistryMatchIntegrationBase": true,
+      "digestAndProjectionFunctionsIndependentlyByteCompared": [
+        {
+          "name": "computeArtifactDigest",
+          "byteIdentical": true,
+          "sha256": "c91869cac1cb4b948db591f1d6d0820e145038aa120f01cb59f4ed0c5b1e2f73"
+        },
+        {
+          "name": "formatMode",
+          "byteIdentical": true,
+          "sha256": "ba19ae1564d64ca3d17887c4d41bd466565785e4fed31905b4de39f866a90559"
+        },
+        {
+          "name": "buildPublicSummary",
+          "byteIdentical": true,
+          "sha256": "130b25ebd5a64f7edddc48bd6767a2c56c82a3e32896462ae6b2824195dd7e9c"
+        },
+        {
+          "name": "buildPublicProductEvaluation",
+          "byteIdentical": true,
+          "sha256": "a0a1dc153cc9b7f85aeef5c01d988318337a04df95c2409dc6ebddb7703b3017"
+        },
+        {
+          "name": "isPublicIdentifier",
+          "byteIdentical": true,
+          "sha256": "e7eb7caf6803ac24e2150bd389f55fc3be7164f75975413e01ccca0e754a0fbc"
+        },
+        {
+          "name": "isPublicText",
+          "byteIdentical": true,
+          "sha256": "459ebc7249a0ea8b9d4819007252b2a58b12f0c5634fe708d71e52d2b159f696"
+        }
+      ],
+      "publicScorecardIsSourceProjectionNotNewValidation": true,
+      "evidenceMaturityIncreasedByProseOrReportCount": false,
+      "executionAuthenticated": false,
+      "scientificValidation": false,
+      "explanation": "The helper checks exact public projections from captured scorecard/registry inputs; it does not reward report size, reviews or hashes with scientific credit. Matching an unsigned generation statement is byte consistency, not execution authentication or scientific truth."
+    },
+    "historyAndOrdering": {
+      "fourBaselineReportsExactlyPreservedInSnapshot": true,
+      "previousSixReviewArtifactsRemainPinnedAndUnchanged": true,
+      "oldFinalIsInput": true,
+      "soleLateException": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+      "otherReviewInputsRemainDigestBound": true,
+      "fullObservedTreeDistinctFromInputIdentity": true,
+      "historicalApprovalTransferred": false,
+      "protectedGitCommitMustBindPublishedTree": true,
+      "generationStatementStoredOutsideInputs": true,
+      "atomicFourFilePublicationClaimed": false,
+      "finalGateOrdering": "All nonterminal source/review input must be frozen before final gates and report generation. Adding this review changes the input digest, so Builder evidence cannot be relabelled as final-source execution. After generation only the exact terminal attestation may be added without changing the evaluator input digest."
+    },
+    "compatibility": {
+      "frontendContracts": [
+        "tf.world/0.3",
+        "tf.action/0.3",
+        "tf.observation/0.3"
+      ],
+      "all452BaseGitBlobsCompared": true,
+      "changedBasePaths": [
+        ".gitignore",
+        "package.json",
+        "scripts/evaluate-launcher.test.mjs",
+        "scripts/evaluate.mjs",
+        "scripts/source-scope.mjs",
+        "scripts/source-scope.test.mjs",
+        "vitest.config.ts"
+      ],
+      "frontendAndSelectedContractFilesCompared": 140,
+      "changedFrontendAndSelectedContractPaths": [],
+      "preciseContractScoreAndGuardIdentities": [
+        {
+          "path": "schemas/world-state.schema.json",
+          "mode": 420,
+          "size": 10838,
+          "sha256": "0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795"
+        },
+        {
+          "path": "schemas/action.schema.json",
+          "mode": 420,
+          "size": 2809,
+          "sha256": "f80094a63dc37e10c033b9981cfbbe423182bd4aebcff1e22cfb70cd2dd4aa18"
+        },
+        {
+          "path": "schemas/atomistic-full-candidate-observer-contract.schema.json",
+          "mode": 420,
+          "size": 35375,
+          "sha256": "cf3d5d3d3531d08f17df46f69a78590d656afd80dbbaf2db61bcad6cb9a1eb53"
+        },
+        {
+          "path": "lib/simulation/thermochemical-world.ts",
+          "mode": 420,
+          "size": 94517,
+          "sha256": "79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8"
+        },
+        {
+          "path": "evaluation/current-scorecard.json",
+          "mode": 420,
+          "size": 19570,
+          "sha256": "ff0f47dd69ff3832468dc489119a59e5d42afff9c95ff6d16ba98fbc9dfb96a7"
+        },
+        {
+          "path": "evaluation/baselines/registry.json",
+          "mode": 420,
+          "size": 10251,
+          "sha256": "883c59c2e9c826c80a12b854f10ab7fd479138e97cebc2b14a6079349865d0ed"
+        },
+        {
+          "path": "scripts/release-artifact.mjs",
+          "mode": 420,
+          "size": 27372,
+          "sha256": "93e171f5ecfca397baa6d19ba4201ebb03680335a73941658f9b4214dadc310c"
+        }
+      ],
+      "migrationRequired": false,
+      "noFrontendWorkModified": true,
+      "sourceCIComparisonAndReleaseArtifactCodeUnchanged": true
+    }
+  },
+  "evidenceAudit": {
+    "independentMethod": "Reviewer-authored read-only Node audit using filesystem reads, SHA256/POSIX identities, raw Git blob-object verification and git show. It executes neither candidate modules nor solvers.",
+    "rawAudit": {
+      "path": "/private/tmp/tf-r18a-lifecycle-science.ZZlUvZ/read-only-evidence.json",
+      "size": 35050,
+      "sha256": "89eb5344feded43d1ccd7200d65a562de9536627438043001f84d1e512ee3a95"
+    },
+    "auditScript": {
+      "path": "/private/tmp/tf-r18a-lifecycle-science.ZZlUvZ/read-only-audit.mjs",
+      "size": 9522,
+      "sha256": "2e6e881c97105b1506a7fb24208ac74b70e8c9af0420a5bd168dab6e5e52fa40"
+    },
+    "original641": {
+      "pathCount": 641,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "priorPortable507": {
+      "pathCount": 507,
+      "canonicalBytes": 83896,
+      "sha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137"
+    },
+    "source511MatchesActualBuilderPlan": true,
+    "actualBuilderResults": {
+      "path": "results.json",
+      "mode": 420,
+      "size": 878909,
+      "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+    },
+    "actualBuilderPlan": {
+      "path": "plan-v1.json",
+      "mode": 420,
+      "size": 244348,
+      "sha256": "8da2ef01ac8cc3ee410b3fe9ee9fad41cf416af0298d64063c13467f8d9869b6"
+    },
+    "actualTopLevelGates": [
+      {
+        "id": "admission",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "lint",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "type",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "syntax-strict-json",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "focused-contracts",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "numerical",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      },
+      {
+        "id": "final-admission",
+        "status": "pass",
+        "exitCode": 0,
+        "timedOut": false
+      }
+    ],
+    "all14RawLogIdentitiesMatch": true,
+    "focused": {
+      "fileCount": 6,
+      "testCount": 75,
+      "skipped": 0,
+      "scope": "Protocol and focused compatibility only"
+    },
+    "nestedHistorical": {
+      "status": 0,
+      "tests5": true,
+      "tests20": true,
+      "skipped": false
+    },
+    "actualGitCheckout": {
+      "treeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf",
+      "indexRecords": 511,
+      "receipt": {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "mode": 420,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      "nodeStatus": 0,
+      "node29": true,
+      "nodePass29": true,
+      "nodeSkip0": true,
+      "postCheckoutChmodPerformed": false,
+      "approvedReleaseCommit": false,
+      "dependencyLayout": "external-reference-focused-only"
+    },
+    "numerical": {
+      "pythonTests": 21,
+      "nodeTests": 29,
+      "newReceipts": [
+        {
+          "identity": {
+            "path": "receipt-1.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          },
+          "matchesFormal": true
+        },
+        {
+          "identity": {
+            "path": "receipt-2.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          },
+          "matchesFormal": true
+        }
+      ],
+      "sourceCopyMode": 292,
+      "actualGitCheckoutNumericalRun": false,
+      "independentReviewerSolverExecution": false,
+      "hostElapsedMs": 30989.920583,
+      "elapsedBasis": "Builder monotonic wall clock; not reduced PDE time",
+      "budgetMs": 600000,
+      "stopGraceMs": 1000,
+      "stopGraceExtendsAcceptance": false
+    },
+    "absentEvidence": [
+      "No full-core successor pass",
+      "No complete post-review 513 or later source execution",
+      "No real evaluator generation from this candidate",
+      "No production build",
+      "No candidate Linux CI",
+      "No full PFHub t=8 convergence",
+      "No engineering or physical experiment"
+    ]
+  },
+  "R12": {
+    "candidateContainsAnyNinePaths": false,
+    "candidateContainsAnyExactR12WholeFileDigest": false,
+    "originalEvidencePreserved": true,
+    "rightsClearanceClaimed": false,
+    "checkScope": "Exact path and whole-file SHA256 comparisons, not a general rights assessment or proof that all transformed excerpts are absent."
+  },
+  "residualLimitations": [
+    {
+      "priority": "P2",
+      "id": "R18A-UNSIGNED-GENERATION-CONSISTENCY-BOUNDARY",
+      "newDefect": false,
+      "text": "An arbitrary caller can construct an unsigned generation statement. Correctness claims must remain byte-consistency only; actual successful command evidence, full schema/evaluator validation and release guards are separate. The current code and scope explicitly retain this limitation."
+    },
+    {
+      "priority": "P2",
+      "id": "R18A-TINY-GRID-NONPROMOTIONAL-BOUNDARY",
+      "newDefect": false,
+      "text": "No spatial/time refinement fit, independent spatial discretization, full final-time validation, SI/material mapping or cross-scale mechanism validation is added. The preflight cannot support industrial recommendations."
+    },
+    {
+      "priority": "P2",
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "newDefect": false,
+      "text": "Existing worker-shutdown/environment limitation remains carried by predecessor evidence; cause and OS/native dependency closure are not established by this read-only scientific review."
+    },
+    {
+      "priority": "P2",
+      "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "newDefect": false,
+      "text": "Existing executor preparation/terminal-report limitation is not changed by this candidate. Actual command/session exit remains authoritative; this scientific review does not validate executor setup failure reporting."
+    }
+  ],
+  "nextActions": [
+    "Obtain independent software/numerical/evaluator disposition and dated SOTA review; root owns fixes and relevant reviewer must verify closure of any P0/P1.",
+    "Archive exact nonterminal review bytes, then rerun all applicable full gates and actual evaluator on the resulting exact ordinary-Git-mode source. Keep old failures and 0444-source versus 0644-Git evidence distinct.",
+    "After release blockers close, preregister a bounded independent-discretization/final-time pilot as a separate scientific hypothesis, retaining nonpromotional status until like-for-like convergence and validation evidence exist."
+  ],
+  "independentObservation": {
+    "schemaVersion": "tf.r18a-lifecycle-science-read-only-audit/0.1",
+    "observedAt": "2026-09-07T14:45:35.382Z",
+    "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+    "base": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "candidateWhole": {
+      "pathCount": 513,
+      "canonicalBytes": 84979,
+      "sha256": "6a905cbf7e4b3d6fdfd9aad3f1f4022a4638ffd308e9f5248b9c16b392fd0180"
+    },
+    "priorWhole": {
+      "pathCount": 507,
+      "canonicalBytes": 83896,
+      "sha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137"
+    },
+    "originalWhole": {
+      "pathCount": 641,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "artifacts": [
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+        "mode": 420,
+        "size": 7367,
+        "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+        "mode": 420,
+        "size": 24001,
+        "sha256": "26f70ffb560d5f9092b1455360b325f8d0381785979a93f1c9ffcbcd0c1da602"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+        "mode": 420,
+        "size": 51797,
+        "sha256": "93d1ead54054ad81988d15e4fc77ea73af4862ede045e6323fb7b6f150565081"
+      }
+    ],
+    "candidateFromBase": {
+      "pathCount": 66,
+      "canonicalBytes": 11583,
+      "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394",
+      "matchesManifest": true
+    },
+    "deltaFromPrior": {
+      "pathCount": 14,
+      "canonicalBytes": 2261,
+      "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc",
+      "matchesManifest": true,
+      "records": [
+        {
+          "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+          "mode": 420,
+          "size": 143300,
+          "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+          "mode": 420,
+          "size": 110864,
+          "sha256": "f888a7571846c3fdbcf25a0a114765258171f1c939794266d0611a2196590b04"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+          "mode": 420,
+          "size": 7367,
+          "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.3.schema.json",
+          "mode": 420,
+          "size": 6286,
+          "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "mode": 420,
+          "size": 25845,
+          "sha256": "ace282e52e240452df9bf142341afce8b6116e9321f3d50e9b00dee02c415534"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "mode": 420,
+          "size": 16567,
+          "sha256": "52a666b485a23747598d62e95984f6178d36593574791f2ea426512fae613b11"
+        },
+        {
+          "path": "scripts/derived-report-contract.mjs",
+          "mode": 420,
+          "size": 13691,
+          "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+        },
+        {
+          "path": "scripts/derived-report-contract.test.mjs",
+          "mode": 420,
+          "size": 7657,
+          "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+        },
+        {
+          "path": "scripts/evaluate-launcher.test.mjs",
+          "mode": 420,
+          "size": 23470,
+          "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+        },
+        {
+          "path": "scripts/evaluate.mjs",
+          "mode": 420,
+          "size": 22343,
+          "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "mode": 420,
+          "size": 11113,
+          "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "mode": 420,
+          "size": 6163,
+          "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+        },
+        {
+          "path": "scripts/source-scope.mjs",
+          "mode": 420,
+          "size": 1699,
+          "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+        },
+        {
+          "path": "scripts/source-scope.test.mjs",
+          "mode": 420,
+          "size": 2001,
+          "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+        }
+      ]
+    },
+    "removedPriorPaths": [],
+    "baselineGit": {
+      "fileCount": 452,
+      "changedPaths": [
+        ".gitignore",
+        "package.json",
+        "scripts/evaluate-launcher.test.mjs",
+        "scripts/evaluate.mjs",
+        "scripts/source-scope.mjs",
+        "scripts/source-scope.test.mjs",
+        "vitest.config.ts"
+      ],
+      "allModes100644": true,
+      "frontendAndContractFileCount": 140,
+      "frontendAndContractChangedPaths": []
+    },
+    "scientificImports": [
+      {
+        "expected": {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+          "mode": 420,
+          "size": 90735,
+          "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+        },
+        "observed": {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+          "mode": 420,
+          "size": 90735,
+          "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+          "mode": 420,
+          "size": 7411,
+          "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+        },
+        "observed": {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+          "mode": 420,
+          "size": 7411,
+          "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        "observed": {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+          "mode": 420,
+          "size": 20908,
+          "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+        },
+        "observed": {
+          "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+          "mode": 420,
+          "size": 20908,
+          "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+          "mode": 420,
+          "size": 36479,
+          "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+        },
+        "observed": {
+          "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+          "mode": 420,
+          "size": 36479,
+          "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+          "mode": 420,
+          "size": 6966,
+          "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+          "mode": 420,
+          "size": 6966,
+          "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+          "mode": 420,
+          "size": 18417,
+          "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+          "mode": 420,
+          "size": 18417,
+          "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "mode": 420,
+          "size": 30418,
+          "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "mode": 420,
+          "size": 30418,
+          "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+          "mode": 420,
+          "size": 16746,
+          "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+          "mode": 420,
+          "size": 16746,
+          "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "mode": 420,
+          "size": 72494,
+          "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "mode": 420,
+          "size": 72494,
+          "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+          "mode": 420,
+          "size": 29719,
+          "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+          "mode": 420,
+          "size": 29719,
+          "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      },
+      {
+        "expected": {
+          "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+          "mode": 420,
+          "size": 8093,
+          "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+        },
+        "observed": {
+          "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+          "mode": 420,
+          "size": 8093,
+          "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true,
+        "matchesOriginal": true
+      }
+    ],
+    "upstreamNine": [
+      {
+        "identity": {
+          "path": "docs/ATOMISTIC_REPRODUCTION.md",
+          "mode": 420,
+          "size": 40982,
+          "sha256": "86f6e88c1807bd8daa8b63b9969789695090464f932f5b5caf233efdf7df7767"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+          "mode": 420,
+          "size": 11395,
+          "sha256": "fa5a83d70e499bc2419b63300d24e46a802406b78d2fa4406e93a7e0a0f01735"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+          "mode": 420,
+          "size": 19526,
+          "sha256": "df553e1cd16d3f77e2177b12d403da916240ef36931467211c83354b9133c6d4"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+          "mode": 420,
+          "size": 16437,
+          "sha256": "adf2e8a6a509bc0f79b6ef48b0215e48dc983c1998982f21c4f13ed8504eb891"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "schemas/atomistic-full-candidate-host-observation.schema.json",
+          "mode": 420,
+          "size": 21537,
+          "sha256": "729477cccc0564534b2dad7c3d2bc8ba735aeda369245e9c343987cab90490dd"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "scripts/atomistic/full-candidate-observer-vnext.mjs",
+          "mode": 420,
+          "size": 124052,
+          "sha256": "20ba6cb9e4e4290dbfad18afc4b06e358cc5120664e40d6e2c7106dc49628a8b"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+          "mode": 420,
+          "size": 80214,
+          "sha256": "a0029f7205596332aa3858d50620bb3cb735806e6318253febbb8e06eb7dea07"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "scripts/evaluate-observer-snapshot.test.mjs",
+          "mode": 420,
+          "size": 15891,
+          "sha256": "2dbc466a7638dc569f8fdfbdb29ef2a1cbbf3c81d366bcae8f3ff34b66e3d524"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "scripts/evaluate-worker.mjs",
+          "mode": 420,
+          "size": 68841,
+          "sha256": "31f22211db899c9d42251a34fc40049624cf0ee00d52ca153e9d6f0258997c67"
+        },
+        "matchesGit": true,
+        "matchesPrior": true
+      }
+    ],
+    "reportHistory": [
+      {
+        "identity": {
+          "path": "evaluation/latest-report.json",
+          "mode": 420,
+          "size": 125658,
+          "sha256": "8d50c338ca12083896595febbe7f0ec343ce8a36a6ab5d06d9c80d86042fa6ac"
+        },
+        "matchesGitBytes": true,
+        "matchesEmbeddedIdentity": true,
+        "matchesCurrent": true,
+        "matchesBaseLedger": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/latest-report.md",
+          "mode": 420,
+          "size": 5045,
+          "sha256": "9f73bd6bd28448ee0be769496e07e2006f51d2bfe3b17a3bd32b09abfcfd0d55"
+        },
+        "matchesGitBytes": true,
+        "matchesEmbeddedIdentity": true,
+        "matchesCurrent": true,
+        "matchesBaseLedger": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/public-product-evaluation.json",
+          "mode": 420,
+          "size": 4804,
+          "sha256": "58a121badc7c38d679e7950492bda577be08c9b06c698b441547052a4641b03d"
+        },
+        "matchesGitBytes": true,
+        "matchesEmbeddedIdentity": true,
+        "matchesCurrent": true,
+        "matchesBaseLedger": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/public-summary.json",
+          "mode": 420,
+          "size": 344,
+          "sha256": "a0d99afdfb8e9e9f4924026e8103c70df96094011065bff208dfeb72cbaf59c8"
+        },
+        "matchesGitBytes": true,
+        "matchesEmbeddedIdentity": true,
+        "matchesCurrent": true,
+        "matchesBaseLedger": true
+      }
+    ],
+    "reviewHistory": [
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+          "mode": 420,
+          "size": 16518,
+          "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+          "mode": 420,
+          "size": 77179,
+          "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-science-review.json",
+          "mode": 420,
+          "size": 23098,
+          "sha256": "a2cff93fbd0f22b0df719d5f787e45d4db089464283dc938a43b7db9d9ac44ac"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-software-review.json",
+          "mode": 420,
+          "size": 94425,
+          "sha256": "16aa9651d720e2feb7352916cadde2eaa270fc9d0434c69298578d77c164fdbc"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+          "mode": 420,
+          "size": 31464,
+          "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      },
+      {
+        "identity": {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+          "mode": 420,
+          "size": 24740,
+          "sha256": "7634e215ec55d42d382b4efd7e6dfac5641553a799719dbf7e99f318c41fa13f"
+        },
+        "matchesExpected": true,
+        "matchesPrior": true
+      }
+    ],
+    "R12": [
+      {
+        "original": {
+          "path": "evaluation/gas-kinetics/fixtures/hwang-so2-mechanism-catalog.json",
+          "mode": 420,
+          "size": 63455,
+          "sha256": "0f750a5c8330764f0d6cac6c646269cd264f4384aceb1b453fdd9ab1cccdefba"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "evaluation/reviews/2026-09-02-r12-defect-aware-gas-mechanism-catalog-review.md",
+          "mode": 420,
+          "size": 20100,
+          "sha256": "3c91df2e180215645d4c973ae7994d0c40d8399043468bdc2e709b1d2eeb603f"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "lib/knowledge/gas-mechanism-catalog.test.ts",
+          "mode": 420,
+          "size": 20276,
+          "sha256": "81292d7845a656f78050a8113616f1306cc62e96d33589c2ff95e94c00ff4283"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "lib/knowledge/gas-mechanism-catalog.ts",
+          "mode": 420,
+          "size": 50066,
+          "sha256": "a5b0325048a6e957f0996265739669b9673151a23ce05928447887c0e2414442"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "lib/knowledge/so2-gas-mechanism-catalog.ts",
+          "mode": 420,
+          "size": 1616,
+          "sha256": "82eb5facd427aa46fffbef6ee097e74efd6e5908c30302c06d8f4032b28dfb9e"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "schemas/gas-mechanism-catalog-query-result.schema.json",
+          "mode": 420,
+          "size": 14606,
+          "sha256": "982a2e11bfc5540280dc36e66777dcde8feb003b5680b60110400fec9d7c547b"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "schemas/gas-mechanism-catalog-query.schema.json",
+          "mode": 420,
+          "size": 1835,
+          "sha256": "c278fd17b7f6e427b0d263341127806ea6f28a92d4f361b74c744ab538c88568"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "schemas/gas-mechanism-catalog.schema.json",
+          "mode": 420,
+          "size": 24394,
+          "sha256": "1a9b0970a10ab43869fa75e61855c90937bc188dbe2e35f2d99516086d9acdf7"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      },
+      {
+        "original": {
+          "path": "scripts/gas-kinetics/mechanism-catalog-trust-roots.mjs",
+          "mode": 420,
+          "size": 9046,
+          "sha256": "001c4b528eb5e9a3dfcf44795beb979d5cee041a31e1b86878e2e64a1a08efad"
+        },
+        "presentInCandidate": false,
+        "sameDigestCandidatePaths": []
+      }
+    ],
+    "extractedFunctions": [
+      {
+        "name": "computeArtifactDigest",
+        "byteIdentical": true,
+        "sha256": "c91869cac1cb4b948db591f1d6d0820e145038aa120f01cb59f4ed0c5b1e2f73"
+      },
+      {
+        "name": "formatMode",
+        "byteIdentical": true,
+        "sha256": "ba19ae1564d64ca3d17887c4d41bd466565785e4fed31905b4de39f866a90559"
+      },
+      {
+        "name": "buildPublicSummary",
+        "byteIdentical": true,
+        "sha256": "130b25ebd5a64f7edddc48bd6767a2c56c82a3e32896462ae6b2824195dd7e9c"
+      },
+      {
+        "name": "buildPublicProductEvaluation",
+        "byteIdentical": true,
+        "sha256": "a0a1dc153cc9b7f85aeef5c01d988318337a04df95c2409dc6ebddb7703b3017"
+      },
+      {
+        "name": "isPublicIdentifier",
+        "byteIdentical": true,
+        "sha256": "e7eb7caf6803ac24e2150bd389f55fc3be7164f75975413e01ccca0e754a0fbc"
+      },
+      {
+        "name": "isPublicText",
+        "byteIdentical": true,
+        "sha256": "459ebc7249a0ea8b9d4819007252b2a58b12f0c5634fe708d71e52d2b159f696"
+      }
+    ],
+    "builderSource": {
+      "pathCount": 511,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0",
+      "matchesPlanRows": true
+    },
+    "builderEvidence": {
+      "result": {
+        "path": "results.json",
+        "mode": 420,
+        "size": 878909,
+        "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+      },
+      "plan": {
+        "path": "plan-v1.json",
+        "mode": 420,
+        "size": 244348,
+        "sha256": "8da2ef01ac8cc3ee410b3fe9ee9fad41cf416af0298d64063c13467f8d9869b6"
+      },
+      "resultStatus": "pass-frozen-baseline-only",
+      "gates": [
+        {
+          "id": "admission",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "lint",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "type",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "syntax-strict-json",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "focused-contracts",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "numerical",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "id": "final-admission",
+          "status": "pass",
+          "exitCode": 0,
+          "timedOut": false
+        }
+      ],
+      "logIdentities": [
+        {
+          "gate": "admission",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stdout.log",
+          "size": 1084,
+          "sha256": "1c6e2256d042a5c99b429a08258d723d9c77faa5de60d1622d2f1581785693d1",
+          "matches": true
+        },
+        {
+          "gate": "admission",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "lint",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stdout.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "lint",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "type",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stdout.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "type",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "syntax-strict-json",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stdout.log",
+          "size": 84,
+          "sha256": "0c504f38af0dc3967e2a8e178d851de36a66c1297eff66ed96f565605c5c6c83",
+          "matches": true
+        },
+        {
+          "gate": "syntax-strict-json",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "focused-contracts",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stdout.log",
+          "size": 91015,
+          "sha256": "3676025fbbe7de3229e7efed5ec0dd52211a9b14c26781e2cdbe742e051bf789",
+          "matches": true
+        },
+        {
+          "gate": "focused-contracts",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "numerical",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stdout.log",
+          "size": 8176,
+          "sha256": "2ccfa216f1d19659d2248a88c46f100eeb0c69e97d05c85afde3f01474ed7d5b",
+          "matches": true
+        },
+        {
+          "gate": "numerical",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        },
+        {
+          "gate": "final-admission",
+          "stream": "stdout",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stdout.log",
+          "size": 1084,
+          "sha256": "1c6e2256d042a5c99b429a08258d723d9c77faa5de60d1622d2f1581785693d1",
+          "matches": true
+        },
+        {
+          "gate": "final-admission",
+          "stream": "stderr",
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stderr.log",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "matches": true
+        }
+      ],
+      "receipts": [
+        {
+          "identity": {
+            "path": "receipt-1.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          },
+          "matchesFormal": true
+        },
+        {
+          "identity": {
+            "path": "receipt-2.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          },
+          "matchesFormal": true
+        }
+      ]
+    },
+    "scientificReceipt": {
+      "identity": {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      "promotionAuthorized": false,
+      "evidenceClassification": "auditable",
+      "capabilityCeiling": {
+        "automaticControlAuthorized": false,
+        "causalEffectIdentified": false,
+        "convergenceVerified": false,
+        "crossScaleBridgeValidated": false,
+        "evidenceScoreIncreaseAuthorized": false,
+        "fullPartAConvergenceExecuted": false,
+        "industrialRecommendationAuthorized": false,
+        "physicalModelValidated": false,
+        "rankingEligible": false,
+        "realMaterialMapped": false,
+        "reproduced": false,
+        "strictOfficialMms": false
+      },
+      "causalPolicy": {
+        "counterfactualAllowed": false,
+        "quantitativeInterventionAllowed": false,
+        "requiredResponse": "machine-readable abstention for any causal-effect, intervention or counterfactual request",
+        "structuralEquationIdentified": false
+      },
+      "crossScaleBridge": {
+        "boundariesGeometryAveragingTimeScaleConservationUncertaintyInformationLossReverseUse": "not-applicable because no cross-scale bridge is asserted",
+        "present": false,
+        "reason": "This is a single reduced PDE numerical preflight. It establishes no mapping to atomistic, molecular, microstructural, reactor or plant scales."
+      },
+      "quantityRegistry": {
+        "algebraicResidualL2": {
+          "basis": "Euclidean norm of the assembled reduced linear-system residual for one registered step",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "byteSize": {
+          "basis": "exact regular-file octet count",
+          "dimension": "information",
+          "unit": "byte"
+        },
+        "coordinate": {
+          "basis": "PFHub reduced coordinate; no SI dimensional map",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "count": {
+          "basis": "exact count of declared objects",
+          "dimension": "count",
+          "unit": "1"
+        },
+        "digest": {
+          "basis": "SHA-256 over explicitly declared bytes or canonical record serialization",
+          "dimension": "identifier",
+          "unit": "1"
+        },
+        "discreteL2": {
+          "basis": "PFHub cell quadrature sqrt(sum(error^2*dx*dy)); no physical length unit or SI map is asserted",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "eta": {
+          "basis": "PFHub reduced scalar order parameter",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "kappa": {
+          "basis": "PFHub reduced coefficient multiplying the reduced-coordinate Laplacian",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "source": {
+          "basis": "PFHub reduced source value interpreted as eta change per reduced-time coordinate",
+          "dimension": "dimensionless",
+          "unit": "1"
+        },
+        "time": {
+          "basis": "PFHub reduced time; no SI dimensional map",
+          "dimension": "dimensionless",
+          "unit": "1"
+        }
+      },
+      "preflightMatrix": {
+        "Nx": 8,
+        "Ny": 4,
+        "dt": 0.01,
+        "dx": 0.125,
+        "dy": 0.125,
+        "finalTime": 0.02,
+        "stepCount": 2
+      },
+      "diagnostics": {
+        "analyticBoundaryTailMismatchAtExecutedFaces": 1.512932480407514e-7,
+        "constantTwoDiscreteL2": 1.4142135623730951,
+        "convergenceFitEligible": false,
+        "initialBoundaryCompatibility": false,
+        "rankingEligible": false,
+        "trackEndpointDifferenceL2": 3.9684905262790744e-11
+      },
+      "linearSolver": {
+        "absoluteTolerance": 1e-14,
+        "class": "FiPy LinearPCGSolver",
+        "criterion": "RHS",
+        "iterations": 2000,
+        "preconditioner": null,
+        "solveCountPerStep": 1,
+        "tolerance": 1e-12
+      },
+      "trackRegistry": [
+        {
+          "allowedFutureInterpretation": "PFHub-comparable discrepancy and apparent order only",
+          "futureMetricName": "pfhubManufacturedFieldDiscrepancyL2",
+          "metricSpecifiedByPfhub": true,
+          "problem": "PFHub 7(a) with y=0 value 1 and y=0.5 value 0",
+          "problemUsesOfficialLiteralBoundary": true,
+          "strictMms": false,
+          "trackId": "official-literal"
+        },
+        {
+          "allowedFutureInterpretation": "discrete self-convergence of the literal BVP only",
+          "futureMetricName": "literalBvpEndpointSelfDifferenceL2",
+          "metricSpecifiedByPfhub": false,
+          "problem": "The same official-literal BVP compared across independently frozen refinements",
+          "problemUsesOfficialLiteralBoundary": true,
+          "restriction": "conservative 2-by-2 fine-cell volume average onto each nested coarse cell",
+          "strictMms": false,
+          "trackId": "literal-self"
+        },
+        {
+          "allowedFutureInterpretation": "strict manufactured-solution code verification only",
+          "futureMetricName": "strictMmsErrorL2",
+          "metricSpecifiedByPfhub": false,
+          "problem": "The same PDE and initial field with time-dependent manufactured-field traces on y faces",
+          "problemUsesOfficialLiteralBoundary": false,
+          "requiredLabel": "non-PFHub exact-trace companion",
+          "strictMms": true,
+          "trackId": "exact-trace-companion"
+        }
+      ]
+    },
+    "numericalBudget": {
+      "sourceIdentity": {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "mode": 420,
+        "size": 18023,
+        "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+      },
+      "matchingLines": [
+        "export const NUMERICAL_BUDGET_MS = 600_000;",
+        "export const STOP_GRACE_MS = 1000;",
+        "  requireCondition(Number.isInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= NUMERICAL_BUDGET_MS, 'COMMAND_TIMEOUT_INVALID');",
+        "        elapsedMs: performance.now() - began, timeoutMs, stopGraceMs: STOP_GRACE_MS, maxOutputBytes,",
+        "      }, STOP_GRACE_MS);",
+        "  const budget = createExecutionBudget(NUMERICAL_BUDGET_MS);",
+        "  evidence.budget = { clock: 'monotonic-performance.now', scientificAcceptanceMs: NUMERICAL_BUDGET_MS, stopGraceMs: STOP_GRACE_MS, stopGraceExtendsAcceptance: false };"
+      ]
+    },
+    "reviewerActivity": {
+      "candidateWrites": false,
+      "solverExecution": false,
+      "candidateCodeExecution": false,
+      "gitMutations": false
+    }
+  },
+  "reviewerActivity": {
+    "candidateReadOnly": true,
+    "candidateFilesWritten": [],
+    "priorOrOriginalFilesWritten": [],
+    "solverExecuted": false,
+    "candidateCodeExecuted": false,
+    "dependencyModification": false,
+    "gitIndexOrObjectsModified": false,
+    "commits": false,
+    "pushes": false,
+    "deployments": false,
+    "externalWrites": false,
+    "temporaryReviewArtifactsOnly": true
+  },
+  "finalCaveat": "This independent review is a scoped judgment of preservation and scientific claim boundaries. It cannot substitute for executable validation, an independent solver, experiments or qualified engineering approval. Existing P1 blockers keep commit/push/deployment/promotion prohibited."
+}

@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailingfuture.dev/schemas/backend-migration-admission-v0.3.schema.json",
+  "title": "Pinned a63415c portable source admission; explicit noncyclic report lifecycle successor-v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "state",
+    "integrationBaseCommit",
+    "scientificContractBaseCommit",
+    "previousCandidate",
+    "previousFinalReview",
+    "baseRecords",
+    "imports",
+    "reconciled",
+    "additions",
+    "controlFiles",
+    "reviewOutputs",
+    "upstreamPaths",
+    "receiptPermissionPolicy",
+    "claims",
+    "lifecycleRevision",
+    "reviewHistory",
+    "derivedReportPolicy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "tf.backend-migration-admission/0.3"
+    },
+    "state": {
+      "enum": [
+        "draft-awaiting-previous-final-review",
+        "frozen-for-independent-review"
+      ]
+    },
+    "integrationBaseCommit": {
+      "const": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa"
+    },
+    "scientificContractBaseCommit": {
+      "const": "307e6d723086fe41b6d89e9f9b4b532364ccaeff"
+    },
+    "previousCandidate": {
+      "const": {
+        "recordCount": 25,
+        "canonicalByteSize": 4209,
+        "sha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+        "fullGateInputPathCount": 489,
+        "fullGateInputSha256": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+        "approvalTransferred": false
+      }
+    },
+    "previousFinalReview": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/record"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "baseRecords": {
+      "type": "array",
+      "minItems": 452,
+      "maxItems": 452,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "imports": {
+      "type": "array",
+      "minItems": 40,
+      "maxItems": 41,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "reconciled": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "additions": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "controlFiles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/path"
+      }
+    },
+    "reviewOutputs": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/path"
+      }
+    },
+    "upstreamPaths": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/path"
+      }
+    },
+    "receiptPermissionPolicy": {
+      "const": {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "historicalMode": 292,
+        "gitMode": "100644",
+        "allowedSourceModes": [
+          292,
+          420
+        ],
+        "runtimeException": false,
+        "generatedReceiptException": false,
+        "byteSize": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releaseEligible",
+        "migrationComplete",
+        "rightsCleared",
+        "historicalApprovalTransferred",
+        "physicalValidation",
+        "convergenceVerified",
+        "causalEffectIdentified",
+        "scoreIncrease",
+        "latestRemoteMainClaimed"
+      ],
+      "properties": {
+        "releaseEligible": {
+          "const": false
+        },
+        "migrationComplete": {
+          "const": false
+        },
+        "rightsCleared": {
+          "const": false
+        },
+        "historicalApprovalTransferred": {
+          "const": false
+        },
+        "physicalValidation": {
+          "const": false
+        },
+        "convergenceVerified": {
+          "const": false
+        },
+        "causalEffectIdentified": {
+          "const": false
+        },
+        "scoreIncrease": {
+          "const": false
+        },
+        "latestRemoteMainClaimed": {
+          "const": false
+        }
+      }
+    },
+    "lifecycleRevision": {
+      "const": "successor-v2"
+    },
+    "reviewHistory": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "derivedReportPolicy": {
+      "const": {
+        "derivedOutputPaths": [
+          "evaluation/latest-report.json",
+          "evaluation/latest-report.md",
+          "evaluation/public-product-evaluation.json",
+          "evaluation/public-summary.json"
+        ],
+        "historicalSnapshotPath": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+        "terminalAttestationPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+        "baseReportRecordsAreHistoricalOnly": true,
+        "sourceInputIdentityExcludesOnlyDerivedOutputsAndTerminalAttestation": true,
+        "completeObservedTreeIdentityRetained": true,
+        "generationEvidenceIsSourceInput": false,
+        "sourceAdmissionImpliesReportReadiness": false,
+        "reportConsistencyImpliesReleaseApproval": false
+      }
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)(?!.*[\\u0000-\\u001f\\u007f]).+$"
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "mode",
+        "size",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "mode": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4095
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 134217728
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailingfuture.dev/schemas/backend-migration-admission-v0.2.schema.json",
+  "title": "Fixed-base R18a execution admission; not release approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "baseCommit", "previousLedgerDigest", "historicalFiles", "imports", "reconciled", "additions", "controlFiles", "reviewOutputs", "claims", "counts"],
+  "properties": {
+    "schemaVersion": {"const": "tf.backend-migration-admission/0.2"},
+    "baseCommit": {"const": "307e6d723086fe41b6d89e9f9b4b532364ccaeff"},
+    "previousLedgerDigest": {"const": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"},
+    "historicalFiles": {"type": "array", "minItems": 11, "maxItems": 11, "items": {"$ref": "#/$defs/record"}},
+    "imports": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"$ref": "#/$defs/record"}},
+    "reconciled": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/record"}},
+    "additions": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/record"}},
+    "controlFiles": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "reviewOutputs": {"type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["releaseEligible", "migrationComplete", "rightsCleared", "historicalApprovalTransferred", "convergenceVerified", "physicalValidation", "causalEffectIdentified", "scoreIncrease", "latestMainIntegrated"],
+      "properties": {
+        "releaseEligible": {"const": false}, "migrationComplete": {"const": false}, "rightsCleared": {"const": false},
+        "historicalApprovalTransferred": {"const": false}, "convergenceVerified": {"const": false}, "physicalValidation": {"const": false},
+        "causalEffectIdentified": {"const": false}, "scoreIncrease": {"const": false}, "latestMainIntegrated": {"const": false}
+      }
+    },
+    "counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseMain", "mainPreserved", "mainReconciled", "importedLegacyOnly", "pendingNonR12LegacyOnly", "excludedR12", "historicalConflicts"],
+      "properties": {
+        "baseMain": {"const": 449}, "mainPreserved": {"const": 446}, "mainReconciled": {"const": 3}, "importedLegacyOnly": {"const": 12},
+        "pendingNonR12LegacyOnly": {"const": 469}, "excludedR12": {"const": 9}, "historicalConflicts": {"const": 45}
+      }
+    }
+  },
+  "$defs": {
+    "path": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)(?!.*[\\u0000-\\u001f\\u007f]).+$"},
+    "record": {
+      "type": "object", "additionalProperties": false, "required": ["path", "mode", "size", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"}, "mode": {"type": "integer", "minimum": 0, "maximum": 511},
+        "size": {"type": "integer", "minimum": 0, "maximum": 134217728}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

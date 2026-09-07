@@ -1,0 +1,364 @@
+{
+  "schemaVersion": "tf.review.builder-gates/0.1",
+  "recordedOn": "2026-09-07",
+  "candidateId": "r18a-fixed-307e6d7-current-main-execution-v0.1",
+  "candidateSet": {
+    "recordCount": 24,
+    "canonicalByteSize": 4014,
+    "serialization": "UTF-8 JSON.stringify(records sorted by path; keys path,mode,size,sha256), no newline",
+    "sha256": "dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b"
+  },
+  "builder": "/root/astra_next_integration_plan",
+  "disposition": "selfcheck-complete-await-independent-review",
+  "builderApproval": false,
+  "releaseEligible": false,
+  "claims": {
+    "fullMigrationComplete": false,
+    "historical17FileIdentityTransferred": false,
+    "fullConvergenceVerified": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "reproduced": false,
+    "scoreIncrease": false,
+    "latestMainIntegrated": false
+  },
+  "selfcheckCommands": [
+    {
+      "label": "targeted-vitest",
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs"
+      ],
+      "elapsedMs": 11313,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\nstdout | scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > executes every unchanged historical preparation test in the reconstructed pinned tree\n{\"historicalReplayEvidence\":{\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"--config\",\"vitest.config.ts\",\"scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs\",\"--reporter=verbose\"],\"reconstructedMainFiles\":449,\"reconstructedHistoricalFiles\":11,\"exitCode\":0,\"stdout\":\"\\n RUN  v4.1.11 /private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-historical-kgk406\\n\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an empty inventory and an actual Git tree missing its trusted source inventory 66ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > does not let repository-local or unregistered nested ignore rules hide new sources 994ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > retains a capture failure and does not mistake it for an empty valid inventory 19ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > validates the frozen ledger, schema and actual preparation tree while remaining release-ineligible 65ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > pins both raw files and rejects a byte-only ledger rewrite 13ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate decoded JSON members before schema or semantic validation 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a missing entry and the forged completeness counts it causes 11ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate paths even when the array length remains 939 9ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects changed content identities and modes 18ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects unknown dispositions rather than treating them as implicitly safe 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps all nine R12 paths absent, rights-unresolved, unlicensed and not passed 0ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects R12 inclusion and excluded-to-licensed mutations 18ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a pending-to-admitted scientific-capability mutation 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an unaccounted source and does not exempt the review directory by prefix 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a renamed excluded payload by digest using only a synthetic test identity 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > detects ignored or otherwise unenumerated legacy-only payloads directly on the filesystem 4ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects preserved-main drift including latest-main frontend bytes 0ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps the R18a .gitignore conflict and historical approval non-transfer explicit 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects forged inventory roots even if the top-level complete flag stays true 9ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects any attempt to turn preparation status into release eligibility 10ms\\n\\n Test Files  1 passed (1)\\n      Tests  20 passed (20)\\n   Start at  16:23:58\\n   Duration  1.44s (transform 26ms, setup 0ms, import 107ms, tests 1.27s, environment 0ms)\\n\\n\",\"stderr\":\"\",\"historicalOnly\":true}}\n\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs (5 tests) 10951ms\n     ✓ executes every unchanged historical preparation test in the reconstructed pinned tree  10341ms\n     ✓ cannot hide new sources with local ignore rules and cannot mutate the frozen ledger  395ms\n ✓ scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs (3 tests) 30ms\n\n Test Files  2 passed (2)\n      Tests  8 passed (8)\n   Start at  16:23:50\n   Duration  11.16s (transform 34ms, setup 0ms, import 69ms, tests 10.98s, environment 0ms)\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "admission-current-root",
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs"
+      ],
+      "elapsedMs": 139,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\"schemaVersion\":\"tf.backend-migration-admission-gate/0.2\",\"status\":\"pass-bounded-integration-inventory\",\"releaseEligible\":false,\"historicalCandidateIdentityTransferred\":false,\"currentPathCount\":481,\"failures\":[]}\n",
+      "stderr": ""
+    },
+    {
+      "label": "candidate-lint",
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+        "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+        "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+        "scripts/mesoscale/r16c_json_integrity.mjs",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+        "vitest.config.ts"
+      ],
+      "elapsedMs": 689,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "typecheck",
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "elapsedMs": 862,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "diff-check",
+      "command": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "elapsedMs": 23,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "numerical-acceptance",
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "--python-source",
+        "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+        "--wheelhouse",
+        "/private/tmp/tf-r18a-fipy-lock.LSDdK2"
+      ],
+      "elapsedMs": 14603,
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\"schemaVersion\":\"tf.r18a-current-root-execution/0.1\",\"baseCommit\":\"307e6d723086fe41b6d89e9f9b4b532364ccaeff\",\"startedAt\":\"2026-09-07T12:24:02.969Z\",\"status\":\"pass-bounded-current-root-execution\",\"releaseEligible\":false,\"historicalCandidateIdentityTransferred\":false,\"convergenceVerified\":false,\"physicalValidation\":false,\"reproduced\":false,\"scientificPromotionEligible\":false,\"commands\":[{\"label\":\"python-21\",\"command\":[\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12\",\"-I\",\"-S\",\"-B\",\"-W\",\"error\",\"scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py\"],\"elapsedMs\":6894,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":0,\"stderrBytes\":3114},{\"label\":\"node-29\",\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"--test\",\"--test-reporter=tap\",\"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs\"],\"elapsedMs\":608,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":9635,\"stderrBytes\":0},{\"label\":\"supervisor-1\",\"command\":[\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12\",\"-I\",\"-S\",\"-B\",\"-W\",\"error\",\"scripts/mesoscale/pfhub7a_r18a_supervise_v3.py\",\"--python-source\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap\",\"--wheelhouse\",\"/private/tmp/tf-r18a-fipy-lock.LSDdK2\",\"--output\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json\"],\"elapsedMs\":3240,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":248777,\"stderrBytes\":0},{\"label\":\"schema-1\",\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json\"],\"elapsedMs\":92,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":56,\"stderrBytes\":0},{\"label\":\"supervisor-2\",\"command\":[\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12\",\"-I\",\"-S\",\"-B\",\"-W\",\"error\",\"scripts/mesoscale/pfhub7a_r18a_supervise_v3.py\",\"--python-source\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap\",\"--wheelhouse\",\"/private/tmp/tf-r18a-fipy-lock.LSDdK2\",\"--output\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json\"],\"elapsedMs\":3291,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":248777,\"stderrBytes\":0},{\"label\":\"schema-2\",\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs\",\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json\"],\"elapsedMs\":93,\"exitCode\":0,\"signal\":null,\"error\":null,\"stdoutBytes\":56,\"stderrBytes\":0}],\"bootstrap\":{\"recordShape\":[\"byteSize\",\"path\",\"rawDigest\"],\"ordering\":\"UTF-8 bytewise ascending logical path\",\"serialization\":\"UTF-8 compact JSON array with ASCII escaping and no trailing newline\",\"recordCount\":747,\"byteSize\":32153962,\"recordsDigest\":\"sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530\",\"verifiedBeforeExecution\":true},\"wheels\":[{\"path\":\"fipy-4.0.3-py3-none-any.whl\",\"byteSize\":439565,\"rawDigest\":\"sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e\"},{\"path\":\"numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl\",\"byteSize\":5445405,\"rawDigest\":\"sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0\"},{\"path\":\"scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl\",\"byteSize\":20475078,\"rawDigest\":\"sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12\"},{\"path\":\"packaging-26.3-py3-none-any.whl\",\"byteSize\":129956,\"rawDigest\":\"sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c\"}],\"receipts\":[{\"path\":\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json\",\"byteSize\":248778,\"rawDigest\":\"sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"},{\"path\":\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json\",\"byteSize\":248778,\"rawDigest\":\"sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"}],\"elapsedMs\":14577,\"evidencePath\":\"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/execution.json\"}\n",
+      "stderr": ""
+    }
+  ],
+  "numericalExecution": {
+    "schemaVersion": "tf.r18a-current-root-execution/0.1",
+    "baseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "startedAt": "2026-09-07T12:24:02.969Z",
+    "status": "pass-bounded-current-root-execution",
+    "releaseEligible": false,
+    "historicalCandidateIdentityTransferred": false,
+    "convergenceVerified": false,
+    "physicalValidation": false,
+    "reproduced": false,
+    "scientificPromotionEligible": false,
+    "commands": [
+      {
+        "label": "python-21",
+        "command": [
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py"
+        ],
+        "elapsedMs": 6894,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "",
+        "stderr": "test_actual_candidate_matches_clean_room_oracle (__main__.R18aPreflightTests.test_actual_candidate_matches_clean_room_oracle) ... ok\ntest_child_stdout_limit_kills_process_group (__main__.R18aPreflightTests.test_child_stdout_limit_kills_process_group) ... ok\ntest_dyld_path_normalization_precedes_system_allowlist (__main__.R18aPreflightTests.test_dyld_path_normalization_precedes_system_allowlist) ... ok\ntest_dynamic_inventories_are_ordered_unique_and_origin_typed (__main__.R18aPreflightTests.test_dynamic_inventories_are_ordered_unique_and_origin_typed) ... ok\ntest_fresh_materialization_uses_no_replace_install_and_exact_closure (__main__.R18aPreflightTests.test_fresh_materialization_uses_no_replace_install_and_exact_closure) ... ok\ntest_leader_exit_descendant_pipe_holder_is_killed_on_timeout (__main__.R18aPreflightTests.test_leader_exit_descendant_pipe_holder_is_killed_on_timeout) ... ok\ntest_non_allowlisted_warning_abstains (__main__.R18aPreflightTests.test_non_allowlisted_warning_abstains) ... ok\ntest_oracle_static_allowlist_rejects_io_and_dynamic_builtin_evasions (__main__.R18aPreflightTests.test_oracle_static_allowlist_rejects_io_and_dynamic_builtin_evasions) ... ok\ntest_oracle_static_and_runtime_import_restrictions (__main__.R18aPreflightTests.test_oracle_static_and_runtime_import_restrictions) ... ok\ntest_oracle_static_positive_candidate_without_runtime_inputs (__main__.R18aPreflightTests.test_oracle_static_positive_candidate_without_runtime_inputs) ... ok\ntest_private_runtime_parent_rejects_symlink_ancestor (__main__.R18aPreflightTests.test_private_runtime_parent_rejects_symlink_ancestor) ... ok\ntest_publication_is_exclusive_and_read_only (__main__.R18aPreflightTests.test_publication_is_exclusive_and_read_only) ... ok\ntest_registered_semantic_source_mutants_fail_specific_gates (__main__.R18aPreflightTests.test_registered_semantic_source_mutants_fail_specific_gates) ... ok\ntest_rename_no_replace_preserves_existing_destination (__main__.R18aPreflightTests.test_rename_no_replace_preserves_existing_destination) ... ok\ntest_runtime_and_candidate_capsules_are_sealed (__main__.R18aPreflightTests.test_runtime_and_candidate_capsules_are_sealed) ... ok\ntest_semantic_source_lines_are_explicit (__main__.R18aPreflightTests.test_semantic_source_lines_are_explicit) ... ok\ntest_strict_json_rejects_literal_and_escape_equivalent_duplicates (__main__.R18aPreflightTests.test_strict_json_rejects_literal_and_escape_equivalent_duplicates) ... ok\ntest_successful_leader_with_closed_pipe_descendant_is_rejected (__main__.R18aPreflightTests.test_successful_leader_with_closed_pipe_descendant_is_rejected) ... ok\ntest_track_provenance_boolean_mutation_fails (__main__.R18aPreflightTests.test_track_provenance_boolean_mutation_fails) ... ok\ntest_wheel_byte_mutation_is_rejected (__main__.R18aPreflightTests.test_wheel_byte_mutation_is_rejected) ... ok\ntest_worker_cli_rejects_duplicate_injection_argument (__main__.R18aPreflightTests.test_worker_cli_rejects_duplicate_injection_argument) ... ok\n\n----------------------------------------------------------------------\nRan 21 tests in 5.699s\n\nOK\n"
+      },
+      {
+        "label": "node-29",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--test",
+          "--test-reporter=tap",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs"
+        ],
+        "elapsedMs": 608,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "TAP version 13\n# Subtest: r18a.prefreeze-p1.bound.rounded-down\nok 1 - r18a.prefreeze-p1.bound.rounded-down\n  ---\n  duration_ms: 11.381416\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.bound.rounded-down\",\"mutatedField\":\"/scientificSemantics/boundaryCompatibility/conservativeBoundaryTraceMismatchUpperBound/decimalOutwardUpper\",\"mutatedValue\":\"0.000012204318378837\",\"expectedReason\":\"boundary compatibility and outward-rounded analytic bound must exactly equal the frozen values\",\"observedReason\":\"boundary compatibility and outward-rounded analytic bound must exactly equal the frozen values\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.source\nok 2 - r18a.prefreeze-p1.dimension.source\n  ---\n  duration_ms: 9.259292\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.source\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/source/dimension\",\"mutatedValue\":\"dimensionless-rate\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.kappa\nok 3 - r18a.prefreeze-p1.dimension.kappa\n  ---\n  duration_ms: 8.925041\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.kappa\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/kappa/dimension\",\"mutatedValue\":\"reduced-length^2/reduced-time\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.discrete-l2\nok 4 - r18a.prefreeze-p1.dimension.discrete-l2\n  ---\n  duration_ms: 7.731375\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.discrete-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/discreteL2/dimension\",\"mutatedValue\":\"dimensionless-times-reduced-length\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.algebraic-residual-l2\nok 5 - r18a.prefreeze-p1.dimension.algebraic-residual-l2\n  ---\n  duration_ms: 7.851125\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.algebraic-residual-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/algebraicResidualL2/dimension\",\"mutatedValue\":\"solver-equation-residual\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.source\nok 6 - r18a.prefreeze-p1.basis.source\n  ---\n  duration_ms: 7.845917\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.source\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/source/basis\",\"mutatedValue\":\"change in reduced eta per reduced time\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.kappa\nok 7 - r18a.prefreeze-p1.basis.kappa\n  ---\n  duration_ms: 7.41625\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.kappa\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/kappa/basis\",\"mutatedValue\":\"coefficient multiplying the reduced-coordinate Laplacian in the registered nondimensional PDE\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.discrete-l2\nok 8 - r18a.prefreeze-p1.basis.discrete-l2\n  ---\n  duration_ms: 7.222041\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.discrete-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/discreteL2/basis\",\"mutatedValue\":\"square root of the cell sum of squared eta differences times dx*dy; no domain normalization\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.algebraic-residual-l2\nok 9 - r18a.prefreeze-p1.basis.algebraic-residual-l2\n  ---\n  duration_ms: 7.487916\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.algebraic-residual-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/algebraicResidualL2/basis\",\"mutatedValue\":\"Euclidean norm of the frozen FiPy assembled linear-system residual; diagnostic for this algebraic solve only\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.source-date.historical-commit\nok 10 - r18a.prefreeze-p1.source-date.historical-commit\n  ---\n  duration_ms: 7.347\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.source-date.historical-commit\",\"mutatedField\":\"/sourceMetadata/1/date\",\"mutatedValue\":\"2015-09-09\",\"expectedReason\":\"historical CHiMaD commit date changed\",\"observedReason\":\"historical CHiMaD commit date changed\",\"assertionOutcome\":\"pass\"}\n# Subtest: formal successor receipt passes strict schema, identity, locator, and semantic gates\nok 11 - formal successor receipt passes strict schema, identity, locator, and semantic gates\n  ---\n  duration_ms: 48.242083\n  type: 'test'\n  ...\n# Subtest: formal receipt identity rejects a one-byte whitespace mutation\nok 12 - formal receipt identity rejects a one-byte whitespace mutation\n  ---\n  duration_ms: 35.924958\n  type: 'test'\n  ...\n# Subtest: legacy identity-bypass argument cannot make mutated production bytes pass\nok 13 - legacy identity-bypass argument cannot make mutated production bytes pass\n  ---\n  duration_ms: 27.42825\n  type: 'test'\n  ...\n# Subtest: formal receipt identity is content-bound rather than temporary-path-bound\nok 14 - formal receipt identity is content-bound rather than temporary-path-bound\n  ---\n  duration_ms: 29.796792\n  type: 'test'\n  ...\n# Subtest: capability escalation and provenance rewrites are rejected\nok 15 - capability escalation and provenance rewrites are rejected\n  ---\n  duration_ms: 34.780708\n  type: 'test'\n  ...\n# Subtest: acceptance matrix deletion, text, locator, and pass-state rewrites are rejected\nok 16 - acceptance matrix deletion, text, locator, and pass-state rewrites are rejected\n  ---\n  duration_ms: 59.584334\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects a missing target\nok 17 - acceptance evidence resolver rejects a missing target\n  ---\n  duration_ms: 8.285833\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects wildcard cardinality drift\nok 18 - acceptance evidence resolver rejects wildcard cardinality drift\n  ---\n  duration_ms: 7.9735\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects a pseudo-locator identity predicate failure\nok 19 - acceptance evidence resolver rejects a pseudo-locator identity predicate failure\n  ---\n  duration_ms: 8.342458\n  type: 'test'\n  ...\n# Subtest: rich semantic probes bind modes, reasons, transforms, and measured signals\nok 20 - rich semantic probes bind modes, reasons, transforms, and measured signals\n  ---\n  duration_ms: 30.958292\n  type: 'test'\n  ...\n# Subtest: effective equation and source metadata rewrites are rejected\nok 21 - effective equation and source metadata rewrites are rejected\n  ---\n  duration_ms: 15.21025\n  type: 'test'\n  ...\n# Subtest: executed and comparison track identity rewrites are rejected\nok 22 - executed and comparison track identity rewrites are rejected\n  ---\n  duration_ms: 16.543333\n  type: 'test'\n  ...\n# Subtest: candidate source and executed worker triples are fully bound\nok 23 - candidate source and executed worker triples are fully bound\n  ---\n  duration_ms: 24.330417\n  type: 'test'\n  ...\n# Subtest: module inventory truncation cannot be hidden by recomputing count and digest\nok 24 - module inventory truncation cannot be hidden by recomputing count and digest\n  ---\n  duration_ms: 8.576458\n  type: 'test'\n  ...\n# Subtest: module and dyld inventory ordering and uniqueness are enforced\nok 25 - module and dyld inventory ordering and uniqueness are enforced\n  ---\n  duration_ms: 16.172375\n  type: 'test'\n  ...\n# Subtest: worker step and comparison digest chains are cross-bound\nok 26 - worker step and comparison digest chains are cross-bound\n  ---\n  duration_ms: 30.951875\n  type: 'test'\n  ...\n# Subtest: legacy provenance field is rejected by schema\nok 27 - legacy provenance field is rejected by schema\n  ---\n  duration_ms: 20.809125\n  type: 'test'\n  ...\n# Subtest: inventory digest canonicalization is independent of object insertion order\nok 28 - inventory digest canonicalization is independent of object insertion order\n  ---\n  duration_ms: 5.263708\n  type: 'test'\n  ...\n# Subtest: duplicate JSON members are rejected before Ajv or identity checks\nok 29 - duplicate JSON members are rejected before Ajv or identity checks\n  ---\n  duration_ms: 4.234292\n  type: 'test'\n  ...\n1..29\n# tests 29\n# suites 0\n# pass 29\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 580.784209\n",
+        "stderr": ""
+      },
+      {
+        "label": "supervisor-1",
+        "command": [
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+          "--output",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json"
+        ],
+        "elapsedMs": 3240,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stderr": "",
+        "stdoutArtifact": {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "byteOffset": 0,
+          "byteLength": 248777,
+          "sha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+          "interpretation": "Exact raw stdout bytes: frozen formal receipt excluding its terminal LF. This range was compared byte-for-byte with captured stdout."
+        }
+      },
+      {
+        "label": "schema-1",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json"
+        ],
+        "elapsedMs": 92,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "{\"status\":\"pass\",\"schemaErrors\":[],\"semanticErrors\":[]}\n",
+        "stderr": ""
+      },
+      {
+        "label": "supervisor-2",
+        "command": [
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/bootstrap",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+          "--output",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json"
+        ],
+        "elapsedMs": 3291,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stderr": "",
+        "stdoutArtifact": {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "byteOffset": 0,
+          "byteLength": 248777,
+          "sha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+          "interpretation": "Exact raw stdout bytes: frozen formal receipt excluding its terminal LF. This range was compared byte-for-byte with captured stdout."
+        }
+      },
+      {
+        "label": "schema-2",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json"
+        ],
+        "elapsedMs": 93,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "{\"status\":\"pass\",\"schemaErrors\":[],\"semanticErrors\":[]}\n",
+        "stderr": ""
+      }
+    ],
+    "bootstrap": {
+      "recordShape": [
+        "byteSize",
+        "path",
+        "rawDigest"
+      ],
+      "ordering": "UTF-8 bytewise ascending logical path",
+      "serialization": "UTF-8 compact JSON array with ASCII escaping and no trailing newline",
+      "recordCount": 747,
+      "byteSize": 32153962,
+      "recordsDigest": "sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530",
+      "verifiedBeforeExecution": true
+    },
+    "wheels": [
+      {
+        "path": "fipy-4.0.3-py3-none-any.whl",
+        "byteSize": 439565,
+        "rawDigest": "sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e"
+      },
+      {
+        "path": "numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 5445405,
+        "rawDigest": "sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0"
+      },
+      {
+        "path": "scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 20475078,
+        "rawDigest": "sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12"
+      },
+      {
+        "path": "packaging-26.3-py3-none-any.whl",
+        "byteSize": 129956,
+        "rawDigest": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+      }
+    ],
+    "receipts": [
+      {
+        "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-1.json",
+        "byteSize": 248778,
+        "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      {
+        "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/receipt-2.json",
+        "byteSize": 248778,
+        "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      }
+    ],
+    "elapsedMs": 14577,
+    "evidencePath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-pwmQIA/execution.json",
+    "localUnabridgedCapture": {
+      "path": ".tf-runtime/r18a-current-root-pwmQIA/execution.json",
+      "size": 554255,
+      "sha256": "5598ff6cb4d75ef8b5c6cfba4cc2645d2af55dd0f8b2796026561539aa698483",
+      "portableRawOutputs": "All outputs below are inline except two exact, digest-bound byte ranges of the included formal receipt."
+    }
+  },
+  "additionalValidation": {
+    "nodeSyntax": {
+      "files": 7,
+      "status": "pass",
+      "commandPattern": "node --check <each candidate .mjs file>",
+      "stdout": "",
+      "stderr": ""
+    },
+    "strictJson": {
+      "files": 9,
+      "status": "pass",
+      "parser": "unchanged main scripts/atomistic/runtime-input-contract.mjs parseJsonRejectDuplicateKeys",
+      "extensions": [
+        ".json",
+        ".ipynb"
+      ]
+    },
+    "sourceNotice": {
+      "byteSize": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "selectedNotebookByteSize": 90735,
+      "selectedNotebookSha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "independentComparisonRecord": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json"
+    }
+  },
+  "earlierSelfcheckDisposition": [
+    {
+      "finding": "Runner contract fixture used macOS /var alias and hit INPUT_ANCESTOR_SYMLINK before expected fake-bootstrap mismatch.",
+      "fix": "Canonicalized only the test's temporary directory with realpathSync; production symlink rejection remains unchanged.",
+      "finalResult": "3 runner contract tests pass."
+    },
+    {
+      "finding": "Two unused-variable lint warnings in new admission checker.",
+      "fix": "Removed unused import/destructuring; final lint has no output.",
+      "finalResult": "Pass, zero warnings."
+    }
+  ],
+  "testAccounting": {
+    "runnerContracts": 3,
+    "successorAdmissionContracts": 5,
+    "mandatoryHistoricalAdmissionTests": 20,
+    "pythonNumerical": 21,
+    "nodeNumerical": 29,
+    "numericalSkips": 0,
+    "formalReceipts": 2,
+    "ordinaryCiWasNotRunOnLinux": true
+  },
+  "limitations": [
+    "Numerical execution is Darwin arm64 only; no Linux numerical pass is claimed.",
+    "Caller-supplied bootstrap and wheels were verified; portable means path-independent verified inputs, not bundled redistributable Python binaries or hermetic OS/hardware.",
+    "Shared Node dependency directory was used; no full installed-node_modules byte closure is claimed.",
+    "The fixed base is307e6d723086fe41b6d89e9f9b4b532364ccaeff; upstream a63415c is not integrated.",
+    "Original v0.1 and R18a historical evidence remains historical; matching formal receipts does not reproduce the historical17-file candidate identity.",
+    "Root must run final full repository gates after review fixes in verified disposable copies; long observer/evaluator tests were deliberately not duplicated.",
+    "Independent reviews remain pending; this Builder does not approve the candidate."
+  ]
+}

@@ -1,0 +1,611 @@
+{
+  "schemaVersion": "tf.r18a-report-lifecycle-candidate-manifest/0.1",
+  "recordedOn": "2026-09-07",
+  "status": "frozen-for-independent-review",
+  "builder": "root (fix owner); Astra provided read-only fixture advice",
+  "builderCanApprove": false,
+  "releaseEligible": false,
+  "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+  "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+  "latestRemoteMainClaimed": false,
+  "canonicalization": "SHA256 over UTF-8 JSON.stringify(records), sorted by path, record fields path/mode/size/sha256 in that order. Actual POSIX modes, distinct from admission Git-mode identities.",
+  "candidate": {
+    "recordCount": 66,
+    "canonicalBytes": 11583,
+    "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394",
+    "records": [
+      {
+        "path": ".gitignore",
+        "mode": 420,
+        "size": 492,
+        "sha256": "31341236431b683b0d8c229dc36c2a8aae2c511c63d067206752f3885ec8e395"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+        "mode": 420,
+        "size": 143300,
+        "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+        "mode": 420,
+        "size": 511225,
+        "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+        "mode": 420,
+        "size": 9064,
+        "sha256": "789eb6359676293f165edb7b21d55e6ebdf30366295a97459c38812e2e176011"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+        "mode": 420,
+        "size": 110864,
+        "sha256": "f888a7571846c3fdbcf25a0a114765258171f1c939794266d0611a2196590b04"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+        "mode": 420,
+        "size": 6031,
+        "sha256": "e4d9a458a17cb858f1a3dcf5eb1eff232ece94b7b5dfa759c193d5b9077a2955"
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+        "mode": 420,
+        "size": 1754,
+        "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+        "mode": 420,
+        "size": 90735,
+        "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+        "mode": 420,
+        "size": 4303,
+        "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+        "mode": 420,
+        "size": 7411,
+        "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+      },
+      {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      {
+        "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+        "mode": 420,
+        "size": 20908,
+        "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+        "mode": 420,
+        "size": 7566,
+        "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+        "mode": 420,
+        "size": 81228,
+        "sha256": "8ed096527bc1557a72fca40d0abce06726ca4a05c2936d2e26917243317231f7"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+        "mode": 420,
+        "size": 7584,
+        "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+        "mode": 420,
+        "size": 5167,
+        "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+        "mode": 420,
+        "size": 4806,
+        "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+        "mode": 420,
+        "size": 6330,
+        "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+        "mode": 420,
+        "size": 5705,
+        "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+        "mode": 420,
+        "size": 38058,
+        "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+        "mode": 420,
+        "size": 4065,
+        "sha256": "39e6ce7c29a7f16bfe3b11cae65fe1c7e75aeb2b38141d40d9ede50ba603161a"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+        "mode": 420,
+        "size": 101840,
+        "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+        "mode": 420,
+        "size": 8002,
+        "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+        "mode": 420,
+        "size": 20628,
+        "sha256": "be4d2b39a298ab8ecb15835b4ae6d80aeb440dceddddaf3f5bcc7e24e678278a"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+        "mode": 420,
+        "size": 8746,
+        "sha256": "69d8b377350298c4d6ce62a4e9a981ce335feed1d957dd0ea8bb35111a1ad0d3"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+        "mode": 420,
+        "size": 14074,
+        "sha256": "96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+        "mode": 420,
+        "size": 11467,
+        "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+        "mode": 420,
+        "size": 85182,
+        "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+        "mode": 420,
+        "size": 9803,
+        "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+        "mode": 420,
+        "size": 77179,
+        "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+        "mode": 420,
+        "size": 24740,
+        "sha256": "7634e215ec55d42d382b4efd7e6dfac5641553a799719dbf7e99f318c41fa13f"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+        "mode": 420,
+        "size": 16518,
+        "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-science-review.json",
+        "mode": 420,
+        "size": 23098,
+        "sha256": "a2cff93fbd0f22b0df719d5f787e45d4db089464283dc938a43b7db9d9ac44ac"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+        "mode": 420,
+        "size": 9214,
+        "sha256": "1be2b3e55f667e115b9d995faf84129e0db791bb6d59a977978e7f5868e20805"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-software-review.json",
+        "mode": 420,
+        "size": 94425,
+        "sha256": "16aa9651d720e2feb7352916cadde2eaa270fc9d0434c69298578d77c164fdbc"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+        "mode": 420,
+        "size": 31464,
+        "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+        "mode": 420,
+        "size": 7367,
+        "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+      },
+      {
+        "path": "package.json",
+        "mode": 420,
+        "size": 3069,
+        "sha256": "b6a2ea54c991b322bf4298a2dd8bdaf843de636139477d2967f5756cf59197f0"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.1.schema.json",
+        "mode": 420,
+        "size": 9241,
+        "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.2.schema.json",
+        "mode": 420,
+        "size": 3202,
+        "sha256": "df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.3.schema.json",
+        "mode": 420,
+        "size": 6286,
+        "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+      },
+      {
+        "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+        "mode": 420,
+        "size": 36479,
+        "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+        "mode": 420,
+        "size": 12652,
+        "sha256": "ace5b5f4f04e92a7835945686992eac4059eac7efcf00ff6dcf8f834ce6cc558"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+        "mode": 420,
+        "size": 4535,
+        "sha256": "4b30c5cd29764d9dbf452485fbea30f68df843303f80f648575a96748b2b106e"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+        "mode": 420,
+        "size": 25845,
+        "sha256": "ace282e52e240452df9bf142341afce8b6116e9321f3d50e9b00dee02c415534"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "mode": 420,
+        "size": 16567,
+        "sha256": "52a666b485a23747598d62e95984f6178d36593574791f2ea426512fae613b11"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "mode": 420,
+        "size": 24876,
+        "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "mode": 420,
+        "size": 15597,
+        "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+      },
+      {
+        "path": "scripts/derived-report-contract.mjs",
+        "mode": 420,
+        "size": 13691,
+        "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+      },
+      {
+        "path": "scripts/derived-report-contract.test.mjs",
+        "mode": 420,
+        "size": 7657,
+        "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+      },
+      {
+        "path": "scripts/evaluate-launcher.test.mjs",
+        "mode": 420,
+        "size": 23470,
+        "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+      },
+      {
+        "path": "scripts/evaluate.mjs",
+        "mode": 420,
+        "size": 22343,
+        "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "mode": 420,
+        "size": 18023,
+        "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+        "mode": 420,
+        "size": 8756,
+        "sha256": "4579efa98f0c4435a1609bcbfa38b828eb5090d936b8fa98e6666fca59836404"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+        "mode": 420,
+        "size": 11113,
+        "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+        "mode": 420,
+        "size": 6163,
+        "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+        "mode": 420,
+        "size": 6966,
+        "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+        "mode": 420,
+        "size": 18417,
+        "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+        "mode": 420,
+        "size": 30418,
+        "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+        "mode": 420,
+        "size": 16746,
+        "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+        "mode": 420,
+        "size": 72494,
+        "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+        "mode": 420,
+        "size": 29719,
+        "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+      },
+      {
+        "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+        "mode": 420,
+        "size": 8093,
+        "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+      },
+      {
+        "path": "scripts/source-scope.mjs",
+        "mode": 420,
+        "size": 1699,
+        "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+      },
+      {
+        "path": "scripts/source-scope.test.mjs",
+        "mode": 420,
+        "size": 2001,
+        "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+      },
+      {
+        "path": "vitest.config.ts",
+        "mode": 420,
+        "size": 1406,
+        "sha256": "a42d4133a2c5b755ebcf96b99796ae1e38a07b56e2f19939e82fbc33a1f76643"
+      }
+    ]
+  },
+  "deltaFromPriorPortable507": {
+    "recordCount": 14,
+    "canonicalBytes": 2261,
+    "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc",
+    "records": [
+      {
+        "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+        "mode": 420,
+        "size": 143300,
+        "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+        "mode": 420,
+        "size": 110864,
+        "sha256": "f888a7571846c3fdbcf25a0a114765258171f1c939794266d0611a2196590b04"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+        "mode": 420,
+        "size": 7367,
+        "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.3.schema.json",
+        "mode": 420,
+        "size": 6286,
+        "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+        "mode": 420,
+        "size": 25845,
+        "sha256": "ace282e52e240452df9bf142341afce8b6116e9321f3d50e9b00dee02c415534"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "mode": 420,
+        "size": 16567,
+        "sha256": "52a666b485a23747598d62e95984f6178d36593574791f2ea426512fae613b11"
+      },
+      {
+        "path": "scripts/derived-report-contract.mjs",
+        "mode": 420,
+        "size": 13691,
+        "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+      },
+      {
+        "path": "scripts/derived-report-contract.test.mjs",
+        "mode": 420,
+        "size": 7657,
+        "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+      },
+      {
+        "path": "scripts/evaluate-launcher.test.mjs",
+        "mode": 420,
+        "size": 23470,
+        "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+      },
+      {
+        "path": "scripts/evaluate.mjs",
+        "mode": 420,
+        "size": 22343,
+        "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+        "mode": 420,
+        "size": 11113,
+        "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+        "mode": 420,
+        "size": 6163,
+        "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+      },
+      {
+        "path": "scripts/source-scope.mjs",
+        "mode": 420,
+        "size": 1699,
+        "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+      },
+      {
+        "path": "scripts/source-scope.test.mjs",
+        "mode": 420,
+        "size": 2001,
+        "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+      }
+    ]
+  },
+  "wholeBuilderInput": {
+    "pathCount": 511,
+    "totalBytes": 13288948,
+    "canonicalBytes": 84570,
+    "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0",
+    "admission": {
+      "schemaVersion": "tf.backend-migration-admission-gate/0.3",
+      "lifecycleRevision": "successor-v2",
+      "status": "pass-portable-source-admission",
+      "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+      "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "candidateTreeIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 511,
+        "sha256": "c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35",
+        "gitTreeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf"
+      },
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 507,
+        "sha256": "161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60",
+        "gitTreeOid": "911abbe20373e2b1e4ba9265f43e210bbc6576cc"
+      },
+      "derivedReports": {
+        "state": "present-unvalidated",
+        "presentPaths": [
+          "evaluation/latest-report.json",
+          "evaluation/latest-report.md",
+          "evaluation/public-product-evaluation.json",
+          "evaluation/public-summary.json"
+        ],
+        "validated": false
+      },
+      "terminalAttestationInInputIdentity": false,
+      "releaseEligible": false,
+      "historicalApprovalTransferred": false,
+      "failures": []
+    }
+  },
+  "preservedPrior": {
+    "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable",
+    "pathCount": 507,
+    "sha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137",
+    "removedPaths": [],
+    "historicalApprovalTransferred": false
+  },
+  "scope": {
+    "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+    "mode": 420,
+    "size": 7367,
+    "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+  },
+  "historicalReportSnapshot": {
+    "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+    "mode": 420,
+    "size": 143300,
+    "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+  },
+  "sourceRoles": {
+    "immutableInput": "Every admitted record other than exact four derived report paths and one exact future terminal attestation.",
+    "derivedOutputs": [
+      "evaluation/latest-report.json",
+      "evaluation/latest-report.md",
+      "evaluation/public-product-evaluation.json",
+      "evaluation/public-summary.json"
+    ],
+    "terminalAttestation": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+    "previousFinalReviewRemainsPinnedInput": true,
+    "completeObservedTreeIdentityPreserved": true,
+    "generationEvidenceIsUnsignedConsistencyOnly": true,
+    "generationEvidenceMustRemainOutsideSource": true
+  },
+  "scientificBoundary": {
+    "equationsChanged": false,
+    "frontendContractsChanged": false,
+    "scoreChanged": false,
+    "runtimeLockChanged": false,
+    "formalReceiptChanged": false,
+    "numericalBudgetChanged": false,
+    "convergenceVerified": false,
+    "causalEffectIdentified": false,
+    "physicalValidation": false
+  },
+  "selfReview": {
+    "digestAlgorithmBytePreserved": true,
+    "publicSummaryAlgorithmBytePreserved": true,
+    "publicProductAlgorithmBytePreserved": true,
+    "publicIdentifiersBytePreserved": true,
+    "builderSelfCheckOnly": true,
+    "releaseEligible": false
+  },
+  "frozenBuilderPlan": {
+    "path": "/private/tmp/tf-report-lifecycle-builder.32Zoja/plan-v1.json",
+    "mode": 420,
+    "size": 244348,
+    "sha256": "8da2ef01ac8cc3ee410b3fe9ee9fad41cf416af0298d64063c13467f8d9869b6"
+  },
+  "actualBuilderResults": {
+    "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/results.json",
+    "mode": 420,
+    "size": 878909,
+    "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+  },
+  "postArtifactRule": "This manifest and Builder evidence are not in the tested 511-path source. They become two further immutable review inputs. Reviewers must identify the resulting 513-path tree. Final gates and report generation must use the complete post-review source identity. Only the exact new terminal final-review may be written after report generation without changing input digest.",
+  "finalGateModeRule": "For release-equivalent evaluation, final gates must use an ordinary Git checkout with the source receipt at 0644. Builder numerical evidence here used the verified 0444 source copy; its focused Git checkout ran admission and Node29 at 0644 only. Do not conflate these environments."
+}

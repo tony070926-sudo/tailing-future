@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "tf.backend-migration-preflight/0.1",
+  "observedAt": "2026-09-07",
+  "purpose": "Baseline diagnostics before candidate implementation; not frozen-candidate or release approval",
+  "mainBase": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+  "legacyHead": "643b8b15f1a796c0ca4c34657d4b5edc68389354",
+  "legacyPreservationProbe": {
+    "pathSelection": "git ls-files --cached --others --exclude-standard -z; unique lexicographic sort",
+    "fileCount": 641,
+    "totalByteSize": 59531074,
+    "recordFormat": "{path,mode:lstat.mode&511,size:lstat.size,sha256:hex}",
+    "digestAlgorithm": "sha256(JSON.stringify(records))",
+    "digest": "sha256:33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+    "limitations": "Visible Git source/evidence paths only. Ignored local runtime and external temporary directories are not part of this source digest and were not modified."
+  },
+  "tools": {
+    "node": {
+      "version": "24.16.0",
+      "source": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-darwin-arm64.tar.gz",
+      "archiveSha256": "39189dab4eeb15706c424af0ac08a3044c9e48f7db12a7d77f6b7aafc7dd5df6"
+    },
+    "npm": {"version": "11.13.0", "source": "Bundled in the verified official Node archive"},
+    "r16dbDiagnosticPython": {
+      "version": "3.12.13",
+      "build": "20260807",
+      "metadataSource": "https://raw.githubusercontent.com/astral-sh/uv/main/crates/uv-python/download-metadata.json",
+      "source": "https://github.com/astral-sh/python-build-standalone/releases/download/20260807/cpython-3.12.13%2B20260807-aarch64-apple-darwin-install_only_stripped.tar.gz",
+      "archiveSha256": "25baa97c65b3f0aa90e21131b4f9e80aef8899e8144006db8a9d2c1ab9e807e3",
+      "executableSha256": "71720f1fc66989ebd691e81c96111b47ae6ff3f1a478666084d1cacbf0fccbf2",
+      "role": "Private temporary diagnostic runtime, not vendored and not a deployment/runtime successor claim"
+    },
+    "gh": {
+      "version": "2.98.0",
+      "source": "https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_macOS_arm64.zip",
+      "archiveSha256": "8cfb027cc5310675f2b830eac8f9865c1155a45ffcf9757f699fdd5a22046ca4",
+      "executableSha256": "eedbfd5b8071027fe6326826eded48d274f1ec9d93f9239d9ba778ea1f479ac9",
+      "selection": "main-pinned TAILING_RUNTIME_FREEZE_GH_PATH"
+    }
+  },
+  "baselineGates": [
+    {"command": "npm ci", "exitCode": 0, "packagesAdded": 561, "auditVulnerabilitiesReported": 0},
+    {"command": "npm exec -- vitest run --config vitest.config.ts scripts/atomistic/runtime-freeze-evidence-policy.test.mjs scripts/atomistic/runtime-lock-policy.test.mjs", "exitCode": 0, "passedFiles": 2, "passedTests": 31},
+    {"command": "npm run lint", "exitCode": 0},
+    {"command": "npm run typecheck", "exitCode": 0},
+    {"command": "npm run build", "exitCode": 0, "productionIsolation": "pass", "observedWarnings": ["Client chunk exceeds 500 kB", "vinext cannot statically classify the root route"]},
+    {"command": "npm exec -- vitest run --config vitest.config.ts scripts/evaluate-launcher.test.mjs scripts/release-report.test.mjs scripts/release-artifact.test.mjs scripts/release-cloudflare.test.mjs scripts/source-scope.test.mjs scripts/source-snapshot.test.mjs scripts/workflow-policy.test.mjs", "exitCode": 0, "passedFiles": 7, "passedTests": 94},
+    {"command": "npm run test:python", "exitCode": 0, "suiteTestCounts": [91, 42, 3], "passedTests": 135, "skippedTests": 1, "skipReason": "Existing prepare_structures_test.py skips its frozen Random-TP cache case because that cache is absent; not counted as a pass or full Random-TP execution"},
+    {"command": "npm run test:js:core", "exitCode": 0, "passedFiles": 123, "skippedFiles": 2, "passedTests": 1398, "skippedTests": 5, "elapsedSeconds": 498.94, "boundary": "Test discovery preceded addition of the four candidate files; this is latest-main baseline coverage, not the frozen admission candidate's full gate", "skipReasons": ["One existing full-candidate case requires absent frozen Random-TP cache", "Three existing Chromium integration cases require an explicitly configured browser executable", "One existing manual private-browser launcher case is opt-in"]}
+  ],
+  "legacyR16dbEnvironmentDiagnostics": {
+    "sourceOrFrozenEvidenceEdited": false,
+    "pythonNative": {"command": "python3.12 -I -B -W error scripts/mesoscale/pfhub3_r16d_b_native_test.py", "runtime": "r16dbDiagnosticPython", "exitCode": 0, "passedTests": 10},
+    "vitestVerifier": {"command": "TF_R16DB_PYTHON=<verified-private-python> node node_modules/vitest/vitest.mjs run --config vitest.config.ts scripts/mesoscale/pfhub3_r16d_b_verify.test.mjs", "runtime": "r16dbDiagnosticPython", "exitCode": 0, "passedTests": 46},
+    "packEvidence": {"command": "python3.12 -I -B -W error scripts/mesoscale/r16db_pack_evidence_test.py", "runtime": "r16dbDiagnosticPython", "exitCode": 0, "passedTests": 19},
+    "crossLane": {"command": "python3.12 -I -B -W error scripts/mesoscale/pfhub3_r16e_b_cross_lane_verify_test.py", "runtime": "r16dbDiagnosticPython", "exitCode": 0, "passedTests": 26},
+    "r16ga": {
+      "command": "python3.12 -I -B -W error scripts/mesoscale/pfhub3_r16g_a_verify_test.py",
+      "initialAttempt": {"exitCode": 1, "reason": "ModuleNotFoundError: numpy in the initially bare private Python distribution"},
+      "repair": "Installed the existing hash-verified NumPy wheel offline into the private diagnostic runtime; no shared Codex runtime or legacy source edit",
+      "numpyVersion": "2.5.3",
+      "numpyWheelSha256": "a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0",
+      "exitCode": 0,
+      "passedTests": 13
+    },
+    "legacyPreservationProbeAfterDiagnostics": {"fileCount": 641, "totalByteSize": 59531074, "digest": "sha256:33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"},
+    "disposition": "The missing-version diagnostic is locally resolved without scientific edits. Release-worktree integration and reproducible runtime provisioning remain pending."
+  },
+  "legacyR18NativeDispatchDiagnostic": {
+    "command": "node --test scripts/mesoscale/pfhub7a_r18a_schema_gate.test.mjs scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+    "nodeVersion": "24.16.0",
+    "exitCode": 0,
+    "passedTests": 47,
+    "skippedTests": 0,
+    "sourceOrFrozenEvidenceEdited": false,
+    "boundary": "Original-tree Node/schema/semantic test execution only; not a new Python numerical run, migrated candidate or proof that Vitest dispatch is repaired"
+  },
+  "remainingReleaseBlockers": [
+    "Non-R12 backend work is not integrated into latest main yet",
+    "Conflicting evaluator/report/release changes need versioned integration and full regression gates",
+    "R16d-b now passes its original 10 native and 46 verifier tests with the privately supplied exact CPython 3.12.13; release-worktree integration and reproducible provisioning remain pending",
+    "R17b shared Python runtime closure drift requires a separately versioned successor; old evidence must not be rewritten",
+    "R18 historical node:test discovery needs explicit dispatch without modifying frozen files",
+    "R18a historical candidate includes a different root .gitignore and cannot retain its whole-tree identity in this integration worktree",
+    "R12 exclusion and other source notices still require complete integrated source/production verification",
+    "Frozen candidate and full-release independent reviews are not complete"
+  ],
+  "releaseEligible": false,
+  "commitPerformed": false,
+  "pushPerformed": false,
+  "deploymentPerformed": false
+}

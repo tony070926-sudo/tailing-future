@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 const execFileAsync = promisify(execFile);
 const temporaryRoots = [];
 const launcherBytes = await readFile(new URL('./evaluate.mjs', import.meta.url));
+const launcherDependencies = ['derived-report-contract.mjs', 'atomistic/runtime-input-contract.mjs'];
 const publicDimensionIds = [
   'contract', 'data', 'atomistic', 'mesoscale', 'continuum', 'process',
   'coupling', 'world_rollout', 'uq_ood', 'repro_cost', 'visual_truth', 'safety',
@@ -45,8 +46,13 @@ if (behavior === 'report-symlink') {
     gaps: [{ severity: 'P1', dimension: 'atomistic', recommendedChange: 'private worker text' }],
   };
   if (behavior === 'public-gap-forgery') report.gaps = [{ severity: 'P1', dimension: '../../../private', recommendedChange: 'private worker text' }];
+  if (behavior === 'reject') { report.verdict = 'reject'; report.hardGateFailures = ['synthetic failure']; process.exitCode = 1; }
+  if (behavior === 'wrong-revision') report.sourceRevision = 'a'.repeat(40);
+  if (behavior === 'nonzero') process.exitCode = 1;
   await writeFile(path.join(root, 'evaluation', 'latest-report.json'), JSON.stringify(report));
+  if (behavior === 'duplicate-key') await writeFile(path.join(root, 'evaluation', 'latest-report.json'), JSON.stringify(report).replace('{', '{"duplicate":1,"duplicate":2,'));
   await writeFile(path.join(root, 'evaluation', 'latest-report.md'), '# report\\n\\n- Verdict: **CONDITIONAL**\\n- Artifact: ' + control.artifactDigest + '\\n');
+  if (behavior === 'reject') await writeFile(path.join(root, 'evaluation', 'latest-report.md'), '# synthetic reject\\nVerdict: **REJECT**\\n' + control.artifactDigest + '\\n');
 }
 `;
 
@@ -60,6 +66,10 @@ async function fixture() {
   await mkdir(path.join(root, 'scripts'), { recursive: true });
   await mkdir(path.join(root, 'evaluation', 'baselines'), { recursive: true });
   await writeFile(path.join(root, 'scripts', 'evaluate.mjs'), launcherBytes);
+  for (const relative of launcherDependencies) {
+    await mkdir(path.dirname(path.join(root, 'scripts', relative)), { recursive: true });
+    await writeFile(path.join(root, 'scripts', relative), await readFile(new URL(relative, import.meta.url)));
+  }
   await writeFile(path.join(root, 'scripts', 'evaluate-worker.mjs'), fakeWorker);
   await writeFile(path.join(root, 'evaluation', 'input.json'), '{}\n');
   await writeFile(
@@ -113,6 +123,10 @@ describe('two-stage evaluator launcher', () => {
     ));
 
     expect(result.code).toBe(0);
+    const generation = JSON.parse(result.stdout.trim()).derivedReportGeneration;
+    expect(generation).toMatchObject({ schemaVersion: 'tf.derived-report-generation/0.1', workerExitCode: 0, publicationVerified: true, executionAuthenticated: false, releaseEligible: false });
+    expect(generation.outputs).toHaveLength(4);
+    expect(generation.sourceIdentity.artifactDigest).toBe(report.artifactDigest);
     expect(report.sourceFileCount).toBe(Object.keys(report.sourceManifest).length);
     expect(report.sourceManifest['scripts/evaluate.mjs']).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(report.sourceManifest['scripts/evaluate-worker.mjs']).toMatch(/^sha256:[0-9a-f]{64}$/);
@@ -194,6 +208,67 @@ describe('two-stage evaluator launcher', () => {
     expect(result.code).toBe(1);
     expect(result.stderr).toMatch(/not bound to the frozen source snapshot/);
     await expect(lstat(path.join(root, 'evaluation', 'latest-report.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it.each(['duplicate-key', 'wrong-revision', 'nonzero'])('rejects %s without a successful generation statement', async behavior => {
+    const root = await fixture();
+    const result = await runLauncher(root, { behavior });
+    expect(result.code).toBe(1);
+    expect(result.stdout).not.toContain('derivedReportGeneration');
+    await expect(lstat(path.join(root, 'evaluation', 'latest-report.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('records a rejected publication with nonzero exit; it cannot be successful generation evidence', async () => {
+    const root = await fixture();
+    const result = await runLauncher(root, { behavior: 'reject' });
+    expect(result.code).toBe(1);
+    expect(JSON.parse(result.stdout.trim()).derivedReportGeneration).toMatchObject({ workerExitCode: 1, releaseEligible: false });
+  });
+
+  it.each(['partial-publish', 'changed-report', 'linked-report', 'between-readbacks', 'late-source-drift'])('rejects %s in the real publication readback block using a synthetic launcher fixture', async scenario => {
+    const root = await fixture();
+    // Fault injection changes only this temporary fixture's source. Production
+    // has no runtime test flag and executes the same readback checks below it.
+    const firstRead = '  const published = new Map();';
+    const secondRead = '  // Catch ordinary between-file replacement';
+    const injections = {
+      'partial-publish': "  await unlink(path.join(root, 'evaluation/public-summary.json'));\n",
+      'changed-report': "  { const f = await open(path.join(root, 'evaluation/latest-report.md'), 'a'); await f.write('changed body'); await f.close(); }\n",
+      'linked-report': "  await unlink(path.join(root, 'evaluation/public-summary.json')); await import('node:fs/promises').then(fs => fs.link(path.join(root, 'evaluation/public-product-evaluation.json'), path.join(root, 'evaluation/public-summary.json')));\n",
+      'between-readbacks': "  { const f = await open(path.join(root, 'evaluation/latest-report.md'), 'a'); await f.write('late body change'); await f.close(); }\n",
+      'late-source-drift': "  { const f = await open(path.join(root, 'README.md'), 'a'); await f.write('late source change'); await f.close(); }\n",
+    };
+    const anchor = scenario === 'between-readbacks' ? secondRead : firstRead;
+    expect(launcherBytes.toString().split(anchor)).toHaveLength(2);
+    await writeFile(path.join(root, 'scripts/evaluate.mjs'), launcherBytes.toString().replace(anchor, injections[scenario] + anchor));
+    const result = await runLauncher(root);
+    expect(result.code).toBe(1);
+    expect(result.stdout).not.toContain('derivedReportGeneration');
+    if (scenario === 'partial-publish') expect(result.stderr).toContain('ENOENT');
+    else if (scenario === 'linked-report') expect(result.stderr).toContain('unsafe');
+    else if (scenario === 'late-source-drift') expect(result.stderr).toContain('changed=[README.md]');
+    else expect(result.stderr).toContain('Published report changed');
+  });
+
+  it('keeps old and arbitrary review inputs bound while excluding only the named terminal attestation', async () => {
+    const root = await fixture();
+    const prefix = 'evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3';
+    const terminal = `${prefix}-successor-v2-final-review.json`;
+    const retained = [`${prefix}-final-review.json`, `${terminal}.extra`, 'evaluation/reviews/arbitrary-review.json'];
+    await mkdir(path.join(root, 'evaluation/reviews'));
+    for (const file of [terminal, ...retained]) await writeFile(path.join(root, file), '{}\n');
+    expect((await runLauncher(root)).code).toBe(0);
+    const first = JSON.parse(await readFile(path.join(root, 'evaluation/latest-report.json')));
+    expect(first.sourceManifest[terminal]).toBeUndefined();
+    for (const file of retained) expect(first.sourceManifest[file]).toMatch(/^sha256:/);
+    await writeFile(path.join(root, terminal), '{"terminalOnly":true}\n');
+    expect((await runLauncher(root)).code).toBe(0);
+    const second = JSON.parse(await readFile(path.join(root, 'evaluation/latest-report.json')));
+    expect(second.artifactDigest).toBe(first.artifactDigest);
+    await writeFile(path.join(root, retained[0]), '{"changedHistoricalInput":true}\n');
+    expect((await runLauncher(root)).code).toBe(0);
+    const third = JSON.parse(await readFile(path.join(root, 'evaluation/latest-report.json')));
+    expect(third.artifactDigest).not.toBe(first.artifactDigest);
   });
 
   it('clears stale outputs and rejects linked worker report output', async () => {

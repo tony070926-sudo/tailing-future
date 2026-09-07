@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailingfuture.dev/schemas/backend-migration-admission-v0.1.schema.json",
+  "title": "Tailing Future backend migration admission v0.1",
+  "description": "Preparation-only, byte-bound inventory of legacy and origin/main source paths. Validation never establishes licensing, scientific acceptance, release eligibility or deployment readiness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "profileId",
+    "recordedOn",
+    "state",
+    "identityProtocol",
+    "roots",
+    "counts",
+    "r12Exclusion",
+    "controlPlane",
+    "historicalIdentity",
+    "claimBoundary",
+    "remainingBlockers",
+    "entries"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "tf.backend-migration-admission/0.1" },
+    "profileId": { "const": "r18a-origin-main-backend-migration-admission-v0.1" },
+    "recordedOn": { "const": "2026-09-07" },
+    "state": { "const": "preparation-only-inventory-complete-migration-incomplete" },
+    "identityProtocol": {
+      "const": "sha256(JSON.stringify(lexicographically-sorted-{path,mode-lstat-and-511,size,sha256-hex}-records))/v1"
+    },
+    "roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legacy", "main"],
+      "properties": {
+        "legacy": {
+          "$ref": "#/$defs/inventoryRoot",
+          "type": "object",
+          "properties": {
+            "role": { "const": "preserved-legacy-working-tree" },
+            "commit": { "const": "643b8b15f1a796c0ca4c34657d4b5edc68389354" },
+            "dirtySourceIncluded": { "const": true },
+            "pathCount": { "const": 641 },
+            "totalBytes": { "const": 59531074 },
+            "identityDigest": { "const": "sha256:33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463" }
+          }
+        },
+        "main": {
+          "$ref": "#/$defs/inventoryRoot",
+          "type": "object",
+          "properties": {
+            "role": { "const": "origin-main-release-base" },
+            "commit": { "const": "307e6d723086fe41b6d89e9f9b4b532364ccaeff" },
+            "dirtySourceIncluded": { "const": false },
+            "pathCount": { "const": 449 },
+            "totalBytes": { "const": 10891323 },
+            "identityDigest": { "const": "sha256:9a7e966b67070e0b614cfa1f0c3e32af0ea8f14fe44946bcc806d3d5575fd8ed" }
+          }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "union",
+        "identical",
+        "conflicting",
+        "pendingLegacyOnly",
+        "excludedR12LegacyOnly",
+        "mainOnly",
+        "scientificCapabilitiesAdmitted"
+      ],
+      "properties": {
+        "union": { "const": 939 },
+        "identical": { "const": 106 },
+        "conflicting": { "const": 45 },
+        "pendingLegacyOnly": { "const": 481 },
+        "excludedR12LegacyOnly": { "const": 9 },
+        "mainOnly": { "const": 298 },
+        "scientificCapabilitiesAdmitted": { "const": 0 }
+      }
+    },
+    "r12Exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roundId", "rightsStatus", "payloadPresent", "licensed", "releasePass", "paths"],
+      "properties": {
+        "roundId": { "const": "R12" },
+        "rightsStatus": { "const": "unresolved" },
+        "payloadPresent": { "const": false },
+        "licensed": { "const": false },
+        "releasePass": { "const": false },
+        "paths": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/safePath" }
+        }
+      }
+    },
+    "controlPlane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredCandidatePaths", "requiredReviewInputs", "allowedReviewOutputs"],
+      "properties": {
+        "requiredCandidatePaths": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/safePath" }
+        },
+        "requiredReviewInputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/safePath" }
+        },
+        "allowedReviewOutputs": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/safePath" }
+        }
+      }
+    },
+    "historicalIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidateId",
+        "fileCount",
+        "canonicalCandidateSetDigest",
+        "candidateManifestDigest",
+        "integrationStatus",
+        "transferredApproval",
+        "conflictingPath"
+      ],
+      "properties": {
+        "candidateId": { "const": "r18a-successor-v3" },
+        "fileCount": { "const": 17 },
+        "canonicalCandidateSetDigest": { "const": "sha256:be645d99fb86ed8c9d278a9ea9c6884ccbed9a982b11b21987a408ada1ecf344" },
+        "candidateManifestDigest": { "const": "sha256:3d5fc28623f2a22e7ddfb5d98850953916576e117a9bf8d9b24d4ccc51f19067" },
+        "integrationStatus": { "const": "historical-only-not-reproduced-at-origin-main-root" },
+        "transferredApproval": { "const": false },
+        "conflictingPath": { "const": ".gitignore" }
+      }
+    },
+    "claimBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inventoryComplete",
+        "migrationComplete",
+        "rightsCleared",
+        "scientificallyValidated",
+        "releaseEligible",
+        "deploymentEligible",
+        "industrialAuthority",
+        "causalEffectIdentified"
+      ],
+      "properties": {
+        "inventoryComplete": { "const": true },
+        "migrationComplete": { "const": false },
+        "rightsCleared": { "const": false },
+        "scientificallyValidated": { "const": false },
+        "releaseEligible": { "const": false },
+        "deploymentEligible": { "const": false },
+        "industrialAuthority": { "const": false },
+        "causalEffectIdentified": { "const": false }
+      }
+    },
+    "remainingBlockers": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 512 }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 939,
+      "maxItems": 939,
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "safePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)(?!.*[\\u0000-\\u001f\\u007f]).+$"
+    },
+    "digestHex": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "size", "sha256"],
+      "properties": {
+        "mode": { "type": "integer", "minimum": 0, "maximum": 511 },
+        "size": { "type": "integer", "minimum": 0, "maximum": 134217728 },
+        "sha256": { "$ref": "#/$defs/digestHex" }
+      }
+    },
+    "inventoryRoot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "commit", "dirtySourceIncluded", "pathCount", "totalBytes", "identityDigest"],
+      "properties": {
+        "role": { "type": "string" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "dirtySourceIncluded": { "type": "boolean" },
+        "pathCount": { "type": "integer", "minimum": 1 },
+        "totalBytes": { "type": "integer", "minimum": 1 },
+        "identityDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "relation",
+        "legacyIdentity",
+        "mainIdentity",
+        "disposition",
+        "migrationStatus",
+        "rightsStatus",
+        "payloadPresent",
+        "scientificCapabilityAdmitted"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/safePath" },
+        "relation": {
+          "enum": ["identical", "conflicting", "legacy-only", "main-only"]
+        },
+        "legacyIdentity": {
+          "oneOf": [{ "$ref": "#/$defs/identity" }, { "type": "null" }]
+        },
+        "mainIdentity": {
+          "oneOf": [{ "$ref": "#/$defs/identity" }, { "type": "null" }]
+        },
+        "disposition": {
+          "enum": [
+            "copied-identical",
+            "main-preserved-conflict",
+            "pending-not-admitted",
+            "excluded-r12-redistribution-unresolved",
+            "main-only-preserved"
+          ]
+        },
+        "migrationStatus": {
+          "enum": [
+            "baseline-byte-identical",
+            "pending-versioned-reconciliation",
+            "pending-integration",
+            "excluded-rights-unresolved",
+            "baseline-main-only"
+          ]
+        },
+        "rightsStatus": {
+          "enum": ["not-evaluated", "unresolved"]
+        },
+        "payloadPresent": { "type": "boolean" },
+        "scientificCapabilityAdmitted": { "const": false }
+      }
+    }
+  }
+}

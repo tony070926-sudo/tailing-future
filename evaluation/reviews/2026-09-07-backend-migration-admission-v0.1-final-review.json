@@ -1,0 +1,1023 @@
+{
+  "schemaVersion": "tf.backend-migration-final-review/0.1",
+  "date": "2026-09-07",
+  "owner": "/root",
+  "boundedIteration": "backend-migration-admission-v0.1",
+  "decision": "PASS_PREPARATION_ONLY_WITH_RECORDED_P2",
+  "hypothesis": "A complete byte-bound admission inventory distinguishes preserved main, pending legacy, conflicts and R12 exclusions without transferring historical scientific approval or licensing status.",
+  "authorization": {
+    "userDecision": "采用不含 R12 的发布版本，保留本地证据",
+    "interpretation": "Exclude the nine unresolved R12 transcription paths from the public integration candidate; preserve original local source and evidence. This is not a rights clearance or gate waiver."
+  },
+  "sourceRoots": {
+    "legacy": {
+      "head": "643b8b15f1a796c0ca4c34657d4b5edc68389354",
+      "role": "preserved-dirty-local-source",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future"
+    },
+    "integration": {
+      "base": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "branch": "codex/backend-release-r18a",
+      "role": "separate-current-main-worktree",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a"
+    }
+  },
+  "candidateIdentityProtocol": "sha256(JSON.stringify(records sorted lexicographically by path; exact key order path,mode,size,sha256; SHA values are bare lowercase hex; mode=lstat.mode&511))",
+  "initialCandidateSha256": "14e272dd48b134fda469776d9dc6fc3957b8fd05f7c73c814491c53b349c562e",
+  "intermediateCandidateSha256": "e386e0e2da31939bb482b587639244a70045ffc566750a4ec357a23219342ef8",
+  "finalCandidate": {
+    "rows": [
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+        "mode": 420,
+        "size": 511225,
+        "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.1.schema.json",
+        "mode": 420,
+        "size": 9241,
+        "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "mode": 420,
+        "size": 24876,
+        "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "mode": 420,
+        "size": 15597,
+        "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+      }
+    ],
+    "canonicalBytes": 697,
+    "setSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec"
+  },
+  "builder": {
+    "agent": "Astra",
+    "selfCheck": "Initial 17-test candidate and baseline gates are recorded in immutable builder-gates/preflight artifacts; these are not substituted for final-candidate gates.",
+    "approvesCandidate": false
+  },
+  "reviewers": [
+    {
+      "agent": "/root/release_scope_audit",
+      "scope": "mechanism/scientific and source-claim validity",
+      "mode": "read-only",
+      "decision": "PASS_PREPARATION_ONLY",
+      "openFindings": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 0
+      }
+    },
+    {
+      "agent": "/root/admission_software_review",
+      "scope": "software, numerical/evaluator integrity",
+      "mode": "read-only",
+      "decision": "PASS_PREPARATION_ONLY",
+      "openFindings": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 1
+      },
+      "independentFocusedTests": 20,
+      "independentFixtureChecks": 10,
+      "postGateObservation": "Full-suite worker shutdown delay; not reproduced in two standalone reruns. Preserve unresolved root cause as P2; no assertion failure observed."
+    },
+    {
+      "agent": "/root/admission_sota_review",
+      "scope": "dated primary-source method comparison and at most three next gaps",
+      "mode": "read-only",
+      "decision": "PASS_FOR_BOUNDED_PROVENANCE_CLAIM_INTEGRITY",
+      "openFindings": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 3
+      },
+      "externalEvidenceClass": "reference",
+      "numericalRankingEligible": false
+    }
+  ],
+  "findingDispositions": [
+    {
+      "id": "SOFTWARE-P1-EMPTY-SOURCE-INVENTORY",
+      "severity": "P1",
+      "status": "closed-by-original-independent-reviewer",
+      "fixOwner": "/root",
+      "fix": "Always validate completeness and pending/excluded physical absence when the ledger is parsed, including an empty capture; retain Git capture failures.",
+      "evidence": "20-test final suite plus independent real temporary-Git and empty-array probes."
+    },
+    {
+      "id": "SOFTWARE-P1-MUTABLE-IGNORE-AUTHORITY",
+      "severity": "P1",
+      "status": "closed-by-original-independent-reviewer",
+      "fixOwner": "/root",
+      "fix": "Hash-bind captured main root .gitignore bytes and pass their ordered rules as explicit Git --exclude arguments. Do not use mutable local/global/per-directory ignore rules.",
+      "evidence": "Independent fresh full-tree probes reject hidden unknown sources, nested ignores and root-ignore mutation; bound dependency ignores remain valid."
+    },
+    {
+      "id": "SOTA-P2-FULL-PFHUB7A",
+      "severity": "P2",
+      "status": "accepted-residual-outside-preparation-scope",
+      "nextTask": "Full PFHub7(a) to t=8 with spatial, temporal and algebraic error separation; distinguish official-literal discrepancy, literal-self convergence and non-PFHub exact-trace-companion strict MMS."
+    },
+    {
+      "id": "SOTA-P2-SAME-CHEMISTRY-VALIDATION",
+      "severity": "P2",
+      "status": "accepted-residual-outside-preparation-scope",
+      "nextTask": "One legally usable complete same-chemistry network, same-source thermochemistry and a bounded independently validated trajectory; oxide bookkeeping is not an active catalyst model."
+    },
+    {
+      "id": "SOTA-P2-CROSS-SCALE-AND-IDENTIFIED-EFFECT",
+      "severity": "P2",
+      "status": "accepted-residual-outside-preparation-scope",
+      "nextTask": "One calibrated cross-scale mapping with explicit units, basis, boundaries, averaging, conservation, information loss and evidence; effects continue to abstain until identification and execution validation."
+    },
+    {
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "severity": "P2",
+      "status": "accepted-residual-root-cause-unresolved",
+      "reviewer": "/root/admission_software_review",
+      "fixImplemented": false,
+      "observation": "Full JS core returned exit0 with1418 passes and5 skips, but Vitest emitted a 10-second worker shutdown warning after the target4-test file completed. Two independent standalone reruns both passed4/4, exit0, empty stderr. No output invalidation shown; absence of a resource cleanup issue is not established.",
+      "nextTask": "If a later full run repeats the warning, freeze a separate worker lifecycle diagnostic; do not raise timeout or hide the original warning.",
+      "evidence": {
+        "path": "/private/tmp/tf-worker-exit-diagnostic.QSlzDP/evidence.json",
+        "sha256": "5c6a3556f9ae30003ada0ef6e580d7d0fb382cb96d3f646a57241d6636d3ac15",
+        "evidence": {
+          "purpose": "Bounded diagnostic of a full-suite Vitest worker-termination warning; no source changes or timeout suppression",
+          "node": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "nodeVersion": "v24.16.0",
+          "command": [
+            "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "--config",
+            "vitest.config.ts",
+            "lib/simulation/atomistic-private-position-frame-v047.test.ts"
+          ],
+          "environmentBoundary": "Pinned Node PATH and GH executable; this synchronous TypeScript fixture does not execute Python, GH, a browser or any scientific solver.",
+          "candidateBefore": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+          "candidateAfter": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+          "candidateUnchanged": true,
+          "runs": [
+            {
+              "run": 1,
+              "startedAt": "2026-09-07T11:09:07.611Z",
+              "elapsedMs": 2377,
+              "exitCode": 0,
+              "signal": null,
+              "error": null,
+              "stdoutSha256": "e814dcc5b3db9802d20b03e2bba27d3bec067cd7064f67f88b41a4433c126501",
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutBytes": 709,
+              "stderrBytes": 0,
+              "stdout": "\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\n ✓ lib/simulation/atomistic-private-position-frame-v047.test.ts (4 tests) 2114ms\n     ✓ derives a frozen minimal single-frame contract with no private artifact tree  555ms\n     ✓ fails closed on extra keys, stale digests, and altered literal boundaries  525ms\n     ✓ owns one defensive positions copy and revokes it with deterministic zero-fill semantics  517ms\n     ✓ rejects altered, non-finite, shared, and wrong-sized position bytes  517ms\n\n Test Files  1 passed (1)\n      Tests  4 passed (4)\n   Start at  15:09:07\n   Duration  2.24s (transform 51ms, setup 0ms, import 66ms, tests 2.11s, environment 0ms)\n\n",
+              "stderr": ""
+            },
+            {
+              "run": 2,
+              "startedAt": "2026-09-07T11:09:09.990Z",
+              "elapsedMs": 2381,
+              "exitCode": 0,
+              "signal": null,
+              "error": null,
+              "stdoutSha256": "10ffcee44e540192d7dda117dc8fe5c8f0b49ca9f133d98b3149b0040f760749",
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutBytes": 709,
+              "stderrBytes": 0,
+              "stdout": "\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\n ✓ lib/simulation/atomistic-private-position-frame-v047.test.ts (4 tests) 2116ms\n     ✓ derives a frozen minimal single-frame contract with no private artifact tree  548ms\n     ✓ fails closed on extra keys, stale digests, and altered literal boundaries  526ms\n     ✓ owns one defensive positions copy and revokes it with deterministic zero-fill semantics  519ms\n     ✓ rejects altered, non-finite, shared, and wrong-sized position bytes  520ms\n\n Test Files  1 passed (1)\n      Tests  4 passed (4)\n   Start at  15:09:10\n   Duration  2.23s (transform 47ms, setup 0ms, import 61ms, tests 2.12s, environment 0ms)\n\n",
+              "stderr": ""
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "inventoryDisposition": {
+    "union": 939,
+    "identical": 106,
+    "conflicting": 45,
+    "pendingNonR12LegacyOnly": 481,
+    "excludedR12LegacyOnly": 9,
+    "mainOnly": 298,
+    "scientificCapabilitiesAdmitted": 0
+  },
+  "scientificBoundary": {
+    "newPhysicalModel": false,
+    "quantitativeCausalEffectIdentified": false,
+    "oldR18aApprovalTransferred": false,
+    "r12RightsStatus": "unresolved",
+    "r12Licensed": false,
+    "evidenceScoreRaised": false,
+    "externalResultReproduced": false,
+    "industrialRecommendationAuthorized": false,
+    "safetyCriticalControlPathAdded": false
+  },
+  "nextIntegrationPlan": {
+    "owner": "/root/astra_next_integration_plan",
+    "model": "gpt-6-astra",
+    "status": "read-only-plan-not-implemented",
+    "boundedHypothesis": "Migrate one causal-query capability: mechanism candidates preserve applicability, competing signs and conservation; unexecuted or unidentified interventions/counterfactuals abstain in machine-readable form.",
+    "sourcePaths": [
+      "lib/knowledge/causal-model.ts",
+      "lib/knowledge/catalysis.ts",
+      "lib/knowledge/causal-model.test.ts",
+      "schemas/causal-model.schema.json",
+      "schemas/causal-query.schema.json",
+      "schemas/causal-query-result.schema.json"
+    ],
+    "dependencyDisposition": "Preserve current-main lib/simulation/digest.ts and add explicit canonical digest, replay and malformed-value compatibility tests; no R12, Python, frontend or thermochemistry imports in this slice.",
+    "mainFileReconciliation": "vitest.config.ts only; preserve the other 448 main files. The current successor suite must execute the unchanged v0.1 suite in a digest-verified historical snapshot. Exact old-suite exclusion relocates execution and must not remove it.",
+    "historicalEvidencePolicy": "Preserve v0.1 four-file candidate and review evidence; add v0.2 schema/ledger/checker/test. Reconstruct historical main307e6d7 plus frozen additions, not selected current files. Missing snapshot input, skipped historical execution or nonzero child exit fails successor.",
+    "pathAccounting": {
+      "legacyOnlyImported": 6,
+      "nonR12LegacyOnlyPending": 475,
+      "r12Excluded": 9,
+      "legacyMainConflictsStillRecorded": 45,
+      "capabilitiesImported": 1,
+      "initialMainFilesUnchanged": 448,
+      "mainConfigReconciliations": 1,
+      "successorFiles": 4
+    },
+    "gatePolicy": "Run targeted library/digest/successor Vitest, actual successor admission and git diff checks. Run full npm run check in a complete digest-verified disposable candidate snapshot; retain logs and declared generated report changes. Recheck original integration source afterward; generated temporary reports do not replace main reports or inherit release approval.",
+    "scientificMilestones": [
+      "Next bounded integration: the six-file causal-query library with main-digest compatibility and historical/current admission dispatch.",
+      "Continue portable runtime, R18 successor identity and non-R12 source/notice integration required by the existing Goal; keep prior scientific evidence historical.",
+      "After R18 closure, full PFHub7(a) to t=8 with independently checked spatial/time/algebraic convergence; thermochemistry remains a separate later bounded chemistry slice."
+    ],
+    "noImplementationPerformed": true,
+    "noReleaseAuthority": true,
+    "targetWorktree": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+    "preservedOriginalWorktree": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future"
+  },
+  "knownHistoricalAttempts": {
+    "reviewProbeRerun": "A one-shot preserved reviewer fixture rerun failed with EEXIST; recorded in software-review.json and not counted as closure. Fresh independent probes subsequently passed.",
+    "baselineMissingNumpy": "Initial bare private Python lacked NumPy; offline verified wheel repair and separate diagnostic success are recorded in preflight.json. No frozen legacy evidence was overwritten.",
+    "cancelledDuplicateTest": "Builder cancelled its own duplicate baseline test process; not counted as successful evidence."
+  },
+  "remainingReleaseBlockers": [
+    "481 non-R12 legacy-only files and 45 conflicts are inventoried, not fully integrated or scientifically revalidated at current main.",
+    "Portable versioned R16d-b/R17b runtime integration remains unfinished; private diagnostic passes do not replace runtime successor evidence.",
+    "R18 native-test dispatch and historical .gitignore candidate identity require explicit successor treatment.",
+    "Benchmark7 source notice, other imported-source notices and complete R12-excluded source/production verification remain unfinished.",
+    "Full integrated release-candidate reviews, protected-main CI release artifact and deployment gates have not run."
+  ],
+  "releaseDecision": {
+    "status": "abstain",
+    "reasonCodes": [
+      "integration_incomplete",
+      "runtime_successors_pending",
+      "source_notice_integration_pending",
+      "full_release_candidate_not_reviewed"
+    ],
+    "commitPerformed": false,
+    "pushPerformed": false,
+    "deploymentPerformed": false,
+    "releaseEligible": false
+  },
+  "goalState": {
+    "observed": "blocked",
+    "objectiveKept": true,
+    "markedComplete": false,
+    "resumeToolAvailable": false,
+    "nextUserAction": "/goal resume"
+  },
+  "goalAlignment": "The six-file causal-library integration is a bounded release-integration prerequisite. It does not complete the existing R18a/PFHub7(a) Goal; the full PFHub7(a) spatial/time convergence milestone remains unexecuted and required.",
+  "nextSliceDiagnostic": {
+    "classification": "isolated-compatibility-diagnostic-not-integrated-candidate",
+    "builder": "/root/astra_next_integration_plan",
+    "builderEvidence": {
+      "path": "/private/tmp/tf-causal-main-diagnostic.YZAnxv/diagnostic-receipt.json",
+      "sha256": "f6176b485ea2a889a2dac93fa02cd67ef61cffe5d114d61bc145181ea3cdf145",
+      "evidence": {
+        "schemaVersion": "tf.scratch-compatibility-diagnostic/0.1",
+        "root": "/private/tmp/tf-causal-main-diagnostic.YZAnxv",
+        "startedAt": "2026-09-07T11:14:10.786Z",
+        "finishedAt": "2026-09-07T11:14:14.175Z",
+        "runtime": {
+          "version": "v24.16.0",
+          "executable": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "mode": 493,
+          "size": 120573328,
+          "sha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+        },
+        "dependencyDirectory": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/node_modules",
+        "dependencyLock": {
+          "mode": 420,
+          "size": 386499,
+          "sha256": "159a3c4e740dc206b0e217f21f86dce39198309d116cd74661c816e68ee5d20d"
+        },
+        "diagnosticInputs": [
+          {
+            "path": "diagnostic-scope.md",
+            "mode": 420,
+            "size": 1922,
+            "sha256": "32a0f611396f30ef46ef93db00e5c70b152da80c327bfcedcaee1a0d1141cc7a"
+          },
+          {
+            "path": "run-diagnostic.mjs",
+            "mode": 420,
+            "size": 3220,
+            "sha256": "d9a4ca9b847c3025b8558d2618e3db3006af5ecb115907e4b3f61ca152f9f056"
+          }
+        ],
+        "inventory": [
+          {
+            "path": "lib/knowledge/catalysis.ts",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 66776,
+            "sha256": "aaea3611fe1a5bcf22c5202725bbfa75898754f4f71df3ef9aff1437e349609e"
+          },
+          {
+            "path": "lib/knowledge/causal-model.test.ts",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 36303,
+            "sha256": "03c1cbbdad76a31478a85df86954c04912672eac9feab0fc9e65859a5d001058"
+          },
+          {
+            "path": "lib/knowledge/causal-model.ts",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 107289,
+            "sha256": "b766a8af7a77b3b90b1c48eac26f1e2886b08de35ec1dc58b6cbd3ac128b3d27"
+          },
+          {
+            "path": "lib/simulation/digest.test.ts",
+            "origin": "main",
+            "mode": 420,
+            "size": 3350,
+            "sha256": "5e913703dff5c366e51867bc5d50e4eb19ed797f235e9b4324fca953d6e4ea73"
+          },
+          {
+            "path": "lib/simulation/digest.ts",
+            "origin": "main",
+            "mode": 420,
+            "size": 3601,
+            "sha256": "a671ae7c6b0d2dc34fa97f19f4ac677c8e97337ea46ca0cf760420b67fe74cc0"
+          },
+          {
+            "path": "package.json",
+            "origin": "main",
+            "mode": 420,
+            "size": 2866,
+            "sha256": "721e32ee361788878f1157ffa10605edd390d7f9f9f6b4e3822cbd8f38b279b2"
+          },
+          {
+            "path": "schemas/causal-model.schema.json",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 21144,
+            "sha256": "c0fc371fbff3b7d2611717750e9d760dbab4cda2f102fb31f263a9005385795f"
+          },
+          {
+            "path": "schemas/causal-query-result.schema.json",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 6956,
+            "sha256": "f0c7eef5546d5528f8d25f39edaadf521cdf06408bbadec7b8742ac8208668a5"
+          },
+          {
+            "path": "schemas/causal-query.schema.json",
+            "origin": "legacy",
+            "mode": 420,
+            "size": 2462,
+            "sha256": "348bb71b946123717c1ae0934b4741b0d75bce1a81d969d26b3bc8458961b9de"
+          },
+          {
+            "path": "tsconfig.json",
+            "origin": "main",
+            "mode": 420,
+            "size": 758,
+            "sha256": "3c0c756d30455c45b90eaf4ebce829c849e0e502bcb7a4ff23ef23407162efe8"
+          },
+          {
+            "path": "vitest.config.ts",
+            "origin": "main",
+            "mode": 420,
+            "size": 1041,
+            "sha256": "c71b966d6c632b94d915fa319f862a16b9e990837efd22134a12080c774226b5"
+          }
+        ],
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "lib/knowledge/causal-model.test.ts",
+          "lib/simulation/digest.test.ts",
+          "--reporter=verbose"
+        ],
+        "environmentOverrides": {
+          "PATH": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin:<inherited PATH>",
+          "NO_COLOR": "1"
+        },
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "\n RUN  v4.1.11 /private/tmp/tf-causal-main-diagnostic.YZAnxv\n\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > passes both closed JSON Schema and semantic validation 301ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > validates closed query/result schemas and fails closed without throwing on malformed input 282ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > uses a key-order-independent canonical digest and rejects non-finite values 43ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > answers the catalyst competency questions without conflating the two branches 67ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > treats catalyst equilibrium behavior as a thermodynamic constraint, not a kinetic causal path 13ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > abstains when transport context is missing instead of treating intrinsic surface rate as observed rate 12ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > preserves local nonmonotonic signs without inventing a transitive total-effect sign 13ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > does not use taxonomy or alternatives as causal evidence 12ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > abstains on intervention and counterfactual requests without identified structural equations 51ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > does not let a bundle self-authorize an intervention or counterfactual by claiming calibration 29ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > rejects duplicate ids, dangling evidence and unknown quantity units 160ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > rejects cross-scale shortcuts, pseudo-causal associations and non-regenerating ideal cycles 20ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > computes element, charge, site and catalytic-cycle closure from structured stoichiometry 18ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > requires explicit standard-state activity rate laws and closes the typed surface-to-pellet equation 99ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > requires calibrated, evidence-bound structural equations before intervention claims 4ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > requires conflicting local claims to be explicit 98ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > enforces bridge computation/physical direction before traversal 7ms\n ✓ lib/knowledge/causal-model.test.ts > causal mechanism contract > rejects same-step causal feedback but allows explicitly lagged qualitative loops 31ms\n ✓ lib/simulation/digest.test.ts > canonical scientific digest > is independent of record insertion order and retains JSON undefined-array semantics 8ms\n ✓ lib/simulation/digest.test.ts > canonical scientific digest > ignores inherited Object and Array toJSON pollution without collapsing namespaces 3ms\n ✓ lib/simulation/digest.test.ts > canonical scientific digest > rejects accessors without invoking them 2ms\n ✓ lib/simulation/digest.test.ts > canonical scientific digest > rejects hidden, symbolic, exotic, cyclic, callable, and non-finite payloads 2ms\n\n Test Files  2 passed (2)\n      Tests  22 passed (22)\n   Start at  15:14:11\n   Duration  2.57s (transform 351ms, setup 0ms, import 631ms, tests 1.28s, environment 0ms)\n\n",
+        "stderr": "",
+        "copiedSourceUnchanged": true,
+        "releaseCandidate": false,
+        "independentApproval": false
+      }
+    },
+    "independentReview": {
+      "reviewer": "/root/release_scope_audit",
+      "readOnly": true,
+      "decision": "PASS_DIAGNOSTIC_ONLY",
+      "findings": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 0
+      },
+      "receiptIdentityMatched": true,
+      "sourceIdentitiesMatched": 11,
+      "currentMainGitBlobsMatched": 5,
+      "astTestCount": {
+        "causal": 18,
+        "digest": 4
+      },
+      "localStaticImportClosureMatched": true,
+      "r12LocalDependencies": 0,
+      "rerun": {
+        "windowUtc": "2026-09-07T11:18:56Z/2026-09-07T11:18:57Z",
+        "passedTests": 22,
+        "passedFiles": 2,
+        "exitCode": 0,
+        "stderrBytes": 0,
+        "fullRawOutputPersistedByRoot": false
+      },
+      "sourcePreservation": {
+        "legacyFiles": 641,
+        "mainBaselineFiles": 449,
+        "legacyOnlyPathsNotImported": 490,
+        "admissionCandidateSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec"
+      },
+      "boundaries": [
+        "Existing corpus only; no experimental validation of mechanisms/rate equations or quantitative causal execution.",
+        "Shared node_modules is not an independent hermetic dependency byte closure.",
+        "Enumerated source identity does not establish that every cache or filesystem metadata field was unchanged.",
+        "Future migration still needs its own frozen candidate, successor admission and three independent reviews."
+      ]
+    },
+    "productionSourceChanged": false,
+    "scientificCapabilitiesAdmitted": 0,
+    "evidenceScoreIncrease": false,
+    "migrationComplete": false,
+    "releaseEligible": false
+  },
+  "futureReleaseSafety": {
+    "required": "Resolve current remote state, integrate/review the actual release candidate, and use the protected-main Sentinel artifact workflow only after all applicable blockers close.",
+    "branchUpstreamCaution": "The preparation branch tracks origin/main. Do not use a bare git push; any future authorized branch publication must name its reviewed destination explicitly.",
+    "sourcePreservation": "Do not overwrite newer frontend, frozen historical artifacts or unrelated original-worktree changes."
+  },
+  "completedAt": "2026-09-07T11:43:09.953Z",
+  "postFixGateEvidence": {
+    "schemaVersion": "tf.admission-post-review-gates/0.1",
+    "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+    "outputRoot": "/private/tmp/tf-admission-final-gates-7CyeZd",
+    "startedAt": "2026-09-07T10:55:41.672Z",
+    "node": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "version": "v24.16.0"
+    },
+    "candidateBefore": {
+      "pathCount": 4,
+      "totalBytes": 560939,
+      "canonicalBytes": 697,
+      "sha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+      "recordsRetainedInRawRunnerResult": 4
+    },
+    "legacyBefore": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "recordsRetainedInRawRunnerResult": 641
+    },
+    "gates": [
+      {
+        "id": "js-core",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:js:core"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:55:41.840Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T11:06:24.556Z",
+        "elapsedSeconds": 642.716,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/js-core.stdout.log",
+          "bytes": 24772,
+          "sha256": "25355f352a3bed4f71922f6778590ffe3cbacff54603c76a7d614a55c8723958",
+          "rawText": "\n> tailing-future@0.4.0 test:js:core\n> vitest run --config vitest.config.ts --exclude scripts/evaluate-observer-snapshot.test.mjs\n\n\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\nstdout | lib/simulation/aqueous-dynamics-long-verification.test.ts > v0.4.2 aqueous 10000-step long verification\n[aqueous-long-verification] accepted 1000/10000 steps\n[aqueous-long-verification] accepted 2000/10000 steps\n[aqueous-long-verification] accepted 3000/10000 steps\n[aqueous-long-verification] accepted 4000/10000 steps\n[aqueous-long-verification] accepted 5000/10000 steps\n[aqueous-long-verification] accepted 6000/10000 steps\n[aqueous-long-verification] accepted 7000/10000 steps\n[aqueous-long-verification] accepted 8000/10000 steps\n[aqueous-long-verification] accepted 9000/10000 steps\n[aqueous-long-verification] accepted 10000/10000 steps\n[aqueous-long-verification] evidence {\"verificationDigest\":\"sha256:b1928e0df0b8f19af19aef24fa8c75133252bff9e71be97a1e3fff9b61b64fc0\",\"trajectoryDigest\":\"sha256:8698b78bb0d8aef8ac1a47571ac93611d5ecc15b161444afbefd945e93171e49\",\"checkpointDigest\":\"sha256:be6fb71d265c792b51984a94a7f6edeb5ee9d3380988d673e4e2c9d1dd4e9f9b\",\"auditEvidenceDigest\":\"sha256:b1ebd68658abf042e97340c9f4a5f9a1d3ce8367726130d3da1864d4a2f44a81\",\"finalStateDigest\":\"sha256:059477eac2d32f4498becb83894d9ce33501c2e26b443b48edb3419a3382d420\",\"longRunReceiptDigest\":\"sha256:44e59ff21915556d6b9f17c582feea0b7d810a51b69c11cc338982109c7d2f64\",\"determinismReceiptDigest\":\"sha256:9943f6d30d527322ede552018b4334c8ef5eef52e93cbc4d660b1acacfa7679d\",\"replayWorkEvidenceDigest\":\"sha256:b6fac1db0a8f7dea92ea55dfcd6c09148d85588e35c06f39b4f74f244d9ebff8\",\"maximumRelativeEnergyExcursion\":0.00014348723343311155,\"maximumRelativeEnergyExcursionStep\":1571,\"linearRelativeDriftRatePerPicosecond\":0.0000010928567842502236,\"maximumMomentumResidual\":{\"value\":1.2857162078118546e-8,\"step\":6923},\"maximumInternalForceResidual\":{\"value\":3.417285947337647e-13,\"step\":853},\"maximumPositionConstraintResidual\":{\"value\":2.5000446157719125e-11,\"step\":1725},\"maximumVelocityConstraintResidual\":{\"value\":9.999014151249519e-11,\"step\":1997},\"minimumNonexcludedPair\":{\"distanceAngstrom\":1.7019605156098359,\"atomAId\":\"water-a-h1\",\"atomBId\":\"water-b-o\",\"step\":7440},\"lennardJonesCutoffTransitions\":0,\"totalReceiptedSolverAndObservationWorkUnits\":3303385447}\n\n ✓ lib/simulation/aqueous-dynamics-long-verification.test.ts (31 tests) 238966ms\n     ✓ accepts a structurally self-consistent synthetic fixture only as non-execution evidence  806ms\n     ✓ rejects consistently rehashed gate rewriting  19512ms\n     ✓ rejects rehashed inconsistent energy statistics  496ms\n     ✓ rejects a duplicate sample digest after consistent parent rehashing  367ms\n     ✓ rejects a non-digest sample binding after consistent parent rehashing  359ms\n     ✓ rejects a rehashed wrong checkpoint index  604ms\n     ✓ rejects negative per-sample integration work  354ms\n     ✓ rejects zero per-sample integration work after step zero  360ms\n     ✓ rejects a negative audit time even after all containing digests are refreshed  352ms\n     ✓ rejects finite Number.MAX_VALUE evidence that overflows derived statistics  454ms\n     ✓ rejects a forged deterministic prefix despite a refreshed receipt  613ms\n     ✓ rejects rehashed replay work that disagrees with the primary prefix  602ms\n     ✓ rejects an illegal Lennard-Jones membership transition  459ms\n     ✓ rejects a later minimum step when equal-distance samples tie  475ms\n     ✓ actually executes exactly 10000 accepted fixed-step NVE transitions  419ms\n     ✓ rejects outer tampering and nested work tampering after refreshed parent digests  515ms\n ✓ lib/molecular/atomistic-private-trajectory-instancing-runtime-v048.test.ts (3 tests) 44992ms\n     ✓ updates all 101 frames while preserving all Three scene and buffer identities  6739ms\n     ✓ rejects a frame capability from another trajectory before changing current state  13179ms\n     ✓ rejects unstable or decorated position-byte owners before digesting or projecting  25073ms\n ✓ lib/simulation/periodic-verification.test.ts (2 tests) 25967ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs (3 tests) 42972ms\n     ✓ exports one positions-only packet and revokes the synthetic V048 source before return  12285ms\n     ✓ does not export from a revoked or cloned materialization capability  30683ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-envelope-v049.test.mjs (8 tests) 17465ms\n     ✓ round-trips deterministically with exact layout, independent output, and bound offsets  10327ms\n ✓ scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs (3 tests) 18091ms\n     ✓ derives all 101 private frames from one explicitly synthetic spatial fixture  12216ms\n     ✓ rejects the legacy collapsed verifier fixture at the V048 spatial gate  5874ms\n ✓ lib/simulation/thermochemical-world.test.ts (22 tests) 30770ms\n     ✓ passes deterministic heat, coupling, conservation and domain verification  29827ms\n     ✓ replays the complete world and gives sibling branches unique identities  652ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-trajectory-harness-v049.server.test.mjs (4 tests) 12438ms\n     ✓ revokes the synthetic V048 source before listening and returns only aggregate audit data  12395ms\n ✓ lib/simulation/atomistic-private-position-trajectory-v048.test.ts (7 tests) 10200ms\n     ✓ owns exactly 101 spatially resolved solver frames without interpolation  6916ms\n     ✓ rejects the old 895-water collapsed visual fixture  327ms\n     ✓ rejects a rigid-water geometry violation even when all source digests are refreshed  333ms\n     ✓ rejects non-finite input and out-of-order frame descriptors  599ms\n     ✓ rejects each F64-to-F32 numeric edge before a derived frame can be issued  1299ms\n     ✓ rejects duplicate declared frames before scanning the remaining trajectory  392ms\n     ✓ rejects rigid geometry that survives F64 but collapses after F32 conversion  334ms\n ✓ scripts/atomistic/openmm/nacl-water-interface-import-v0411.test.mjs (7 tests) 8757ms\n     ✓ rebinds every Python artifact byte to the exact TypeScript plan  649ms\n     ✓ rejects a normalized array mutation even if the file is returned to read-only mode  555ms\n     ✓ rejects an artifact changed after its individual read  626ms\n     ✓ rejects receipt claim escalation and a non-closed bundle inventory  486ms\n     ✓ rejects attacker-resealed coordinates, gates, swapped digests and duplicate keys  2442ms\n     ✓ refuses an existing output without changing its sentinel  1835ms\n ✓ scripts/atomistic/openmm/openmm-world-session-loader-faults.test.mjs (8 tests) 7209ms\n     ✓ retries one recoverable short read and leaves the seam uncontaminated  1403ms\n     ✓ rejects one premature EOF without returning a partial capability and zeroizes bytes  848ms\n     ✓ detects one path replacement during the second read and zeroizes bytes  853ms\n     ✓ zeroizes a captured artifact when a late digest validation rejects it  831ms\n     ✓ zeroizes a successful read when descriptor close fails before handoff  828ms\n     ✓ preserves both premature EOF and close failures while zeroizing bytes  821ms\n     ✓ zeroizes the overflow probe and main buffer after a one-byte append  832ms\n     ✓ zeroizes an independent receipt buffer when its post-verifier read changes  792ms\n ✓ scripts/atomistic/runtime-lock-policy.test.mjs (13 tests) 6893ms\n     ✓ accepts the checked-in lock with schema, source, plan, and non-circular context checks  3131ms\n     ✓ binds the declared P revision, timestamp, modes, paths, blobs, and mappings to a real ancestor Git commit  833ms\n     ✓ rejects the exact P object when it is not an ancestor of the executing checkout  816ms\n     ✓ recomputes all five source blobs and both runner mappings from P rather than the working tree  703ms\n     ✓ ignores symlinked and multiply linked working-tree runner decoys and verifies P blobs  1234ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-loopback-server-v049.test.mjs (9 tests) 6919ms\n ✓ lib/molecular/atomistic-private-browser-trajectory-instancing-runtime-v049.test.ts (4 tests) 6741ms\n ✓ lib/simulation/atomistic-private-browser-position-trajectory-v049.test.ts (5 tests) 6952ms\n ✓ lib/simulation/nacl-water-interface-system-v0410.test.ts (11 tests) 6834ms\n     ✓ constructs one exact, immutable, self-digested system and full coordinate seed  432ms\n     ✓ admits read-only inspection but blocks preparation and dynamics without invoking a solver  2061ms\n     ✓ fails closed on atom, layer, gate, claim, ordering and self-digest tampering  2133ms\n     ✓ rejects accessors, undefined, non-finite data and extra keys before trust  993ms\n     ✓ rejects a caller-supplied forged plan at every action and observation boundary  1008ms\n ✓ lib/simulation/atomistic-presentation-frame.test.ts (11 tests) 5996ms\n     ✓ performs deterministic F64LE to F32LE conversion and reuses the V045 receipt  771ms\n     ✓ lets only the owner idempotently revoke private F32 bytes while retaining metadata  644ms\n     ✓ rejects tampering, wrong digest or shape, missing channels, and channel reordering  661ms\n     ✓ rejects a missing or out-of-order frame, wrong atom order or cell, and cross-session use  923ms\n     ✓ rejects NaN in actual F64 source bytes  341ms\n     ✓ rejects positive infinity in actual F64 source bytes  340ms\n     ✓ rejects negative zero in actual F64 source bytes  340ms\n     ✓ rejects F32 overflow in actual F64 source bytes  340ms\n     ✓ rejects F32 negative-zero underflow in actual F64 source bytes  342ms\n     ✓ rejects metadata digest swaps, claim escalation, and validation against another session  824ms\n ✓ lib/simulation/periodic-atomistic-world.test.ts (15 tests) 5375ms\n     ✓ crosses periodic faces, rebuilds the Verlet list and closes a 10,000-step NVE trajectory  4126ms\n     ✓ restores byte-exactly, continues deterministically and isolates branches  594ms\n ✓ scripts/atomistic/openmm/verify-control-directory.test.mjs (6 tests) 5396ms\n     ✓ verifies a closed, bound synthetic producer directory and returns a schema-valid receipt  441ms\n     ✓ materializes exactly 101 immutable digest-bound frames without exposing raw bytes  553ms\n     ✓ adapts one exact captured frame into a clone-resistant private V046 capability  3424ms\n     ✓ fails closed on linked, truncated, or appended private artifact inputs  646ms\n ✓ lib/molecular/atomistic-instancing-core-v046.test.ts (9 tests) 4836ms\n     ✓ derives exact topology and 101 frame bindings from a validated V045 session  308ms\n     ✓ keeps selection stable and binds it to atom-order and topology digests  973ms\n     ✓ reconstructs an intact O-H link through the locked cubic periodic face  605ms\n     ✓ owns runtime buffers privately and exposes mutation-isolated snapshots  601ms\n     ✓ rejects cross-session, altered-byte, and SharedArrayBuffer handles atomically  1687ms\n ✓ scripts/atomistic/source-tree-identity.test.mjs (7 tests) 3166ms\n     ✓ ignores replacement refs and inherited Git replacement configuration  437ms\n     ✓ binds empty-subtree topology through SHA-256 of every raw tree object  417ms\n     ✓ separates content, executable-mode and path drift and enforces ancestry  698ms\n     ✓ rejects symlinks, gitlinks and every non-regular blob mode  397ms\n     ✓ rejects duplicate, backslash, control, non-NFC and invalid-UTF8 paths  575ms\n     ✓ rejects missing blobs and bounded individual or aggregate source bytes  387ms\n ✓ scripts/atomistic/runtime-freeze-evidence-policy.test.mjs (18 tests) 3577ms\n     ✓ forces Git replacement refs off, verifies V is the direct child of S and reads V blobs rather than the worktree  315ms\n     ✓ executes only the fixed absolute digest-pinned gh copy and ignores PATH decoys  847ms\n ✓ lib/molecular/atomistic-private-instancing-core-v047.test.ts (5 tests) 3065ms\n     ✓ creates one position-only plan without reconstructing the private session tree  516ms\n     ✓ projects the sanitized frame twice without creating a second trajectory frame  557ms\n     ✓ zero-fills each issued handle copy and rejects cross-metadata updates atomically  995ms\n     ✓ disposes runtime buffers idempotently and fails closed after disposal  493ms\n     ✓ feeds the shared Three bridge without importing the full private source session  503ms\n ✓ scripts/atomistic/verify-full-candidate.test.mjs (31 tests | 1 skipped) 2962ms\n     ✓ rejects claim, diagnostic summary, bundle digest and outcome forgery  409ms\n ✓ lib/simulation/openmm-world-session-loader.server.test.ts (5 tests) 1604ms\n     ✓ uses the framework server-only marker and rejects a client import chain at build time  1593ms\n ✓ lib/molecular/atomistic-three-instanced-runtime-v046.test.ts (6 tests) 2746ms\n     ✓ uploads bound matrices in place, marks updates, recomputes bounds, and preserves objects  987ms\n     ✓ maps actual Three Raycaster instanceId hits back to authoritative atom identity  644ms\n     ✓ updates layer visibility and disposes every shared resource exactly once  620ms\n ✓ lib/simulation/atomistic-world-session.test.ts (4 tests) 2591ms\n     ✓ reports scientific verified-pass while explicitly denying authenticity and promotion  510ms\n     ✓ rejects legacy 51/50 chunking and true authenticity or promotion claims  453ms\n     ✓ rejects receipt/manifest swaps, malformed cells, and stale ordered-frame identity  554ms\n     ✓ keeps playback, seek, selection, and interpolation outside scientific evidence  1073ms\n ✓ scripts/evaluate-launcher.test.mjs (13 tests) 2412ms\n     ✓ binds CI source paths, bytes and modes to the declared GitHub commit  793ms\n ✓ lib/molecular/aqueous-dynamics-render-trajectory.test.ts (16 tests) 2438ms\n     ✓ is deterministic for the same accepted-step input  833ms\n     ✓ rejects nested source tampering after the attacker recomputes the outer bundle digest  439ms\n     ✓ requires local execution branding, then brands an exact frozen clone only after full replay  473ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-loopback-server-v046.test.mjs (5 tests) 2339ms\n     ✓ serves one authenticated packet, rejects replay, and zeroizes transferred storage  518ms\n     ✓ fails closed for cross-origin, query, range, body, OPTIONS, and host changes  458ms\n     ✓ zeroizes without serving when the controller closes early  458ms\n     ✓ bounds protocol errors, Expect continuations, and oversized headers without consumption  453ms\n     ✓ zeroizes every captured allocation after a deterministic pre-listen asset fault  451ms\n ✓ lib/simulation/nacl-water-interface-schemas-v0410.test.ts (6 tests) 2102ms\n     ✓ accepts the exact locked system and all three deterministic action decisions  1281ms\n     ✓ rejects malformed bindings, unlisted actions and forged solver/evidence observations  426ms\n ✓ scripts/atomistic/full-candidate-observer-vnext.test.mjs (113 tests) 1859ms\n ✓ scripts/atomistic/full-candidate-plan-policy.test.mjs (10 tests) 1953ms\n     ✓ integrates the frozen, not-run candidate state into atomistic validation output  718ms\n     ✓ uses strict AJV and freezes the schema bytes against permissive drift  603ms\n ✓ lib/simulation/atomistic-private-position-frame-v047.test.ts (4 tests) 2049ms\n     ✓ derives a frozen minimal single-frame contract with no private artifact tree  531ms\n     ✓ fails closed on extra keys, stale digests, and altered literal boundaries  513ms\n     ✓ owns one defensive positions copy and revokes it with deterministic zero-fill semantics  501ms\n     ✓ rejects altered, non-finite, shared, and wrong-sized position bytes  503ms\n ✓ scripts/atomistic/receipt-policy.test.mjs (16 tests) 1578ms\n ✓ lib/molecular/aqueous-dynamics-lab-component.test.ts (1 test) 1281ms\n     ✓ keeps play, seek, navigation, and WebGL RAF read-only after trajectory generation  1281ms\n ✓ scripts/atomistic/full-candidate-registration-source-policy.test.mjs (6 tests) 1376ms\n     ✓ binds exact regular bytes to one stage-0 index blob and staged tree  383ms\n ✓ lib/simulation/constrained-velocity-verlet.test.ts (12 tests) 1384ms\n     ✓ keeps a free rigid TIP3P geometry stable for 2,000 steps at dt=0.001 ps  502ms\n     ✓ keeps a free rigid TIP3P geometry stable for 2,000 steps at dt=0.002 ps  517ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs (20 tests) 1239ms\n     ✓ does not let repository-local or unregistered nested ignore rules hide new sources  973ms\n ✓ scripts/atomistic/full-candidate-execution-preflight-policy.test.mjs (94 tests) 899ms\n ✓ lib/structure/structure-document.test.ts (17 tests) 993ms\n     ✓ round-trips native export, rejects NUL, and persists the maximum semantic cardinality  673ms\n ✓ lib/simulation/aqueous-system-spec.test.ts (19 tests) 935ms\n     ✓ uses separate energy closure plus Reference-relative and CPU-binary32-ULP force criteria  377ms\n ✓ lib/simulation/aqueous-force-field.test.ts (6 tests) 944ms\n     ✓ matches central finite differences for every total-force component  721ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-openmm-webgl2-harness-v046.server.test.mjs (1 test) 939ms\n     ✓ composes the exact source export and browser bundle without claiming a draw  939ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-export-v046.server.test.mjs (1 test) 838ms\n     ✓ exports only the digest-bound positions derivative and revokes before listen  837ms\n ✓ lib/simulation/atomistic-trajectory-chunk.test.ts (5 tests) 735ms\n ✓ lib/molecular/aqueous-dynamics-webgl-trajectory-scene.test.ts (6 tests) 699ms\n ✓ lib/structure/custom-structure-workbench.test.ts (4 tests) 624ms\n     ✓ uses one shared endpoint datalist at 4096 atoms instead of per-row option explosions  500ms\n ✓ lib/simulation/molecular-world.test.ts (15 tests) 649ms\n     ✓ keeps isolated-system energy, momentum, COM and rigid geometry inside locked gates for 10,000 steps  543ms\n ✓ lib/simulation/aqueous-dynamics-convergence.test.ts (5 tests) 594ms\n ✓ lib/molecular/aqueous-dynamics-render-frame.test.ts (12 tests) 534ms\n ✓ lib/simulation/aqueous-dynamics-schemas.test.ts (8 tests) 527ms\n ✓ lib/simulation/aqueous-dynamics-world.test.ts (7 tests) 515ms\n ✓ lib/simulation/nacl-water-interface-import-receipt-schemas-v0411.test.ts (7 tests) 471ms\n     ✓ pins the no-LF numeric golden vector and complete canonical plan value  401ms\n ✓ scripts/atomistic/openmm/write-ci-evidence.test.mjs (60 tests) 451ms\n ✓ scripts/atomistic/openmm/export-nacl-water-interface-plan-v0411.test.mjs (5 tests) 454ms\n     ✓ prints only the fixed non-solver summary after CLI publication  404ms\n ✓ scripts/atomistic/openmm/private-browser-harness/compose-protected-browser-evidence-v049.test.mjs (24 tests) 423ms\n ✓ scripts/release-artifact.test.mjs (13 tests) 394ms\n ✓ lib/molecular/aqueous-dynamics-webgl-scene.test.ts (10 tests) 389ms\n ✓ scripts/atomistic/write-container-observation.test.mjs (14 tests) 315ms\n ✓ scripts/atomistic/random-tp-authority-request-policy.test.mjs (20 tests) 315ms\n ✓ scripts/atomistic/random-tp-rights-disposition-policy.test.mjs (14 tests) 293ms\n ✓ scripts/atomistic/runtime-input-contract.test.mjs (8 tests) 255ms\n ✓ scripts/workflow-policy.test.mjs (44 tests) 237ms\n ✓ lib/simulation/lennard-jones.test.ts (12 tests) 245ms\n ✓ lib/simulation/aqueous-system-spec-schemas.test.ts (7 tests) 227ms\n ✓ lib/simulation/periodic-atomistic-schemas.test.ts (5 tests) 203ms\n ✓ scripts/atomistic/openmm/private-browser-harness/chromium-v049-lock.test.mjs (3 tests) 164ms\n ✓ scripts/atomistic/openmm/fetch-ci-assets.test.mjs (12 tests) 205ms\n ✓ lib/simulation/aqueous-foundation-verification.test.ts (3 tests) 197ms\n ✓ scripts/atomistic/openmm/verify-control.test.mjs (3 tests) 196ms\n ✓ scripts/atomistic/full-candidate-metrics.test.mjs (11 tests) 172ms\n ✓ scripts/atomistic/openmm/private-browser-harness/build-private-browser-trajectory-client-v049.test.mjs (3 tests) 142ms\n ✓ lib/structure/custom-structure-webgl-component.test.ts (7 tests) 149ms\n ✓ lib/simulation/periodic-ewald.test.ts (10 tests) 129ms\n ✓ lib/simulation/aqueous-schemas.test.ts (4 tests) 116ms\n ✓ scripts/atomistic/openmm/private-browser-harness/fetch-private-chromium-v049.test.mjs (17 tests) 126ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-envelope-v046.test.mjs (6 tests) 101ms\n ✓ lib/simulation/periodic-coulomb-exceptions.test.ts (6 tests) 85ms\n ✓ scripts/atomistic/openmm/private-browser-harness/build-private-browser-client-v046.test.mjs (1 test) 87ms\n ✓ lib/molecular/periodic-atomistic-render-frame.test.ts (2 tests) 75ms\n ✓ scripts/atomistic/bootstrap-replica-receipt-policy.test.mjs (12 tests) 70ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-playwright-package-preflight-v049.test.mjs (10 tests) 66ms\n ✓ scripts/atomistic/inspect-full-candidate-registration.test.mjs (45 tests) 60ms\n ✓ scripts/release-cloudflare.test.mjs (9 tests) 63ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-chromium-runtime-preflight-v049.test.mjs (9 tests) 52ms\n ✓ lib/structure/structure-document-schema.test.ts (4 tests) 50ms\n ✓ scripts/atomistic/openmm/private-browser-harness/run-protected-browser-namespace-v049.test.mjs (10 tests) 43ms\n ✓ scripts/atomistic/private-full-candidate-handoff.test.mjs (10 tests) 44ms\n ✓ scripts/release-report.test.mjs (9 tests) 35ms\n ✓ scripts/atomistic/artifact-cache.test.mjs (4 tests) 31ms\n ✓ scripts/atomistic/inspect-full-candidate-github-readiness.test.mjs (4 tests) 28ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-production-boundary.test.mjs (2 tests) 26ms\n ✓ scripts/atomistic/openmm/control-metrics.test.mjs (7 tests) 25ms\n ✓ scripts/atomistic/verify-bootstrap-replicas.test.mjs (10 tests) 20ms\n ✓ lib/simulation/aqueous-topology.test.ts (7 tests) 19ms\n ✓ scripts/validate-production-isolation.test.mjs (3 tests) 21ms\n ✓ scripts/source-snapshot.test.mjs (3 tests) 14ms\n ✓ lib/simulation/rigid-constraints.test.ts (13 tests) 13ms\n ✓ scripts/atomistic/openmm/private-browser-harness/run-protected-private-browser-mode-v049.server.test.mjs (16 tests) 12ms\n ✓ lib/molecular/molecular-interactions.test.ts (11 tests) 11ms\n ✓ lib/structure/structure-render-model.test.ts (12 tests) 10ms\n ✓ app/components/molecular-visual-guides.test.ts (6 tests) 10ms\n ✓ scripts/atomistic/full-candidate-producer-outcome-policy.test.mjs (9 tests) 8ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-production-boundary-v049.test.mjs (3 tests) 9ms\n ✓ scripts/evaluation-report-boundary.test.mjs (4 tests) 7ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-observer-v049.test.mjs (65 tests) 5ms\n ✓ lib/simulation/periodic-cell.test.ts (15 tests) 5ms\n ✓ lib/simulation/periodic-atomistic-kernel.test.ts (8 tests) 4ms\n ✓ scripts/atomistic/openmm/openmm-tip3p-schemas.test.mjs (3 tests) 4ms\n ✓ lib/structure/strict-json.test.ts (15 tests) 4ms\n ✓ scripts/atomistic/full-candidate-github-evidence-policy.test.mjs (15 tests) 4ms\n ✓ scripts/atomistic/dataset-manifest.test.mjs (5 tests) 4ms\n ✓ scripts/atomistic/plan-policy.test.mjs (8 tests) 4ms\n ✓ lib/structure/custom-structure-boundary.test.ts (4 tests) 4ms\n ✓ scripts/comparator-evidence-policy.test.mjs (4 tests) 3ms\n ✓ lib/simulation/digest.test.ts (4 tests) 3ms\n ✓ lib/structure/element-catalog.test.ts (2 tests) 3ms\n ✓ lib/simulation/periodic-potentials.test.ts (5 tests) 2ms\n ✓ lib/molecular/aqueous-webgl-runtime-policy.test.ts (11 tests) 2ms\n ✓ lib/simulation/amber14-tip3p-parameters.test.ts (4 tests) 2ms\n ✓ scripts/github-release-policy.test.mjs (4 tests) 2ms\n ✓ lib/structure/structure-webgl-runtime-policy.test.ts (2 tests) 1ms\n ✓ scripts/source-scope.test.mjs (3 tests) 1ms\n ↓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-integration-v049.test.mjs (3 tests | 3 skipped)\n ↓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-manual-launcher-v049.test.mjs (1 test | 1 skipped)\n\n Test Files  124 passed | 2 skipped (126)\n      Tests  1418 passed | 5 skipped (1423)\n   Start at  14:55:42\n   Duration  642.39s (transform 1.82s, setup 0ms, import 43.11s, tests 573.34s, environment 927ms)\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/js-core.stderr.log",
+          "bytes": 198,
+          "sha256": "3646478b7d4b4c3af1d30447eed0f1599063cd08769f6b841ddff55f6edb6f17",
+          "rawText": "[vitest-pool]: Timeout terminating forks worker for test files /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/lib/simulation/atomistic-private-position-frame-v047.test.ts.\n"
+        }
+      },
+      {
+        "id": "syntax-checker",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--check",
+          "scripts/backend-migration/verify-r18a-origin-main-admission.mjs"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:55:41.842Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:55:41.862Z",
+        "elapsedSeconds": 0.02,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/syntax-checker.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/syntax-checker.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "syntax-test",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--check",
+          "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:55:41.862Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:55:41.885Z",
+        "elapsedSeconds": 0.023,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/syntax-test.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/syntax-test.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "schema-semantic-inventory",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission.mjs"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:55:41.885Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:55:42.084Z",
+        "elapsedSeconds": 0.199,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/schema-semantic-inventory.stdout.log",
+          "bytes": 338,
+          "sha256": "b4aae33d7b8fea1ef4eb6c9269da99a46de144c5e2a91eaa70344793ed12b59e",
+          "rawText": "{\"schemaVersion\":\"tf.backend-migration-admission-gate/0.1\",\"status\":\"pass-preparation-only\",\"releaseEligible\":false,\"ledgerRawDigest\":\"sha256:8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7\",\"schemaRawDigest\":\"sha256:6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc\",\"currentPathCount\":459,\"failures\":[]}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/schema-semantic-inventory.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "lint",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "lint"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:55:42.085Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:06.228Z",
+        "elapsedSeconds": 24.143,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/lint.stdout.log",
+          "bytes": 120,
+          "sha256": "cc13822689d692791d12d990ae04b914e6f199670a93ae08bf6b204a898d2643",
+          "rawText": "\n> tailing-future@0.4.0 lint\n> eslint app lib scripts eslint.config.mjs next.config.ts vite.config.ts vitest.config.ts\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/lint.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "typecheck",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:56:06.229Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:07.331Z",
+        "elapsedSeconds": 1.102,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/typecheck.stdout.log",
+          "bytes": 50,
+          "sha256": "8b4b2ee27ae77153016f3fdd94b58f1df761e4a9545841b1afcec5513ce148ed",
+          "rawText": "\n> tailing-future@0.4.0 typecheck\n> tsc --noEmit\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/typecheck.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "python",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:python"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:56:07.331Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:15.643Z",
+        "elapsedSeconds": 8.312,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/python.stdout.log",
+          "bytes": 896,
+          "sha256": "131efa21a978fa5fa63d23240fb203db2cd8b4749fdfa6e5280ce8a4e414ae3d",
+          "rawText": "\n> tailing-future@0.4.0 test:python\n> python3 -m unittest discover -s scripts/atomistic -p '*_test.py' && python3 -m unittest discover -s scripts/atomistic/openmm -p '*_test.py' && python3 scripts/safe_extract_zip_test.py\n\n{\"lockDigest\": \"sha256:8b7349e5a7016e69d77c77a38dd9f883d0a581e80bf2b2b2ab5fa93f76721645\", \"model\": \"mattersim\", \"wheelCount\": 11}\n{\"lockDigest\": \"sha256:c7c2faba66b2e77b5d204377240d0d90dbc6af01e3ea8ddaad8ae3ba66422eb6\", \"model\": \"mattersim\", \"wheelCount\": 11}\n{\"lockDigest\": \"sha256:3b10332ab73d71854ed82fa534d4f5b2d3f1cd9878a5c030f64380e909877d2b\", \"model\": \"mattersim\", \"wheelCount\": 10}\n{\"lockDigest\": \"sha256:9bd5a386255ad0ee6fdce64230d56aa73c7be744c775c3841d2ebcd0511947d2\", \"model\": \"mattersim\", \"wheelCount\": 8}\n{\"lockDigest\": \"sha256:efcfc7c8d54b0b3396258fbca3a053d40b65cdae03aa01e253df25caa8facdf9\", \"model\": \"mattersim\", \"wheelCount\": 8}\nSafely extracted 2 files\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/python.stderr.log",
+          "bytes": 640,
+          "sha256": "2ae3c299d5738408b949cda7b1c3eb8eb1f1714417d7f442fe8c6dbd3f4255e4",
+          "rawText": ".s.........................................................................................\n----------------------------------------------------------------------\nRan 91 tests in 1.426s\n\nOK (skipped=1)\n..........................................\n----------------------------------------------------------------------\nRan 42 tests in 6.078s\n\nOK\n../private/tmp/tf-backend-release-tools.re0t54/python/lib/python3.12/zipfile/__init__.py:1624: UserWarning: Duplicate name: 'dist/value'\n  return self._open_to_write(zinfo, force_zip64=force_zip64)\n.\n----------------------------------------------------------------------\nRan 3 tests in 0.023s\n\nOK\n"
+        }
+      },
+      {
+        "id": "atomistic-plan-runtime",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "atomistic:validate"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:56:15.644Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:18.685Z",
+        "elapsedSeconds": 3.041,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/atomistic-plan-runtime.stdout.log",
+          "bytes": 658,
+          "sha256": "34df31e785b057d49a8851ea353f1789aa0b5a7c328e5eb1241ea1a9c13fe1cb",
+          "rawText": "\n> tailing-future@0.4.0 atomistic:validate\n> node scripts/validate-atomistic-plan.mjs && node scripts/validate-atomistic-runtime-lock.mjs\n\nAtomistic plan: VALID · 2 pinned models · 2 benchmarks · 1 intentionally blocked artifact(s) · FULL CANDIDATE FROZEN 693×2 — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · RANDOM-TP RIGHTS 3/3 ABSTAIN · AUTHORITY REQUEST VALID — NOT AUTHORIZATION · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · PLAN ONLY — NO INFERENCE\nAtomistic runtime lock: VALID · bootstrap-runtime-frozen-not-reproduced · 2/2 accepted protected-main replicas · BOOTSTRAP RUNTIME FROZEN — NOT SCIENTIFICALLY REPRODUCED\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/atomistic-plan-runtime.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "production-build-isolation",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:56:18.686Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:21.889Z",
+        "elapsedSeconds": 3.203,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/production-build-isolation.stdout.log",
+          "bytes": 1317,
+          "sha256": "21775d9a284e46d561d8961d9691e5e7015d95b68e8037a700bfb4c5190952a0",
+          "rawText": "\n> tailing-future@0.4.0 build\n> vinext build && node scripts/validate-production-isolation.mjs\n\n\n  vinext build  (Vite 8.2.2)\n\n[1/5] analyze client references...\ntransforming...\n✓ 242 modules transformed.\nrendering chunks...\n✓ built in 300ms\n[2/5] analyze server references...\ntransforming...\n✓ 134 modules transformed.\nrendering chunks...\n✓ built in 530ms\n[3/5] build rsc environment...\ntransforming...\n✓ 234 modules transformed.\nrendering chunks...\ncomputing gzip size...\n✓ built in 233ms\n[4/5] build client environment...\ntransforming...\n✓ 178 modules transformed.\nrendering chunks...\ncomputing gzip size...\n✓ built in 378ms\n[5/5] build ssr environment...\ntransforming...\n✓ 140 modules transformed.\nrendering chunks...\ncomputing gzip size...\n✓ built in 378ms\n\u001b[0m\n  Route (app)\n  ─ ? /\n\n  ? Unknown\n\n  ? Some routes could not be classified. vinext currently uses static analysis\n    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.\n    Automatic classification will be improved in a future release.\n\n  Build complete. Run `vinext start` to start the production server.\n\nProduction isolation: PASS · 78 files · 5729883 bytes · sha256:4e31bb226b6bbf10f080ee6bf1b42af26a91659c0d3b406b1469ad43060d7c5d · public evaluation 4804 bytes / 8 forbidden fields absent\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/production-build-isolation.stderr.log",
+          "bytes": 360,
+          "sha256": "351b524197fb492920789369e7f1a271420c757633fbb553b280a181ac4c31a4",
+          "rawText": "[plugin builtin:vite-reporter] \n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n"
+        }
+      },
+      {
+        "id": "dependency-audit",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "audit",
+          "--json"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T10:56:21.890Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T10:56:22.917Z",
+        "elapsedSeconds": 1.027,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/dependency-audit.stdout.log",
+          "bytes": 366,
+          "sha256": "2a94f0ae3aa7c4bb462874ad55979c70252668c258c2d31a2d18aab33ff772a7",
+          "rawText": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 20,\n      \"dev\": 661,\n      \"optional\": 173,\n      \"peer\": 35,\n      \"peerOptional\": 0,\n      \"total\": 718\n    }\n  }\n}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/dependency-audit.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      },
+      {
+        "id": "observer-evaluator",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:js:observer-snapshot"
+        ],
+        "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a",
+        "startedAt": "2026-09-07T11:06:24.557Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "finishedAt": "2026-09-07T11:43:09.849Z",
+        "elapsedSeconds": 2205.292,
+        "stdout": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/observer-evaluator.stdout.log",
+          "bytes": 664,
+          "sha256": "fb0f060a74bb10d2538867891cd5769e9d958254c3d45701e405ffc5aae19ee9",
+          "rawText": "\n> tailing-future@0.4.0 test:js:observer-snapshot\n> vitest run --config vitest.config.ts scripts/evaluate-observer-snapshot.test.mjs\n\n\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\n ✓ scripts/evaluate-observer-snapshot.test.mjs (2 tests) 2204877ms\n     ✓ rejects the five enumerated pre-capture reviewed-source mutations without score promotion  915885ms\n     ✓ rejects a request-only authorization injection without score promotion  1288991ms\n\n Test Files  1 passed (1)\n      Tests  2 passed (2)\n   Start at  15:06:24\n   Duration  2204.95s (transform 12ms, setup 0ms, import 19ms, tests 2204.88s, environment 0ms)\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-admission-final-gates-7CyeZd/observer-evaluator.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "rawText": ""
+        }
+      }
+    ],
+    "releaseEligible": false,
+    "evaluatorPolicy": "Execute real evaluator through observer-snapshot temporary copies; never overwrite frozen main report files in the integration worktree.",
+    "candidateAfter": {
+      "pathCount": 4,
+      "totalBytes": 560939,
+      "canonicalBytes": 697,
+      "sha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+      "recordsRetainedInRawRunnerResult": 4
+    },
+    "legacyAfter": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "recordsRetainedInRawRunnerResult": 641
+    },
+    "candidateUnchanged": true,
+    "legacyUnchanged": true,
+    "finishedAt": "2026-09-07T11:43:09.953Z",
+    "status": "pass-bounded-preparation-gates-only",
+    "reviewInputs": [
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+        "mode": 420,
+        "size": 4806,
+        "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+        "mode": 420,
+        "size": 7584,
+        "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+        "mode": 420,
+        "size": 7566,
+        "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+        "mode": 420,
+        "size": 5167,
+        "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+        "mode": 420,
+        "size": 6330,
+        "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+        "mode": 420,
+        "size": 5705,
+        "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+      }
+    ],
+    "rawResultIdentity": {
+      "path": "/private/tmp/tf-admission-final-gates-7CyeZd/results.json",
+      "size": 309562,
+      "sha256": "b8a24c4032ca395a3c888eef65e3f324c3585c5c848a8700197243d1054faea0"
+    },
+    "runnerIdentity": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-admission-final-gates.mjs",
+      "mode": 420,
+      "size": 6551,
+      "sha256": "6e1da9999899394fddfe9cc98a56aed47603c40035d0b343f02cc28714a525b1"
+    },
+    "rawOutputBoundary": "Raw gate logs are test evidence, not a newly validated scientific dataset or industrial capability."
+  },
+  "gateSummary": {
+    "allApplicableBoundedPreparationGatesExitedZero": true,
+    "javascriptCore": {
+      "passedTests": 1418,
+      "skippedTests": 5,
+      "passedFiles": 124,
+      "skippedFiles": 2
+    },
+    "observerEvaluator": {
+      "passedTests": 2,
+      "skippedTests": 0,
+      "realEvaluatorInvocations": 6,
+      "baselineExpectedVerdict": "conditional",
+      "mutationsExpectedVerdict": "reject",
+      "noScorePromotion": true,
+      "publishedIntegrationReportsUnchanged": true
+    },
+    "python": {
+      "passedTests": 135,
+      "skippedTests": 1,
+      "suitesTotalTests": [
+        91,
+        42,
+        3
+      ]
+    },
+    "skipDisposition": [
+      {
+        "suite": "JavaScript",
+        "count": 1,
+        "reason": "Existing full-candidate case requires absent frozen Random-TP cache."
+      },
+      {
+        "suite": "JavaScript",
+        "count": 3,
+        "reason": "Existing private Chromium integration requires an explicitly configured browser executable."
+      },
+      {
+        "suite": "JavaScript",
+        "count": 1,
+        "reason": "Existing manual private-browser launcher is opt-in."
+      },
+      {
+        "suite": "Python",
+        "count": 1,
+        "reason": "Existing frozen Random-TP cache case has no local dataset cache."
+      }
+    ],
+    "skipsCountedAsPass": false,
+    "fullRandomTpExecutionPerformed": false,
+    "privateBrowserExecutionPerformed": false,
+    "dependencyAuditReportedVulnerabilities": 0,
+    "buildWarnings": [
+      "A client chunk exceeds 500 kB.",
+      "vinext cannot statically classify the root route."
+    ],
+    "workerShutdownWarningDisposition": "Recorded as SOFTWARE-P2-WORKER-SHUTDOWN-DELAY; root cause unresolved, not reproduced in two independent targeted reruns; no assertion failure observed.",
+    "mainFilesChanged": 0,
+    "legacyEnumeratedFilesChanged": 0,
+    "scientificValidationMaturityIncreased": false
+  },
+  "reviewEvidenceIdentities": [
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+      "mode": 420,
+      "size": 4806,
+      "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+      "mode": 420,
+      "size": 7584,
+      "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+      "mode": 420,
+      "size": 7566,
+      "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+      "mode": 420,
+      "size": 5167,
+      "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+      "mode": 420,
+      "size": 6330,
+      "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+      "mode": 420,
+      "size": 5705,
+      "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+    }
+  ],
+  "artifactVerificationPolicy": "The final review is one explicitly allowed review output, not a member of the four-file scientific-claim/inventory candidate. After assembling it, rerun strict JSON parsing, the actual-tree checker and the focused admission suite; this does not reinterpret historical passes as current release approval.",
+  "postAssemblyVerification": {
+    "status": "pass",
+    "actualInventory": {
+      "sourcePathCount": 460,
+      "status": "pass-preparation-only",
+      "releaseEligible": false,
+      "failures": []
+    },
+    "focusedAdmissionSuite": {
+      "passedTests": 20,
+      "skippedTests": 0,
+      "exitCode": 0,
+      "rawOutput": " ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs (20 tests) 1347ms\n     ✓ does not let repository-local or unregistered nested ignore rules hide new sources  1061ms\n\n Test Files  1 passed (1)\n      Tests  20 passed (20)\n   Start at  15:44:30\n   Duration  1.53s (transform 24ms, setup 0ms, import 116ms, tests 1.35s, environment 0ms)\n\n"
+    },
+    "gitDiffCheck": {
+      "exitCode": 0,
+      "scope": "Tracked changes; main source files are unchanged. Additive candidate files are covered by the admission checker and lint."
+    },
+    "strictReviewJson": {
+      "parsedFiles": 6,
+      "duplicateKeyNegativeControlRejected": true,
+      "exitCode": 0,
+      "rawOutput": "{\"reviewJsonFilesParsed\":6,\"duplicateKeyNegativeControlRejected\":true,\"status\":\"pass\"}\n"
+    },
+    "initialStrictParserInvocation": {
+      "exitCode": 1,
+      "reason": "Root diagnostic passed UTF-8 text to the existing byte-only parser. Corrected the invocation to supply Buffer bytes, with no source or parser change.",
+      "rawOutput": "file:///Users/tonywilliam/Documents/ChatGPT/Tailing%20Future-backend-release-r18a/scripts/atomistic/runtime-input-contract.mjs:195\n  if (!Buffer.isBuffer(bytes) && !(bytes instanceof Uint8Array)) throw new TypeError(`${label} must be bytes`);\n                                                                       ^\n\nTypeError: JSON input must be bytes\n    at parseJsonRejectDuplicateKeys (file:///Users/tonywilliam/Documents/ChatGPT/Tailing%20Future-backend-release-r18a/scripts/atomistic/runtime-input-contract.mjs:195:72)\n    at file:///Users/tonywilliam/Documents/ChatGPT/Tailing%20Future-backend-release-r18a/[eval1]:1:348\n    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)\n    at async node:internal/modules/esm/loader:230:26\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:227:20)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)\n\nNode.js v24.16.0\n"
+    },
+    "boundary": "These checks validate the artifact assembly and unchanged four-file candidate, not full release eligibility. No numeric, schema, checker or test source was changed after the final full gates."
+  }
+}

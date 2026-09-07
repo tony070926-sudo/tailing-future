@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "tf.backend-migration-builder-gates/0.1",
+  "date": "2026-09-07",
+  "builder": "/root/astra",
+  "coordinator": "/root",
+  "approval": false,
+  "releaseEligible": false,
+  "candidateFreeze": {
+    "frozenAt": "2026-09-07T10:36:56Z",
+    "protocol": "sha256(JSON.stringify(sorted records by path; record keys exactly path,mode,size,sha256; sha256 field is unprefixed hexadecimal))",
+    "canonicalBytes": 697,
+    "sha256": "14e272dd48b134fda469776d9dc6fc3957b8fd05f7c73c814491c53b349c562e",
+    "entries": [
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+        "mode": 420,
+        "size": 511225,
+        "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.1.schema.json",
+        "mode": 420,
+        "size": 9241,
+        "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "mode": 420,
+        "size": 24072,
+        "sha256": "499c73003eb35605350ccc6230d41673329625805c164d83497470f7897ee0f8"
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "mode": 420,
+        "size": 10632,
+        "sha256": "b95e41451a704f2f75e942363af38470ea93a598b0a18ed76a5b5e7601263d3e"
+      }
+    ]
+  },
+  "protocolCorrection": "Builder initially reported a 725-byte serialization using four sha256:-prefixed field values (digest 5b98a7f92b3b0d948db95b0d8886df7717c7e0f8efdc241fc2484bf7061f52e1). Coordinator independently recomputed and Builder confirmed the scope protocol is bare hex, 697 bytes and 14e272dd... No candidate file bytes changed.",
+  "reviewInputs": [
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+      "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+      "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+    }
+  ],
+  "runtime": {
+    "node": "24.16.0",
+    "npm": "11.13.0",
+    "gh": "2.98.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "provisioningEvidence": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json"
+  },
+  "coordinatorObservedGates": [
+    {
+      "commands": [
+        "node --check scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "node --check scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "node scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "node node_modules/vitest/vitest.mjs run --config vitest.config.ts scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs"
+      ],
+      "exitCode": 0,
+      "rawOutput": "{\"schemaVersion\":\"tf.backend-migration-admission-gate/0.1\",\"status\":\"pass-preparation-only\",\"releaseEligible\":false,\"ledgerRawDigest\":\"sha256:8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7\",\"schemaRawDigest\":\"sha256:6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc\",\"currentPathCount\":455,\"failures\":[]}\n\n RUN  v4.1.11 /Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\n\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs (17 tests) 227ms\n\n Test Files  1 passed (1)\n      Tests  17 passed (17)\n   Start at  14:38:59\n   Duration  402ms (transform 25ms, setup 0ms, import 115ms, tests 227ms, environment 0ms)\n\n"
+    },
+    {
+      "commands": [
+        "npm run lint",
+        "npm run typecheck",
+        "npm run atomistic:validate",
+        "npm run build"
+      ],
+      "exitCode": 0,
+      "rawOutput": "\n> tailing-future@0.4.0 lint\n> eslint app lib scripts eslint.config.mjs next.config.ts vite.config.ts vitest.config.ts\n\n\n> tailing-future@0.4.0 typecheck\n> tsc --noEmit\n\n\n> tailing-future@0.4.0 atomistic:validate\n> node scripts/validate-atomistic-plan.mjs && node scripts/validate-atomistic-runtime-lock.mjs\n\nAtomistic plan: VALID · 2 pinned models · 2 benchmarks · 1 intentionally blocked artifact(s) · FULL CANDIDATE FROZEN 693×2 — NOT RUN · RUNTIME INPUTS BYTE-FROZEN · RANDOM-TP RIGHTS 3/3 ABSTAIN · AUTHORITY REQUEST VALID — NOT AUTHORIZATION · SHARED-HOST VNEXT OBSERVER FIXTURE ONLY · DISPATCH BLOCKED · PLAN ONLY — NO INFERENCE\nAtomistic runtime lock: VALID · bootstrap-runtime-frozen-not-reproduced · 2/2 accepted protected-main replicas · BOOTSTRAP RUNTIME FROZEN — NOT SCIENTIFICALLY REPRODUCED\n\n> tailing-future@0.4.0 build\n> vinext build && node scripts/validate-production-isolation.mjs\n\n\n  vinext build  (Vite 8.2.2)\n\n[1/5] analyze client references...\ntransforming...\n✓ 242 modules transformed.\nrendering chunks...\n✓ built in 272ms\n[2/5] analyze server references...\ntransforming...\n✓ 134 modules transformed.\nrendering chunks...\n✓ built in 525ms\n[3/5] build rsc environment...\ntransforming...\n✓ 234 modules transformed.\nrendering chunks...\ncomputing gzip size...\n✓ built in 236ms\n[4/5] build client environment...\ntransforming...\n✓ 178 modules transformed.\nrendering chunks...\ncomputing gzip size...\n[plugin builtin:vite-reporter] \n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 369ms\n[5/5] build ssr environment...\ntransforming...\n✓ 140 modules transformed.\nrendering chunks...\ncomputing gzip size...\n✓ built in 355ms\n\u001b[0m\n  Route (app)\n  ─ ? /\n\n  ? Unknown\n\n  ? Some routes could not be classified. vinext currently uses static analysis\n    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.\n    Automatic classification will be improved in a future release.\n\n  Build complete. Run `vinext start` to start the production server.\n\nProduction isolation: PASS · 78 files · 5729883 bytes · sha256:67b536bb9011d6a8d725e0a49e992b98d589b688656b6cb86c46a273104c18ca · public evaluation 4804 bytes / 8 forbidden fields absent\n"
+    }
+  ],
+  "preFreezeSelfCheckDispositions": [
+    "Uniformly check every current file for excluded payload hashes, including exact allowed review paths.",
+    "Read known legacy-only paths directly from the filesystem; Git ignore rules cannot establish their absence.",
+    "Accept legitimate empty regular source files; preserve fixed bounded reads.",
+    "Production byte inspection has no caller-selectable frozen-identity bypass."
+  ],
+  "testCancellation": "A duplicate npm test launched by Builder was terminated by Builder; incomplete output is not counted as test evidence.",
+  "limitations": [
+    "This is an inventory-integrity candidate, not migration completion, licensing clearance, a physics or causal validation, or release approval.",
+    "Latest-main baseline tests and legacy runtime diagnostics in preflight are not a full frozen-candidate regression run.",
+    "Formal independent reviews and final post-review gates remain pending.",
+    "Non-R12 migration, versioned report/release integration, R17b private runtime successor and PFHub7 source notices remain release blockers."
+  ]
+}

@@ -15,6 +15,13 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // /0.3 executes both unchanged predecessor suites in verified historical
+    // trees. Their actual-tree assertions cannot describe this newer base.
+    exclude: [
+      '**/node_modules/**',
+      'scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs',
+      'scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs',
+    ],
     testTimeout: 20_000,
     // Several suites execute long, CPU-bound molecular trajectories. Running
     // those files concurrently makes wall-clock time depend on host load and
