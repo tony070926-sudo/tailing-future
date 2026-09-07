@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import {
   chmod,
   link,
@@ -16,10 +17,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
+  DETERMINISM_ROOTS_CONTRACT_PATH,
+  DETERMINISM_ROOTS_CONTRACT_RAW_DIGEST,
+  DETERMINISM_ROOTS_CONTRACT_SCHEMA_PATH,
+  DETERMINISM_ROOTS_CONTRACT_SCHEMA_RAW_DIGEST,
+  DETERMINISM_ROOTS_CONTRACT_SCHEMA_SEMANTIC_DIGEST,
+  DETERMINISM_ROOTS_CONTRACT_SEMANTIC_DIGEST,
   OBSERVER_CONTRACT_PATH,
   OBSERVER_CONTRACT_RAW_DIGEST,
   OBSERVER_CONTRACT_SCHEMA_PATH,
   OBSERVER_RECEIPT_SCHEMA_PATH,
+  OBSERVER_RECEIPT_SCHEMA_RAW_DIGEST,
+  OBSERVER_RECEIPT_SCHEMA_SEMANTIC_DIGEST,
   OBSERVER_RANDOM_TP_ID_MANIFEST_PATH,
   OBSERVER_WORKFLOW_RAW_DIGEST,
   OBSERVER_WORKFLOW_SIZE_BYTES,
@@ -28,40 +37,141 @@ import {
   assessCalculatorNativeStressForSymmetry,
   buildFixtureReceipt,
   buildSyntheticCampaignFixture,
+  canonicalDeterminismRoots,
+  canonicalProvenancePayload,
   canonicalScientificPayload,
   forceRichardson,
+  inspectDeterminismRootsContractBytes,
+  inspectDeterminismRootsSchemaBytes,
   inspectObserverContractBytes,
+  inspectObserverReceiptSchemaBytes,
   inspectRandomTpIdManifestBytes,
   inspectObserverWorkflowSource,
   nextBinary64,
+  parseExecutionProvenanceForDeterminism,
+  parsePredictionJsonlForDeterminism,
   passesAbsoluteRelative,
   passesStressSymmetry,
   sha256,
   stressRichardson,
   stressSymmetryResidual,
   validateDeterminismFixture,
+  validateDeterminismRootsContractSchema,
+  validateDeterminismRootsContractSemantics,
   validateFixtureReceipt,
   validateObserverContractRepository,
   validateObserverContractSchema,
   validateObserverContractSemantics,
   validateObserverSourceSetRepository,
   validateObserverWorkflowSourceRepository,
+  validateScientificPredictionRecords,
   validateSyntheticCampaignFixture,
   validateSyntheticHostObservations,
 } from './full-candidate-observer-vnext.mjs';
-import { parseJsonRejectingDuplicateMembers } from './runtime-lock-policy.mjs';
+import {
+  canonicalJson,
+  parseJsonRejectingDuplicateMembers,
+} from './runtime-lock-policy.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const contractBytes = await readFile(path.join(root, OBSERVER_CONTRACT_PATH));
 const contractSchemaBytes = await readFile(path.join(root, OBSERVER_CONTRACT_SCHEMA_PATH));
 const receiptSchemaBytes = await readFile(path.join(root, OBSERVER_RECEIPT_SCHEMA_PATH));
+const determinismContractBytes = await readFile(
+  path.join(root, DETERMINISM_ROOTS_CONTRACT_PATH),
+);
+const determinismSchemaBytes = await readFile(
+  path.join(root, DETERMINISM_ROOTS_CONTRACT_SCHEMA_PATH),
+);
 const workflowBytes = await readFile(path.join(root, OBSERVER_WORKFLOW_SOURCE_PATH));
 const idManifestBytes = await readFile(path.join(root, OBSERVER_RANDOM_TP_ID_MANIFEST_PATH));
+const frozenRunnerSource = await readFile(
+  path.join(root, 'scripts/atomistic/v2/run_model.py'),
+  'utf8',
+);
+const frozenRuntimeContractSource = await readFile(
+  path.join(root, 'scripts/atomistic/v2/runtime_contract.py'),
+  'utf8',
+);
 const contract = parseJsonRejectingDuplicateMembers(contractBytes);
 const contractSchema = parseJsonRejectingDuplicateMembers(contractSchemaBytes);
 const receiptSchema = parseJsonRejectingDuplicateMembers(receiptSchemaBytes);
+const determinismContract = parseJsonRejectingDuplicateMembers(determinismContractBytes);
+const determinismSchema = parseJsonRejectingDuplicateMembers(determinismSchemaBytes);
 const workflowSource = workflowBytes.toString('utf8');
 const clone = (value) => structuredClone(value);
+const predictionJsonl = (records) => Buffer.from(
+  `${records.map((record) => canonicalJson(record)).join('\n')}\n`,
+  'utf8',
+);
+const provenanceJson = (provenance) => Buffer.from(
+  `${canonicalJson(provenance)}\n`,
+  'utf8',
+);
+const rebindExecutionProvenance = (records, provenance, mutate) => {
+  mutate(provenance.environmentBinding, provenance.hostObservation);
+  provenance.environmentSha256 = sha256(Buffer.from(
+    canonicalJson(provenance.environmentBinding),
+    'utf8',
+  ));
+  records.forEach((record) => {
+    record.environmentSha256 = provenance.environmentSha256;
+  });
+};
+const canonicalBytesWithSpans = (value, capture) => {
+  const chunks = [];
+  const spans = [];
+  let offset = 0;
+  const append = (source) => {
+    chunks.push(source);
+    offset += Buffer.byteLength(source, 'utf8');
+  };
+  const visit = (entry, pathParts) => {
+    if (entry === null) {
+      append('null');
+      return;
+    }
+    if (Array.isArray(entry)) {
+      append('[');
+      entry.forEach((child, index) => {
+        if (index > 0) append(',');
+        visit(child, [...pathParts, index]);
+      });
+      append(']');
+      return;
+    }
+    if (typeof entry === 'object') {
+      append('{');
+      Object.keys(entry).sort().forEach((key, index) => {
+        if (index > 0) append(',');
+        append(`${JSON.stringify(key)}:`);
+        visit(entry[key], [...pathParts, key]);
+      });
+      append('}');
+      return;
+    }
+    if (typeof entry === 'number' && !Number.isFinite(entry)) {
+      throw new TypeError('non-finite scalar in test canonicalizer');
+    }
+    const normalized = typeof entry === 'number' && Object.is(entry, -0) ? 0 : entry;
+    const encoded = JSON.stringify(normalized);
+    if (encoded === undefined) throw new TypeError('unsupported scalar in test canonicalizer');
+    const start = offset;
+    append(encoded);
+    if (capture(pathParts, normalized)) {
+      spans.push({ pathParts, start, end: offset, value: normalized });
+    }
+  };
+  visit(value, []);
+  return { bytes: Buffer.from(chunks.join(''), 'utf8'), spans };
+};
+const sha256WithReplacement = (bytes, { start, end }, replacement) => {
+  const hash = createHash('sha256');
+  hash.update(bytes.subarray(0, start));
+  hash.update(Buffer.from(replacement, 'utf8'));
+  hash.update(bytes.subarray(end));
+  return `sha256:${hash.digest('hex')}`;
+};
 const FIXTURE_COMMAND_IN_SOURCE =
   'node scripts/atomistic/full-candidate-observer-vnext.mjs --emit-fixture';
 const CHECKOUT_ACTION_IN_SOURCE =
@@ -71,6 +181,8 @@ const reviewedSourceBytes = new Map([
   [OBSERVER_WORKFLOW_SOURCE_PATH, workflowBytes],
   [OBSERVER_CONTRACT_SCHEMA_PATH, contractSchemaBytes],
   [OBSERVER_RECEIPT_SCHEMA_PATH, receiptSchemaBytes],
+  [DETERMINISM_ROOTS_CONTRACT_PATH, determinismContractBytes],
+  [DETERMINISM_ROOTS_CONTRACT_SCHEMA_PATH, determinismSchemaBytes],
 ]);
 
 async function createReviewedSourceRepository(prefix = 'tf-observer-sources-') {
@@ -100,6 +212,24 @@ describe('full-candidate vNext fixture-only observer contract', () => {
     expect(sha256(workflowBytes)).toBe(OBSERVER_WORKFLOW_RAW_DIGEST);
     expect(OBSERVER_WORKFLOW_SOURCE_PATH.startsWith('.github/workflows/')).toBe(false);
     expect(inspectRandomTpIdManifestBytes(idManifestBytes).failures).toEqual([]);
+    const determinismInspection = inspectDeterminismRootsContractBytes(
+      determinismContractBytes,
+    );
+    expect(determinismInspection.failures).toEqual([]);
+    expect(determinismInspection.rawDigest).toBe(DETERMINISM_ROOTS_CONTRACT_RAW_DIGEST);
+    expect(determinismInspection.semanticDigest)
+      .toBe(DETERMINISM_ROOTS_CONTRACT_SEMANTIC_DIGEST);
+    expect(sha256(determinismSchemaBytes))
+      .toBe(DETERMINISM_ROOTS_CONTRACT_SCHEMA_RAW_DIGEST);
+    expect(sha256(Buffer.from(canonicalJson(determinismSchema), 'utf8')))
+      .toBe(DETERMINISM_ROOTS_CONTRACT_SCHEMA_SEMANTIC_DIGEST);
+    expect(sha256(Buffer.from(canonicalJson(receiptSchema), 'utf8')))
+      .toBe(OBSERVER_RECEIPT_SCHEMA_SEMANTIC_DIGEST);
+    expect(validateDeterminismRootsContractSchema(
+      determinismContract,
+      determinismSchema,
+    )).toEqual([]);
+    expect(validateDeterminismRootsContractSemantics(determinismContract)).toEqual([]);
     const mutatedIdManifest = Buffer.from(idManifestBytes.toString('utf8').replace(
       'random-TP-000000',
       'random-TP-999999',
@@ -111,6 +241,8 @@ describe('full-candidate vNext fixture-only observer contract', () => {
       root,
       contractSchemaBytes,
       receiptSchemaBytes,
+      determinismContractBytes,
+      determinismSchemaBytes,
       workflowBytes,
       requireWorkflowGitIndex: false,
     });
@@ -124,6 +256,116 @@ describe('full-candidate vNext fixture-only observer contract', () => {
     ));
     expect(inspectObserverContractBytes(duplicated, { enforceFrozenDigest: false })
       .failures.join('\n')).toMatch(/strict JSON failed.*duplicate/i);
+  });
+
+  it('binds determinism-root raw and semantic bytes and rejects duplicate contract/schema members', () => {
+    const whitespaceDrift = Buffer.concat([
+      determinismContractBytes,
+      Buffer.from(' ', 'utf8'),
+    ]);
+    const whitespaceInspection = inspectDeterminismRootsContractBytes(whitespaceDrift);
+    expect(whitespaceInspection.failures.join('\n')).toMatch(/rawDigest/);
+    expect(whitespaceInspection.failures.join('\n')).not.toMatch(/semanticDigest/);
+
+    const keyReorderedBytes = Buffer.from(JSON.stringify(Object.fromEntries(
+      Object.entries(determinismContract).reverse(),
+    )), 'utf8');
+    const keyReorderedInspection = inspectDeterminismRootsContractBytes(
+      keyReorderedBytes,
+    );
+    expect(keyReorderedInspection.rawDigest).not.toBe(DETERMINISM_ROOTS_CONTRACT_RAW_DIGEST);
+    expect(keyReorderedInspection.semanticDigest)
+      .toBe(DETERMINISM_ROOTS_CONTRACT_SEMANTIC_DIGEST);
+    expect(keyReorderedInspection.failures.join('\n')).toMatch(/rawDigest/);
+    expect(keyReorderedInspection.failures.join('\n')).not.toMatch(/semanticDigest/);
+
+    const semanticDrift = Buffer.from(determinismContractBytes.toString('utf8').replace(
+      'Define closed, bounded and separately rooted',
+      'Define closed, bounded and distinctly rooted',
+    ));
+    const semanticInspection = inspectDeterminismRootsContractBytes(semanticDrift);
+    expect(semanticInspection.failures.join('\n')).toMatch(/rawDigest/);
+    expect(semanticInspection.failures.join('\n')).toMatch(/semanticDigest/);
+
+    const duplicateContract = Buffer.from(determinismContractBytes.toString('utf8').replace(
+      '"schemaVersion": "tf.atomistic-full-candidate-determinism-roots/0.1",',
+      '"schemaVersion": "forged",\n  "schemaVersion": "tf.atomistic-full-candidate-determinism-roots/0.1",',
+    ));
+    expect(inspectDeterminismRootsContractBytes(
+      duplicateContract,
+      { enforceFrozenDigest: false },
+    ).failures.join('\n')).toMatch(/strict JSON failed.*duplicate/i);
+    expect(inspectDeterminismRootsContractBytes(Buffer.alloc(1_000_001)).failures.join('\n'))
+      .toMatch(/byte limit exceeded/);
+
+    const duplicateSchema = Buffer.from(determinismSchemaBytes.toString('utf8').replace(
+      '"$schema": "https://json-schema.org/draft/2020-12/schema",',
+      '"$schema": "forged",\n  "$schema": "https://json-schema.org/draft/2020-12/schema",',
+    ));
+    expect(() => parseJsonRejectingDuplicateMembers(duplicateSchema)).toThrow(/duplicate/i);
+  });
+
+  it('strictly binds and bounds the determinism-root schema bytes', () => {
+    const baseline = inspectDeterminismRootsSchemaBytes(determinismSchemaBytes);
+    expect(baseline.failures).toEqual([]);
+    expect(baseline.rawDigest).toBe(DETERMINISM_ROOTS_CONTRACT_SCHEMA_RAW_DIGEST);
+    expect(baseline.semanticDigest)
+      .toBe(DETERMINISM_ROOTS_CONTRACT_SCHEMA_SEMANTIC_DIGEST);
+
+    const whitespace = inspectDeterminismRootsSchemaBytes(Buffer.concat([
+      determinismSchemaBytes,
+      Buffer.from(' ', 'utf8'),
+    ]));
+    expect(whitespace.failures.join('\n')).toMatch(/rawDigest/);
+    expect(whitespace.failures.join('\n')).not.toMatch(/semanticDigest/);
+    const semantic = inspectDeterminismRootsSchemaBytes(Buffer.from(
+      determinismSchemaBytes.toString('utf8').replace(
+        'Closed, fixture-only and dispatch-disabled rules',
+        'Closed, fixture-only, strictly dispatch-disabled rules',
+      ),
+    ));
+    expect(semantic.failures.join('\n')).toMatch(/rawDigest/);
+    expect(semantic.failures.join('\n')).toMatch(/semanticDigest/);
+    const duplicate = inspectDeterminismRootsSchemaBytes(Buffer.from(
+      determinismSchemaBytes.toString('utf8').replace(
+        '"$schema": "https://json-schema.org/draft/2020-12/schema",',
+        '"$schema": "forged",\n  "$schema": "https://json-schema.org/draft/2020-12/schema",',
+      ),
+    ));
+    expect(duplicate.failures.join('\n')).toMatch(/strict JSON\/schema failed.*duplicate/i);
+    expect(inspectDeterminismRootsSchemaBytes(Buffer.alloc(1_000_001)).failures.join('\n'))
+      .toMatch(/byte limit exceeded/);
+  });
+
+  it('strictly binds and bounds the changed host-observation schema bytes', () => {
+    const baseline = inspectObserverReceiptSchemaBytes(receiptSchemaBytes);
+    expect(baseline.failures).toEqual([]);
+    expect(baseline.rawDigest).toBe(OBSERVER_RECEIPT_SCHEMA_RAW_DIGEST);
+    expect(baseline.semanticDigest).toBe(OBSERVER_RECEIPT_SCHEMA_SEMANTIC_DIGEST);
+
+    const whitespace = inspectObserverReceiptSchemaBytes(Buffer.concat([
+      receiptSchemaBytes,
+      Buffer.from(' ', 'utf8'),
+    ]));
+    expect(whitespace.failures.join('\n')).toMatch(/rawDigest/);
+    expect(whitespace.failures.join('\n')).not.toMatch(/semanticDigest/);
+    const semantic = inspectObserverReceiptSchemaBytes(Buffer.from(
+      receiptSchemaBytes.toString('utf8').replace(
+        'A fixture-only, non-scientific and non-promotional receipt.',
+        'A strict fixture-only, non-scientific and non-promotional receipt.',
+      ),
+    ));
+    expect(semantic.failures.join('\n')).toMatch(/rawDigest/);
+    expect(semantic.failures.join('\n')).toMatch(/semanticDigest/);
+    const duplicate = inspectObserverReceiptSchemaBytes(Buffer.from(
+      receiptSchemaBytes.toString('utf8').replace(
+        '"$schema": "https://json-schema.org/draft/2020-12/schema",',
+        '"$schema": "forged",\n  "$schema": "https://json-schema.org/draft/2020-12/schema",',
+      ),
+    ));
+    expect(duplicate.failures.join('\n')).toMatch(/strict JSON\/schema failed.*duplicate/i);
+    expect(inspectObserverReceiptSchemaBytes(Buffer.alloc(1_000_001)).failures.join('\n'))
+      .toMatch(/byte limit exceeded/);
   });
 
   it.each([
@@ -197,6 +439,580 @@ describe('full-candidate vNext fixture-only observer contract', () => {
     });
     expect(result.failures.join('\n')).toMatch(/observer\.contract\.rawDigest/);
     expect(result.failures.join('\n')).toMatch(/observer\.contract\.topology\.executionOrder\[0\]\.adapterRequests/);
+  });
+
+  it.each([
+    ['scientific field omission', (candidate) => {
+      candidate.scientificProjection.includedRecordFields.pop();
+    }, /scientificProjection/],
+    ['provenance field omission', (candidate) => {
+      candidate.provenanceProjection.topLevelFields.pop();
+    }, /provenanceProjection/],
+    ['environment reclassified as scientific', (candidate) => {
+      candidate.scientificProjection.includedRecordFields.push('environmentSha256');
+    }, /scientificProjection/],
+    ['nonfinite permission', (candidate) => {
+      candidate.inputContract.nonfiniteNumbersAllowed = true;
+    }, /nonfiniteNumbersAllowed/],
+    ['nonfinite byte bound', (candidate) => {
+      candidate.inputContract.maximumExecutionProvenanceBytes.value = Number.NaN;
+    }, /maximumExecutionProvenanceBytes/],
+    ['scientific byte unit', (candidate) => {
+      candidate.scientificProjection.maximumCanonicalBytes.unit = 'record';
+    }, /maximumCanonicalBytes.*unit/],
+    ['force basis', (candidate) => {
+      candidate.quantityContract.forcesEvPerAngstrom.basis = '';
+    }, /quantityContract.*forcesEvPerAngstrom.*basis/],
+    ['dispatch claim', (candidate) => {
+      candidate.claims.dispatchEligible = true;
+    }, /claims/],
+    ['schema extension', (candidate) => {
+      candidate.unreviewed = true;
+    }, /unreviewed/],
+  ])('fails closed on determinism-root contract %s', (_label, mutate, expected) => {
+    const candidate = clone(determinismContract);
+    mutate(candidate);
+    expect(validateDeterminismRootsContractSchema(candidate, determinismSchema).join('\n'))
+      .toMatch(expected);
+    expect(validateDeterminismRootsContractSemantics(candidate).join('\n'))
+      .toMatch(expected);
+  });
+});
+
+describe('full-candidate scientific and provenance projection roots', () => {
+  it('accepts the exact rich environment preimage shape emitted by the frozen v2 runner', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    const environmentBinding = fixture.authoritativeProvenance.environmentBinding;
+    expect(Object.keys(environmentBinding).sort())
+      .toEqual([...determinismContract.inputContract.environmentBindingFields].sort());
+    expect(Object.keys(environmentBinding.containerIdentity).sort())
+      .toEqual([...determinismContract.inputContract.containerIdentityFields].sort());
+    expect(Object.keys(environmentBinding.networkProofStart).sort())
+      .toEqual([...determinismContract.inputContract.networkProofFields].sort());
+    expect(Object.keys(environmentBinding.networkProofEnd).sort())
+      .toEqual([...determinismContract.inputContract.networkProofFields].sort());
+    environmentBinding.networkProofStart.probes.forEach((probe) => {
+      expect(Object.keys(probe).sort())
+        .toEqual([...determinismContract.inputContract.networkProbeFields].sort());
+    });
+    expect(environmentBinding).not.toHaveProperty('containerId');
+    expect(fixture.authoritativeProvenance.environmentSha256).toBe(sha256(Buffer.from(
+      canonicalJson(environmentBinding),
+      'utf8',
+    )));
+
+    const block = frozenRunnerSource.match(
+      /        environment_binding = \{([\s\S]*?)\n        \}\n        environment_sha256/,
+    );
+    expect(block).not.toBeNull();
+    const claimsOffset = block[1].indexOf('**claims');
+    expect(claimsOffset).toBeGreaterThan(0);
+    const explicitKeys = [...block[1].matchAll(/"([A-Za-z0-9_]+)"\s*:/g)];
+    const runnerFields = [
+      ...explicitKeys.filter((match) => match.index < claimsOffset).map((match) => match[1]),
+      'evidenceClass',
+      'promotionEligible',
+      'comparable',
+      'reproduced',
+      ...explicitKeys.filter((match) => match.index > claimsOffset).map((match) => match[1]),
+    ];
+    expect(runnerFields).toEqual(
+      determinismContract.inputContract.environmentBindingFields,
+    );
+    expect(frozenRuntimeContractSource).toMatch(
+      /def canonical_json_bytes[\s\S]*?allow_nan=False[\s\S]*?separators=\(",", ":"\)[\s\S]*?sort_keys=True/,
+    );
+    expect(() => canonicalProvenancePayload(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    )).not.toThrow();
+  });
+
+  it('matches the frozen v2 Python environment digest for both model bindings', () => {
+    const pythonSource = [
+      'import json, runpy, sys',
+      'runtime = runpy.run_path(sys.argv[1])',
+      'value = json.load(sys.stdin)',
+      'sys.stdout.write(runtime["sha256_json"](value))',
+    ].join('; ');
+    const fixture = buildSyntheticCampaignFixture(contract);
+    for (const model of fixture.models) {
+      const provenance = model.authoritativeProvenance;
+      const reorderedBinding = Object.fromEntries(
+        Object.entries(provenance.environmentBinding).reverse(),
+      );
+      const pythonDigest = execFileSync('python3', [
+        '-c',
+        pythonSource,
+        path.join(root, 'scripts/atomistic/v2/runtime_contract.py'),
+      ], {
+        encoding: 'utf8',
+        env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' },
+        input: `${JSON.stringify(reorderedBinding)}\n`,
+        timeout: 10_000,
+      }).trim();
+      expect(pythonDigest).toBe(provenance.environmentSha256);
+      expect(pythonDigest).toBe(sha256(Buffer.from(
+        canonicalJson(provenance.environmentBinding),
+        'utf8',
+      )));
+    }
+  });
+
+  it('canonicalizes environment-binding key reorder without changing its semantic digest', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    const reorderedProvenance = clone(fixture.authoritativeProvenance);
+    reorderedProvenance.environmentBinding = Object.fromEntries(
+      Object.entries(reorderedProvenance.environmentBinding).reverse(),
+    );
+    expect(Object.keys(reorderedProvenance.environmentBinding))
+      .not.toEqual(Object.keys(fixture.authoritativeProvenance.environmentBinding));
+    expect(sha256(Buffer.from(
+      canonicalJson(reorderedProvenance.environmentBinding),
+      'utf8',
+    ))).toBe(fixture.authoritativeProvenance.environmentSha256);
+    expect(canonicalProvenancePayload(
+      fixture.authoritative,
+      reorderedProvenance,
+    )).toEqual(canonicalProvenancePayload(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    ));
+  });
+
+  it('keeps scientific bytes/root stable across fresh-container provenance and changes the provenance bytes/root', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    const authoritative = canonicalDeterminismRoots(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    );
+    const repeat = canonicalDeterminismRoots(
+      fixture.repeat,
+      fixture.repeatProvenance,
+    );
+
+    expect(authoritative.scientific.bytes).toEqual(repeat.scientific.bytes);
+    expect(authoritative.scientific.root).toBe(repeat.scientific.root);
+    expect(authoritative.provenance.bytes).not.toEqual(repeat.provenance.bytes);
+    expect(authoritative.provenance.root).not.toBe(repeat.provenance.root);
+    expect(authoritative.scientific.bytes.toString('utf8')).not.toContain(
+      fixture.authoritativeProvenance.environmentSha256,
+    );
+    expect(authoritative.scientific.bytes.toString('utf8')).not.toContain(
+      fixture.authoritativeProvenance.hostObservation.containerId,
+    );
+    expect(authoritative.scientific.bytes.toString('utf8')).not.toContain(
+      fixture.authoritativeProvenance.hostObservation.networkNamespaceIdentity,
+    );
+    expect(authoritative.provenance.bytes.toString('utf8')).toContain(
+      fixture.authoritativeProvenance.environmentSha256,
+    );
+    expect(authoritative.provenance.bytes.toString('utf8')).toContain(
+      fixture.authoritativeProvenance.hostObservation.containerId,
+    );
+    expect(authoritative.provenance.bytes.toString('utf8')).toContain(
+      fixture.authoritativeProvenance.hostObservation.networkNamespaceIdentity,
+    );
+    const containerOnlyRecords = clone(fixture.authoritative);
+    const containerOnlyProvenance = clone(fixture.authoritativeProvenance);
+    rebindExecutionProvenance(
+      containerOnlyRecords,
+      containerOnlyProvenance,
+      (_environmentBinding, hostObservation) => {
+        hostObservation.containerId = 'fixture-mattersim-container-only';
+      },
+    );
+    const containerOnly = canonicalDeterminismRoots(
+      containerOnlyRecords,
+      containerOnlyProvenance,
+    );
+    expect(containerOnly.scientific.bytes).toEqual(authoritative.scientific.bytes);
+    expect(containerOnly.scientific.root).toBe(authoritative.scientific.root);
+    expect(containerOnly.provenance.root).not.toBe(authoritative.provenance.root);
+
+    const namespaceOnlyRecords = clone(fixture.authoritative);
+    const namespaceOnlyProvenance = clone(fixture.authoritativeProvenance);
+    rebindExecutionProvenance(
+      namespaceOnlyRecords,
+      namespaceOnlyProvenance,
+      (environmentBinding, hostObservation) => {
+        environmentBinding.networkProofStart.network_namespace = 'net:[4026533999]';
+        environmentBinding.networkProofEnd.network_namespace = 'net:[4026533999]';
+        hostObservation.networkNamespaceIdentity =
+          environmentBinding.networkProofStart.network_namespace;
+      },
+    );
+    const namespaceOnly = canonicalDeterminismRoots(
+      namespaceOnlyRecords,
+      namespaceOnlyProvenance,
+    );
+    expect(namespaceOnly.scientific.bytes).toEqual(authoritative.scientific.bytes);
+    expect(namespaceOnly.scientific.root).toBe(authoritative.scientific.root);
+    expect(namespaceOnly.provenance.root).not.toBe(authoritative.provenance.root);
+
+    const imageOnlyRecords = clone(fixture.authoritative);
+    const imageOnlyProvenance = clone(fixture.authoritativeProvenance);
+    rebindExecutionProvenance(
+      imageOnlyRecords,
+      imageOnlyProvenance,
+      (environmentBinding, hostObservation) => {
+        environmentBinding.containerIdentity.configImageId = `sha256:${'e'.repeat(64)}`;
+        hostObservation.imageConfigDigest =
+          environmentBinding.containerIdentity.configImageId;
+      },
+    );
+    const imageOnly = canonicalDeterminismRoots(
+      imageOnlyRecords,
+      imageOnlyProvenance,
+    );
+    expect(imageOnly.scientific.bytes).toEqual(authoritative.scientific.bytes);
+    expect(imageOnly.scientific.root).toBe(authoritative.scientific.root);
+    expect(imageOnly.provenance.root).not.toBe(authoritative.provenance.root);
+    expect(validateDeterminismFixture(
+      fixture.authoritative,
+      fixture.repeat,
+      fixture.authoritativeProvenance,
+      fixture.repeatProvenance,
+    )).toEqual([]);
+  });
+
+  it('normalizes signed zero in every scientific numeric shape', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    const positive = clone(fixture.authoritative);
+    const negative = clone(fixture.authoritative);
+    positive[0].energyEv = 0;
+    negative[0].energyEv = -0;
+    for (let atom = 0; atom < 16; atom += 1) {
+      for (let component = 0; component < 3; component += 1) {
+        positive[0].forcesEvPerAngstrom[atom][component] = 0;
+        negative[0].forcesEvPerAngstrom[atom][component] = -0;
+      }
+    }
+    for (let row = 0; row < 3; row += 1) {
+      for (let column = 0; column < 3; column += 1) {
+        positive[0].stressAseEvPerAngstrom3[row][column] = 0;
+        negative[0].stressAseEvPerAngstrom3[row][column] = -0;
+      }
+    }
+    expect(canonicalScientificPayload(negative)).toEqual(
+      canonicalScientificPayload(positive),
+    );
+    expect(sha256(canonicalScientificPayload(negative))).toBe(
+      sha256(canonicalScientificPayload(positive)),
+    );
+  });
+
+  it('commits every structure identity and all 40,194 energy/force/stress scalars or fails closed', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    const scientificRecords = fixture.authoritative.map((record) => Object.fromEntries(
+      determinismContract.scientificProjection.includedRecordFields.map(
+        (field) => [field, record[field]],
+      ),
+    ));
+    const projected = {
+      schemaVersion: determinismContract.scientificProjection.schemaVersion,
+      records: scientificRecords,
+    };
+    const committedFields = new Set([
+      'id',
+      'inputStructureDigest',
+      'atomCount',
+      'atomicNumbers',
+      'modelId',
+      'checkpointSha256',
+      'packageSha256',
+      'runnerSha256',
+      'energyEv',
+      'forcesEvPerAngstrom',
+      'stressAseEvPerAngstrom3',
+    ]);
+    const traced = canonicalBytesWithSpans(projected, (pathParts) => (
+      pathParts[0] === 'records'
+        && Number.isSafeInteger(pathParts[1])
+        && committedFields.has(pathParts[2])
+    ));
+    const canonicalBytes = Buffer.concat([traced.bytes, Buffer.from('\n')]);
+    const productionBytes = canonicalScientificPayload(fixture.authoritative);
+    expect(canonicalBytes).toEqual(productionBytes);
+    expect(JSON.parse(productionBytes.toString('utf8')))
+      .toEqual(JSON.parse(canonicalJson(projected)));
+    const outputSpans = traced.spans.filter(({ pathParts }) => [
+      'energyEv',
+      'forcesEvPerAngstrom',
+      'stressAseEvPerAngstrom3',
+    ].includes(pathParts[2]));
+    expect(outputSpans).toHaveLength(693 * (1 + 16 * 3 + 3 * 3));
+    const structureRootSpans = traced.spans.filter(({ pathParts }) => [
+      'inputStructureDigest',
+      'atomicNumbers',
+    ].includes(pathParts[2]));
+    expect(structureRootSpans).toHaveLength(693 * (1 + 16));
+    const baselineRoot = sha256(productionBytes);
+    for (const span of [...structureRootSpans, ...outputSpans]) {
+      let replacement;
+      if (span.pathParts[2] === 'inputStructureDigest') {
+        const digest = span.value;
+        replacement = JSON.stringify(`${digest.slice(0, -1)}${digest.endsWith('0') ? '1' : '0'}`);
+      } else if (span.pathParts[2] === 'atomicNumbers') {
+        replacement = JSON.stringify(span.value === 118 ? 117 : span.value + 1);
+      } else {
+        replacement = JSON.stringify(nextBinary64(
+          span.value,
+          Number.POSITIVE_INFINITY,
+        ));
+      }
+      expect(sha256WithReplacement(canonicalBytes, span, replacement))
+        .not.toBe(baselineRoot);
+    }
+
+    const changedRoot = (mutate) => {
+      const candidate = clone(fixture.authoritative);
+      mutate(candidate);
+      return sha256(canonicalScientificPayload(candidate));
+    };
+    expect(changedRoot((records) => {
+      records[0].inputStructureDigest = `sha256:${'a'.repeat(64)}`;
+    })).not.toBe(baselineRoot);
+    expect(changedRoot((records) => {
+      records[0].atomicNumbers[0] += 1;
+    })).not.toBe(baselineRoot);
+    for (const recordIndex of [0, 346, 692]) {
+      expect(changedRoot((records) => {
+        records[recordIndex].energyEv = nextBinary64(
+          records[recordIndex].energyEv,
+          Number.POSITIVE_INFINITY,
+        );
+      })).not.toBe(baselineRoot);
+    }
+    for (let atom = 0; atom < 16; atom += 1) {
+      for (let component = 0; component < 3; component += 1) {
+        expect(changedRoot((records) => {
+          records[346].forcesEvPerAngstrom[atom][component] = nextBinary64(
+            records[346].forcesEvPerAngstrom[atom][component],
+            Number.POSITIVE_INFINITY,
+          );
+        })).not.toBe(baselineRoot);
+      }
+    }
+    for (let row = 0; row < 3; row += 1) {
+      for (let column = 0; column < 3; column += 1) {
+        expect(changedRoot((records) => {
+          records[346].stressAseEvPerAngstrom3[row][column] = nextBinary64(
+            records[346].stressAseEvPerAngstrom3[row][column],
+            Number.POSITIVE_INFINITY,
+          );
+        })).not.toBe(baselineRoot);
+      }
+    }
+    const failClosedIdentityMutations = {
+      id: 'random-TP-999999',
+      atomCount: 15,
+      modelId: 'mace-mpa-0-medium',
+      checkpointSha256: `sha256:${'a'.repeat(64)}`,
+      packageSha256: `sha256:${'a'.repeat(64)}`,
+      runnerSha256: `sha256:${'a'.repeat(64)}`,
+    };
+    for (const record of fixture.authoritative) {
+      for (const [field, mutation] of Object.entries(failClosedIdentityMutations)) {
+        const original = record[field];
+        record[field] = mutation;
+        expect(() => validateScientificPredictionRecords(fixture.authoritative)).toThrow();
+        record[field] = original;
+      }
+    }
+    expect(validateScientificPredictionRecords(fixture.authoritative))
+      .toBe(fixture.authoritative);
+    const otherModelFixture = buildSyntheticCampaignFixture(contract).models[1];
+    expect(canonicalDeterminismRoots(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    ).scientific.root).not.toBe(canonicalDeterminismRoots(
+      otherModelFixture.authoritative,
+      otherModelFixture.authoritativeProvenance,
+    ).scientific.root);
+  }, 120_000);
+
+  it('rejects missing, extra, duplicate, malformed, nonfinite and schema-drifted prediction input', () => {
+    const records = buildSyntheticCampaignFixture(contract).models[0].authoritative;
+    const mutations = [
+      (candidate) => { candidate.pop(); },
+      (candidate) => { candidate.push(clone(candidate.at(-1))); },
+      (candidate) => { candidate[1].id = candidate[0].id; },
+      (candidate) => { delete candidate[0].energyEv; },
+      (candidate) => { candidate[0].unknown = false; },
+      (candidate) => { candidate[0].schemaVersion = 'tf.atomistic-prediction/0.4'; },
+      (candidate) => { candidate[0].energyEv = Number.NaN; },
+      (candidate) => { candidate[0].forcesEvPerAngstrom[0][0] = Number.POSITIVE_INFINITY; },
+      (candidate) => { candidate[0].stressAseEvPerAngstrom3[0][0] = Number.NEGATIVE_INFINITY; },
+      (candidate) => { candidate[0].forcesEvPerAngstrom[0].pop(); },
+      (candidate) => { delete candidate[0].forcesEvPerAngstrom[0][1]; },
+      (candidate) => { candidate[0].forcesEvPerAngstrom[0].extra = 0; },
+      (candidate) => { candidate[0].stressAseEvPerAngstrom3.pop(); },
+      (candidate) => { delete candidate[0].stressAseEvPerAngstrom3[0][1]; },
+      (candidate) => { candidate[0].stressAseEvPerAngstrom3[0].extra = 0; },
+      (candidate) => { candidate[0].stressAseEvPerAngstrom3.extra = 0; },
+      (candidate) => { delete candidate[0].atomicNumbers[1]; },
+      (candidate) => { candidate[0].atomicNumbers.extra = 1; },
+      (candidate) => { candidate.extra = false; },
+      (candidate) => { candidate[0].environmentSha256 = `sha256:${'f'.repeat(64)}`; },
+    ];
+    for (const mutate of mutations) {
+      const candidate = clone(records);
+      mutate(candidate);
+      expect(() => canonicalScientificPayload(candidate)).toThrow();
+    }
+
+    const bytes = predictionJsonl(records);
+    expect(canonicalScientificPayload(parsePredictionJsonlForDeterminism(bytes)))
+      .toEqual(canonicalScientificPayload(records));
+    const firstLineEnd = bytes.indexOf(0x0a);
+    const firstLine = bytes.subarray(0, firstLineEnd).toString('utf8');
+    const duplicateMemberLine = firstLine.replace(
+      '"energyEv":0',
+      '"energyEv":0,"energyEv":0',
+    );
+    const duplicateMemberBytes = Buffer.concat([
+      Buffer.from(duplicateMemberLine, 'utf8'),
+      bytes.subarray(firstLineEnd),
+    ]);
+    expect(() => parsePredictionJsonlForDeterminism(duplicateMemberBytes))
+      .toThrow(/duplicate/i);
+    expect(() => parsePredictionJsonlForDeterminism(bytes.subarray(0, -1)))
+      .toThrow(/terminal LF/);
+    expect(() => parsePredictionJsonlForDeterminism(Buffer.from([0xff, 0x0a])))
+      .toThrow(/UTF-8/);
+    expect(() => parsePredictionJsonlForDeterminism(Buffer.alloc(8_388_609)))
+      .toThrow(/1\.\.8388608 bytes/);
+  });
+
+  it('keeps excluded environment data fully validated and closed in the provenance projection', () => {
+    const fixture = buildSyntheticCampaignFixture(contract).models[0];
+    expect(canonicalProvenancePayload(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    )).toEqual(canonicalDeterminismRoots(
+      fixture.authoritative,
+      fixture.authoritativeProvenance,
+    ).provenance.bytes);
+
+    const outerProvenanceMutations = [
+      (candidate) => { delete candidate.environmentSha256; },
+      (candidate) => { candidate.extra = 'forbidden'; },
+      (candidate) => { candidate.schemaVersion = 'tf.atomistic-full-candidate-execution-provenance/0.2'; },
+      (candidate) => { candidate.environmentSha256 = `sha256:${'f'.repeat(64)}`; },
+    ];
+    for (const mutate of outerProvenanceMutations) {
+      const candidate = clone(fixture.authoritativeProvenance);
+      mutate(candidate);
+      expect(() => canonicalProvenancePayload(fixture.authoritative, candidate)).toThrow();
+    }
+
+    const environmentBindingMutations = [
+      (binding) => { delete binding.planSha256; },
+      (binding) => { binding.extra = false; },
+      (binding) => { binding.planSha256 = `sha256:${'f'.repeat(64)}`; },
+      (binding) => { binding.runnerSha256 = `sha256:${'f'.repeat(64)}`; },
+      (binding) => { binding.adapter = 'unfrozen-adapter/v1'; },
+      (binding) => {
+        binding.dependencyLockSha256 =
+          determinismContract.modelBindings.models[1].dependencyLockSha256;
+      },
+      (binding) => {
+        binding.adapter = determinismContract.modelBindings.models[1].adapter;
+        binding.dependencyLockSha256 =
+          determinismContract.modelBindings.models[1].dependencyLockSha256;
+      },
+      (binding) => { binding.installedDistributionsSha256 = 'sha256:BAD'; },
+      (binding) => { binding.workflowRevision = 'ABC'; },
+      (binding) => { binding.batchSize = Number.NaN; },
+      (binding) => { delete binding.containerIdentity.kind; },
+      (binding) => { binding.containerIdentity.extra = false; },
+      (binding) => { binding.containerIdentity.kind = 'oci-manifest'; },
+      (binding) => { binding.containerIdentity.configImageId = 'sha256:BAD'; },
+      (binding) => { binding.containerIdentity.promotionTrustRoot = true; },
+      (binding) => {
+        binding.containerIdentity.registryManifestDigest =
+          `sha256:${'a'.repeat(64)}`;
+      },
+      (binding) => { delete binding.networkProofStart.egress_disabled; },
+      (binding) => { binding.networkProofStart.extra = false; },
+      (binding) => { binding.networkProofStart.egress_disabled = false; },
+      (binding) => { binding.networkProofStart.network_namespace = 'host-net'; },
+      (binding) => { binding.networkProofStart.effective_capabilities = '0x0'; },
+      (binding) => {
+        binding.networkProofStart.effective_capabilities =
+          '0x0000000000001000';
+      },
+      (binding) => { binding.networkProofStart.interfaces.push('eth0'); },
+      (binding) => { binding.networkProofStart.ipv4_routes.push('eth0 route'); },
+      (binding) => {
+        binding.networkProofStart.ipv6_routes.length = 1;
+        delete binding.networkProofStart.ipv6_routes[0];
+      },
+      (binding) => { binding.networkProofStart.ipv4_routes.extra = false; },
+      (binding) => { delete binding.networkProofStart.probes[0].family; },
+      (binding) => { binding.networkProofStart.probes[0].extra = false; },
+      (binding) => { binding.networkProofStart.probes[0].family = 'ipv6'; },
+      (binding) => { binding.networkProofStart.probes[0].port = Number.NaN; },
+      (binding) => { binding.networkProofStart.probes[0].blockedErrno = Number.NaN; },
+      (binding) => { binding.networkProofStart.probes[0].blockedErrno = 2; },
+      (binding) => { binding.networkProofStart.probes[0].blockedReason = ''; },
+      (binding) => { binding.networkProofStart.probes[0].blockedReason = 'x'.repeat(257); },
+      (binding) => { binding.networkProofStart.escape_sockets_absent = false; },
+      (binding) => { binding.networkProofStart.method = 'schema-drift'; },
+      (binding) => {
+        binding.networkProofEnd.network_namespace = 'net:[4026533999]';
+      },
+    ];
+    for (const mutate of environmentBindingMutations) {
+      const records = clone(fixture.authoritative);
+      const candidate = clone(fixture.authoritativeProvenance);
+      expect(() => {
+        rebindExecutionProvenance(records, candidate, mutate);
+        canonicalProvenancePayload(records, candidate);
+      }).toThrow();
+    }
+
+    const hostObservationMutations = [
+      (candidate) => { candidate.hostObservation.imageConfigDigest = `sha256:${'f'.repeat(64)}`; },
+      (candidate) => { candidate.hostObservation.containerId = ''; },
+      (candidate) => { candidate.hostObservation.networkNamespaceIdentity = 'net:[42]'; },
+      (candidate) => { candidate.hostObservation.extra = false; },
+    ];
+    for (const mutate of hostObservationMutations) {
+      const candidate = clone(fixture.authoritativeProvenance);
+      mutate(candidate);
+      expect(() => canonicalProvenancePayload(fixture.authoritative, candidate)).toThrow();
+    }
+
+    const bytes = provenanceJson(fixture.authoritativeProvenance);
+    expect(parseExecutionProvenanceForDeterminism(bytes))
+      .toEqual(fixture.authoritativeProvenance);
+    expect(canonicalProvenancePayload(fixture.authoritative, bytes))
+      .toEqual(canonicalProvenancePayload(
+        fixture.authoritative,
+        fixture.authoritativeProvenance,
+      ));
+    const duplicateTopLevel = Buffer.from(bytes.toString('utf8').replace(
+      '"environmentSha256":',
+      `"environmentSha256":"sha256:${'0'.repeat(64)}","environmentSha256":`,
+    ));
+    expect(() => parseExecutionProvenanceForDeterminism(duplicateTopLevel))
+      .toThrow(/duplicate/i);
+    const duplicateNested = Buffer.from(bytes.toString('utf8').replace(
+      '"runnerSha256":',
+      `"runnerSha256":"sha256:${'0'.repeat(64)}","runnerSha256":`,
+    ));
+    expect(() => parseExecutionProvenanceForDeterminism(duplicateNested))
+      .toThrow(/duplicate/i);
+    expect(() => parseExecutionProvenanceForDeterminism(bytes.subarray(0, -1)))
+      .toThrow(/terminal LF/);
+    expect(() => parseExecutionProvenanceForDeterminism(Buffer.from([0xff, 0x0a])))
+      .toThrow(/UTF-8/);
+    expect(() => parseExecutionProvenanceForDeterminism(Buffer.from('{"x":NaN}\n')))
+      .toThrow(/invalid/);
+    expect(() => parseExecutionProvenanceForDeterminism(Buffer.alloc(16_385)))
+      .toThrow(/1\.\.16384 bytes/);
   });
 });
 
@@ -298,7 +1114,7 @@ describe('unregistered observer workflow source policy', () => {
     }
   });
 
-  it('binds all four reviewed sources to descriptors, stage-0 blobs and one staged tree', async () => {
+  it('binds all six reviewed sources to descriptors, stage-0 blobs and one staged tree', async () => {
     const temporary = await createReviewedSourceRepository();
     try {
       expect((await validateObserverSourceSetRepository(temporary)).failures).toEqual([]);
@@ -494,9 +1310,9 @@ describe('fixture-only numerical and observation behavior', () => {
     expect(validateSyntheticCampaignFixture(fixture, contract)).toEqual([]);
 
     const mutations = [
-      [(candidate) => { candidate.models[0].authoritative.pop(); }, /authoritative\.records/],
-      [(candidate) => { candidate.models[0].authoritative[0].id = 'fake-id'; }, /authoritative\[0\]\.id/],
-      [(candidate) => { candidate.models[0].authoritative[0].referenceEnergy = 123; }, /authoritative\[0\]\.referenceEnergy/],
+      [(candidate) => { candidate.models[0].authoritative.pop(); }, /authoritative: scientific records must contain exactly/],
+      [(candidate) => { candidate.models[0].authoritative[0].id = 'fake-id'; }, /authoritative: scientific records\[0\]\.id/],
+      [(candidate) => { candidate.models[0].authoritative[0].referenceEnergy = 123; }, /authoritative: scientific records\[0\].*schema-drifted/],
       [(candidate) => { candidate.models[0].secret = 'forbidden'; }, /models\[0\]\.secret/],
       [(candidate) => { candidate.models[0].invarianceCases.pop(); }, /invarianceCases\.count/],
       [(candidate) => { candidate.models[0].invarianceCases[0].id = 'fake-id'; }, /invarianceCases\[0\]\.key/],
@@ -533,14 +1349,24 @@ describe('fixture-only numerical and observation behavior', () => {
 
   it('compares all 693 canonical leaves even after a coherent repeat-root recomputation', () => {
     const fixture = buildSyntheticCampaignFixture(contract).models[0];
-    expect(validateDeterminismFixture(fixture.authoritative, fixture.repeat)).toEqual([]);
-    fixture.repeat[692].energy = nextBinary64(
-      fixture.repeat[692].energy,
+    expect(validateDeterminismFixture(
+      fixture.authoritative,
+      fixture.repeat,
+      fixture.authoritativeProvenance,
+      fixture.repeatProvenance,
+    )).toEqual([]);
+    fixture.repeat[692].energyEv = nextBinary64(
+      fixture.repeat[692].energyEv,
       Number.POSITIVE_INFINITY,
     );
     const forgedRepeatRoot = sha256(canonicalScientificPayload(fixture.repeat));
     expect(forgedRepeatRoot).not.toBe(sha256(canonicalScientificPayload(fixture.authoritative)));
-    expect(validateDeterminismFixture(fixture.authoritative, fixture.repeat).join('\n'))
+    expect(validateDeterminismFixture(
+      fixture.authoritative,
+      fixture.repeat,
+      fixture.authoritativeProvenance,
+      fixture.repeatProvenance,
+    ).join('\n'))
       .toMatch(/canonicalScientificPayloadBytes/);
   });
 
@@ -631,6 +1457,10 @@ describe('fixture-only numerical and observation behavior', () => {
     ['aggregate publication right', (receipt) => { receipt.rights.aggregatePublicationAllowed = true; }, /observer\.receipt\.(?:schema|rights)/],
     ['runtime redistribution right', (receipt) => { receipt.rights.runtimeRedistributionAllowed = true; }, /observer\.receipt\.(?:schema|rights)/],
     ['excluded regimes', (receipt) => { receipt.applicability.excludedRegimes = []; }, /observer\.receipt\.(?:schema|applicability)/],
+    ['extra field', (receipt) => { receipt.unreviewed = false; }, /observer\.receipt\.schema/],
+    ['nonfinite number', (receipt) => {
+      receipt.contractChecks.stressSymmetryBoundary.nextDown.value = Number.NaN;
+    }, /observer\.receipt\.(?:schema|contractChecks)/],
   ])('rejects fixture receipt %s mutation', (_label, mutate, expected) => {
     const receipt = buildFixtureReceipt(contract, workflowBytes);
     mutate(receipt);

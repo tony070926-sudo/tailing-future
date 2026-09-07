@@ -50,6 +50,16 @@ const mutations = [
     syntax: 'json',
   },
   {
+    path: 'evaluation/atomistic/full-candidate-determinism-roots-v0.1.json',
+    hardGate: 'observer.determinismRoots.rawDigest: exact reviewed bytes differ',
+    syntax: 'json',
+  },
+  {
+    path: 'schemas/atomistic-full-candidate-determinism-roots.schema.json',
+    hardGate: 'observer.determinismRoots.schema.rawDigest: exact reviewed bytes differ',
+    syntax: 'json',
+  },
+  {
     path: 'evaluation/atomistic/random-tp-rights-disposition-v0.1.json',
     hardGate: 'rights-disposition.rawDigest: exact reviewed bytes differ',
     syntax: 'json',
@@ -65,7 +75,7 @@ afterEach(async () => {
 });
 
 describe('observer source snapshot evaluator binding', () => {
-  it('rejects the five enumerated pre-capture reviewed-source mutations without score promotion', async () => {
+  it('rejects the seven enumerated pre-capture reviewed-source mutations without score promotion', async () => {
     const scorecard = JSON.parse(await readFile(
       path.join(repositoryRoot, 'evaluation/current-scorecard.json'),
       'utf8',
@@ -127,7 +137,7 @@ describe('observer source snapshot evaluator binding', () => {
     expect([...mutationResult.report.hardGateFailures].sort())
       .toEqual([...expectedMutationGates].sort());
     expect(mutationResult.report.hardGateFailures.filter((failure) => (
-      /^(?:observer\.contract(?:\.schema)?|observer\.workflow|observer\.receipt\.schema)\.rawDigest:/.test(
+      /^(?:observer\.contract(?:\.schema)?|observer\.workflow|observer\.receipt\.schema|observer\.determinismRoots(?:\.schema)?)\.rawDigest:/.test(
         failure,
       )
     )).sort()).toEqual(mutations

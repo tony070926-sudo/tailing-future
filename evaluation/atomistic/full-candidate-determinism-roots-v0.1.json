@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "tf.atomistic-full-candidate-determinism-roots/0.1",
+  "status": "fixture-only-dispatch-disabled",
+  "frozenAt": "2026-09-07",
+  "hypothesisId": "H-vNext-Scientific-Provenance-Roots/0.1",
+  "purpose": "Define closed, bounded and separately rooted scientific and execution-provenance projections for one full-candidate model execution without authorizing or observing model execution.",
+  "observerBoundary": {
+    "path": "evaluation/atomistic/full-candidate-observer-contract-vnext.json",
+    "schemaVersion": "tf.atomistic-full-candidate-observer-contract/0.1",
+    "rawDigest": "sha256:9fd93ded20bd013a0c6d61dfec48368fc7957725ee4f95f4fafa242c7f7f0759",
+    "extendedWithoutReinterpretation": true
+  },
+  "inputContract": {
+    "predictionSchemaVersion": "tf.atomistic-prediction/0.3",
+    "executionProvenanceSchemaVersion": "tf.atomistic-full-candidate-execution-provenance/0.1",
+    "records": {
+      "value": 693,
+      "unit": "prediction-record/model/execution",
+      "dimension": "count",
+      "basis": "the exact frozen ASCII-ordered Random-TP ID manifest"
+    },
+    "atomsPerRecord": {
+      "value": 16,
+      "unit": "atom/prediction-record",
+      "dimension": "count",
+      "basis": "the frozen Random-TP 693-by-16 benchmark"
+    },
+    "predictionRecordFields": [
+      "schemaVersion",
+      "id",
+      "inputStructureDigest",
+      "atomCount",
+      "atomicNumbers",
+      "modelId",
+      "checkpointSha256",
+      "packageSha256",
+      "runnerSha256",
+      "environmentSha256",
+      "status",
+      "energyEv",
+      "forcesEvPerAngstrom",
+      "stressAseEvPerAngstrom3"
+    ],
+    "executionProvenanceFields": [
+      "schemaVersion",
+      "environmentBinding",
+      "environmentSha256",
+      "hostObservation"
+    ],
+    "environmentBindingFields": [
+      "planSha256",
+      "runnerSha256",
+      "pythonVersion",
+      "pythonImplementation",
+      "system",
+      "machine",
+      "device",
+      "dtype",
+      "batchSize",
+      "threads",
+      "adapter",
+      "numpyVersion",
+      "torchVersion",
+      "installedDistributionsSha256",
+      "dependencyLockSha256",
+      "containerIdentity",
+      "executionIdentityComplete",
+      "workflowRevision",
+      "runtimeSourceRevision",
+      "evidenceClass",
+      "promotionEligible",
+      "comparable",
+      "reproduced",
+      "structureBundleSha256",
+      "structureManifestFileSha256",
+      "networkProofStart",
+      "networkProofEnd"
+    ],
+    "containerIdentityFields": [
+      "kind",
+      "configImageId",
+      "scope",
+      "promotionTrustRoot",
+      "registryManifestDigest"
+    ],
+    "networkProofFields": [
+      "egress_disabled",
+      "network_namespace",
+      "effective_capabilities",
+      "interfaces",
+      "ipv4_routes",
+      "ipv6_routes",
+      "probes",
+      "escape_sockets_absent",
+      "method"
+    ],
+    "networkProbeFields": [
+      "family",
+      "address",
+      "port",
+      "blockedErrno",
+      "blockedReason"
+    ],
+    "hostObservationFields": [
+      "imageConfigDigest",
+      "containerId",
+      "networkNamespaceIdentity"
+    ],
+    "environmentBindingFixedValues": {
+      "planSha256": "sha256:d3a58524029b51c598d00a7bb9f60b6479a9973a0f9907cbf94a31e61bf1c9c2",
+      "runnerSha256": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+      "pythonVersion": "3.12.13",
+      "pythonImplementation": "CPython",
+      "system": "Linux",
+      "machine": "x86_64",
+      "device": "cpu",
+      "dtype": "float32",
+      "batchSize": 1,
+      "threads": 1,
+      "numpyVersion": "2.5.2",
+      "torchVersion": "2.8.0+cpu",
+      "executionIdentityComplete": true,
+      "evidenceClass": "bootstrap-not-reproduced",
+      "promotionEligible": false,
+      "comparable": false,
+      "reproduced": false,
+      "structureBundleSha256": "sha256:d4ff1ee210abf80884e1526b1e2600e918103f3505a2a712bce57d6fba3a1b5c",
+      "structureManifestFileSha256": "sha256:9f870f62cd60b7021d874d1970c81ac8cb64a302e2c5fd4013464198fd11a25e"
+    },
+    "recordOrder": "exact-frozen-random-tp-id-manifest-ascii-order/v1",
+    "duplicateJsonMembersAllowed": false,
+    "duplicateRecordIdsAllowed": false,
+    "missingFieldsAllowed": false,
+    "extraFieldsAllowed": false,
+    "nonfiniteNumbersAllowed": false,
+    "maximumPredictionJsonlBytes": {
+      "value": 8388608,
+      "unit": "byte",
+      "dimension": "information-size",
+      "basis": "hard upper bound before strict UTF-8 or JSONL parsing"
+    },
+    "maximumExecutionProvenanceBytes": {
+      "value": 16384,
+      "unit": "byte",
+      "dimension": "information-size",
+      "basis": "hard upper bound before strict UTF-8 or JSON parsing of one closed execution-provenance object"
+    }
+  },
+  "scientificProjection": {
+    "schemaVersion": "tf.atomistic-full-candidate-scientific-projection/0.1",
+    "topLevelFields": [
+      "schemaVersion",
+      "records"
+    ],
+    "includedRecordFields": [
+      "schemaVersion",
+      "id",
+      "inputStructureDigest",
+      "atomCount",
+      "atomicNumbers",
+      "modelId",
+      "checkpointSha256",
+      "packageSha256",
+      "runnerSha256",
+      "status",
+      "energyEv",
+      "forcesEvPerAngstrom",
+      "stressAseEvPerAngstrom3"
+    ],
+    "excludedProvenancePaths": [
+      "records[*].environmentSha256",
+      "executionProvenance.schemaVersion",
+      "executionProvenance.environmentBinding",
+      "executionProvenance.environmentSha256",
+      "executionProvenance.hostObservation.imageConfigDigest",
+      "executionProvenance.hostObservation.containerId",
+      "executionProvenance.hostObservation.networkNamespaceIdentity"
+    ],
+    "structureIdentityFields": [
+      "id",
+      "inputStructureDigest",
+      "atomCount",
+      "atomicNumbers"
+    ],
+    "modelIdentityFields": [
+      "modelId",
+      "checkpointSha256",
+      "packageSha256",
+      "runnerSha256"
+    ],
+    "outputFields": [
+      "energyEv",
+      "forcesEvPerAngstrom",
+      "stressAseEvPerAngstrom3"
+    ],
+    "maximumCanonicalBytes": {
+      "value": 8388608,
+      "unit": "byte",
+      "dimension": "information-size",
+      "basis": "hard upper bound on the versioned canonical scientific projection including one terminal LF"
+    }
+  },
+  "provenanceProjection": {
+    "schemaVersion": "tf.atomistic-full-candidate-provenance-projection/0.1",
+    "topLevelFields": [
+      "schemaVersion",
+      "scientificRoot",
+      "environmentSha256",
+      "imageConfigDigest",
+      "containerId",
+      "networkNamespaceIdentity"
+    ],
+    "predictionBindingFieldsValidated": [
+      "id",
+      "environmentSha256"
+    ],
+    "environmentBinding": "sha256-over-the-exact-frozen-v2-runner-rich-environment-binding-preimage-without-terminal-lf-must-equal-every-prediction-and-executionProvenance-environmentSha256/v1",
+    "sourceAgreement": "host-observed-image-config-digest-and-network-namespace-must-equal-the-v2-runner-bound-values-before-projection; container-id-is-host-only/v1",
+    "containerIdentitySource": "validated-host-lifecycle-observation-not-container-self-report/v1",
+    "networkNamespaceIdentitySource": "validated-host-observation-and-runner-environment-binding-must-agree/v1",
+    "maximumCanonicalBytes": {
+      "value": 4096,
+      "unit": "byte",
+      "dimension": "information-size",
+      "basis": "hard upper bound on the versioned canonical provenance projection including one terminal LF"
+    }
+  },
+  "canonicalization": {
+    "encoding": "recursive-lexicographic-object-key-json-utf8-plus-one-lf/v1",
+    "root": "sha256-over-exact-canonical-bytes/v1",
+    "signedZeroNormalization": "every-negative-zero-number-to-positive-zero-before-encoding/v1",
+    "arraysOrdered": true,
+    "objectKeysSortedLexicographically": true,
+    "schemaVersionCommittedInEachProjection": true
+  },
+  "modelBindings": {
+    "runnerSha256": "sha256:d6e83640f15926088c116312c27605570f9e9c8ba4e9a9988ef5bf4d3a974ed4",
+    "models": [
+      {
+        "model": "mattersim",
+        "modelId": "mattersim-v1.0.0-5m",
+        "checkpointSha256": "sha256:e3df9fa708725e3d453140646c7d1838324b347a3d1214cf1440522146f872b5",
+        "packageSha256": "sha256:1b5e46ba56efa5c1e93372ad32321300fa5e1f07dd9188a11b727bd578cf8d7f",
+        "adapter": "mattersim-ase-batch1-full3x3-eva3/v1",
+        "dependencyLockSha256": "sha256:9c990909d1307bb32608d31b9ed217d2368c28e2048f6dec39e8dc4a2b63642b"
+      },
+      {
+        "model": "mace",
+        "modelId": "mace-mpa-0-medium",
+        "checkpointSha256": "sha256:75428afe3a1d7d8062e19bcaabd5c433623cabf308242ec9fb493e38604fb638",
+        "packageSha256": "sha256:b80407edf6b2a1ec8523668c2a36852d20927ce1c3c56b70983a9f2dc53233ad",
+        "adapter": "mace-ase-batch1-full3x3-eva3/v1",
+        "dependencyLockSha256": "sha256:ae4b21b6f6d8ad98edcf2d5e0d938cd563379f494cce0b4aaa2e987332147e33"
+      }
+    ]
+  },
+  "quantityContract": {
+    "atomCount": {
+      "quantity": "atoms represented by one prediction",
+      "unit": "atom/prediction-record",
+      "dimension": "count",
+      "basis": "exactly 16 ordered atoms in one frozen Random-TP frame"
+    },
+    "atomicNumber": {
+      "quantity": "nuclear charge identity",
+      "unit": "1",
+      "dimension": "dimensionless-atomic-number",
+      "basis": "ordered integer atomic numbers Z in the closed range 1 through 118"
+    },
+    "energyEv": {
+      "quantity": "total potential energy",
+      "unit": "eV",
+      "dimension": "energy",
+      "basis": "one complete 16-atom periodic frame with no fitted offset or scale"
+    },
+    "forcesEvPerAngstrom": {
+      "quantity": "ordered Cartesian atomic force components",
+      "unit": "eV/angstrom",
+      "dimension": "energy-per-length",
+      "basis": "16 ordered atoms times three Cartesian components in the prediction atom order"
+    },
+    "stressAseEvPerAngstrom3": {
+      "quantity": "ASE-sign Cauchy stress tensor",
+      "unit": "eV/angstrom^3",
+      "dimension": "energy-per-volume",
+      "basis": "one full 3-by-3 Cartesian tensor after the separately required raw-source symmetry gate"
+    }
+  },
+  "comparisonPolicy": {
+    "sameModelAuthoritativeRepeatScientificBytesMustMatch": true,
+    "sameModelAuthoritativeRepeatScientificRootsMustMatch": true,
+    "freshContainerProvenanceBytesMustDiffer": true,
+    "freshContainerProvenanceRootsMustDiffer": true,
+    "freshContainerIdsMustDiffer": true,
+    "freshNetworkNamespaceIdentitiesMustDiffer": true,
+    "numericToleranceAllowed": false,
+    "mismatchDisposition": "fail-closed-no-repeat-replacement/v1"
+  },
+  "applicability": {
+    "systemBoundary": "one static 16-atom three-dimensionally periodic Random-TP frame per prediction",
+    "horizon": "single-point-no-dynamics-or-future-rollout",
+    "modelBoundary": "the two byte-frozen MatterSim and MACE lanes only",
+    "excludedRegimes": [
+      "cross-runner-bit-exactness",
+      "probe-record-determinism",
+      "reference-label-values",
+      "uncertainty-calibration",
+      "dynamics-or-future-state",
+      "causal-or-counterfactual-effects",
+      "real-material-or-industrial-validation"
+    ]
+  },
+  "claims": {
+    "modelExecutionObserved": false,
+    "scientificValidationComplete": false,
+    "reproduced": false,
+    "comparisonEligible": false,
+    "promotionEligible": false,
+    "publicationEligible": false,
+    "dispatchEligible": false,
+    "causalClaimAllowed": false,
+    "industrialFitness": false
+  }
+}
