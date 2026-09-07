@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run test:js && npm run test:r18a:node && npm run test:python",
     "test:r18a:node": "node --test scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
-    "r18a:validate": "node scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+    "r18a:validate": "node scripts/mesoscale/pfhub7a_r18a_current_root_v3.mjs",
     "test:js": "npm run test:js:core && npm run test:js:observer-snapshot",
     "test:js:core": "vitest run --config vitest.config.ts --exclude scripts/evaluate-observer-snapshot.test.mjs",
     "test:js:observer-snapshot": "vitest run --config vitest.config.ts scripts/evaluate-observer-snapshot.test.mjs",
