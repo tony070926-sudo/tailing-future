@@ -1,6 +1,6 @@
 {
   "schemaVersion": "tf.public-product-evaluation/0.1",
-  "sourceArtifactDigest": "sha256:a467685dfa9e63e9ae41730fe58b218e34b629d1751c4d4f5cf82e243def5ce6",
+  "sourceArtifactDigest": "sha256:595fd4b6094ca2f290075f68dfcae738f93232417ecdbc90b06d9ec6bfaba2a9",
   "scorecard": {
     "candidateVersion": "0.4.11-nacl-water-semantic-import",
     "dimensions": [

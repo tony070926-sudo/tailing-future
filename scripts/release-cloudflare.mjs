@@ -10,13 +10,17 @@ import {
   mkdtempSync,
   openSync,
   readFileSync,
+  readdirSync,
+  readSync,
   realpathSync,
   rmSync,
+  rmdirSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // Capture and erase Cloudflare credentials before any project-owned module is
 // loaded. Only the final Wrangler child receives the validated copy.
@@ -38,6 +42,7 @@ const CLOUDFLARE_DEPLOY_KEYS = Object.freeze([
   'CLOUDFLARE_API_TOKEN',
 ]);
 const WRANGLER_RESOLVED_URL = `https://registry.npmjs.org/wrangler/-/wrangler-${WRANGLER_VERSION}.tgz`;
+const encryptedOAuthSessions = new WeakMap();
 
 export async function main({
   argv = process.argv,
@@ -244,16 +249,9 @@ export async function main({
         releaseInputs,
         cloudflareEnvironment,
         scratchRoot,
+        root,
       );
-      execFileSync(
-        process.execPath,
-        [wranglerEntry, 'deploy', '--config', deployConfig],
-        {
-          cwd: extractedPath,
-          env: deployEnvironment,
-          stdio: 'inherit',
-        },
-      );
+      runWranglerDeployment(wranglerEntry, deployConfig, extractedPath, deployEnvironment);
     });
   } finally {
     rmSync(scratchRoot, { recursive: true, force: true });
@@ -308,6 +306,7 @@ export function resolveReleaseInputs(sourceEnvironment, runAuthCommand = execFil
     GH_HOST: 'github.com',
     GH_TOKEN: githubToken,
     WRANGLER_OAUTH_CONFIG_PATH: wranglerOAuthConfigPath(sourceEnvironment),
+    WRANGLER_ENCRYPTED_OAUTH_CONFIG_PATH: wranglerOAuthConfigPath(sourceEnvironment, 'enc'),
   });
 }
 
@@ -354,6 +353,7 @@ export function createWranglerDeployEnvironment(
   sourceEnvironment,
   cloudflareEnvironment,
   scratchRoot,
+  repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'),
 ) {
   const keys = Object.keys(cloudflareEnvironment).sort();
   const usesEnvironmentCredentials = arraysEqual(keys, CLOUDFLARE_DEPLOY_KEYS);
@@ -390,14 +390,51 @@ export function createWranglerDeployEnvironment(
     deploymentEnvironment.CLOUDFLARE_ACCOUNT_ID = accountId;
     deploymentEnvironment.CLOUDFLARE_API_TOKEN = apiToken;
   } else {
+    assertNoRetainedOAuthSession(sourceEnvironment);
     deploymentEnvironment.CLOUDFLARE_ACCOUNT_ID = EXPECTED_CLOUDFLARE_ACCOUNT_ID;
-    installWranglerOAuthConfig(
-      sourceEnvironment.WRANGLER_OAUTH_CONFIG_PATH,
-      directories.config,
-    );
+    const encryptedPath = sourceEnvironment.WRANGLER_ENCRYPTED_OAUTH_CONFIG_PATH;
+    if (encryptedPath && credentialPathExists(encryptedPath)) {
+      const session = installEncryptedWranglerOAuthConfig(encryptedPath, scratchRoot, repositoryRoot);
+      deploymentEnvironment.XDG_CONFIG_HOME = session.configHome;
+      deploymentEnvironment.CLOUDFLARE_AUTH_USE_KEYRING = 'true';
+      encryptedOAuthSessions.set(deploymentEnvironment, session);
+    } else {
+      installWranglerOAuthConfig(
+        sourceEnvironment.WRANGLER_OAUTH_CONFIG_PATH,
+        directories.config,
+      );
+    }
   }
   assertNoGitHubCredentials(deploymentEnvironment);
   return Object.freeze(deploymentEnvironment);
+}
+
+export function runWranglerDeployment(
+  wranglerEntry,
+  deployConfig,
+  cwd,
+  environment,
+  runCommand = execFileSync,
+  report = console.warn,
+) {
+  const session = encryptedOAuthSessions.get(environment);
+  let childExited = false;
+  if (session) {
+    report(`Encrypted OAuth session: ${session.directory}; retained if credentials refresh or the deployment is interrupted.`);
+  }
+  try {
+    runCommand(process.execPath, [wranglerEntry, 'deploy', '--config', deployConfig, '--profile', 'default'], {
+      cwd,
+      env: environment,
+      stdio: 'inherit',
+    });
+    childExited = true;
+  } catch (error) {
+    childExited = Number.isInteger(error?.status);
+    throw error;
+  } finally {
+    if (session) finishEncryptedWranglerOAuthSession(session, childExited, report);
+  }
 }
 
 export function validateWranglerLock(packageJson, packageLock) {
@@ -541,18 +578,174 @@ function validateGitHubToken(token) {
   }
 }
 
-function wranglerOAuthConfigPath(sourceEnvironment) {
+function wranglerOAuthConfigPath(sourceEnvironment, extension = 'toml') {
   const xdgConfigHome = sourceEnvironment.XDG_CONFIG_HOME;
   if (typeof xdgConfigHome === 'string' && xdgConfigHome.length > 0) {
     if (!path.isAbsolute(xdgConfigHome)) return null;
-    return path.join(xdgConfigHome, '.wrangler', 'config', 'default.toml');
+    return path.join(xdgConfigHome, '.wrangler', 'config', `default.${extension}`);
   }
   const home = sourceEnvironment.HOME;
   if (typeof home !== 'string' || !path.isAbsolute(home)) return null;
   const configHome = process.platform === 'darwin'
     ? path.join(home, 'Library', 'Preferences')
     : path.join(home, '.config');
-  return path.join(configHome, '.wrangler', 'config', 'default.toml');
+  return path.join(configHome, '.wrangler', 'config', `default.${extension}`);
+}
+
+function credentialPathExists(sourcePath) {
+  try {
+    lstatSync(sourcePath);
+    return true;
+  } catch (error) {
+    if (error.code === 'ENOENT') return false;
+    throw new Error('release blocked: Wrangler encrypted OAuth path cannot be inspected');
+  }
+}
+
+function assertNoRetainedOAuthSession(sourceEnvironment) {
+  for (const sourcePath of [sourceEnvironment.WRANGLER_ENCRYPTED_OAUTH_CONFIG_PATH,
+    sourceEnvironment.WRANGLER_OAUTH_CONFIG_PATH]) {
+    if (sourcePath === null || sourcePath === undefined) continue;
+    if (typeof sourcePath !== 'string' || !path.isAbsolute(sourcePath)) {
+      throw new Error('release blocked: Wrangler OAuth profile path must be absolute');
+    }
+    const guard = path.join(path.dirname(sourcePath), '.tailing-release-auth');
+    if (credentialPathExists(guard)) {
+      throw new Error(`release blocked: an encrypted OAuth session requires reconciliation at ${guard}; do not reuse the original profile until it is resolved`);
+    }
+  }
+}
+
+function readEncryptedOAuthFile(sourcePath) {
+  if (typeof sourcePath !== 'string' || !path.isAbsolute(sourcePath)) {
+    throw new Error('release blocked: encrypted Wrangler OAuth path must be absolute');
+  }
+  let descriptor;
+  try {
+    descriptor = openSync(sourcePath, fileConstants.O_RDONLY | fileConstants.O_NOFOLLOW | fileConstants.O_NONBLOCK);
+    const before = fstatSync(descriptor);
+    if (!before.isFile() || before.nlink !== 1 || (before.mode & 0o7777) !== 0o600
+        || typeof process.getuid !== 'function' || before.uid !== process.getuid()
+        || before.size < 1 || before.size > 16_384) {
+      throw new Error('unsafe metadata');
+    }
+    const bounded = Buffer.alloc(16_385);
+    let length = 0;
+    while (length < bounded.length) {
+      const count = readSync(descriptor, bounded, length, bounded.length - length, null);
+      if (count === 0) break;
+      length += count;
+    }
+    const bytes = bounded.subarray(0, length);
+    const after = fstatSync(descriptor);
+    if (!sameFileMetadata(before, after) || bytes.length !== before.size) {
+      throw new Error('changed while reading');
+    }
+    validateEncryptedOAuthEnvelope(bytes);
+    return { bytes, metadata: after };
+  } catch {
+    throw new Error('release blocked: encrypted Wrangler OAuth must be an owned, single-link regular 0600 file with a valid bounded envelope');
+  } finally {
+    if (descriptor !== undefined) closeSync(descriptor);
+  }
+}
+
+function sameFileMetadata(left, right) {
+  return ['dev', 'ino', 'size', 'mode', 'uid', 'nlink', 'mtimeMs', 'ctimeMs']
+    .every((key) => left[key] === right[key]);
+}
+
+function validateEncryptedOAuthEnvelope(bytes) {
+  const text = bytes.toString('utf8');
+  if (!Buffer.from(text, 'utf8').equals(bytes) || text.includes('\\')) throw new Error('invalid encoding');
+  const envelope = JSON.parse(text);
+  const keys = ['alg', 'ciphertext', 'iv', 'tag', 'v'];
+  if (envelope === null || typeof envelope !== 'object' || Array.isArray(envelope)
+      || !arraysEqual(Object.keys(envelope).sort(), keys)
+      || [...text.matchAll(/"(?:alg|ciphertext|iv|tag|v)"\s*:/g)].length !== keys.length
+      || envelope.v !== 1 || envelope.alg !== 'AES-256-GCM') throw new Error('invalid envelope');
+  for (const [key, exactBytes] of [['iv', 12], ['tag', 16], ['ciphertext', null]]) {
+    const value = envelope[key];
+    if (typeof value !== 'string' || value.length === 0
+        || !/^[A-Za-z0-9+/]*={0,2}$/.test(value)) throw new Error('invalid base64');
+    const decoded = Buffer.from(value, 'base64');
+    if (decoded.toString('base64') !== value
+        || (exactBytes !== null && decoded.length !== exactBytes)
+        || decoded.length === 0) throw new Error('invalid envelope length');
+  }
+}
+
+function installEncryptedWranglerOAuthConfig(sourcePath, scratchRoot, repositoryRoot) {
+  const source = readEncryptedOAuthFile(sourcePath);
+  const sourceDirectory = realpathSync(path.dirname(sourcePath));
+  const directoryMetadata = lstatSync(sourceDirectory);
+  if (!directoryMetadata.isDirectory() || directoryMetadata.uid !== process.getuid()
+      || (directoryMetadata.mode & 0o022) !== 0
+      || [scratchRoot, repositoryRoot].some((root) => isWithinPath(sourceDirectory, realpathSync(root)))) {
+    throw new Error('release blocked: encrypted OAuth recovery must be in a private directory outside the repository and release scratch');
+  }
+  // This directory is both the durable recovery location and an exclusive
+  // release-session guard. Native Wrangler does not share this guard: original
+  // credentials are never overwritten, including when another login changes.
+  const guard = path.join(sourceDirectory, '.tailing-release-auth');
+  try {
+    mkdirSync(guard, { mode: 0o700 });
+  } catch {
+    throw new Error(`release blocked: an encrypted OAuth session requires reconciliation at ${guard}; do not reuse the original profile until it is resolved`);
+  }
+  const directory = realpathSync(mkdtempSync(path.join(guard, 'session-')));
+  const configHome = path.join(directory, 'xdg');
+  const targetDirectory = path.join(configHome, '.wrangler', 'config');
+  const targetPath = path.join(targetDirectory, 'default.enc');
+  mkdirSync(targetDirectory, { recursive: true, mode: 0o700 });
+  writeFileSync(targetPath, source.bytes, { flag: 'wx', mode: 0o600 });
+  const installed = readEncryptedOAuthFile(targetPath);
+  if (!installed.bytes.equals(source.bytes)) throw new Error('release blocked: encrypted OAuth copy differs');
+  const currentSource = readEncryptedOAuthFile(sourcePath);
+  if (!sameFileMetadata(currentSource.metadata, source.metadata) || !currentSource.bytes.equals(source.bytes)) {
+    throw new Error(`release blocked: encrypted OAuth source changed; reconcile the retained session at ${directory}`);
+  }
+  const directories = [targetDirectory, path.dirname(targetDirectory), configHome, directory, guard]
+    .map((entry) => ({ path: entry, metadata: lstatSync(entry) }));
+  return { guard, directory, configHome, targetPath, installed, directories };
+}
+
+function isWithinPath(target, root) {
+  const relative = path.relative(root, target);
+  return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
+}
+
+function finishEncryptedWranglerOAuthSession(session, childExited, report) {
+  let unchanged = false;
+  try {
+    const current = readEncryptedOAuthFile(session.targetPath);
+    unchanged = childExited && current.bytes.equals(session.installed.bytes)
+      && sameFileMetadata(current.metadata, session.installed.metadata);
+    let expectedEntry = session.targetPath;
+    for (const directory of session.directories) {
+      const metadata = lstatSync(directory.path);
+      unchanged &&= metadata.isDirectory() && !metadata.isSymbolicLink()
+        && metadata.dev === directory.metadata.dev && metadata.ino === directory.metadata.ino
+        && metadata.uid === directory.metadata.uid && (metadata.mode & 0o7777) === 0o700
+        && arraysEqual(readdirSync(directory.path), [path.basename(expectedEntry)]);
+      expectedEntry = directory.path;
+    }
+  } catch {
+    // A partial refresh, replaced path, or uncertain exit must be retained.
+    unchanged = false;
+  }
+  if (unchanged) {
+    try {
+      unlinkSync(session.targetPath);
+      for (const directory of session.directories) rmdirSync(directory.path);
+      report('Encrypted OAuth session: unchanged credentials; private session removed.');
+      return;
+    } catch {
+      // Remove only known entries and empty directories; never recurse through
+      // state created by another process or an unexpected native tool write.
+    }
+  }
+  report(`Encrypted OAuth session requires reconciliation: ${session.directory}. Refreshed or uncertain state was retained; the original profile was not overwritten. A later release is blocked until this session is resolved.`);
 }
 
 function installWranglerOAuthConfig(sourcePath, isolatedConfigHome) {

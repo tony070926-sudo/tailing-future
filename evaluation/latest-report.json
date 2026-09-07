@@ -1,11 +1,11 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-07T10:21:44.173Z",
+  "generatedAt": "2026-09-07T16:11:02.894Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:a467685dfa9e63e9ae41730fe58b218e34b629d1751c4d4f5cf82e243def5ce6",
-  "sourceFileCount": 448,
+  "artifactDigest": "sha256:595fd4b6094ca2f290075f68dfcae738f93232417ecdbc90b06d9ec6bfaba2a9",
+  "sourceFileCount": 450,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:6c6d291738c5a6a5f4a0c7f6d03d7a930b5ed02963de2aa7a6c548887d15963c",
@@ -54,6 +54,7 @@
     "docs/NACL_WATER_INTERFACE_V0410_CONTRACT.md": "sha256:f884d5a1f491e3bd5b61b1075b8b4b8e4433fe50f48db4963293ef7389f2b3e6",
     "docs/NACL_WATER_INTERFACE_V0411_IMPORT_CONTRACT.md": "sha256:c5b68a8ca7ca1950c397eaa19e21e7cf1790a0c96ebcd4290220c3886ffd2f06",
     "docs/NACL_WATER_V042_CONTRACT.md": "sha256:1c876526ea68c00ba23407a04b4fb2af7e4ab8da3c6b8375bc5325edf6f991d0",
+    "docs/RELEASE_AUTHENTICATION.md": "sha256:5eb813dc561b267e42b4fb72a00bcfe16510c9817df0d266080b4a58bebff734",
     "docs/RESEARCH_BASELINE.md": "sha256:ca8f3339065737a34d6faa5f4600b5bb6077ecd86634eddffe61b8a022ec94e4",
     "docs/ROADMAP.md": "sha256:a5a7a472e749ad0bf6086230891f5b7d5c720cb48177d8cdef0e0d8ebe0ee7d9",
     "docs/SAFETY.md": "sha256:36e6f5fb4a8a29c6675dba7dc96ddbd9a49af9474d6681a1758bfe6d85ab7929",
@@ -119,6 +120,7 @@
     "evaluation/reviews/2026-09-06-custom-structure-workbench-review.md": "sha256:6b5fff69ffe2c6e14086b71ffd50456717884cc9aead35b6757853e946438e42",
     "evaluation/reviews/2026-09-06-random-tp-authority-request-review.md": "sha256:f6d40941e876c686c94f8b37591854deaa1c4bfcd384795bcc8f42766ffcf98e",
     "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md": "sha256:df553e1cd16d3f77e2177b12d403da916240ef36931467211c83354b9133c6d4",
+    "evaluation/reviews/2026-09-07-wrangler-encrypted-release-review.md": "sha256:1ef1fbc88ea34828d4e8e3d350d04c54354ee80a876e20819777b1fb00f4ffe3",
     "lib/molecular/aqueous-dynamics-lab-component.test.ts": "sha256:220406a2f98aad659121b78a8501168af8c00705e60e089ffdaf85897afd36be",
     "lib/molecular/aqueous-dynamics-render-frame.test.ts": "sha256:b7fe5a418833a983720e27dcf61ae3002853ef15d20db4498b7a6416cba3865b",
     "lib/molecular/aqueous-dynamics-render-frame.ts": "sha256:44eb1d0a1868bf4146c9da748d8be031d24842cfebdf2ba5ac8a9396e0464564",
@@ -436,8 +438,8 @@
     "scripts/github-release-policy.test.mjs": "sha256:c8a49539d3bab740a680dea1312e115fa8b3c88b86a4e2a8f392d8266c1e86cf",
     "scripts/release-artifact.mjs": "sha256:93e171f5ecfca397baa6d19ba4201ebb03680335a73941658f9b4214dadc310c",
     "scripts/release-artifact.test.mjs": "sha256:a3ee8f111c897a8f130ddaabdb49d31594207f07f7cc7094068925321b6801c6",
-    "scripts/release-cloudflare.mjs": "sha256:83df33a6ae805ef7830286723991587bfdc4eb9f7504aaca03834f760cd71a9f",
-    "scripts/release-cloudflare.test.mjs": "sha256:ac1818a3ccec2d6808b56645296520d63de517d5682f047393e8d159883e99ce",
+    "scripts/release-cloudflare.mjs": "sha256:e0a0498fd25a41717fd27276ab69c326153381636321923bbb4a3b81d100f04c",
+    "scripts/release-cloudflare.test.mjs": "sha256:343dcf6058832e0ac8127202728c901fb9b1fc674cfcf0ac3563e91e66a04430",
     "scripts/release-report.mjs": "sha256:66db07001dc6a4f87d33362af679ea236703692f763ffe0489f054bce378a00d",
     "scripts/release-report.test.mjs": "sha256:56bbe63fc293246ce26cc2f9347af98e8bd1226ba8a2faea8f21cc0b31682fb3",
     "scripts/safe_extract_zip.py": "sha256:e6b1a46b1ba471c888402cd75987819b18097d0bc6d2f87f5d1469f3d6a7caa0",
@@ -814,7 +816,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 166096.68
+    "elapsedMs": 170914.97
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
@@ -910,7 +912,7 @@
     "scripts/evaluate.mjs": "sha256:255acdfb30cb8aaa2764d82b178c08ebd517476f23f1d060dcbcfa01f9340883",
     "scripts/evaluate-worker.mjs": "sha256:31f22211db899c9d42251a34fc40049624cf0ee00d52ca153e9d6f0258997c67",
     "scripts/evaluate-launcher.test.mjs": "sha256:3ccca5f37141d0461c0c5e46dad080b995acc810dd5c638b5769b8a1346c614b",
-    "scripts/release-cloudflare.mjs": "sha256:83df33a6ae805ef7830286723991587bfdc4eb9f7504aaca03834f760cd71a9f",
+    "scripts/release-cloudflare.mjs": "sha256:e0a0498fd25a41717fd27276ab69c326153381636321923bbb4a3b81d100f04c",
     "scripts/release-report.test.mjs": "sha256:56bbe63fc293246ce26cc2f9347af98e8bd1226ba8a2faea8f21cc0b31682fb3",
     ".github/workflows/sentinel-report.yml": "sha256:9d07ad91f474da47ce1b7367cd25dbb3e13c6c95021a05ff38278a12e2368c4d"
   },
