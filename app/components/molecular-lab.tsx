@@ -31,6 +31,7 @@ import {
 } from '@/lib/simulation/molecular-world';
 import { PeriodicAtomisticLab } from './periodic-atomistic-lab';
 import { AqueousDynamicsLab } from './aqueous-dynamics-lab';
+import { CustomStructureWorkbench } from './custom-structure-workbench';
 
 type InspectorTab = 'structure' | 'interactions' | 'evidence';
 type WaterScanAxis = 'separation' | 'orientation';
@@ -69,6 +70,7 @@ const INSPECTOR_TABS: ReadonlyArray<readonly [InspectorTab, string]> = [
 export function MolecularLab({ active }: { active: boolean }) {
   const [periodicLabOpen, setPeriodicLabOpen] = useState(false);
   const [aqueousLabOpen, setAqueousLabOpen] = useState(false);
+  const [customStructureOpen, setCustomStructureOpen] = useState(false);
   const [dynamicsWorld, setDynamicsWorld] = useState(() => new MolecularDynamicsWorld());
   const [sceneKind, setSceneKind] = useState<MolecularSceneKind>('water-dimer');
   const [labMode, setLabMode] = useState<MolecularLabMode>('static-configuration');
@@ -397,6 +399,18 @@ export function MolecularLab({ active }: { active: boolean }) {
     setAqueousLabOpen(true);
   };
 
+  const openCustomStructure = () => {
+    setIsScanPlaying(false);
+    setIsTrajectoryPlaying(false);
+    setPeriodicLabOpen(false);
+    setAqueousLabOpen(false);
+    setCustomStructureOpen(true);
+  };
+
+  if (customStructureOpen) {
+    return <CustomStructureWorkbench active={active} onBack={() => setCustomStructureOpen(false)} />;
+  }
+
   if (aqueousLabOpen) {
     return <AqueousDynamicsLab active={active} onBack={() => setAqueousLabOpen(false)} />;
   }
@@ -472,6 +486,9 @@ export function MolecularLab({ active }: { active: boolean }) {
             </button>
             <button type="button" className="aqueous-solver-entry" aria-pressed="false" onClick={openAqueousLab}>
               <span>NaCl + H₂O</span><b>WebGL2 水溶液实验台</b><small>8 原子 · direct Ewald · solver</small>
+            </button>
+            <button type="button" className="custom-structure-entry" aria-pressed="false" onClick={openCustomStructure}>
+              <span>Z=1–118</span><b>自定义结构工作台</b><small>STRUCTURE ONLY · SOLVER NOT RUN</small>
             </button>
           </div>
 
