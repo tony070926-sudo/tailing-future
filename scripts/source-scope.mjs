@@ -43,6 +43,8 @@ export function selectProjectSourceFiles(relativePaths) {
     .filter((relativePath) => relativePath !== 'evaluation/latest-report.json'
       && relativePath !== 'evaluation/latest-report.md'
       && relativePath !== 'evaluation/public-summary.json'
-      && relativePath !== 'evaluation/public-product-evaluation.json')
+      && relativePath !== 'evaluation/public-product-evaluation.json'
+      // One named terminal attestation only; historical and other reviews are inputs.
+      && relativePath !== 'evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json')
     .sort();
 }

@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "tf.project-private-runtime-lock/0.1",
+  "lockId": "pfhub7a-r18a-fipy-scipy-headless-darwin-arm64-cpython312-v1",
+  "createdAt": "2026-09-07T06:48:41Z",
+  "purpose": "Project-private, content-addressed, headless numerical runtime for the bounded PFHub 7(a) R18a semantic preflight only.",
+  "platform": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "pythonImplementation": "CPython",
+    "pythonVersion": "3.12.14",
+    "pythonCacheTag": "cpython-312",
+    "byteOrder": "little",
+    "float64Bytes": 8
+  },
+  "bootstrapSource": {
+    "kind": "caller-supplied-local-root-verified-before-copy",
+    "logicalRoot": "$PYTHON_SOURCE_ROOT",
+    "selection": {
+      "included": [
+        "bin/python3.12",
+        "regular files below lib/python3.12"
+      ],
+      "excludedPathComponents": [
+        "site-packages",
+        "__pycache__"
+      ],
+      "excludedSuffixes": [
+        ".pyc",
+        ".pyo"
+      ],
+      "symlinksAllowed": false
+    },
+    "pythonExecutable": {
+      "path": "bin/python3.12",
+      "byteSize": 18041888,
+      "rawDigest": "sha256:ac60cfe0268614638d0ffa35f3b0284fc7b3a11482723793455e17eeb278509e"
+    },
+    "canonicalClosure": {
+      "recordShape": [
+        "byteSize",
+        "path",
+        "rawDigest"
+      ],
+      "ordering": "UTF-8 bytewise ascending logical path",
+      "serialization": "UTF-8 compact JSON array with ASCII escaping and no trailing newline",
+      "recordCount": 747,
+      "byteSize": 32153962,
+      "recordsDigest": "sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530"
+    }
+  },
+  "wheelhouse": {
+    "kind": "caller-supplied-directory-verified-by-exact-filename-size-and-sha256",
+    "logicalRoot": "$WHEELHOUSE",
+    "installer": "No pip resolver or install hook is executed. The materializer rejects unsafe names, links and duplicate members, then extracts the exact wheel members.",
+    "distributions": [
+      {
+        "name": "FiPy",
+        "version": "4.0.3",
+        "filename": "fipy-4.0.3-py3-none-any.whl",
+        "byteSize": 439565,
+        "rawDigest": "sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e",
+        "sourceUrl": "https://pypi.org/project/FiPy/4.0.3/",
+        "licenseExpression": "LicenseRef-NIST-PD"
+      },
+      {
+        "name": "numpy",
+        "version": "2.5.3",
+        "filename": "numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 5445405,
+        "rawDigest": "sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0",
+        "sourceUrl": "https://pypi.org/project/numpy/2.5.3/",
+        "licenseExpression": "BSD-3-Clause"
+      },
+      {
+        "name": "scipy",
+        "version": "1.18.1",
+        "filename": "scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 20475078,
+        "rawDigest": "sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12",
+        "sourceUrl": "https://pypi.org/project/scipy/1.18.1/",
+        "licenseExpression": "BSD-3-Clause"
+      },
+      {
+        "name": "packaging",
+        "version": "26.3",
+        "filename": "packaging-26.3-py3-none-any.whl",
+        "byteSize": 129956,
+        "rawDigest": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+        "sourceUrl": "https://pypi.org/project/packaging/26.3/",
+        "licenseExpression": "Apache-2.0 OR BSD-2-Clause"
+      }
+    ],
+    "expandedClosure": {
+      "destinationPrefix": "lib/python3.12/site-packages/",
+      "recordCount": 2668,
+      "byteSize": 93182230,
+      "recordsDigest": "sha256:0c68ccb7e085c71a2ab19ec8563af3ff1eba5644598bcd9b863bb738521d1332"
+    }
+  },
+  "combinedClosure": {
+    "recordCount": 3415,
+    "byteSize": 125336192,
+    "recordsDigest": "sha256:55f3f0353e053a0eca5cf92af57019c16cdf33f50a126922993ed8cdbf2a2b7c",
+    "materializedFileMode": "0444 except bin/python3.12 is 0555",
+    "materializedDirectoryMode": "0555",
+    "addressing": "Runtime directory basename is the lowercase hexadecimal SHA-256 of these exact lock-file bytes."
+  },
+  "solverSubset": {
+    "supported": [
+      "FiPy cell-centred finite-volume mesh and variables",
+      "serial SciPy sparse linear solver backend",
+      "NumPy array operations used by the R18a preflight"
+    ],
+    "intentionallyNotInstalled": [
+      "matplotlib",
+      "typer",
+      "typing_extensions",
+      "FiPy viewer, plotting and CLI dependency trees",
+      "PETSc, Trilinos, PyAMGX and MPI backends"
+    ],
+    "boundary": "This is a tested minimal headless solver subset, not a complete general-purpose FiPy installation. An import or feature outside the declared subset must fail rather than trigger dependency resolution."
+  },
+  "upstreamComparison": {
+    "classification": "reference",
+    "fipyRevision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+    "sourceUrl": "https://github.com/usnistgov/fipy/blob/64635bf8ed6bc51431edb7d6cf1495ff68ac18a7/environments/locks/conda-scipy-osx-arm64.lock",
+    "byteSize": 21118,
+    "rawDigest": "sha256:5fe560baec43e9497e4133bb444084fae6d360478ba0b6a258e20f1e4901d043",
+    "upstreamLockedPythonAbi": "cp313",
+    "upstreamLockedNumpy": "2.4.6",
+    "upstreamLockedScipy": "1.17.1",
+    "localDifference": "R18a uses locally locked CPython 3.12 arm64 PyPI wheels for NumPy 2.5.3 and SciPy 1.18.1. This locally preflighted selection is not FiPy's upstream conda-lock combination and receives no compatibility claim beyond the frozen R18a subset."
+  },
+  "warningPolicy": {
+    "defaultAction": "error",
+    "allowlist": [
+      {
+        "category": "DeprecationWarning",
+        "moduleRegex": "^fipy\\.tools\\.numerix$",
+        "message": "numpy.core is deprecated and has been renamed to numpy._core. The numpy._core namespace contains private NumPy internals and its use is discouraged, as NumPy internals can change without warning in any release. In practice, most real-world usage of numpy.core is to access functionality in the public NumPy API. If that is the case, use the public NumPy API. If not, you are using NumPy internals. If you would still like to access an internal attribute, use numpy._core.umath.",
+        "observedCountDuringImport": 2,
+        "reason": "FiPy 4.0.3 imports numpy.core.umath twice from fipy.tools.numerix line 61 under NumPy 2.5.3. The exact message and module only are ignored; every other warning remains an error."
+      }
+    ]
+  },
+  "dynamicClosurePolicy": {
+    "moduleOrigins": "After the semantic run, inventory every loaded module origin. Only built-in, frozen, the exact worker, or a regular file inside the materialized runtime is accepted.",
+    "nativeImages": "On Darwin, inventory loaded Mach-O images through dyld. Only materialized-runtime images or /usr/lib and /System/Library host images are accepted.",
+    "receipt": "Publish normalized logical paths, byte identities for runtime and worker files, and a canonical digest of each inventory.",
+    "hostBoundary": "The Darwin kernel, dyld, /usr/lib, /System/Library frameworks, hardware, firmware and numerical behavior of Accelerate are inventoried by path where loaded but are not byte-locked by this capsule."
+  },
+  "evidencePolicy": {
+    "classification": "auditable",
+    "reproduced": false,
+    "rankingEligible": false,
+    "scoreIncreaseAuthorized": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "industrialUseAuthorized": false
+  }
+}

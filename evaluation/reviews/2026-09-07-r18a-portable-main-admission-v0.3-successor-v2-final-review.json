@@ -1,0 +1,2195 @@
+{
+  "schemaVersion": "tf.r18a-portable-lifecycle-terminal-review/0.1",
+  "recordedOn": "2026-09-07",
+  "recordedAt": "2026-09-07T15:56:51.823Z",
+  "author": "/root",
+  "role": "final-disposition-owner-not-independent-reviewer",
+  "status": "pass-local-reviewed-candidate-protected-CI-and-deployment-pending",
+  "reviewRecordComplete": true,
+  "commitEligible": true,
+  "pushEligible": true,
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false,
+  "decisionScope": "Root authorizes only the exact reviewed local candidate for a scoped commit and normal protected pull request. This is not CI success, main-merge approval without required checks, deployment approval by this artifact, or scientific promotion. User authorized commit/deploy subject to gates and chose the release excluding R12 with local evidence retained.",
+  "hypothesis": "Separate immutable source inputs, four evaluator-derived reports, and one exact terminal review; preserve source admission across ordinary Git modes while rejecting mode drift during report verification. Re-execute the unchanged bounded R18a numerical checks and complete local gates without raising scientific capability claims.",
+  "acceptance": [
+    "Archive historical reports and all predecessor reviews exactly; permit no approval transfer.",
+    "Keep frontend source/resources and tf.world/action/observation /0.3 unchanged relative to the pinned integration base.",
+    "Admit stable ordinary Git0644 and historical source receipt0444 while rejecting both receipt mode-transition directions during the actual production derived-report verification path.",
+    "Preserve all four output bytes/public projections and strict JSON validation; recapture actual mode-sensitive evaluator inputs after readbacks.",
+    "After independent read-only reviews and the final code fix, run all 24 frozen local gates to actual exit0 with raw logs and explicit cleanup observations.",
+    "Add only the single preregistered terminal review after generation; keep the 512 evaluator input identities unchanged.",
+    "Require fresh protected GitHub CI and the existing guarded main-only release workflow before any deployment."
+  ],
+  "frozenCandidate": {
+    "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "finalWorktree": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-final",
+    "branch": "codex/backend-release-r18a-final",
+    "reviewedClosureScope": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/r18a-report-posix-drift-closure-scope.md",
+      "size": 3140,
+      "sha256": "943f0f7c8de79f9345f43904471bee335d1f1ba9db5e9e73bc96b480be8896c5"
+    },
+    "builderFreeze": [
+      {
+        "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/plan.json",
+        "size": 245695,
+        "sha256": "c796c28841f0252de4e5231c7dc257b21e8ea0c1963cb9ee7bb84f01fc2e40ef"
+      },
+      {
+        "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/manifest.json",
+        "size": 112564,
+        "sha256": "f2eabfd1cd5c87f509fde75942709548df10a46aad018cc2e33373d3c51095c8"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-RILMZr/results.json",
+        "size": 885414,
+        "sha256": "91910fad1dcb1fcfeb8d9fd3a9605b7d36a6e908900815afecf827c431f00716"
+      }
+    ],
+    "reviewedClosurePosixSource": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "0a968e9ea6c589f8dcc0afafad9224141542442f3aa1475c8468163289710908"
+    },
+    "ordinaryGitBeforeEvaluation": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "89220d532144120b7190cf924566c78820cd08a3951e03972c2d341155f46d25"
+    },
+    "testedObservedTreeBeforeThisTerminalReview": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 516,
+      "sha256": "8bdbcd2f3bb4a2a3a1b44890ce2f371d0c571c76512573d00d8a1b3257837989",
+      "gitTreeOid": "f17e88eb2984363741ca3e41b479e89f8292c29e"
+    },
+    "testedObservedPosixBeforeThisTerminalReview": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "a60fa69ddc01112b79071ecace903b97dd54f31ee66790274dcd46214c5936d2"
+    },
+    "sourceInputIdentity": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 512,
+      "sha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+      "gitTreeOid": "c5d365c1b164683d76f4c8ca6ea0b4b95b9813fb"
+    },
+    "evaluatorArtifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+    "terminalReviewPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-final-review.json",
+    "terminalReviewExcludedFromEvaluatorInput": true,
+    "selfIdentityPolicy": "This document cannot contain its own digest. The tested 516-file tree above excludes this exact terminal artifact; subsequent scoped Git commit and external post-assembly evidence identify the complete 517-file tree. No other review inputs are excluded.",
+    "reportSourceInputMode": "All 512 actual source inputs are POSIX0644 in the full run and final transfer; four generated outputs retain actual evaluator POSIX0600. Git records nonexecutable regular files as100644.",
+    "derivedOutputs": [
+      {
+        "path": "evaluation/latest-report.json",
+        "size": 135513,
+        "sha256": "7237ba5e2758d7e5052d1e5447060803cbe7df52cded317d2eae117a5fa99ae3"
+      },
+      {
+        "path": "evaluation/latest-report.md",
+        "size": 5045,
+        "sha256": "628c9bb848d27e80fa03a59598afbf193893cfd55ea9b5e285fc64fb75567b16"
+      },
+      {
+        "path": "evaluation/public-product-evaluation.json",
+        "size": 4804,
+        "sha256": "1762f666976a11657d10760cfb2b513833156855f89f49fdd1fe32c1b2818491"
+      },
+      {
+        "path": "evaluation/public-summary.json",
+        "size": 344,
+        "sha256": "7517b699aad89c8c2e5ec3fddba7dcdf8899717d50187327e348195a6d99169d"
+      }
+    ],
+    "originalWorktree": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future",
+      "head": "643b8b15f1a796c0ca4c34657d4b5edc68389354",
+      "before": {
+        "pathCount": 641,
+        "canonicalBytes": 106952,
+        "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+      },
+      "after": {
+        "pathCount": 641,
+        "canonicalBytes": 106952,
+        "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+      },
+      "preserved": true
+    }
+  },
+  "scientificBoundary": {
+    "classification": "unchanged PFHub7(a) reduced numerical preflight only",
+    "meshCells": [
+      8,
+      4
+    ],
+    "steps": 2,
+    "timeStep": {
+      "value": 0.01,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub7(a) native reduced time"
+    },
+    "horizon": {
+      "value": 0.02,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub7(a) native reduced time"
+    },
+    "formalReceipt": {
+      "size": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    },
+    "tracks": {
+      "officialLiteral": "Analytic-field discrepancy, not strict MMS.",
+      "literalSelf": "Same literal BVP self-comparison; not a third PDE.",
+      "exactTraceCompanion": "Explicitly non-PFHub strict MMS."
+    },
+    "fullT8ConvergenceVerified": false,
+    "independentSpatialDiscretizationVerified": false,
+    "realMaterialOrIndustrialValidation": false,
+    "identifiedEngineeringCausalEffect": false,
+    "R2ReducedWorldIsRealMaterialOrReactor": false,
+    "automaticSafetyCriticalControl": false,
+    "causalPolicy": "Mechanism paths remain auditable candidate explanations, never identified total effects. Quantitative interventions/counterfactuals require identified structural equations, actual values/context, boundaries/horizon, parameter evidence and calibrated validation domain; otherwise machine-readable abstention.",
+    "evidenceMaturity": {
+      "score": 41,
+      "verdict": "conditional",
+      "hardGateFailures": [],
+      "scoreIncreased": false,
+      "meaning": "validation maturity only; neither scientific truth nor percentage of SOTA"
+    }
+  },
+  "R12": {
+    "userDecision": "release-excludes-R12-preserve-local-evidence",
+    "rightsClearanceClaimed": false,
+    "publicCatalogCapability": false,
+    "originalEvidenceRetained": true,
+    "excludedPaths": [
+      "evaluation/gas-kinetics/fixtures/hwang-so2-mechanism-catalog.json",
+      "evaluation/reviews/2026-09-02-r12-defect-aware-gas-mechanism-catalog-review.md",
+      "lib/knowledge/gas-mechanism-catalog.test.ts",
+      "lib/knowledge/gas-mechanism-catalog.ts",
+      "lib/knowledge/so2-gas-mechanism-catalog.ts",
+      "schemas/gas-mechanism-catalog-query-result.schema.json",
+      "schemas/gas-mechanism-catalog-query.schema.json",
+      "schemas/gas-mechanism-catalog.schema.json",
+      "scripts/gas-kinetics/mechanism-catalog-trust-roots.mjs"
+    ],
+    "provenanceMentionsDoNotConstituteRuntimeCapability": true
+  },
+  "independentReviews": {
+    "science": {
+      "reviewer": "/root/lifecycle_science_review",
+      "role": "science",
+      "readOnly": true,
+      "identity": {
+        "path": "/private/tmp/tf-r18a-lifecycle-science.ZZlUvZ/science-review.json",
+        "mode": 420,
+        "size": 61012,
+        "sha256": "99d97e85f064e13af501882a101cfb45210e3b12151c94b37758d77e41b9f7b4"
+      },
+      "repositoryPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-science-review.json",
+      "historicalVerdict": "pass-bounded-scientific-boundary-review",
+      "notApprovalTransfer": true
+    },
+    "software": {
+      "reviewer": "/root/admission_software_review",
+      "role": "software",
+      "readOnly": true,
+      "identity": {
+        "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/software-review.json",
+        "mode": 420,
+        "size": 62393,
+        "sha256": "000a8fd030bce2881d131a5ad652ac2dd189facb7b0c1681346cc169b7787919"
+      },
+      "repositoryPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-software-review.json",
+      "historicalVerdict": "P1_BLOCKED_REPORT_LIFECYCLE_CLOSURE_INCOMPLETE",
+      "notApprovalTransfer": true
+    },
+    "sota": {
+      "reviewer": "/root/portable_sota_review",
+      "role": "sota",
+      "readOnly": true,
+      "identity": {
+        "path": "/private/tmp/tf-r18a-lifecycle-sota-review.OVcwX6/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-sota-review.json",
+        "mode": 420,
+        "size": 50495,
+        "sha256": "f1402f904cedef651dfeb448837f0846cca111d5ac5017649a50f86d36d2cf77"
+      },
+      "repositoryPath": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-sota-review.json",
+      "historicalVerdict": "pass-bounded-sota-and-evidence-discipline-review-with-three-retained-P2",
+      "notApprovalTransfer": true
+    }
+  },
+  "independentCodeClosure": {
+    "identity": {
+      "path": "/private/tmp/tf-report-posix-closure-review.0OiZA8/closure.json",
+      "size": 10153,
+      "sha256": "69e76be37120cb365d97953e7864db59d9b0f22827f84117f60175592f298035"
+    },
+    "record": {
+      "schemaVersion": "tf.r18a-report-posix-closure-review/0.1",
+      "recordedOn": "2026-09-07",
+      "reviewer": "/root/admission_software_review",
+      "mode": "independent-read-only",
+      "verdict": "PASS_CODE_CLOSURE_ONLY_FULL_GATES_PENDING",
+      "frozenManifest": {
+        "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/manifest.json",
+        "mode": 420,
+        "size": 112564,
+        "sha256": "f2eabfd1cd5c87f509fde75942709548df10a46aad018cc2e33373d3c51095c8"
+      },
+      "frozenScope": {
+        "path": "/private/tmp/tf-backend-release-tools.re0t54/r18a-report-posix-drift-closure-scope.md",
+        "mode": 420,
+        "size": 3140,
+        "sha256": "943f0f7c8de79f9345f43904471bee335d1f1ba9db5e9e73bc96b480be8896c5"
+      },
+      "sourceIdentity": {
+        "pathCount": 516,
+        "canonicalBytes": 85601,
+        "sourceSha256": "0a968e9ea6c589f8dcc0afafad9224141542442f3aa1475c8468163289710908"
+      },
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 512,
+        "sha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+        "gitTreeOid": "c5d365c1b164683d76f4c8ca6ea0b4b95b9813fb"
+      },
+      "wholeObservedIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 516,
+        "sha256": "3b1118a7ed8eecd0ec593f37e154a3b4fc10a1f06a0a2c91627c5aa34056fc2a",
+        "gitTreeOid": "5f156d52e00e10bff9482bfb0077b1973f4ad9db"
+      },
+      "closureDispositions": [
+        {
+          "id": "R18A-PORTABLE-P1-DERIVED-REPORT-POSIX-DRIFT",
+          "priority": "P1",
+          "status": "closed-code-defect",
+          "location": {
+            "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-closure/scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+            "start": 217,
+            "end": 238
+          },
+          "reason": "After all report readbacks, the exact production entrypoint recaptures inputs and compares mode-sensitive capturedInputIdentity against the first capture. Both legal modes remain admitted; a change in either direction now abstains with a specific reason. Independent test executes the production function with real filesystem/capture/admission, not only the pure helper. Guard-removal negative controls incorrectly pass in both directions, proving the final guard is exercised.",
+          "exactFunction": {
+            "bytes": 2252,
+            "sha256": "a172841cee1c1e461372c5a7421008fd439dd3ede112b25a378feeff43d59c85"
+          },
+          "executedBidirectionalEvidence": [
+            {
+              "fromMode": 420,
+              "toMode": 292,
+              "productionStatus": "abstain",
+              "reason": "POSIX_INPUT_CHANGED_DURING_REPORT_CHECK",
+              "negativeControlWithoutGuard": "incorrect-pass",
+              "syntheticProtocolOnly": true,
+              "executionAuthenticated": false,
+              "releaseEligible": false
+            },
+            {
+              "fromMode": 292,
+              "toMode": 420,
+              "productionStatus": "abstain",
+              "reason": "POSIX_INPUT_CHANGED_DURING_REPORT_CHECK",
+              "negativeControlWithoutGuard": "incorrect-pass",
+              "syntheticProtocolOnly": true,
+              "executionAuthenticated": false,
+              "releaseEligible": false
+            }
+          ]
+        },
+        {
+          "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+          "priority": "P1",
+          "status": "closed-implementation-defect-full-validation-pending",
+          "reason": "The explicit four-derived-output/one-terminal-attestation protocol removes self-pinning while preserving old report history, old review inputs and unknown-source fail-closed behavior. Those unchanged protocol tests and new actual-POSIX stability guard passed. This closes the identified implementation defects only; no real evaluator/full-gate success is asserted and runtime integration can still reveal a new blocker."
+        }
+      ],
+      "findings": [],
+      "countsOfFindings": {
+        "newP0": 0,
+        "newP1": 0,
+        "newP2": 0,
+        "reviewerCodeP1Closed": 2,
+        "inheritedRootOperationalP1Open": 2
+      },
+      "inheritedOperationalBlockers": [
+        {
+          "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+          "priority": "P1",
+          "origin": "root-assigned operational/release blocker",
+          "status": "open",
+          "reason": "Only actual applicable post-review full-core evidence can close this; bounded closure does not."
+        },
+        {
+          "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+          "priority": "P1",
+          "origin": "root-assigned operational/release blocker",
+          "status": "open",
+          "reason": "The frozen 24-gate plan has not been executed; all applicable terminal evidence remains required."
+        }
+      ],
+      "p2Residuals": [
+        {
+          "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+          "status": "retained-not-fixed"
+        },
+        {
+          "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+          "status": "retained-accepted-nonblocking-not-fixed",
+          "reason": "CLI/process terminal authority remains required."
+        }
+      ],
+      "evidence": {
+        "independent": {
+          "results": {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-Y9XgOZ/results.json",
+            "mode": 420,
+            "size": 871278,
+            "sha256": "da4a7d56a574423850aa27b78df1b39593438a0d1703a01c31bc2089f8bbed01"
+          },
+          "gateCount": 3,
+          "cliExitCode": 0,
+          "files": 3,
+          "passed": 29,
+          "filteredSkipped": 9,
+          "filterReason": "Explicit --testNamePattern excludes the other unchanged admission tests in this reviewer rerun; not a historical corpus exemption and not counted as independently reexecuted.",
+          "numericalRerun": false
+        },
+        "builder": {
+          "results": {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-RILMZr/results.json",
+            "mode": 420,
+            "size": 885414,
+            "sha256": "91910fad1dcb1fcfeb8d9fd3a9605b7d36a6e908900815afecf827c431f00716"
+          },
+          "gateCount": 7,
+          "focusedFiles": 6,
+          "focusedPassed": 76,
+          "skipped": 0,
+          "historicalPassed": [
+            5,
+            20
+          ],
+          "actualGitNodePassed": 29,
+          "numerical": {
+            "raw": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-RILMZr/candidate/.tf-runtime/r18a-current-root-8pQqfm/execution.json",
+              "mode": 384,
+              "size": 558598,
+              "sha256": "6157446c8f72cbdfd4b2cb727cae47555e7da13fddd1ba253387a3f3ae4e2ee2"
+            },
+            "pythonPassed": 21,
+            "nodePassed": 29,
+            "receipts": [
+              {
+                "path": "/private/tmp/tf-r18a-current-main-final-gates-RILMZr/candidate/.tf-runtime/r18a-current-root-8pQqfm/receipt-1.json",
+                "mode": 292,
+                "size": 248778,
+                "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+              },
+              {
+                "path": "/private/tmp/tf-r18a-current-main-final-gates-RILMZr/candidate/.tf-runtime/r18a-current-root-8pQqfm/receipt-2.json",
+                "mode": 292,
+                "size": 248778,
+                "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+              }
+            ],
+            "elapsedMs": 37306.036375,
+            "sourceReceiptMode": "0444; not ordinary-Git numerical execution",
+            "reviewerAuditedNotReexecuted": true
+          }
+        },
+        "detailedReadOnlyAudit": {
+          "path": "/private/tmp/tf-report-posix-closure-review.0OiZA8/closure-review.json",
+          "size": 55391,
+          "sha256": "069f7aa26f8e2f0d2efde4101d3906413982291c42d0f1150ea7c87107938e0e"
+        },
+        "previousReview": {
+          "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/software-review.json",
+          "mode": 420,
+          "size": 62393,
+          "sha256": "000a8fd030bce2881d131a5ad652ac2dd189facb7b0c1681346cc169b7787919"
+        },
+        "previousFailureProbe": {
+          "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/mode-drift-probe.json",
+          "mode": 420,
+          "size": 2161,
+          "sha256": "7fb2978183d079abdd76a096c1d13f2a1aa875ce4e48b70995c4248661cb3cfa"
+        }
+      },
+      "fullGateDesign": {
+        "plan": {
+          "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/full-gates-plan.json",
+          "mode": 420,
+          "size": 260917,
+          "sha256": "a04b7da37194d70f1d36b3f3c13ba92a9e590601f42eca1d25e0e7ec3e7a5364"
+        },
+        "ordinaryGitPreparation": {
+          "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/ordinary-git-preparation.json",
+          "mode": 420,
+          "size": 109488,
+          "sha256": "10dbfc566159f5022ce167c4826356ec601daab5b79a7e362c979c6aac038152"
+        },
+        "checkedSourcePaths": 516,
+        "actualReceiptMode": "0644",
+        "noPostCheckoutChmod": true,
+        "head": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+        "existingPAncestorCheckExitCode": 0,
+        "candidateUncommitted": true,
+        "gateCount": 24,
+        "syntheticGuardChecks": 90,
+        "completePredecessorListsVerified": true,
+        "generationLFParserVerified": true,
+        "evaluateBuildDerivedSameRootOrdered": true,
+        "GITHUB_SHAAbsent": true,
+        "releaseManifestNotRun": true,
+        "noObviousExecutionErrorFound": true,
+        "notYetExecuted": true
+      },
+      "preservedEvidence": {
+        "prior513Unchanged": true,
+        "threePriorReviewsArchivedUnchanged": true,
+        "archivedSoftwareOriginalAlsoVerified": true,
+        "original641Unchanged": true,
+        "terminalAttestationNotWritten": true,
+        "initialCycleAndDriftFailureEvidenceRetained": true,
+        "priorPassesNotWithdrawnOrRelabeled": true
+      },
+      "limitations": [
+        "Closes the two identified implementation defects only. CORE-DEADLINES and SEQUENCE-INCOMPLETE remain open until actual applicable full gates pass.",
+        "No full-core/observer/real evaluator/build/Linux CI/deployment ran in this closure review. Static plan and synthetic guard checks are not real execution or cleanup evidence.",
+        "Unsigned report generation remains consistency-only; no scientific or release approval.",
+        "Existing finite readback/direct-child/original-process-group limits and recorded P2 residuals remain."
+      ],
+      "releaseEligible": false,
+      "commitEligible": false,
+      "pushEligible": false,
+      "deploymentEligible": false,
+      "scientificPromotionEligible": false,
+      "goalComplete": false,
+      "candidateEdited": false,
+      "priorEvidenceEdited": false,
+      "reviewFreezeComplete": true
+    }
+  },
+  "independentTerminalFullGateClosure": {
+    "identity": {
+      "path": "/private/tmp/tf-report-full-gates-terminal-review.ThViE0/terminal-review.json",
+      "size": 8363,
+      "sha256": "545415b05d2e2dbff616a43dc76ae62ebcc0b87100ce2cea44b2d851ee9bdab6"
+    },
+    "record": {
+      "schemaVersion": "tf.r18a-local-full-gates-terminal-review/0.1",
+      "recordedOn": "2026-09-07",
+      "reviewer": "/root/admission_software_review",
+      "mode": "independent-read-only-terminal-evidence-audit",
+      "verdict": "PASS_LOCAL_FULL_GATES_ONLY",
+      "results": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/results.json",
+        "mode": 420,
+        "size": 956564,
+        "sha256": "df944bf8fe78d09726ca717695fe0a6831327dd5d66233c29d0a4cf32560351f"
+      },
+      "plan": {
+        "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/full-gates-plan.json",
+        "mode": 420,
+        "size": 260917,
+        "sha256": "a04b7da37194d70f1d36b3f3c13ba92a9e590601f42eca1d25e0e7ec3e7a5364"
+      },
+      "previousCodeClosure": {
+        "path": "/private/tmp/tf-report-posix-closure-review.0OiZA8/closure.json",
+        "mode": 420,
+        "size": 10153,
+        "sha256": "69e76be37120cb365d97953e7864db59d9b0f22827f84117f60175592f298035"
+      },
+      "verifiedEvidence": {
+        "path": "/private/tmp/tf-report-full-gates-terminal-review.ThViE0/verified-evidence.json",
+        "mode": 420,
+        "size": 18981,
+        "sha256": "0d68c6c7376168dced16a644db35931fcf3ac5aad3d074af12ed722654d1e0e5"
+      },
+      "gateCount": 24,
+      "all24TerminalPass": true,
+      "all24ExitCodesZero": true,
+      "all48RawLogsHashesAndSizesVerified": true,
+      "allCleanupFlagsTrue": true,
+      "allNineCleanupGuardsVerifiedAgainstExactPredecessors": true,
+      "noTimedOutTruncatedSignalErrorOrKillError": true,
+      "source": {
+        "ordinaryGit516BeforeAfterSha256": "89220d532144120b7190cf924566c78820cd08a3951e03972c2d341155f46d25",
+        "finalObserved516PosixSha256": "a60fa69ddc01112b79071ecace903b97dd54f31ee66790274dcd46214c5936d2",
+        "sourceInput512GitNormalizedSha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+        "actualEvaluatorArtifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+        "sourceReceiptMode": "0644",
+        "onlyChangedPaths": [
+          "evaluation/latest-report.json",
+          "evaluation/latest-report.md",
+          "evaluation/public-product-evaluation.json",
+          "evaluation/public-summary.json"
+        ],
+        "frozen516CodeAndInputsUnchanged": true,
+        "original641Unchanged": true,
+        "sourceDependencyUnchanged": true,
+        "dependencyCopyChangedPaths": [
+          ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+        ],
+        "dependencyNonCacheChanges": []
+      },
+      "counts": {
+        "focused": 76,
+        "focusedSkipped": 0,
+        "coreFilesPassed": 127,
+        "coreFilesSkipped": 2,
+        "coreTestsPassed": 1480,
+        "coreTestsSkipped": 5,
+        "nodeDispatchPassed": 29,
+        "fullPythonTotal": 136,
+        "fullPythonPassed": 135,
+        "fullPythonSkipped": 1,
+        "observerPassed": 2,
+        "numericalPythonPassed": 21,
+        "numericalNodePassed": 29,
+        "newFormalReceipts": 2,
+        "npmAuditVulnerabilities": 0
+      },
+      "numerical": {
+        "raw": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate/.tf-runtime/r18a-current-root-XDdA6z/execution.json",
+          "mode": 384,
+          "size": 558595,
+          "sha256": "38cc4ff7b904e74dbc797db8f887b01813be9ed6a76746c7882cd005d91bdf93"
+        },
+        "elapsedMs": 30332.425625,
+        "sourceReceiptMode": "0644 actual ordinary-Git source",
+        "newReceiptMode": "0444",
+        "receipts": [
+          {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate/.tf-runtime/r18a-current-root-XDdA6z/receipt-1.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          },
+          {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate/.tf-runtime/r18a-current-root-XDdA6z/receipt-2.json",
+            "mode": 292,
+            "size": 248778,
+            "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+          }
+        ]
+      },
+      "evaluation": {
+        "actualGateExitCode": 0,
+        "elapsedSeconds": 165.564,
+        "verdict": "conditional",
+        "evidenceMaturityScore": 41,
+        "notSotaPercentage": true,
+        "hardGateFailures": [],
+        "sourceRevision": null,
+        "upstreamStatuses": "not-reported-local",
+        "generationIsUnsigned": true,
+        "executionAuthenticated": false,
+        "sameRootBuildSchemaAndProductionIsolationPassed": true,
+        "sameRootDerivedAfterBuildPassed": true,
+        "publicOutputsAndActualModeSensitiveInputRehashed": true
+      },
+      "blockerDispositions": [
+        {
+          "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+          "priority": "P1",
+          "origin": "root-assigned local operational/release blocker",
+          "status": "closed-for-this-frozen-local-candidate",
+          "reason": "The actual complete current-candidate core invocation passed 1480 tests with only the five existing conditional skips. Previously failing periodic/export/loader suites passed all 8 tests inside that full run at unchanged source deadlines. Earlier failures remain preserved; their performance root cause is not declared fixed."
+        },
+        {
+          "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+          "priority": "P1",
+          "origin": "root-assigned local operational/release blocker",
+          "status": "closed-for-this-frozen-local-candidate",
+          "reason": "All 24 frozen planned gates truly completed with exit 0, including full core, Node29 dispatch, full Python, atomistic validation, vulnerability audit, observer, actual evaluator, production build/full schema and post-build derived consistency. This is no longer a partial or isolated-test substitute."
+        }
+      ],
+      "skipDispositions": [
+        {
+          "count": 1,
+          "suite": "scripts/atomistic/verify-full-candidate.test.mjs",
+          "reason": "Existing Random-TP cache-dependent test; raw cache absent. No scientific execution claimed."
+        },
+        {
+          "count": 3,
+          "suite": "private-browser-trajectory-chromium-integration-v049.test.mjs",
+          "reason": "Existing locked Chromium executable opt-in absent."
+        },
+        {
+          "count": 1,
+          "suite": "private-browser-trajectory-manual-launcher-v049.test.mjs",
+          "reason": "Existing deliberate manual capability-launch opt-in absent."
+        },
+        {
+          "count": 1,
+          "suite": "scripts/atomistic/prepare_structures_test.py",
+          "reason": "Existing frozen Random-TP cache-dependent Python test; absent cache skip retained."
+        }
+      ],
+      "warningDispositions": [
+        {
+          "scope": "full Python safe_extract_zip negative test",
+          "warning": "UserWarning: Duplicate name: 'dist/value'",
+          "disposition": "Expected duplicate-entry fixture construction; all three extraction tests passed."
+        },
+        {
+          "scope": "production build",
+          "warning": "Some chunks exceed 500 kB; route classification unknown in static analysis.",
+          "disposition": "Non-failing build diagnostics retained; no optimization or runtime-route correctness claim."
+        },
+        {
+          "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+          "disposition": "Old P2 retained, not declared fixed. Current core/observer stderr empty and all process cleanup flags true."
+        },
+        {
+          "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+          "disposition": "Existing executor preparation-report residual retained; this actual run has a complete terminal result, not running-file inference."
+        }
+      ],
+      "findings": [],
+      "newP0": 0,
+      "newP1": 0,
+      "newP2": 0,
+      "limitations": [
+        "Only the two local operational blockers close for these exact frozen inputs and actual local outputs. This is not protected GitHub CI, a committed release artifact, engineering approval or deployment authorization.",
+        "Current terminal review and any final attestation still require root assembly and protocol checks; no Q-final file was written here.",
+        "No source edits or test/solver reruns occurred during this evidence audit.",
+        "Numerical maturity and successful reduced-model checks are not real-material causal identification, universal physical validation or percent of SOTA.",
+        "Original-process-group cleanup is observed; escaped descendants and an OS sandbox are not certified.",
+        "No GITHUB_SHA/upstream-success substitution or transfer of historical approval is accepted; earlier failed full-run evidence remains retained."
+      ],
+      "releaseEligible": false,
+      "commitEligible": false,
+      "pushEligible": false,
+      "deploymentEligible": false,
+      "scientificPromotionEligible": false,
+      "goalComplete": false,
+      "reviewFreezeComplete": true
+    }
+  },
+  "dispositions": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-POSIX-DRIFT",
+      "priority": "P1",
+      "status": "closed-for-this-candidate",
+      "evidence": [
+        "69e76be37120cb365d97953e7864db59d9b0f22827f84117f60175592f298035",
+        "df944bf8fe78d09726ca717695fe0a6831327dd5d66233c29d0a4cf32560351f"
+      ],
+      "reason": "Actual source identity recaptured after all four readbacks; stable-mode controls and both transition regressions exercise the exact production function. Independent code closure plus the subsequent full24gate pass."
+    },
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+      "priority": "P1",
+      "status": "closed-for-this-local-candidate",
+      "evidence": [
+        "69e76be37120cb365d97953e7864db59d9b0f22827f84117f60175592f298035",
+        "545415b05d2e2dbff616a43dc76ae62ebcc0b87100ce2cea44b2d851ee9bdab6",
+        "df944bf8fe78d09726ca717695fe0a6831327dd5d66233c29d0a4cf32560351f"
+      ],
+      "reason": "Immutable historical reports and reviews are inputs; exactly four generated reports and the exact terminal review are excluded. Actual generation, complete gates and post-build mode-sensitive consistency passed. Protected CI/deployment still pending."
+    },
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "origin": "root-assigned local operational/release blocker",
+      "status": "closed-for-this-frozen-local-candidate",
+      "reason": "The actual complete current-candidate core invocation passed 1480 tests with only the five existing conditional skips. Previously failing periodic/export/loader suites passed all 8 tests inside that full run at unchanged source deadlines. Earlier failures remain preserved; their performance root cause is not declared fixed."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "origin": "root-assigned local operational/release blocker",
+      "status": "closed-for-this-frozen-local-candidate",
+      "reason": "All 24 frozen planned gates truly completed with exit 0, including full core, Node29 dispatch, full Python, atomistic validation, vulnerability audit, observer, actual evaluator, production build/full schema and post-build derived consistency. This is no longer a partial or isolated-test substitute."
+    },
+    {
+      "id": "R12-PUBLIC-RELEASE-RIGHTS-SCOPE",
+      "priority": "P1",
+      "status": "closed-only-by-exclusion",
+      "reason": "User explicitly chose omission of the nine catalog files/capability from the public release. Local originals remain intact; no permission or rights clearance is claimed."
+    }
+  ],
+  "openInScopeP0": 0,
+  "openInScopeP1": 0,
+  "localExecutionEvidence": {
+    "identity": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/results.json",
+      "size": 956564,
+      "sha256": "df944bf8fe78d09726ca717695fe0a6831327dd5d66233c29d0a4cf32560351f"
+    },
+    "status": "pass-frozen-baseline-only",
+    "root": "/private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-v03-checkout-3im0UH",
+    "snapshotRoot": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+    "startedAt": "2026-09-07T15:14:25.640Z",
+    "finishedAt": "2026-09-07T15:46:56.363Z",
+    "plan": {
+      "path": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/full-gates-plan.json",
+      "bytes": 260917,
+      "sha256": "a04b7da37194d70f1d36b3f3c13ba92a9e590601f42eca1d25e0e7ec3e7a5364"
+    },
+    "executor": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e",
+      "nodePath": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "nodeVersion": "v24.16.0",
+      "nodeSha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+    },
+    "gates": [
+      {
+        "id": "full-lint",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "lint"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 300000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-lint.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-lint.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:51.957Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:14:59.797Z",
+        "elapsedSeconds": 7.84,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-lint.stdout.log",
+          "bytes": 120,
+          "sha256": "cc13822689d692791d12d990ae04b914e6f199670a93ae08bf6b204a898d2643"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-lint.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "typecheck",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 300000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/typecheck.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/typecheck.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:51.961Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:14:56.346Z",
+        "elapsedSeconds": 4.385,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/typecheck.stdout.log",
+          "bytes": 50,
+          "sha256": "8b4b2ee27ae77153016f3fdd94b58f1df761e4a9545841b1afcec5513ce148ed"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/typecheck.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "current-admission",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/current-admission.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/current-admission.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:51.963Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:14:52.350Z",
+        "elapsedSeconds": 0.387,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/current-admission.stdout.log",
+          "bytes": 1084,
+          "sha256": "d73b0da1db700337e6fb614cfbc6bd6d250b9670156739ddc6134a8c0588f92b"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/current-admission.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "syntax-strict-json",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import {readFileSync} from 'node:fs'; import {execFileSync} from 'node:child_process'; import {parseJsonRejectDuplicateKeys} from './scripts/atomistic/runtime-input-contract.mjs'; for (const file of [\"scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs\",\"scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs\",\"scripts/derived-report-contract.mjs\",\"scripts/derived-report-contract.test.mjs\",\"scripts/evaluate-launcher.test.mjs\",\"scripts/evaluate.mjs\",\"scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs\",\"scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs\",\"scripts/source-scope.mjs\",\"scripts/source-scope.test.mjs\"]) execFileSync(process.execPath,['--check',file],{stdio:'pipe'}); for(const file of ['evaluation/backend-migration/r18a-origin-main-admission-v0.3.json','schemas/backend-migration-admission-v0.3.schema.json','evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json']) parseJsonRejectDuplicateKeys(readFileSync(file),file); console.log(JSON.stringify({status:'pass',syntaxFiles:10,strictJsonFiles:3,scientificValidation:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/syntax-strict-json.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/syntax-strict-json.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:51.965Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:14:52.331Z",
+        "elapsedSeconds": 0.366,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/syntax-strict-json.stdout.log",
+          "bytes": 84,
+          "sha256": "0c504f38af0dc3967e2a8e178d851de36a66c1297eff66ed96f565605c5c6c83"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/syntax-strict-json.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-initial",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-initial.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-initial.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:59.800Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:14:59.830Z",
+        "elapsedSeconds": 0.03,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-initial.stdout.log",
+          "bytes": 244,
+          "sha256": "baaba5dcc874f710d151762251c55133be5fe8f7df72657bdd36f72fb9042506"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-initial.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "focused-contracts",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--fileParallelism=false",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "scripts/source-scope.test.mjs",
+          "scripts/derived-report-contract.test.mjs",
+          "scripts/evaluate-launcher.test.mjs",
+          "--reporter=verbose"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 400000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/focused-contracts.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/focused-contracts.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:14:59.831Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:16:17.028Z",
+        "elapsedSeconds": 77.197,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/focused-contracts.stdout.log",
+          "bytes": 92783,
+          "sha256": "bbc5ec9b952b4c37cba0a66d61b26e3b83a4d25a6d812192bd5dcb7e54f0b750"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/focused-contracts.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-focused",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-focused.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-focused.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:16:17.029Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:16:17.065Z",
+        "elapsedSeconds": 0.036,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-focused.stdout.log",
+          "bytes": 282,
+          "sha256": "969e7e5320bd2a5163a5bdc63fb57811473a7eda6ba070317f43186c59f57517"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-focused.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "numerical-acceptance",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 601000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/numerical-acceptance.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/numerical-acceptance.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:16:17.066Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:16:47.463Z",
+        "elapsedSeconds": 30.397,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/numerical-acceptance.stdout.log",
+          "bytes": 8184,
+          "sha256": "b2d0ea0e382714f18aa50d3e38c3f3f9ba687d72a3cdc4236b532ced3ee01774"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/numerical-acceptance.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-numerical",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-numerical.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-numerical.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:16:47.467Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:16:47.508Z",
+        "elapsedSeconds": 0.041,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-numerical.stdout.log",
+          "bytes": 323,
+          "sha256": "626f31449ac126aa7438c78a5cecec174b42c1571d04f37e3912d40c4f6f342c"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-numerical.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "full-js-core",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:js:core"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 1500000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-js-core.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-js-core.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:16:47.509Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:50.034Z",
+        "elapsedSeconds": 602.525,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-js-core.stdout.log",
+          "bytes": 105353,
+          "sha256": "81e301ca020c0dd2469532acc8bc3b7c3f30befad5678cb792463b9055d95155"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-js-core.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-core",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-core.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-core.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:50.037Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:50.068Z",
+        "elapsedSeconds": 0.031,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-core.stdout.log",
+          "bytes": 358,
+          "sha256": "1d06205b617f20a67bcca2f47798f8b73733d9b1d6b78fc9a3d11ec298e15021"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-core.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "node-29-required-dispatch",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:r18a:node"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 300000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/node-29-required-dispatch.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/node-29-required-dispatch.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:50.071Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:50.875Z",
+        "elapsedSeconds": 0.804,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/node-29-required-dispatch.stdout.log",
+          "bytes": 6581,
+          "sha256": "9ab28d51d3a580c9e170bf2c9f2d69e1e42456c8ee1892f273ac4e9dcbd6c09f"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/node-29-required-dispatch.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "full-python",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:python"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 600000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-python.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-python.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:50.073Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:58.549Z",
+        "elapsedSeconds": 8.476,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-python.stdout.log",
+          "bytes": 896,
+          "sha256": "f73c11d923d0f7ab8f5dd10a9e9a0b4ec6446aeeaac4ff433327f355736c7bbf"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-python.stderr.log",
+          "bytes": 640,
+          "sha256": "f4ad57b00556092d317b322283cd5b04ca1494a6882e28067200de056cf4ef5c"
+        }
+      },
+      {
+        "id": "atomistic-validate",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "atomistic:validate"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 600000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/atomistic-validate.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/atomistic-validate.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:50.075Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:53.094Z",
+        "elapsedSeconds": 3.019,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/atomistic-validate.stdout.log",
+          "bytes": 658,
+          "sha256": "34df31e785b057d49a8851ea353f1789aa0b5a7c328e5eb1241ea1a9c13fe1cb"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/atomistic-validate.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "npm-audit",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "audit",
+          "--json"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 180000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/npm-audit.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/npm-audit.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:50.079Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:51.150Z",
+        "elapsedSeconds": 1.071,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/npm-audit.stdout.log",
+          "bytes": 366,
+          "sha256": "2a94f0ae3aa7c4bb462874ad55979c70252668c258c2d31a2d18aab33ff772a7"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/npm-audit.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-runtime-gates",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\",\"cleanup-core\",\"node-29-required-dispatch\",\"full-python\",\"atomistic-validate\",\"npm-audit\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-runtime-gates.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-runtime-gates.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:58.550Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:26:58.587Z",
+        "elapsedSeconds": 0.037,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-runtime-gates.stdout.log",
+          "bytes": 448,
+          "sha256": "66f5719218c97806ed1b17e02c7eec0611a58059175152f8f4e953c0c38ea717"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-runtime-gates.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "observer-snapshot",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:js:observer-snapshot"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 3300000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/observer-snapshot.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/observer-snapshot.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:26:58.588Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:43:54.187Z",
+        "elapsedSeconds": 1015.599,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/observer-snapshot.stdout.log",
+          "bytes": 654,
+          "sha256": "2361f6d7f02643235dc64d22bc05fe0a33eacfaae76e7fb2199dc2e7fca0b76c"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/observer-snapshot.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-observer",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\",\"cleanup-core\",\"node-29-required-dispatch\",\"full-python\",\"atomistic-validate\",\"npm-audit\",\"cleanup-runtime-gates\",\"observer-snapshot\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-observer.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-observer.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:43:54.190Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:43:54.227Z",
+        "elapsedSeconds": 0.037,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-observer.stdout.log",
+          "bytes": 492,
+          "sha256": "eb738d35f84b98da3b5e75b999e4d48a9510225088d02608cdaf2d9be081fad9"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-observer.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "full-evaluate",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "evaluate"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 1200000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-evaluate.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-evaluate.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:43:54.229Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:39.793Z",
+        "elapsedSeconds": 165.564,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-evaluate.stdout.log",
+          "bytes": 68330,
+          "sha256": "acbc0a12e853c886b2c373846038a3ee116e592bc42e46d4f2f7b5fe83830ce2"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-evaluate.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-evaluate",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\",\"cleanup-core\",\"node-29-required-dispatch\",\"full-python\",\"atomistic-validate\",\"npm-audit\",\"cleanup-runtime-gates\",\"observer-snapshot\",\"cleanup-observer\",\"full-evaluate\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-evaluate.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-evaluate.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:46:39.795Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:39.826Z",
+        "elapsedSeconds": 0.031,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-evaluate.stdout.log",
+          "bytes": 527,
+          "sha256": "f89a203a8c43cf9d39f287d74b7c38b9cdf45ca9196ae686f9a791d861e538bb"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-evaluate.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "production-build",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 900000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/production-build.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/production-build.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:46:39.828Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:44.859Z",
+        "elapsedSeconds": 5.031,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/production-build.stdout.log",
+          "bytes": 1317,
+          "sha256": "8b1f20a2621d686b4c6a7a4ac93ec1502e8cb979bccebc991b832d64ca6c7f49"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/production-build.stderr.log",
+          "bytes": 360,
+          "sha256": "351b524197fb492920789369e7f1a271420c757633fbb553b280a181ac4c31a4"
+        }
+      },
+      {
+        "id": "cleanup-build",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\",\"cleanup-core\",\"node-29-required-dispatch\",\"full-python\",\"atomistic-validate\",\"npm-audit\",\"cleanup-runtime-gates\",\"observer-snapshot\",\"cleanup-observer\",\"full-evaluate\",\"cleanup-evaluate\",\"production-build\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-build.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-build.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:46:44.860Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:44.892Z",
+        "elapsedSeconds": 0.032,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-build.stdout.log",
+          "bytes": 565,
+          "sha256": "5b152a2900b829da0570b5956cbfd2a633bc74d25a1e1b5990cfb09e73434934"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-build.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "derived-reports-after-build",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import{createHash}from'node:crypto';import path from'node:path';import{verifyDerivedReportsAtRoot}from'./scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs';import{parseJsonRejectDuplicateKeys}from'./scripts/atomistic/runtime-input-contract.mjs';import{auditProductionDist}from'./scripts/release-artifact.mjs';const report=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const gates=report.gates.filter(g=>g.id==='full-evaluate');if(gates.length!==1)throw Error('Exact evaluator gate required');const g=gates[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Actual evaluator execution not successful');const raw=readFileSync(g.stdout.path);if(raw.length!==g.stdout.bytes||createHash('sha256').update(raw).digest('hex')!==g.stdout.sha256)throw Error('Evaluator log identity changed');const matches=raw.toString('utf8').split('\\n').filter(line=>line.startsWith('{\"derivedReportGeneration\":'));if(matches.length!==1)throw Error('Exactly one generation statement required');const envelope=parseJsonRejectDuplicateKeys(Buffer.from(matches[0]),'actual evaluator stdout');if(Object.keys(envelope).length!==1)throw Error('Unexpected generation envelope');const evidence=envelope.derivedReportGeneration;const observed=verifyDerivedReportsAtRoot(process.cwd(),evidence,null);if(observed.status!=='pass-derived-report-consistency'||observed.sourceVerifiedBeforeAndAfter!==true||observed.evaluatorInputVerifiedBeforeAndAfter!==true)throw Error(JSON.stringify(observed));const production=await auditProductionDist({root:process.cwd()});console.log(JSON.stringify({schemaVersion:'tf.r18a-post-evaluation-evidence/0.1',status:'pass-local-generated-report-consistency',generationEvidence:evidence,observed,production,actualCommand:g.command,actualExitCode:g.exitCode,stdoutIdentity:{path:g.stdout.path,bytes:g.stdout.bytes,sha256:g.stdout.sha256},ciVerified:false,releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 120000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/derived-reports-after-build.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/derived-reports-after-build.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:46:44.894Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:45.649Z",
+        "elapsedSeconds": 0.755,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/derived-reports-after-build.stdout.log",
+          "bytes": 137477,
+          "sha256": "5829d715a30495e4c6433da9ace26dc4c8e33eb095201724b9c7198b9757b3d4"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/derived-reports-after-build.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "cleanup-final",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import{readFileSync}from'node:fs';import path from'node:path';const r=JSON.parse(readFileSync(path.join(process.cwd(),'../results.json')));const expected=[\"full-lint\",\"typecheck\",\"current-admission\",\"syntax-strict-json\",\"cleanup-initial\",\"focused-contracts\",\"cleanup-focused\",\"numerical-acceptance\",\"cleanup-numerical\",\"full-js-core\",\"cleanup-core\",\"node-29-required-dispatch\",\"full-python\",\"atomistic-validate\",\"npm-audit\",\"cleanup-runtime-gates\",\"observer-snapshot\",\"cleanup-observer\",\"full-evaluate\",\"cleanup-evaluate\",\"production-build\",\"cleanup-build\",\"derived-reports-after-build\"];for(const id of expected){const matches=r.gates.filter(g=>g.id===id);if(matches.length!==1)throw Error('Missing or duplicate predecessor '+id);const g=matches[0];if(g.status!=='pass'||g.exitCode!==0||g.timedOut||g.outputTruncated||g.cleanup?.directChildExitObserved!==true||g.cleanup?.pipesClosed!==true||g.cleanup?.processGroupAbsent!==true)throw Error('Unfinished or unsafe predecessor '+id);}console.log(JSON.stringify({status:'pass-completed-predecessor-check',checkedGateIds:expected,claim:'Direct child and original process group only; escaped descendants not verified.',releaseEligible:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-final.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-final.stderr.log"
+        },
+        "startedAt": "2026-09-07T15:46:45.651Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T15:46:45.681Z",
+        "elapsedSeconds": 0.03,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-final.stdout.log",
+          "bytes": 611,
+          "sha256": "a3bba2c61731c9cc0bef46f09967723acb88be540d8f23f33d55ff561137f1b5"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/cleanup-final.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "sourceBefore": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "89220d532144120b7190cf924566c78820cd08a3951e03972c2d341155f46d25"
+    },
+    "sourceAfter": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "89220d532144120b7190cf924566c78820cd08a3951e03972c2d341155f46d25"
+    },
+    "legacyBefore": {
+      "pathCount": 641,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "legacyAfter": {
+      "pathCount": 641,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "snapshotBefore": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "89220d532144120b7190cf924566c78820cd08a3951e03972c2d341155f46d25"
+    },
+    "snapshotAfter": {
+      "pathCount": 516,
+      "canonicalBytes": 85601,
+      "sha256": "a60fa69ddc01112b79071ecace903b97dd54f31ee66790274dcd46214c5936d2"
+    },
+    "snapshotChangedPaths": [
+      "evaluation/latest-report.json",
+      "evaluation/latest-report.md",
+      "evaluation/public-product-evaluation.json",
+      "evaluation/public-summary.json"
+    ],
+    "snapshotPathSetUnchanged": true,
+    "dependencyCopyVerified": true,
+    "dependencySourceUnchanged": true,
+    "dependencySnapshotNonCacheChangedPaths": [],
+    "dependencyInventoryArtifactsVerified": true,
+    "logIdentitiesVerified": true,
+    "derived": {
+      "schemaVersion": "tf.r18a-post-evaluation-evidence/0.1",
+      "status": "pass-local-generated-report-consistency",
+      "generationEvidence": {
+        "schemaVersion": "tf.derived-report-generation/0.1",
+        "sourceIdentity": {
+          "artifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+          "sourceFileCount": 512
+        },
+        "sourceRevision": null,
+        "workerExitCode": 0,
+        "outputs": [
+          {
+            "path": "evaluation/latest-report.json",
+            "size": 135513,
+            "sha256": "7237ba5e2758d7e5052d1e5447060803cbe7df52cded317d2eae117a5fa99ae3"
+          },
+          {
+            "path": "evaluation/latest-report.md",
+            "size": 5045,
+            "sha256": "628c9bb848d27e80fa03a59598afbf193893cfd55ea9b5e285fc64fb75567b16"
+          },
+          {
+            "path": "evaluation/public-product-evaluation.json",
+            "size": 4804,
+            "sha256": "1762f666976a11657d10760cfb2b513833156855f89f49fdd1fe32c1b2818491"
+          },
+          {
+            "path": "evaluation/public-summary.json",
+            "size": 344,
+            "sha256": "7517b699aad89c8c2e5ec3fddba7dcdf8899717d50187327e348195a6d99169d"
+          }
+        ],
+        "publicationVerified": true,
+        "executionAuthenticated": false,
+        "releaseEligible": false
+      },
+      "observed": {
+        "schemaVersion": "tf.derived-report-consistency/0.1",
+        "status": "pass-derived-report-consistency",
+        "releaseEligible": false,
+        "executionAuthenticated": false,
+        "scientificValidation": false,
+        "reasons": [],
+        "inputIdentity": {
+          "artifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+          "sourceFileCount": 512
+        },
+        "outputIdentities": [
+          {
+            "path": "evaluation/latest-report.json",
+            "size": 135513,
+            "sha256": "7237ba5e2758d7e5052d1e5447060803cbe7df52cded317d2eae117a5fa99ae3"
+          },
+          {
+            "path": "evaluation/latest-report.md",
+            "size": 5045,
+            "sha256": "628c9bb848d27e80fa03a59598afbf193893cfd55ea9b5e285fc64fb75567b16"
+          },
+          {
+            "path": "evaluation/public-product-evaluation.json",
+            "size": 4804,
+            "sha256": "1762f666976a11657d10760cfb2b513833156855f89f49fdd1fe32c1b2818491"
+          },
+          {
+            "path": "evaluation/public-summary.json",
+            "size": 344,
+            "sha256": "7517b699aad89c8c2e5ec3fddba7dcdf8899717d50187327e348195a6d99169d"
+          }
+        ],
+        "sourceInputIdentity": {
+          "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+          "pathCount": 512,
+          "sha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+          "gitTreeOid": "c5d365c1b164683d76f4c8ca6ea0b4b95b9813fb"
+        },
+        "sourceVerifiedBeforeAndAfter": true,
+        "evaluatorInputVerifiedBeforeAndAfter": true
+      },
+      "production": {
+        "fileCount": 78,
+        "totalBytes": 5729937,
+        "contentRootDigest": "sha256:d6de8ecf2165f68909235501fe11cc7b70e826afbf52b4318a3844a775fdea78"
+      },
+      "actualCommand": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "evaluate"
+      ],
+      "actualExitCode": 0,
+      "stdoutIdentity": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-poeSEs/logs/full-evaluate.stdout.log",
+        "bytes": 68330,
+        "sha256": "acbc0a12e853c886b2c373846038a3ee116e592bc42e46d4f2f7b5fe83830ce2"
+      },
+      "ciVerified": false,
+      "releaseEligible": false
+    },
+    "report": {
+      "verdict": "conditional",
+      "weightedScore": 41,
+      "hardGateFailures": [],
+      "sourceRevision": null,
+      "runtime": {
+        "node": "v24.16.0",
+        "platform": "darwin",
+        "architecture": "arm64"
+      },
+      "upstreamGates": {
+        "install": "not-reported-local",
+        "lint": "not-reported-local",
+        "typecheck": "not-reported-local",
+        "test": "not-reported-local",
+        "atomistic_manifest": "not-reported-local",
+        "build": "not-reported-local",
+        "audit": "not-reported-local"
+      },
+      "artifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+      "sourceFileCount": 512
+    }
+  },
+  "preservedEarlierFailures": [
+    {
+      "resultsPath": "/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/results.json",
+      "size": 858783,
+      "sha256": "2bc8ec7898be4790d27dd6a416ce32441cd700fd1f606406443dd3a5c5ed257b",
+      "outcome": "Symlink dependency layout failed two checks; preserved, not successful validation."
+    },
+    {
+      "resultsPath": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/results.json",
+      "size": 862572,
+      "sha256": "1ea626b13cf8b17463c204677b0d95c8e6220d53cd65a35334b5feab772f52bb",
+      "outcome": "Physical dependency full-core run failed existing suite deadlines; seven later gates did not run. This remains a failed run."
+    },
+    {
+      "resultsPath": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/results.json",
+      "size": 830146,
+      "sha256": "2f1ed9e15c276d16fd51e28734cb7079fa48b83dff426803c8af860875eac0f0",
+      "outcome": "Unchanged isolated three suites passed eight tests; diagnostic only, not the complete-core closure."
+    }
+  ],
+  "earlierFailureInterpretation": "The later complete current-candidate pass supersedes only the applicable local blockers. No performance root cause is claimed fixed or explained. No timeouts, numerical thresholds or existing opt-ins were relaxed.",
+  "transfer": {
+    "status": "pass-byte-identical-final-worktree-preparation",
+    "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-final",
+    "baseRevision": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "pathCount": 516,
+    "canonicalBytes": 85601,
+    "sourceSha256": "a60fa69ddc01112b79071ecace903b97dd54f31ee66790274dcd46214c5936d2",
+    "admission": {
+      "schemaVersion": "tf.backend-migration-admission-gate/0.3",
+      "lifecycleRevision": "successor-v2",
+      "status": "pass-portable-source-admission",
+      "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+      "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "candidateTreeIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 516,
+        "sha256": "8bdbcd2f3bb4a2a3a1b44890ce2f371d0c571c76512573d00d8a1b3257837989",
+        "gitTreeOid": "f17e88eb2984363741ca3e41b479e89f8292c29e"
+      },
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 512,
+        "sha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+        "gitTreeOid": "c5d365c1b164683d76f4c8ca6ea0b4b95b9813fb"
+      },
+      "derivedReports": {
+        "state": "present-unvalidated",
+        "presentPaths": [
+          "evaluation/latest-report.json",
+          "evaluation/latest-report.md",
+          "evaluation/public-product-evaluation.json",
+          "evaluation/public-summary.json"
+        ],
+        "validated": false
+      },
+      "terminalAttestationInInputIdentity": false,
+      "releaseEligible": false,
+      "historicalApprovalTransferred": false,
+      "failures": []
+    },
+    "derived": {
+      "status": "pass-derived-report-consistency",
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 512,
+        "sha256": "084a283e76abf1a1342ea2cc9f5f5acf787595dc4dae6e22426b44bfc2bbd2d5",
+        "gitTreeOid": "c5d365c1b164683d76f4c8ca6ea0b4b95b9813fb"
+      },
+      "artifactDigest": "sha256:015ee71bb0faec6323ac03dc1eac313b18224d96ecac87e80e745414704186ca",
+      "sourceVerifiedBeforeAndAfter": true,
+      "evaluatorInputVerifiedBeforeAndAfter": true
+    },
+    "frozenSnapshotUnchanged": true,
+    "terminalReviewWritten": false,
+    "commitMade": false,
+    "releaseEligible": false
+  },
+  "transferHelperCorrection": "An external copy helper first rejected real evaluator output mode0600 because it incorrectly expected every path0644. It exited before copy, leaving the target pristine. Only that helper was corrected to preserve512 source0644 and4 output0600; no source, test, frozen evidence or gate changed.",
+  "durableEvidenceArchive": {
+    "status": "pass-local-evidence-archive",
+    "destination": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18a-evidence-20260907.mVkSqZ",
+    "indexPath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18a-evidence-20260907.mVkSqZ/index.json",
+    "indexBytes": 140769,
+    "indexSha256": "dc17f5a37cc73d7906e0d7e9b02dfb85b2b95292ac378f3e737922b4c4e3c22b",
+    "sourcePathCount": 241,
+    "objectCount": 120,
+    "objectBytes": 70717763,
+    "terminalReviewIncluded": false,
+    "releaseEligible": false,
+    "supplement": {
+      "indexPath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18a-evidence-20260907.mVkSqZ/late-evidence-v1/index.json",
+      "size": 1978,
+      "sha256": "4b984220c5025ec7890617ccaf0cb29597f04a2421f72a9196c3ff772fb09038",
+      "recordCount": 5,
+      "records": [
+        {
+          "source": "/private/tmp/tf-report-full-gates-terminal-review.ThViE0/terminal-review.json",
+          "sourceMode": 420,
+          "size": 8363,
+          "sha256": "545415b05d2e2dbff616a43dc76ae62ebcc0b87100ce2cea44b2d851ee9bdab6",
+          "archivePath": "late-evidence-v1/01-terminal-review.json",
+          "archiveMode": 292
+        },
+        {
+          "source": "/private/tmp/tf-report-full-gates-terminal-review.ThViE0/verified-evidence.json",
+          "sourceMode": 420,
+          "size": 18981,
+          "sha256": "0d68c6c7376168dced16a644db35931fcf3ac5aad3d074af12ed722654d1e0e5",
+          "archivePath": "late-evidence-v1/02-verified-evidence.json",
+          "archiveMode": 292
+        },
+        {
+          "source": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/prepare-final-worktree.mjs",
+          "sourceMode": 420,
+          "size": 4239,
+          "sha256": "d05ab3f8c4f4a191e3163884a481204698bd05f842b2f110a29c600b2fa2ab60",
+          "archivePath": "late-evidence-v1/03-prepare-final-worktree.mjs",
+          "archiveMode": 292
+        },
+        {
+          "source": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/prepare-final-worktree-attempt1.json",
+          "sourceMode": 420,
+          "size": 806,
+          "sha256": "9559e3b0b376443e88f7c68200ec6aa5813a0d8dde0b36ece9a603a8c67e0642",
+          "archivePath": "late-evidence-v1/04-prepare-final-worktree-attempt1.json",
+          "archiveMode": 292
+        },
+        {
+          "source": "/private/tmp/tf-report-posix-closure-builder.GGPQIS/prepare-final-worktree-success.json",
+          "sourceMode": 420,
+          "size": 2324,
+          "sha256": "e9154a573b994d4fc07b3e71a04f0ea9e2a4f3b40474451416d7f5157c92c4a3",
+          "archivePath": "late-evidence-v1/05-prepare-final-worktree-success.json",
+          "archiveMode": 292
+        }
+      ]
+    },
+    "policy": "Independent read-only byte copies with verified hashes; original archive index immutable. Not a whole source/runtime backup, not a public artifact, and not execution authentication. Original worktrees and R12 remain preserved."
+  },
+  "residualLimitations": [
+    "Only the two local operational blockers close for these exact frozen inputs and actual local outputs. This is not protected GitHub CI, a committed release artifact, engineering approval or deployment authorization.",
+    "No source edits or test/solver reruns occurred during this evidence audit.",
+    "Numerical maturity and successful reduced-model checks are not real-material causal identification, universal physical validation or percent of SOTA.",
+    "Original-process-group cleanup is observed; escaped descendants and an OS sandbox are not certified.",
+    "No GITHUB_SHA/upstream-success substitution or transfer of historical approval is accepted; earlier failed full-run evidence remains retained.",
+    "Current root assembly is a disposition document, not an independent solver, experiment, execution signature or qualified engineering approval.",
+    "Local dependency validation used a verified physical copy of installed dependencies, not fresh npm ci nor a native-OS closure; protected Linux CI must independently install and validate.",
+    "Five existing JavaScript conditional skips and one existing Python data-cache skip remain disclosed. No private-browser/manual capability launch or unclear-rights dataset fetch was enabled.",
+    "Frontend source/resources and public /0.3 contracts are unchanged, but existing frontend imports display updated generated evaluation data; identical UI data/build output is not claimed.",
+    "Retain SOFTWARE-P2-WORKER-SHUTDOWN-DELAY and R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT; no claim they were fixed.",
+    "External SOTA results retain their original evidence labels and locked primary source identities. No external result is relabeled locally reproduced and no numerical ranking is added."
+  ],
+  "nextScientificTasks": [
+    {
+      "id": "R18A-PORTABLE-SOTA-01",
+      "priority": "P2",
+      "title": "Full t=8 convergence remains unexecuted",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "Nonblocking only for this frozen mechanical admission hypothesis; blocks any full PFHub7(a) convergence claim.",
+      "nextScientificTask": "Preregister and run separate spatial and temporal refinement studies through reduced t=8, with eligibility/continuation rules and all results retained. Keep literal discrepancy, literal-BVP self-convergence and non-PFHub exact-trace MMS distinct.",
+      "acceptance": "Use the official study and error-range requirements where applicable; control the complementary discretization error and justify apparent-order uncertainty. A literal boundary-tail bound does not substitute for full-study results.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-02",
+      "priority": "P2",
+      "title": "Independent spatial discretization is absent",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "The dense oracle confirms same-discretization assembly only.",
+      "nextScientificTask": "Build an independently authored spatial discretization, such as continuous P1 FEM with consistent mass, checked manufactured forcing, explicit periodic-x and y-trace policies and registered quadrature. Initially preserve the temporal split to isolate spatial differences.",
+      "acceptance": "Compare FEM and FV using a declared common observation operator and norm; do not equate nodal values, cell averages and cell-center samples. Lock runtime and demonstrate its compatibility before numerical comparison.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-03",
+      "priority": "P2",
+      "title": "Full-study error separation and resource calibration remain absent",
+      "status": "retained; not closed by lifecycle repair",
+      "impact": "Small bounded residuals, two matched receipts and the current runtime allowance do not calibrate convergence uncertainty or full-study resource feasibility.",
+      "nextScientificTask": "Calibrate temporal, spatial, solver, quadrature and observation errors with paired refinements and tightened-solver comparisons, recording true residuals and convergence reasons alongside measured wall time and peak memory.",
+      "acceptance": "Derive nuisance budgets from intended order precision; preregister resource/continuation limits before larger runs. Keep the dense same-discretization oracle on tiny systems, and do not extrapolate short-run timings into a performance ranking.",
+      "reviewedInRound": "report-lifecycle-successor-v2"
+    }
+  ],
+  "nextOperationalSteps": [
+    "Verify the unique terminal artifact, exact512 source inputs, four reports, original641 files and exact scoped Git index after assembly.",
+    "Commit/push only the verified candidate branch and complete required protected PR checks without bypassing evaluate/app15368 or strict main protection.",
+    "After protected main merge, require the exact main-push CI attempt1 and use the existing guarded release script in a separate clean main checkout; do not alter the existing user's main worktree.",
+    "Only after actual release verification continue the active Goal with the preregistered budgeted R18b convergence pilot; preserve literal discrepancy/self-convergence/non-PFHub strict MMS tracks."
+  ]
+}

@@ -1,0 +1,373 @@
+{
+  "schemaVersion": "tf.review.independent-mechanism-source/0.3",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/release_scope_audit",
+  "role": "Independent read-only mechanism/scientific validity and scoped source-evidence reviewer",
+  "verdict": "PASS_BOUNDED_MECHANISM_SOURCE_AND_CLAIM_INVARIANCE",
+  "overallDisposition": "BLOCKED_PENDING_OPERATIONAL_P1_DISPOSITION_AND_FINAL_GATES",
+  "scope": "Frozen portable admission /0.3 on a63415c; scientific mechanism preservation and truthful execution/source identity only, not release or full numerical validation",
+  "candidateIdentity": {
+    "pathCount": 52,
+    "totalBytes": 1808795,
+    "canonicalBytes": 9197,
+    "sha256": "5b61550587ab5a4bfa30259a533d287c154a0286ad58b792e26ffd995097f4d4",
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "bytes": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+    },
+    "builderGates": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "bytes": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+    },
+    "fullTreeAtReview": {
+      "pathCount": 503,
+      "totalBytes": 12923768,
+      "canonicalBytes": 83120,
+      "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120"
+    }
+  },
+  "documentsReadCompletely": [
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+    "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/schemas/backend-migration-admission-v0.3.schema.json"
+  ],
+  "findings": {
+    "P0": [],
+    "P1": [
+      {
+        "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+        "origin": "inherited, not newly discovered",
+        "statusAtFrozenReviewInput": "open-awaiting-independent-disposition",
+        "closedByThisReview": false,
+        "evidence": {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+          "jsonPointer": "/findingsDisposition/2"
+        },
+        "detail": "Prior complete-core execution failed inner deadlines. No host or hardware cause is established. This Builder focused corpus does not close that failed full gate.",
+        "closureCondition": "Root must record the original failure and obtain independent operational disposition backed by the applicable complete core gate on the final new-base candidate; this science review cannot supply that evidence."
+      },
+      {
+        "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+        "origin": "inherited, not newly discovered",
+        "statusAtFrozenReviewInput": "open-awaiting-independent-disposition",
+        "closedByThisReview": false,
+        "evidence": {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+          "jsonPointer": "/findingsDisposition/3"
+        },
+        "detail": "Seven of seventeen previous final gates were not executed. Portable Builder evidence explicitly excludes full core, observer, evaluator and production build.",
+        "closureCondition": "Run and record every applicable final gate after review/fixes on the correctly bound final source tree. Do not borrow historical passes or count absent gates as passed."
+      },
+      {
+        "id": "R18A-FRESH-CHECKOUT-RECEIPT-MODE",
+        "origin": "inherited, not newly discovered",
+        "statusAtFrozenReviewInput": "open-awaiting-independent-disposition",
+        "closedByThisReview": false,
+        "evidence": {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+          "jsonPointer": "/focusedEvidence/1/gitCheckoutEvidence"
+        },
+        "detail": "The /0.3 design narrows owner-write compatibility to the exact source receipt. Builder raw logs report an uncorrected Git checkout with source0644, admission and Node29. Software reviewer owns closure of the permission and execution-integrity gap.",
+        "closureCondition": "Relevant software reviewer must verify the source-path-only 0444/0644 rule, exact bytes and stable regular-file checks, rejection of unsafe modes/links, actual Git tree/index evidence and unchanged private generated-receipt sealing; then include applicable final-tree gates."
+      }
+    ],
+    "P2": []
+  },
+  "newInScopeFindings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "identityAndPreservation": {
+    "scienceImports": 12,
+    "previousImports": 41,
+    "original641": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "oldIntegration490": {
+      "pathCount": 490,
+      "totalBytes": 12522447,
+      "canonicalBytes": 80802,
+      "sha256": "73936b1df85f1697044929f154141f19de225341d1eb460ba0df639754e24a1b"
+    },
+    "exactR12PathsAbsent": [
+      "evaluation/gas-kinetics/fixtures/hwang-so2-mechanism-catalog.json",
+      "evaluation/reviews/2026-09-02-r12-defect-aware-gas-mechanism-catalog-review.md",
+      "lib/knowledge/gas-mechanism-catalog.test.ts",
+      "lib/knowledge/gas-mechanism-catalog.ts",
+      "lib/knowledge/so2-gas-mechanism-catalog.ts",
+      "schemas/gas-mechanism-catalog-query-result.schema.json",
+      "schemas/gas-mechanism-catalog-query.schema.json",
+      "schemas/gas-mechanism-catalog.schema.json",
+      "scripts/gas-kinetics/mechanism-catalog-trust-roots.mjs"
+    ]
+  },
+  "upstream": {
+    "integrationBase": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "scientificContractBase": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "preservedBaseFiles": 449,
+    "upstreamExactPaths": [
+      "docs/ATOMISTIC_REPRODUCTION.md",
+      "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+      "evaluation/latest-report.json",
+      "evaluation/latest-report.md",
+      "evaluation/public-product-evaluation.json",
+      "evaluation/public-summary.json",
+      "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+      "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+      "schemas/atomistic-full-candidate-host-observation.schema.json",
+      "scripts/atomistic/full-candidate-observer-vnext.mjs",
+      "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+      "scripts/evaluate-observer-snapshot.test.mjs",
+      "scripts/evaluate-worker.mjs"
+    ],
+    "appLibSchemasByteUnchanged": true,
+    "scopeNote": "app/lib/schema preservation means all base-owned paths. New versioned admission schemas/scripts are explicitly additional, not a claim that the directory path set is unchanged.",
+    "upstreamReportsAreHistoricalInputs": true,
+    "newObserverOrEvaluatorExecutionClaimed": false,
+    "frontendContracts": [
+      "tf.world/0.3",
+      "tf.action/0.3",
+      "tf.observation/0.3"
+    ]
+  },
+  "scientificAssessment": [
+    {
+      "claim": "All 12 R18a science imports retain bytes and modes in original, previous integration and portable roots.",
+      "evidence": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/backend-migration/r18a-origin-main-admission-v0.2.json#/imports",
+      "interpretation": "No equation, forcing, runtime lock, scientific schema, oracle, thresholds or formal receipt is rewritten by portable admission."
+    },
+    {
+      "claim": "The versioned runner separates historical scientific-contract provenance from actual integration and candidate identity.",
+      "evidence": [
+        {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "line": 62
+        },
+        {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "line": 68
+        },
+        {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "line": 126
+        }
+      ],
+      "interpretation": "scientificContractBaseCommit remains 307e6d723086fe41b6d89e9f9b4b532364ccaeff; integrationBaseCommit is derived from admitted a63415c174dcfaa0dc5370ecc777b6ccdcda86aa inputs. Admission and exact candidate-tree identity are compared before and after the run; Git HEAD alone is not used as proof of uncommitted inputs."
+    },
+    {
+      "claim": "The 8x4, two-step dt=0.01 to t=0.02 dimensionless smoke domain is unchanged.",
+      "evidence": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json#/scientificSemantics",
+      "interpretation": "Diffusion remains n+1; nonlinear reaction and forcing n; exact traces n+1. The declared unit/dimension/basis registry and unnormalized cell-area L2 are unchanged. This is not full t=8 convergence or a real material/reactor/process model."
+    },
+    {
+      "claim": "Three evidence tracks remain distinct.",
+      "interpretation": "official-literal is analytic-field discrepancy with literal boundaries, not strict MMS; literal-self remains synthetic affine restriction only, not a BVP convergence execution; exact-trace-companion retains its non-PFHub label and strict manufactured-solution meaning. The dense oracle independently assembles the same FV system, not a different spatial discretization."
+    },
+    {
+      "claim": "No new causal or engineering authority is admitted.",
+      "interpretation": "The formal receipt retains structuralEquationIdentified=false, quantitativeInterventionAllowed=false, counterfactualAllowed=false and machine-readable abstention policy. No general causal-query API is implemented by runner argument rejection. No physical mapping, cross-scale validation, score increase, numerical ranking, automatic control or industrial recommendation is authorized."
+    },
+    {
+      "claim": "Numerical acceptance and failure-cleanup allowances remain separate.",
+      "interpretation": "The new runner reuses the unchanged monotonic600000ms budget and failure-only1000ms grace; the final source-admission and candidate-equality checks occur before success. No hard-real-time, escaped-descendant or OS-isolation guarantee is inferred."
+    }
+  ],
+  "sourceEvidence": {
+    "disposition": "Exact provenance preservation, not blanket rights clearance",
+    "selectedNotebook": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+      "bytes": 90735,
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "primaryUrl": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb"
+    },
+    "notice": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+      "bytes": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "primaryUrl": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md"
+    },
+    "sidecar": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+      "bytes": 4303,
+      "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+    },
+    "evidenceScope": "The exact notebook/notice/sidecar bytes were verified against the old integration; notice and sidecar were read. Primary URLs above were independently fetched in the earlier science/source review, not refetched in this invariant-byte review. The prior review supplies provenance context only, not transferred candidate approval.",
+    "limitations": [
+      "The notice and sidecar apply to their scoped PFHub payload, not all repository sources, external runtime redistribution, R12, NIST endorsement or legal approval.",
+      "The upstream heading-edit date remains honestly null; the pinned revision and comparison evidence remain preserved.",
+      "All nine R12 original paths remain in the original641 inventory and absent from this candidate. Excluded does not mean licensed. The ledger keeps rightsCleared=false."
+    ]
+  },
+  "evidenceAudit": {
+    "observations": {
+      "rawLogFilesVerified": 12,
+      "numericalCommandSummariesMatchRaw": 6,
+      "focusedEvidenceMatchesRaw": true,
+      "outerFocused": 22,
+      "historicalV02": 5,
+      "nestedV01": 20,
+      "freshCheckoutNode29": 29,
+      "numericalPython21": 21,
+      "numericalNode29": 29,
+      "elapsedMs": 30989.315040999998,
+      "generatedReceipts": [
+        {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/receipt-1.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/receipt-2.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        }
+      ],
+      "actualNumericalRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate",
+      "actualNumericalSourceReceiptMode": 292,
+      "checkoutNumericalRerunClaimed": false
+    },
+    "treeBoundary": {
+      "tested501": {
+        "pathCount": 501,
+        "totalBytes": 12830071,
+        "canonicalBytes": 82737,
+        "sha256": "fd0855a7a0b280ece5165f2bd06cd8933fd5410d83773eadd5ce07408b0f1c5d"
+      },
+      "reviewOutput503": {
+        "pathCount": 503,
+        "totalBytes": 12923768,
+        "canonicalBytes": 83120,
+        "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120"
+      },
+      "onlyAdded": [
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+          "mode": 420,
+          "size": 77179,
+          "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+          "mode": 420,
+          "size": 16518,
+          "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+        }
+      ],
+      "testedGitIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 501,
+        "sha256": "362a63b30fc1dcd0f6ab145653988a22ebfa10a1be8c61871102de81536a7423",
+        "gitTreeOid": "c0126c948afc55fdf3811a04cb10fb5696744c86"
+      },
+      "postArtifactGitCanonicalSha256": "114148af836fe6d95d0238c33eb851a1d99dfe1fabb23e277c715df87991381b",
+      "claim": "No numerical or full-gate pass is transferred to the 503-path tree"
+    },
+    "previousFinalReview": {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "mode": 420,
+      "size": 101840,
+      "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f",
+      "status": "abstain",
+      "reviewRecordComplete": true,
+      "fullGatePassed": false,
+      "approvalTransferred": false
+    },
+    "sourcePreAndPostRowsIndependentlyVerified": true,
+    "snapshotPreAndPostRowsIndependentlyVerified": true,
+    "rawArtifactIdentities": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/results.json",
+        "bytes": 862553,
+        "sha256": "19b6a4426aa23dee00aae46a5df28e001d12167c502fc32560950fa5f84d519f"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/execution.json",
+        "bytes": 558032,
+        "sha256": "ede6d107e7ad5d528519ee2fa363516393859fa3024809b6b85b3dc7a475e064"
+      },
+      {
+        "path": "/private/tmp/tf-portable-builder.v1UHyw/plan-v1.json",
+        "bytes": 240548,
+        "sha256": "8f33f5554e0dd46427267fe6b6d9f2c9f068b2d52c56e7da095c8ec3ca4bc2d5"
+      }
+    ],
+    "actualGitCheckoutBoundary": "Raw focused output already redacts checkout.root as <temporary-checkout>. The complete index string was present: 52385 bytes, SHA256468b327894adb74920ed4657e117a6635d9464f18950b732d8789940811ad91f,501 entries. Its derived summary matches Builder evidence. The temporary checkout is not claimed to have been re-created or inspected live by this reviewer.",
+    "executionDistinction": "The actual numerical run was performed in the verified501-path snapshot with source receipt0444; actual Git checkout/source0644 separately executed admission and Node29. No numerical run in that Git checkout is claimed. Generated private receipts retain0444 and exact248778-byte/d91e identity. Matching receipts and source digests are not experiments or general execution-authenticity guarantees.",
+    "afterArtifacts": "Only manifest and Builder-gates were added to obtain503 paths. No existing501-path content/mode changed. No numeric or full-gate approval is transferred to the503-path tree or any later review-output tree."
+  },
+  "reviewerObservationEvidence": {
+    "command": "/Users/tonywilliam/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node /private/tmp/tf-portable-science-review.BITy4H/inspect-v2.mjs",
+    "cwd": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable",
+    "toolChunkId": "51c3cd",
+    "exitCode": 0,
+    "wallTimeSeconds": 0.38970575,
+    "files": [
+      {
+        "path": "/private/tmp/tf-portable-science-review.BITy4H/inspect-v2.mjs",
+        "bytes": 11282,
+        "sha256": "0fb66b5df565b5bc29eee2895f2d71190fbf0b1d66048c7f6fe5f6d688f4586d"
+      },
+      {
+        "path": "/private/tmp/tf-portable-science-review.BITy4H/observed-tool-output.json",
+        "bytes": 7476,
+        "sha256": "9432e9d86a3ac93bdfb5bfe9ec84b1c2e500a3028b66799afcfa45a06ede2a6a"
+      },
+      {
+        "path": "/private/tmp/tf-portable-science-review.BITy4H/inspection-v2-tool-result.json",
+        "bytes": 8681,
+        "sha256": "a5f6de78c4d66cf659dd6431bb79414f494bfe0ca5e4b5bd747b343ce17e912d"
+      },
+      {
+        "path": "/private/tmp/tf-portable-science-review.BITy4H/inspect.mjs",
+        "bytes": 11301,
+        "sha256": "5ceea81c4a737d4934733925002030822213560ff8997426ab3b6f1dfff692c6"
+      },
+      {
+        "path": "/private/tmp/tf-portable-science-review.BITy4H/inspection-v1-tool-result.json",
+        "bytes": 760,
+        "sha256": "90d026b13977c867226fb9861ee46a2599f1937b01d2b3c6c8d826bc46ca8db7"
+      }
+    ],
+    "capturePolicy": "Actual tool-returned combined output was preserved by apply_patch after execution; no separate stderr capture or signed execution attestation. No retrospective invention of timings, test IDs or solver runs.",
+    "selfCorrection": "The first inspection script incorrectly assumed a live absolute checkout root in the raw log; the candidate test explicitly sanitizes that field before logging. The assertion was corrected to the actual documented <temporary-checkout> format in inspect-v2.mjs. Both script versions and actual first failure are retained. This was a reviewer assumption correction, not a candidate defect."
+  },
+  "residualLimitations": [
+    "Three inherited operational P1s are not closed by this science review. Root still needs relevant independent software dispositions and all applicable final gates on the final candidate tree.",
+    "No independent test suite, schema/mutation execution, numerical solver or causal API execution was performed by this reviewer in this task; Builder results were inspected and bound to actual stored files.",
+    "No Linux/protected CI, latest remote main, clean dependency resolution, qualified engineering approval or full migration/release claim is established.",
+    "Historical upstream reports, previous reviews and prior blocker strings remain historical records, not results generated by the portable candidate.",
+    "Full t=8 spatial/time convergence, different spatial discretization and complete error/resource calibration remain outstanding; a future R18b pilot must remain separately preregistered and formal-ineligible.",
+    "External raw evidence remains in local temporary paths and must be retained or copied byte-exactly before deletion; pointers alone are not portable evidence.",
+    "The source-permission exception does not weaken private runtime or generated-receipt sealing, nor does source admission authenticate all downstream executions."
+  ],
+  "nextActions": [
+    "Relevant software reviewer decides closure of the strictly scoped source-permission compatibility and records operational applicability; preserve the old failed full-gate evidence.",
+    "After final fixes/review closure, root runs all applicable final gates with new source/output tree identity and complete raw evidence; missing gates remain blocking.",
+    "Resume the separately bounded R18b FEM/FV t=8 pilot after execution readiness, without claiming formal convergence or increasing scientific score."
+  ],
+  "reviewerActivity": {
+    "testSuitesExecuted": false,
+    "solversExecuted": false,
+    "candidateModulesImported": false,
+    "repositoryFilesWritten": false,
+    "externalSourcesFetchedThisTask": false,
+    "onlyFilesWrittenUnder": "/private/tmp/tf-portable-science-review.BITy4H"
+  },
+  "releaseEligible": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false
+}

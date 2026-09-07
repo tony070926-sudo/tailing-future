@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "tf.review.candidate-manifest/0.4",
+  "candidateId": "r18a-fixed-307e6d7-current-main-execution-v0.1-successor-v2",
+  "recordedOn": "2026-09-07",
+  "state": "frozen-for-independent-review",
+  "baseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+  "notLatestOriginMain": true,
+  "observedNewerOriginMain": "a63415c",
+  "candidateFiles": [
+    {
+      "path": ".gitignore",
+      "mode": 420,
+      "size": 492,
+      "sha256": "31341236431b683b0d8c229dc36c2a8aae2c511c63d067206752f3885ec8e395"
+    },
+    {
+      "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+      "mode": 420,
+      "size": 9064,
+      "sha256": "789eb6359676293f165edb7b21d55e6ebdf30366295a97459c38812e2e176011"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+      "mode": 420,
+      "size": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+      "mode": 420,
+      "size": 90735,
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+      "mode": 420,
+      "size": 4303,
+      "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+    },
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+      "mode": 420,
+      "size": 7411,
+      "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+    },
+    {
+      "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+      "mode": 292,
+      "size": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+      "mode": 420,
+      "size": 20908,
+      "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+      "mode": 420,
+      "size": 4065,
+      "sha256": "39e6ce7c29a7f16bfe3b11cae65fe1c7e75aeb2b38141d40d9ede50ba603161a"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+      "mode": 420,
+      "size": 8746,
+      "sha256": "69d8b377350298c4d6ce62a4e9a981ce335feed1d957dd0ea8bb35111a1ad0d3"
+    },
+    {
+      "path": "package.json",
+      "mode": 420,
+      "size": 3066,
+      "sha256": "b011cd48dd265511c16a080024dfb0b334954f66d93c548b1270f2aafe3916d4"
+    },
+    {
+      "path": "schemas/backend-migration-admission-v0.2.schema.json",
+      "mode": 420,
+      "size": 3202,
+      "sha256": "df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684"
+    },
+    {
+      "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+      "mode": 420,
+      "size": 36479,
+      "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+      "mode": 420,
+      "size": 12652,
+      "sha256": "ace5b5f4f04e92a7835945686992eac4059eac7efcf00ff6dcf8f834ce6cc558"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+      "mode": 420,
+      "size": 4535,
+      "sha256": "4b30c5cd29764d9dbf452485fbea30f68df843303f80f648575a96748b2b106e"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+      "mode": 420,
+      "size": 18023,
+      "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+      "mode": 420,
+      "size": 8756,
+      "sha256": "4579efa98f0c4435a1609bcbfa38b828eb5090d936b8fa98e6666fca59836404"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+      "mode": 420,
+      "size": 6966,
+      "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+      "mode": 420,
+      "size": 18417,
+      "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+      "mode": 420,
+      "size": 30418,
+      "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+      "mode": 420,
+      "size": 16746,
+      "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+      "mode": 420,
+      "size": 72494,
+      "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+      "mode": 420,
+      "size": 29719,
+      "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+    },
+    {
+      "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+      "mode": 420,
+      "size": 8093,
+      "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+    },
+    {
+      "path": "vitest.config.ts",
+      "mode": 420,
+      "size": 1308,
+      "sha256": "85669d13ea4f8403167f117319f5f11292cbb61839095f301b8d3aef6fc87a7e"
+    }
+  ],
+  "candidateSet": {
+    "recordCount": 25,
+    "canonicalByteSize": 4209,
+    "serialization": "UTF-8 JSON.stringify(records sorted by path; keys path,mode,size,sha256), no newline",
+    "sha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5"
+  },
+  "historicalPreservation": {
+    "files": 11,
+    "identitiesBoundByLedger": true,
+    "historicalR18a17FileIdentityTransferred": false
+  },
+  "mainPreservation": {
+    "preservedCount": 446,
+    "reconciledPaths": [
+      ".gitignore",
+      "package.json",
+      "vitest.config.ts"
+    ]
+  },
+  "sourceImportCount": 12,
+  "controlArtifactPolicy": {
+    "manifestIncludedInCandidateSet": false,
+    "builderGateIncludedInCandidateSet": false,
+    "independentReviewArtifactsIncludedInCandidateSet": false,
+    "reason": "Avoid recursive self identities; final reviews bind candidate and gate artifacts separately."
+  },
+  "executionBoundary": {
+    "grid": {
+      "values": [
+        8,
+        4
+      ],
+      "unit": "1",
+      "dimension": "cell-count",
+      "basis": "x/y finite-volume cell counts"
+    },
+    "steps": {
+      "value": 2,
+      "unit": "1",
+      "dimension": "step-count",
+      "basis": "semi-implicit updates"
+    },
+    "timeStep": {
+      "value": 0.01,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced-time coordinate"
+    },
+    "horizon": {
+      "value": 0.02,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced-time coordinate"
+    },
+    "fullPartAConvergence": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "reproduced": false,
+    "scoreIncrease": false,
+    "releaseEligible": false
+  },
+  "gateDispatch": {
+    "ordinaryCI": "npm test requires Node29 and runner/admission contracts, including historical20; it does not execute Darwin numerical acceptance",
+    "numericalRequiredForScientificPromotion": "npm run r18a:validate -- --python-source ABSOLUTE_ROOT --wheelhouse ABSOLUTE_DIRECTORY",
+    "numericalMissingInputs": "machine-readable abstention and nonzero exit",
+    "admission": "node scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs"
+  },
+  "remainingRequirements": [
+    "Same scientific/source, software/numerical and dated-SOTA reviewers verify closure on this new identity.",
+    "Root-owned final full repository gates after final fixes and reviewer closure.",
+    "Record complete dated final review including initial P1/P2, evidence, fixes and limitations.",
+    "Separately freeze newer-main/actual-Git-checkout/release integration; no inherited approval.",
+    "Proceed next on the scientific critical path to preregistered full R18b t=8 space/time convergence and independent discretization."
+  ],
+  "supersedes": {
+    "candidateSetSha256": "dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b",
+    "manifest": {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+      "bytes": 8002,
+      "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+    },
+    "builderGates": {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+      "bytes": 38058,
+      "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+    },
+    "originalArtifactsPreserved": true
+  },
+  "rootFix": {
+    "scope": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+    "owner": "/root",
+    "independentClosurePending": true,
+    "scientificAcceptanceMs": 600000,
+    "clock": "monotonic-performance.now",
+    "stopGraceMs": 1000,
+    "stopGraceExtendsScientificAcceptance": false,
+    "historicalReplayAllowanceMs": 120000,
+    "sharedBoundedProcessPrimitive": true,
+    "solverOrOracleChanged": false
+  },
+  "releaseLimitations": [
+    "The original receipt fixture's 0444 mode is deliberately preserved. Fresh Git checkout mode compatibility is not established; the verified copy restores exact modes and is not a fresh-checkout or Linux-CI claim.",
+    "Newer origin/main a63415c and other migration/release source requirements remain unintegrated."
+  ]
+}

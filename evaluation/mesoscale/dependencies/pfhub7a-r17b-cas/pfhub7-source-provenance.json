@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "tf.pfhub7-source-provenance/0.1",
+  "recordedOn": "2026-09-07",
+  "classification": "auditable",
+  "sourceScope": "PFHub benchmark7 notebook and its upstream notice only",
+  "attribution": "Derived from the National Institute of Standards and Technology PFHub project, https://github.com/usnistgov/pfhub and https://pages.nist.gov/pfhub.",
+  "selectedNotebook": {
+    "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+    "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+    "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+    "byteSize": 90735,
+    "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+    "localModification": false
+  },
+  "notice": {
+    "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+    "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md",
+    "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+    "byteSize": 1754,
+    "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+    "verbatim": true
+  },
+  "upstreamComparison": {
+    "sources": [
+      {
+        "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/myst.yml",
+        "byteSize": 989,
+        "sha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/benchmarks/benchmark7.ipynb",
+        "byteSize": 90712,
+        "sha256": "00d15bfa910f111caf6753d1e959990d5e1d432f6630c064bae77b1624007863"
+      }
+    ],
+    "mystLicenseLink": [
+      "        - url: https://github.com/usnistgov/pfhub/blob/nist-pages/LICENSE.md"
+    ],
+    "changes": [
+      {
+        "cellIndex": 7,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 9,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 10,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 11,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 12,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 13,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 14,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 15,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 16,
+        "headingLines": 3
+      },
+      {
+        "cellIndex": 17,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 18,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 19,
+        "headingLines": 2
+      },
+      {
+        "cellIndex": 20,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 31,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 32,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 37,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 39,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 41,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 43,
+        "headingLines": 1
+      },
+      {
+        "cellIndex": 45,
+        "headingLines": 1
+      }
+    ],
+    "headingLines": 23,
+    "otherFieldsUnchanged": true,
+    "observedOn": "2026-09-07",
+    "cellCount": 47,
+    "changeDescription": "The selected aa4774ce derivative adds one # to 23 Markdown heading lines in 20 cells relative to the pinned NIST notebook; other cell fields, code, outputs and notebook metadata are identical. This records an upstream difference, not a local rewrite.",
+    "upstreamModificationDate": null,
+    "dateLimitation": "The pinned revisions and comparison date are recorded; an upstream heading-edit date was not independently established."
+  },
+  "boundaries": {
+    "blanketLegalClearance": false,
+    "nistEndorsement": false,
+    "r12RightsCleared": false,
+    "physicalValidation": false,
+    "reproduced": false,
+    "rankingEligible": false,
+    "scoreIncrease": false
+  },
+  "disclaimer": "Preserve and read the accompanying verbatim notice, including NIST's no-responsibility/no-guarantee disclaimer. This record does not establish rights for unrelated repository sources."
+}

@@ -1,0 +1,582 @@
+{
+  "schemaVersion": "tf.review.independent-sota/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/portable_sota_review",
+  "role": "independent read-only dated SOTA and primary-source reviewer",
+  "candidateRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable",
+  "reviewRecordComplete": true,
+  "disposition": "pass-bounded-sota-review-with-three-disclosed-P2",
+  "overallReleaseDisposition": "abstain; inherited operational P1 findings and final gates are outside this review's closure authority",
+  "releaseEligible": false,
+  "reviewerApprovesRelease": false,
+  "hypothesis": "Mechanical admission and actual Git-checkout source portability with truthful versioned execution identity for unchanged R18a dimensionless PFHub7(a) 8x4, two steps, dt=0.01, horizon=0.02; no change in the physical model or scientific capability.",
+  "frozenIdentity": {
+    "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "latestRemoteMainClaimed": false,
+    "candidate": {
+      "recordCount": 52,
+      "canonicalBytes": 9197,
+      "sha256": "5b61550587ab5a4bfa30259a533d287c154a0286ad58b792e26ffd995097f4d4",
+      "allContentModeSizeRecordsIndependentlyMatched": true
+    },
+    "manifest": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "bytes": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5",
+      "independentlyMatched": true
+    },
+    "builderGates": {
+      "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "bytes": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e",
+      "independentlyMatched": true
+    },
+    "testedSource": {
+      "pathCount": 501,
+      "canonicalBytes": 82737,
+      "sha256": "fd0855a7a0b280ece5165f2bd06cd8933fd5410d83773eadd5ce07408b0f1c5d",
+      "gitTreeOid": "c0126c948afc55fdf3811a04cb10fb5696744c86"
+    },
+    "reviewSource": {
+      "pathCount": 503,
+      "canonicalBytes": 83120,
+      "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120",
+      "gitTreeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5",
+      "independentlyMatched": true
+    },
+    "identityDistinction": "The 501-path numerical input precedes exactly the manifest and Builder output. The 503-path review source is a distinct Git tree. This review is not execution evidence for the 503-path or any later output tree.",
+    "independentGitTreeVerification": {
+      "method": "Independent in-memory Git blob/tree object hashing; no object writes, checkout or test execution",
+      "tested501": {
+        "pathCount": 501,
+        "gitTreeOid": "c0126c948afc55fdf3811a04cb10fb5696744c86"
+      },
+      "review503": {
+        "pathCount": 503,
+        "gitTreeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5"
+      }
+    },
+    "gitObjectAvailability": "Direct git ls-tree of the tested OID in the candidate object database returned not a tree object. Both OIDs were then independently reproduced by in-memory Git blob/tree hashing over current source bytes, removing exactly the two named outputs for 501 paths. No checkout, Git-object mutation or executable validation was performed by this reviewer.",
+    "priorSotaReview": {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+      "bytes": 11467,
+      "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b",
+      "independentlyMatched": true
+    },
+    "importedPriorFinalReview": {
+      "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "bytes": 101840,
+      "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f",
+      "status": "abstain",
+      "reviewRecordComplete": true,
+      "releaseEligible": false,
+      "approvalTransferred": false
+    }
+  },
+  "method": {
+    "instructionsRead": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/AGENTS.md",
+    "frozenScopeRead": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+    "activity": "Read scope, complete manifest and Builder artifact, previous SOTA artifact, versioned runner, receipt scientific semantics and raw execution streams; stat/hash comparisons; official primary-source retrieval.",
+    "candidateFilesEdited": false,
+    "priorRootsEdited": false,
+    "testsRunByReviewer": 0,
+    "solversRunByReviewer": 0,
+    "dependenciesInstalled": false,
+    "gitCommitsPushesOrDeployment": false,
+    "independentScientificValidationClaimed": false,
+    "outputPolicy": "This JSON is the reviewer's only file output and is outside all three repository roots."
+  },
+  "localEvidence": {
+    "classification": "auditable",
+    "classificationScope": "Recorded local bounded execution and byte identity only; not full PFHub reproduction or platform reproduction.",
+    "originalFormalReceipt": {
+      "bytes": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+      "sourceHistoricalPosixMode": "0444",
+      "sourceGitMode": "100644",
+      "sourceCheckoutPosixAllowed": [
+        "0444",
+        "0644"
+      ],
+      "privateGeneratedReceiptRequiredPosixMode": "0444"
+    },
+    "exactReceiptException": "The compatibility exception is for one digest-bound regular source receipt, not a relaxation of private runtime or generated-receipt sealing. Software review owns the implementation and mutation-test disposition.",
+    "independentReadOnlyArtifactChecks": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/results.json",
+        "bytes": 862553,
+        "sha256": "19b6a4426aa23dee00aae46a5df28e001d12167c502fc32560950fa5f84d519f",
+        "matched": true
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/execution.json",
+        "bytes": 558032,
+        "sha256": "ede6d107e7ad5d528519ee2fa363516393859fa3024809b6b85b3dc7a475e064",
+        "matched": true
+      },
+      {
+        "path": "/private/tmp/tf-portable-builder.v1UHyw/plan-v1.json",
+        "bytes": 240548,
+        "sha256": "8f33f5554e0dd46427267fe6b6d9f2c9f068b2d52c56e7da095c8ec3ca4bc2d5",
+        "matched": true
+      }
+    ],
+    "generatedReceipts": {
+      "count": 2,
+      "bytesEach": 248778,
+      "sha256Each": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+      "posixModeEach": "0444",
+      "independentlyMatched": true
+    },
+    "rawStreamChecks": {
+      "commands": 6,
+      "stdoutAndStderrDigestMatches": 12,
+      "allExitCodeZero": true,
+      "supervisorStdoutIdentical": true,
+      "pythonRecordedPassCount": 21,
+      "nodeRecordedPassCount": 29,
+      "numericalSkips": 0,
+      "strictSchemaSemanticPasses": 2,
+      "reviewerReranNone": true
+    },
+    "builderRecordedFocusedChecks": {
+      "outerTests": 22,
+      "historicalV02Tests": 5,
+      "nestedHistoricalV01Tests": 20,
+      "freshGitCheckoutNodeTests": 29,
+      "allRecordedPassed": true,
+      "notFullRepositoryCount": true
+    },
+    "actualGitCheckoutRecord": {
+      "treeOid": "c0126c948afc55fdf3811a04cb10fb5696744c86",
+      "receiptPosixMode": "0644",
+      "postCheckoutChmodPerformed": false,
+      "indexEntries": 501,
+      "evidenceOrigin": "Independently hash-checked Builder evidence; no independent checkout rerun by SOTA reviewer."
+    },
+    "unchangedScientificSources": "The supervisor, worker, dense same-discretization oracle, Python corpus, schema gate, Node29 corpus and runtime lock were each read and compared byte-for-byte with the prior integration; all seven matched.",
+    "rawEvidenceRetention": "Absolute scratch paths are local retained evidence, not portable dependencies. Preserve or copy exact bytes before removing scratch storage.",
+    "runtimeBoundary": "The numerical gate is locked to verified caller-supplied Darwin arm64 inputs. Git source-mode compatibility establishes no Linux runtime or protected-CI validation."
+  },
+  "scientificInterpretation": {
+    "quantityBasis": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced coordinates, reduced time, scalar eta, source, kappa and cell-quadrature L2; no SI material map. Nx, Ny and stepCount are counts. Byte fields count octets; milliseconds describe computational elapsed time, not physical time."
+    },
+    "currentDomain": {
+      "x": [
+        0,
+        1
+      ],
+      "y": [
+        0,
+        0.5
+      ],
+      "periodicX": true,
+      "Nx": 8,
+      "Ny": 4,
+      "dt": 0.01,
+      "stepCount": 2,
+      "finalTime": 0.02
+    },
+    "equation": "deta/dt = -4*eta*(eta-1)*(eta-1/2) + kappa*(d2eta/dx2+d2eta/dy2) + S(x,y,t)",
+    "timeIntegrator": "First-order semi-implicit Euler; diffusion at n+1, nonlinear reaction and manufactured source at n; companion exact-trace Dirichlet data at n+1.",
+    "boundaryTracks": [
+      {
+        "id": "official-literal",
+        "comparison": "Analytic manufactured-field discrepancy against the official constant-y-boundary BVP.",
+        "strictMms": false,
+        "pfhubComparableDefinition": true,
+        "executedAsFullConvergence": false
+      },
+      {
+        "id": "literal-self",
+        "comparison": "Self-convergence of that same literal BVP under a declared restriction operator; not a third PDE.",
+        "strictMms": false,
+        "executedAsBvpConvergence": false,
+        "currentEvidence": "Synthetic affine restriction preflight only."
+      },
+      {
+        "id": "exact-trace-companion",
+        "comparison": "Same PDE and initial field with manufactured time-dependent y traces; strict MMS verification target.",
+        "strictMms": true,
+        "requiredLabel": "non-PFHub exact-trace companion",
+        "pfhubComparableDefinition": false,
+        "executedAsFullConvergence": false
+      }
+    ],
+    "boundaryMismatchInference": "For finite tanh arguments, the analytic field does not exactly equal the official 1/0 y-face values. The retained three-track separation is therefore necessary. This is a mathematical interpretation of the official equations, not a correction silently applied to PFHub.",
+    "conservativeTailBound": "The retained conservative pointwise boundary-tail bound is neither an attained maximum nor an interior/global numerical-error bound.",
+    "independenceCeiling": "Independently authored assembly of the same finite-volume discretization can detect assembly/implementation discrepancies. It is not independent spatial discretization, convergence verification or physical validation.",
+    "materialCausalAndControlCeiling": "No real material, chemical mechanism, reactor, process model, identified intervention/counterfactual effect, or automatic safety-critical control claim is supported."
+  },
+  "datedLikeForLikeComparison": {
+    "asOf": "2026-09-07",
+    "numericalRanking": false,
+    "reproducedExternalResults": false,
+    "rows": [
+      {
+        "reference": "PFHub Benchmark 7(a)",
+        "sourceIds": [
+          "pfhub-benchmark7",
+          "nist-pfhub7"
+        ],
+        "sourceUrl": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+        "classification": "reference",
+        "comparableTask": "The declared reduced Allen-Cahn equation, parameter basis, rectangle and official literal y boundaries.",
+        "referenceRequirement": "Separate spatial/time studies at t=8 with nuisance errors controlled and at least three results per study in the stated L2 range [1e-4,5e-3]; report fitted apparent order.",
+        "candidateEvidence": "One 8x4 mesh and two dt=0.01 updates to t=0.02.",
+        "disposition": "Short-horizon acceptance cannot establish the full benchmark convergence requirement. The official discussion of order deviations is not a universal +/-0.2 pass band.",
+        "performanceBoundary": "PFHub parts (b)/(c) change parameters and require resource/error studies; neither is a like-for-like ranking target for this candidate."
+      },
+      {
+        "reference": "FiPy 4.0.3 and pinned CHiMaD implementation",
+        "sourceIds": [
+          "fipy-4.0.3-discretization",
+          "historical-chimad-implementation"
+        ],
+        "sourceUrl": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+        "classification": "reference",
+        "comparableTask": "Cell-centered finite-volume assembly provides the directly relevant discretization lineage.",
+        "candidateEvidence": "Locked FiPy runtime and independent construction of the same finite-volume equations on the bounded mesh.",
+        "disposition": "Assembly agreement and receipt identity are useful bounded evidence; an unchanged same-family oracle does not establish an independent discretization or imported external convergence result."
+      },
+      {
+        "reference": "DOLFINx 0.10.0 variational demo and pinned dolfinx_mpc periodic demo",
+        "sourceIds": [
+          "dolfinx-0.10.0-variational-demo-different-pde",
+          "dolfinx-mpc-0.10.0-periodic-demo"
+        ],
+        "sourceUrl": "https://docs.fenicsproject.org/dolfinx/v0.10.0/python/demos/demo_cahn-hilliard.html",
+        "classification": "reference",
+        "comparableTask": "Finite-element assembly and explicit periodic constraints are prospective implementation methods.",
+        "mismatch": "The cited DOLFINx demo solves fourth-order Cahn-Hilliard on a unit square; the MPC demo solves Poisson. Neither is a local PFHub7(a) Allen-Cahn run.",
+        "disposition": "An independently authored P1 FEM implementation requires its own equation, forcing, boundary, mass, quadrature and common-observation validation before comparison. Joint runtime compatibility is unverified."
+      },
+      {
+        "reference": "MOOSE pinned AllenCahn kernel documentation",
+        "sourceIds": [
+          "moose-2025-09-05-allencahn"
+        ],
+        "sourceUrl": "https://raw.githubusercontent.com/idaholab/moose/832d6f35e1f6c687880270d8bcb23156974cc031/modules/phase_field/doc/content/source/kernels/AllenCahn.md",
+        "classification": "reference",
+        "comparableTask": "AllenCahn supplies the mobility-weighted bulk free-energy derivative; its documentation assigns gradient-interface terms to ACInterface.",
+        "disposition": "A potential alternate FEM lane would still need complete time, interface, source and boundary assembly. The kernel documentation is not PFHub performance evidence or physical calibration."
+      },
+      {
+        "reference": "PETSc pinned ARK source and dated KSP/TS documentation",
+        "sourceIds": [
+          "petsc-3.25.2-ark-source"
+        ],
+        "sourceUrls": [
+          "https://petsc.org/release/manualpages/KSP/KSPSetTolerances/",
+          "https://petsc.org/release/manualpages/TS/TSARKIMEX/",
+          "https://petsc.org/release/manualpages/TS/TSROSW/"
+        ],
+        "classification": "reference",
+        "comparableTask": "Prospective algebraic stopping and time-integration controls.",
+        "disposition": "KSP residual tolerances are not solution-error bounds. ARK use must respect equation-type, mass and stage-boundary assumptions. TSROSW is documented for autonomous systems, so it is not a validated direct replacement for the time-dependent manufactured source.",
+        "versionBoundary": "Pinned ARK source is the prior 3.25.2 reference; fetched release pages identify v3.25.5-9-g933c0de36cc. No version equivalence, latest-version claim or jointly tested runtime is asserted."
+      }
+    ],
+    "externalSourceRule": "All pinned external bytes are auditable only as source identities. Method/example claims remain references. None is labeled reproduced or used in a numerical ranking.",
+    "evidenceMaturity": "No score increase: this round improves scoped provenance and compatibility evidence without adding full-horizon convergence, an independent discretization or physical validation."
+  },
+  "findingCounts": {
+    "newP0": 0,
+    "newP1": 0,
+    "disclosedScientificP2": 3,
+    "inheritedOperationalP1Unchanged": 3
+  },
+  "findings": [
+    {
+      "id": "R18A-PORTABLE-SOTA-01",
+      "priority": "P2",
+      "title": "Full t=8 convergence remains unexecuted",
+      "status": "disclosed and retained",
+      "impact": "Nonblocking only for this frozen mechanical admission hypothesis; blocks any full PFHub7(a) convergence claim.",
+      "nextScientificTask": "Preregister and run separate spatial and temporal refinement studies through reduced t=8, with eligibility/continuation rules and all results retained. Keep literal discrepancy, literal-BVP self-convergence and non-PFHub exact-trace MMS distinct.",
+      "acceptance": "Use the official study and error-range requirements where applicable; control the complementary discretization error and justify apparent-order uncertainty. A literal boundary-tail bound does not substitute for full-study results."
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-02",
+      "priority": "P2",
+      "title": "Independent spatial discretization is absent",
+      "status": "disclosed and retained",
+      "impact": "The dense oracle confirms same-discretization assembly only.",
+      "nextScientificTask": "Build an independently authored spatial discretization, such as continuous P1 FEM with consistent mass, checked manufactured forcing, explicit periodic-x and y-trace policies and registered quadrature. Initially preserve the temporal split to isolate spatial differences.",
+      "acceptance": "Compare FEM and FV using a declared common observation operator and norm; do not equate nodal values, cell averages and cell-center samples. Lock runtime and demonstrate its compatibility before numerical comparison."
+    },
+    {
+      "id": "R18A-PORTABLE-SOTA-03",
+      "priority": "P2",
+      "title": "Full-study error separation and resource calibration remain absent",
+      "status": "disclosed and retained",
+      "impact": "Small bounded residuals, two matched receipts and the current runtime allowance do not calibrate convergence uncertainty or full-study resource feasibility.",
+      "nextScientificTask": "Calibrate temporal, spatial, solver, quadrature and observation errors with paired refinements and tightened-solver comparisons, recording true residuals and convergence reasons alongside measured wall time and peak memory.",
+      "acceptance": "Derive nuisance budgets from intended order precision; preregister resource/continuation limits before larger runs. Keep the dense same-discretization oracle on tiny systems, and do not extrapolate short-run timings into a performance ranking."
+    }
+  ],
+  "inheritedOperationalFindings": [
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "status": "open-awaiting-independent-disposition",
+      "sotaClosure": false,
+      "evidence": "Prior full-core run had three actual inner deadline failures. A single unchanged isolated three-suite/eight-test pass does not establish full-core closure or a hardware cause."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "status": "open-awaiting-independent-disposition",
+      "sotaClosure": false,
+      "evidence": "Seven prior final gates did not run; Builder focused/numerical evidence does not replace root-owned complete final gates on the accepted successor."
+    },
+    {
+      "id": "R18A-FRESH-CHECKOUT-RECEIPT-MODE",
+      "priority": "P1",
+      "status": "open-awaiting-independent-disposition",
+      "sotaClosure": false,
+      "evidence": "Builder supplies actual uncorrected checkout and mutation evidence for the narrow 0444/0644 source compatibility rule; independent software review owns closure."
+    }
+  ],
+  "sources": [
+    {
+      "id": "pfhub-benchmark7",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 90735,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "nist-pfhub7",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/benchmarks/benchmark7.ipynb",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "sha256": "00d15bfa910f111caf6753d1e959990d5e1d432f6630c064bae77b1624007863",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 90712,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "nist-notice",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 1754,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "derivative-license-link",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/myst.yml",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "sha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 989,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "fipy-4.0.3-discretization",
+      "url": "https://raw.githubusercontent.com/usnistgov/fipy/64635bf8ed6bc51431edb7d6cf1495ff68ac18a7/docs/source/numerical/discret.rst",
+      "revision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+      "sha256": "7c3b38a7042e625baf7239de720a20f2401de3a9e18d6c45a372dfc593e90185",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 11615,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "historical-chimad-implementation",
+      "url": "https://raw.githubusercontent.com/guyer/CHiMaDPhaseFieldVI/adc0b2e992386335d01cb4f6ce9924bf3fceb115/benchmark7a.py",
+      "revision": "adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "sha256": "4d06657d162572d8c04e26c6776c66e4040b555123bbe0fffb8dd826ebb89026",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 3307,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "dolfinx-0.10.0-variational-demo-different-pde",
+      "url": "https://raw.githubusercontent.com/FEniCS/dolfinx/b8375fa9fb932cbfce43005eeb4a3d52293f428b/python/demo/demo_cahn-hilliard.py",
+      "revision": "b8375fa9fb932cbfce43005eeb4a3d52293f428b",
+      "sha256": "a03857a0884957d57e02d6f28a67e4ee4547216774a15117590cc631de9f6806",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 11391,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "dolfinx-mpc-0.10.0-periodic-demo",
+      "url": "https://raw.githubusercontent.com/jorgensd/dolfinx_mpc/f35e025e97d5ce57199ac99545b726abb2898616/python/demos/demo_periodic_geometrical.py",
+      "revision": "f35e025e97d5ce57199ac99545b726abb2898616",
+      "sha256": "a8c98d2d99a018ef95784b28c52ada23d203044aae6106fdbcac4c187487f69e",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 5788,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "petsc-3.25.2-ark-source",
+      "url": "https://gitlab.com/petsc/petsc/-/raw/6a3455c81e23ba3f57e5a2b63c12172f50356626/src/ts/impls/arkimex/arkimex.c",
+      "revision": "6a3455c81e23ba3f57e5a2b63c12172f50356626",
+      "sha256": "dac622510684bb6dc706e5b8f6a6793db2249edb0be3e06024825472ec3f955e",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 138513,
+      "digestIndependentlyMatched": true
+    },
+    {
+      "id": "moose-2025-09-05-allencahn",
+      "url": "https://raw.githubusercontent.com/idaholab/moose/832d6f35e1f6c687880270d8bcb23156974cc031/modules/phase_field/doc/content/source/kernels/AllenCahn.md",
+      "revision": "832d6f35e1f6c687880270d8bcb23156974cc031",
+      "sha256": "cc5c52a8aa555c4fb7d2a8a0dbcb577f2ecc502e8be2fdabc7ebafcd08f400ab",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance",
+      "independentlyRetrievedOn": "2026-09-07",
+      "httpStatus": 200,
+      "byteSize": 817,
+      "digestIndependentlyMatched": true
+    }
+  ],
+  "datedRenderedReferences": [
+    {
+      "url": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+      "httpStatus": 200,
+      "byteSize": 163155,
+      "rawDigest": "sha256:6b09e1fbbfd8ec874b48250945179b3096d4ed1842ea7e5f0d15c12fd8eb938e",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+      "httpStatus": 200,
+      "byteSize": 40066,
+      "rawDigest": "sha256:67f620dc3e2c0301d795fa11e24ecdbe552bc04df6a0452e33c8c23e14b325dd",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://docs.fenicsproject.org/dolfinx/v0.10.0/python/demos/demo_cahn-hilliard.html",
+      "httpStatus": 200,
+      "byteSize": 63543,
+      "rawDigest": "sha256:8aedd85f955777c5e123f871680812f0507341be9dfe6b2e1de0d55678104e42",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/KSP/KSPSetTolerances/",
+      "httpStatus": 200,
+      "byteSize": 29108,
+      "rawDigest": "sha256:8bbfe8dcb7c699c67f7b38fb102c0eef0f967d710a8f57c5b9fcb9f0dba630cf",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/TS/TSARKIMEX/",
+      "httpStatus": 200,
+      "byteSize": 27926,
+      "rawDigest": "sha256:2994da47e06f179a9af40dda5c26a51b64b4f3fd296e0215c8c00d47c934a220",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/TS/TSROSW/",
+      "httpStatus": 200,
+      "byteSize": 27370,
+      "rawDigest": "sha256:90835dfa686cc2a174d94d2f57b1144780a806af5763bc18faf4b1e34415e560",
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Raw HTTP response as retrieved on 2026-09-07; URL is mutable and HTML snapshot is not archived in candidate."
+    },
+    {
+      "url": "https://mooseframework.inl.gov/source/kernels/AllenCahn.html",
+      "httpStatus": 403,
+      "byteSize": 5542,
+      "rawDigest": null,
+      "revision": null,
+      "classification": "reference",
+      "digestScope": "Direct raw HTTP retrieval returned 403, so no document digest is claimed. Browser-rendered official reference was inspected; the separately pinned AllenCahn source above was retrieved and hash verified."
+    }
+  ],
+  "datedSourceMetadata": [
+    {
+      "url": "https://api.github.com/repos/usnistgov/fipy/releases/tags/4.0.3",
+      "httpStatus": 200,
+      "byteSize": 4269,
+      "rawDigest": "sha256:952f02f66d13150f01a460297bff339cbf1fbd6c1e2bd1e44ddb62eeec2bc166",
+      "classification": "reference",
+      "tagName": "4.0.3",
+      "publishedAt": "2026-06-18T18:25:19Z",
+      "commit": null,
+      "authorDate": null,
+      "committerDate": null
+    },
+    {
+      "url": "https://api.github.com/repos/guyer/CHiMaDPhaseFieldVI/commits/adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "httpStatus": 200,
+      "byteSize": 4338,
+      "rawDigest": "sha256:42214e07835211822cbda856a88a8afd3003eaa079969aaf16f8989c34f444dd",
+      "classification": "reference",
+      "tagName": null,
+      "publishedAt": null,
+      "commit": "adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "authorDate": "2018-03-07T18:57:14Z",
+      "committerDate": "2018-03-07T18:57:14Z"
+    }
+  ],
+  "residualLimitations": [
+    "No solver, test, dependency installation or checkout was rerun by this reviewer; these are independent static/source and evidence audits.",
+    "The candidate is a bounded dimensionless verification artifact with no SI material mapping and no demonstrated full t=8 convergence.",
+    "Adding this review or any subsequent output changes the source tree; the tested 501-path identity cannot be transferred to the new output tree.",
+    "R12's nine excluded paths remain excluded and original evidence is preserved; exclusion does not supply source-rights clearance.",
+    "Source retrieval on this date establishes traceable references, not exhaustive discovery of every method or a claim that all cited versions are latest.",
+    "This review cannot close software findings or authorize commit, push, deployment, engineering recommendation or promotion while applicable P0/P1 findings or gates remain unresolved."
+  ],
+  "ceilings": {
+    "releaseEligible": false,
+    "commitApproved": false,
+    "pushApproved": false,
+    "deploymentApproved": false,
+    "goalComplete": false,
+    "reproduced": false,
+    "numericalRanking": false,
+    "scoreIncrease": false,
+    "convergenceVerified": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "automaticControlAuthorized": false,
+    "blanketLegalClearance": false
+  },
+  "finalGateRule": "Root must record relevant independent closure and run all applicable final gates after the final fix, then complete the dated final review. SOTA review is neither a release decision nor a substitute for executable validation."
+}

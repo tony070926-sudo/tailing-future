@@ -1,0 +1,1809 @@
+{
+  "schemaVersion": "tf.r18a-portable-software-review/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/admission_software_review",
+  "builder": "Astra; not approver",
+  "mode": "independent-read-only",
+  "verdict": "BLOCKED_P1_RELEASE_CONSTRUCTION_WITH_BOUNDED_PORTABILITY_VALIDATED",
+  "candidate": {
+    "recordCount": 52,
+    "canonicalBytes": 9197,
+    "sha256": "5b61550587ab5a4bfa30259a533d287c154a0286ad58b792e26ffd995097f4d4",
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "mode": 420,
+      "bytes": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+    },
+    "builderEvidence": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "mode": 420,
+      "bytes": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+    },
+    "actual503SourceSha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120",
+    "actualCandidateTreeIdentity": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 503,
+      "sha256": "114148af836fe6d95d0238c33eb851a1d99dfe1fabb23e277c715df87991381b",
+      "gitTreeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5"
+    }
+  },
+  "sourceChecks": [
+    {
+      "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable",
+      "pathCount": 503,
+      "allBytesModesRegularSingleLinksVerified": true,
+      "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120"
+    },
+    {
+      "root": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate",
+      "pathCount": 503,
+      "allBytesModesRegularSingleLinksVerified": true,
+      "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120"
+    },
+    {
+      "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future",
+      "pathCount": 641,
+      "allBytesModesRegularSingleLinksVerified": true,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    }
+  ],
+  "upstreamAndImports": {
+    "scope": "Frozen identity and independent bounded-run plan; no approval",
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "mode": 420,
+      "size": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+    },
+    "builder": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "mode": 420,
+      "size": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+    },
+    "candidate": {
+      "records": [
+        {
+          "path": ".gitignore",
+          "mode": 420,
+          "size": 492,
+          "sha256": "31341236431b683b0d8c229dc36c2a8aae2c511c63d067206752f3885ec8e395"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+          "mode": 420,
+          "size": 511225,
+          "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+          "mode": 420,
+          "size": 9064,
+          "sha256": "789eb6359676293f165edb7b21d55e6ebdf30366295a97459c38812e2e176011"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+          "mode": 420,
+          "size": 106956,
+          "sha256": "095838ae205f7b2c47090fd6af4da336c351020995a0d8d3ed2a5d63274e5e19"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+          "mode": 420,
+          "size": 6031,
+          "sha256": "e4d9a458a17cb858f1a3dcf5eb1eff232ece94b7b5dfa759c193d5b9077a2955"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+          "mode": 420,
+          "size": 1754,
+          "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+          "mode": 420,
+          "size": 90735,
+          "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+          "mode": 420,
+          "size": 4303,
+          "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+          "mode": 420,
+          "size": 7411,
+          "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+        },
+        {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        {
+          "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+          "mode": 420,
+          "size": 20908,
+          "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+          "mode": 420,
+          "size": 7566,
+          "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+          "mode": 420,
+          "size": 81228,
+          "sha256": "8ed096527bc1557a72fca40d0abce06726ca4a05c2936d2e26917243317231f7"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+          "mode": 420,
+          "size": 7584,
+          "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+          "mode": 420,
+          "size": 5167,
+          "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+          "mode": 420,
+          "size": 4806,
+          "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+          "mode": 420,
+          "size": 6330,
+          "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+          "mode": 420,
+          "size": 5705,
+          "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+          "mode": 420,
+          "size": 38058,
+          "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+          "mode": 420,
+          "size": 4065,
+          "sha256": "39e6ce7c29a7f16bfe3b11cae65fe1c7e75aeb2b38141d40d9ede50ba603161a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+          "mode": 420,
+          "size": 101840,
+          "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+          "mode": 420,
+          "size": 8002,
+          "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+          "mode": 420,
+          "size": 20628,
+          "sha256": "be4d2b39a298ab8ecb15835b4ae6d80aeb440dceddddaf3f5bcc7e24e678278a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+          "mode": 420,
+          "size": 8746,
+          "sha256": "69d8b377350298c4d6ce62a4e9a981ce335feed1d957dd0ea8bb35111a1ad0d3"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+          "mode": 420,
+          "size": 14074,
+          "sha256": "96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+          "mode": 420,
+          "size": 11467,
+          "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+          "mode": 420,
+          "size": 85182,
+          "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+          "mode": 420,
+          "size": 9803,
+          "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+          "mode": 420,
+          "size": 9214,
+          "sha256": "1be2b3e55f667e115b9d995faf84129e0db791bb6d59a977978e7f5868e20805"
+        },
+        {
+          "path": "package.json",
+          "mode": 420,
+          "size": 3069,
+          "sha256": "b6a2ea54c991b322bf4298a2dd8bdaf843de636139477d2967f5756cf59197f0"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.1.schema.json",
+          "mode": 420,
+          "size": 9241,
+          "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.2.schema.json",
+          "mode": 420,
+          "size": 3202,
+          "sha256": "df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.3.schema.json",
+          "mode": 420,
+          "size": 5113,
+          "sha256": "8985b4f4658afe3ba97f6b8d2959b7d79f86330818df4db78a748fb82340bc3a"
+        },
+        {
+          "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+          "mode": 420,
+          "size": 36479,
+          "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+          "mode": 420,
+          "size": 12652,
+          "sha256": "ace5b5f4f04e92a7835945686992eac4059eac7efcf00ff6dcf8f834ce6cc558"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+          "mode": 420,
+          "size": 4535,
+          "sha256": "4b30c5cd29764d9dbf452485fbea30f68df843303f80f648575a96748b2b106e"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "mode": 420,
+          "size": 19743,
+          "sha256": "7f9dd954ebea420cdb2278ef2d7cfe6dd91c13c2f702f2d822c79128d641c181"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "mode": 420,
+          "size": 9561,
+          "sha256": "ae79cbaeb2909bcc554fe7fb612d89e2bc379d573ec9f5b69e52a4094ddd9eae"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+          "mode": 420,
+          "size": 24876,
+          "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+          "mode": 420,
+          "size": 15597,
+          "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+          "mode": 420,
+          "size": 18023,
+          "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "mode": 420,
+          "size": 8756,
+          "sha256": "4579efa98f0c4435a1609bcbfa38b828eb5090d936b8fa98e6666fca59836404"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "mode": 420,
+          "size": 10682,
+          "sha256": "711b301d9269f6f7cbc23f69e7b994886af9825e5e5041574d16eff82c08da48"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "mode": 420,
+          "size": 5885,
+          "sha256": "cc798f8606f813671b90c5b760eed622ddc8617c36d628742caffef5a0a83338"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+          "mode": 420,
+          "size": 6966,
+          "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+          "mode": 420,
+          "size": 18417,
+          "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "mode": 420,
+          "size": 30418,
+          "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+          "mode": 420,
+          "size": 16746,
+          "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "mode": 420,
+          "size": 72494,
+          "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+          "mode": 420,
+          "size": 29719,
+          "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+        },
+        {
+          "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+          "mode": 420,
+          "size": 8093,
+          "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+        },
+        {
+          "path": "vitest.config.ts",
+          "mode": 420,
+          "size": 1406,
+          "sha256": "a42d4133a2c5b755ebcf96b99796ae1e38a07b56e2f19939e82fbc33a1f76643"
+        }
+      ],
+      "recordCount": 52,
+      "canonicalBytes": 9197,
+      "sha256": "5b61550587ab5a4bfa30259a533d287c154a0286ad58b792e26ffd995097f4d4"
+    },
+    "fullSource": {
+      "pathCount": 503,
+      "sha256": "d65363562d57de299baea48194353f547b253ff37b2bf740153bac89a79d0120"
+    },
+    "all52CandidateRecordsVerified": true,
+    "all452BaseBlobsVerified": true,
+    "unchangedBaseFileCount": 449,
+    "upstream": [
+      {
+        "path": "docs/ATOMISTIC_REPRODUCTION.md",
+        "sha256": "86f6e88c1807bd8daa8b63b9969789695090464f932f5b5caf233efdf7df7767",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/atomistic/full-candidate-determinism-roots-v0.1.json",
+        "sha256": "fa5a83d70e499bc2419b63300d24e46a802406b78d2fa4406e93a7e0a0f01735",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/latest-report.json",
+        "sha256": "8d50c338ca12083896595febbe7f0ec343ce8a36a6ab5d06d9c80d86042fa6ac",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/latest-report.md",
+        "sha256": "9f73bd6bd28448ee0be769496e07e2006f51d2bfe3b17a3bd32b09abfcfd0d55",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/public-product-evaluation.json",
+        "sha256": "58a121badc7c38d679e7950492bda577be08c9b06c698b441547052a4641b03d",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/public-summary.json",
+        "sha256": "a0d99afdfb8e9e9f4924026e8103c70df96094011065bff208dfeb72cbaf59c8",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-v05-scientific-provenance-roots-review.md",
+        "sha256": "df553e1cd16d3f77e2177b12d403da916240ef36931467211c83354b9133c6d4",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "schemas/atomistic-full-candidate-determinism-roots.schema.json",
+        "sha256": "adf2e8a6a509bc0f79b6ef48b0215e48dc983c1998982f21c4f13ed8504eb891",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "schemas/atomistic-full-candidate-host-observation.schema.json",
+        "sha256": "729477cccc0564534b2dad7c3d2bc8ba735aeda369245e9c343987cab90490dd",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "scripts/atomistic/full-candidate-observer-vnext.mjs",
+        "sha256": "20ba6cb9e4e4290dbfad18afc4b06e358cc5120664e40d6e2c7106dc49628a8b",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "scripts/atomistic/full-candidate-observer-vnext.test.mjs",
+        "sha256": "a0029f7205596332aa3858d50620bb3cb735806e6318253febbb8e06eb7dea07",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "scripts/evaluate-observer-snapshot.test.mjs",
+        "sha256": "2dbc466a7638dc569f8fdfbdb29ef2a1cbbf3c81d366bcae8f3ff34b66e3d524",
+        "baseBlobVerified": true
+      },
+      {
+        "path": "scripts/evaluate-worker.mjs",
+        "sha256": "31f22211db899c9d42251a34fc40049624cf0ee00d52ca153e9d6f0258997c67",
+        "baseBlobVerified": true
+      }
+    ],
+    "imported": [
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.1.schema.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "schemas/backend-migration-admission-v0.2.schema.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+        "identicalToPreviousIntegration": true
+      },
+      {
+        "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+        "identicalToPreviousIntegration": true
+      }
+    ],
+    "old501ExactlyPreserved": true,
+    "plan": {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/independent-plan.json",
+      "mode": 420,
+      "size": 240399,
+      "sha256": "46d3dd418001351771241132bc3f26c8e98d6984c3851f93ffc1f236daf512d2"
+    }
+  },
+  "strictJson": {
+    "paths": [
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+      "schemas/backend-migration-admission-v0.3.schema.json",
+      "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json"
+    ],
+    "passed": 8,
+    "decodedDuplicateKeyNegativeControlPassed": true
+  },
+  "execution": {
+    "rawResults": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/results.json",
+      "mode": 420,
+      "bytes": 861457,
+      "sha256": "384ab98bb76b67059d833df69dfd98f87d0e7fa6a1eaec333bb5939448f5a314"
+    },
+    "executor": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e",
+      "nodePath": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "nodeVersion": "v24.16.0",
+      "nodeSha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+    },
+    "plan": {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/independent-plan.json",
+      "bytes": 240399,
+      "sha256": "46d3dd418001351771241132bc3f26c8e98d6984c3851f93ffc1f236daf512d2"
+    },
+    "status": "pass-frozen-baseline-only",
+    "cliExitCode": 0,
+    "gateCount": 4,
+    "gates": [
+      {
+        "id": "review-admission-before",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:09:52.894Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:09:53.096Z",
+        "elapsedSeconds": 0.202,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stdout.log",
+          "bytes": 552,
+          "sha256": "31aa33eff0fb92238c003e14ce05345c82de98183de96d496e76b2ac85bc913d"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-focused",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--fileParallelism=false",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "--reporter=verbose"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate",
+        "timeoutMs": 400000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:09:53.097Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:10:32.987Z",
+        "elapsedSeconds": 39.89,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stdout.log",
+          "bytes": 80186,
+          "sha256": "9be702edbcf88adda9f624ae5d97a7d176f68611f6c23646909aeb6b4214fc6c"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-numerical",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate",
+        "timeoutMs": 601000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:10:32.991Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:11:04.095Z",
+        "elapsedSeconds": 31.104,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stdout.log",
+          "bytes": 7684,
+          "sha256": "d998a1e4f50d15df076103f9fa437adb645f37743cef0d80141e835f9042c5d0"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-admission-after",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:11:04.096Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:11:04.281Z",
+        "elapsedSeconds": 0.185,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stdout.log",
+          "bytes": 552,
+          "sha256": "31aa33eff0fb92238c003e14ce05345c82de98183de96d496e76b2ac85bc913d"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ]
+  },
+  "counts": {
+    "currentFocused": 22,
+    "historicalV02": 5,
+    "nestedHistoricalV01": 20,
+    "freshCheckoutNode": 29,
+    "numericalPython": 21,
+    "numericalNode": 29,
+    "independentSupervisorRuns": 2,
+    "strictSchemaSemanticReceiptValidations": 2,
+    "skipped": 0,
+    "failed": 0,
+    "notAdditiveFullRepositoryCount": true
+  },
+  "historicalReplay": {
+    "current": {
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+        "--reporter=verbose"
+      ],
+      "historicalBase": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "reconstructedMainFiles": 449,
+      "reconstructedImports": 41,
+      "historicalOnly": true,
+      "pid": 62341,
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "stopReason": null,
+      "timedOut": false,
+      "killError": null,
+      "outputTruncated": false,
+      "graceExpired": false,
+      "cleanupConfirmed": true,
+      "cleanup": {
+        "directChildExitObserved": true,
+        "pipesClosed": true,
+        "processGroupAbsent": true,
+        "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+      },
+      "elapsedMs": 11672.172833,
+      "timeoutMs": 111423,
+      "stopGraceMs": 1000,
+      "maxOutputBytes": 8388608,
+      "stdout": "\n RUN  v4.1.11 /private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-v03-history-84HbRK\n\nstdout | scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > executes every unchanged historical preparation test in the reconstructed pinned tree\n{\"historicalReplayEvidence\":{\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"--config\",\"vitest.config.ts\",\"scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs\",\"--reporter=verbose\"],\"reconstructedMainFiles\":449,\"reconstructedHistoricalFiles\":11,\"exitCode\":0,\"stdout\":\"\\n RUN  v4.1.11 /private/tmp/tf-admission-historical-bmJEtW\\n\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an empty inventory and an actual Git tree missing its trusted source inventory 73ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > does not let repository-local or unregistered nested ignore rules hide new sources 949ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > retains a capture failure and does not mistake it for an empty valid inventory 17ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > validates the frozen ledger, schema and actual preparation tree while remaining release-ineligible 61ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > pins both raw files and rejects a byte-only ledger rewrite 13ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate decoded JSON members before schema or semantic validation 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a missing entry and the forged completeness counts it causes 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate paths even when the array length remains 939 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects changed content identities and modes 18ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects unknown dispositions rather than treating them as implicitly safe 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps all nine R12 paths absent, rights-unresolved, unlicensed and not passed 0ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects R12 inclusion and excluded-to-licensed mutations 20ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a pending-to-admitted scientific-capability mutation 11ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an unaccounted source and does not exempt the review directory by prefix 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a renamed excluded payload by digest using only a synthetic test identity 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > detects ignored or otherwise unenumerated legacy-only payloads directly on the filesystem 4ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects preserved-main drift including latest-main frontend bytes 0ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps the R18a .gitignore conflict and historical approval non-transfer explicit 9ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects forged inventory roots even if the top-level complete flag stays true 10ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects any attempt to turn preparation status into release eligibility 9ms\\n\\n Test Files  1 passed (1)\\n      Tests  20 passed (20)\\n   Start at  18:10:13\\n   Duration  1.41s (transform 26ms, setup 0ms, import 119ms, tests 1.23s, environment 0ms)\\n\\n\",\"stderr\":\"\",\"lifecycle\":{\"timeoutMs\":110910,\"stopGraceMs\":1000,\"elapsedMs\":1568.4802500000005,\"cleanupConfirmed\":true,\"cleanup\":{\"directChildExitObserved\":true,\"pipesClosed\":true,\"processGroupAbsent\":true,\"scope\":\"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"}},\"historicalOnly\":true}}\n\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > executes every unchanged historical preparation test in the reconstructed pinned tree 10785ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > validates the actual current tree without transferring historical approval 96ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > rejects missing, extra, duplicate, mutated and renamed excluded source identities 81ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > rejects unknown imports, forged quantities and promoted scientific or historical claims 54ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs > fixed-base R18a admission successor > cannot hide new sources with local ignore rules and cannot mutate the frozen ledger 389ms\n\n Test Files  1 passed (1)\n      Tests  5 passed (5)\n   Start at  18:10:03\n   Duration  11.52s (transform 33ms, setup 0ms, import 60ms, tests 11.41s, environment 0ms)\n\n",
+      "stderr": ""
+    },
+    "nested": {
+      "command": [
+        "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+        "--reporter=verbose"
+      ],
+      "reconstructedMainFiles": 449,
+      "reconstructedHistoricalFiles": 11,
+      "exitCode": 0,
+      "stdout": "\n RUN  v4.1.11 /private/tmp/tf-admission-historical-bmJEtW\n\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an empty inventory and an actual Git tree missing its trusted source inventory 73ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > does not let repository-local or unregistered nested ignore rules hide new sources 949ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > retains a capture failure and does not mistake it for an empty valid inventory 17ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > validates the frozen ledger, schema and actual preparation tree while remaining release-ineligible 61ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > pins both raw files and rejects a byte-only ledger rewrite 13ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate decoded JSON members before schema or semantic validation 1ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a missing entry and the forged completeness counts it causes 10ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate paths even when the array length remains 939 10ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects changed content identities and modes 18ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects unknown dispositions rather than treating them as implicitly safe 10ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps all nine R12 paths absent, rights-unresolved, unlicensed and not passed 0ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects R12 inclusion and excluded-to-licensed mutations 20ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a pending-to-admitted scientific-capability mutation 11ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an unaccounted source and does not exempt the review directory by prefix 1ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a renamed excluded payload by digest using only a synthetic test identity 1ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > detects ignored or otherwise unenumerated legacy-only payloads directly on the filesystem 4ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects preserved-main drift including latest-main frontend bytes 0ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps the R18a .gitignore conflict and historical approval non-transfer explicit 9ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects forged inventory roots even if the top-level complete flag stays true 10ms\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects any attempt to turn preparation status into release eligibility 9ms\n\n Test Files  1 passed (1)\n      Tests  20 passed (20)\n   Start at  18:10:13\n   Duration  1.41s (transform 26ms, setup 0ms, import 119ms, tests 1.23s, environment 0ms)\n\n",
+      "stderr": "",
+      "lifecycle": {
+        "timeoutMs": 110910,
+        "stopGraceMs": 1000,
+        "elapsedMs": 1568.4802500000005,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        }
+      },
+      "historicalOnly": true
+    }
+  },
+  "freshGitCheckout": {
+    "root": "<temporary-checkout>",
+    "treeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5",
+    "receipt": {
+      "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+      "mode": 420,
+      "size": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    },
+    "admission": {
+      "schemaVersion": "tf.backend-migration-admission-gate/0.3",
+      "status": "pass-portable-source-admission",
+      "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+      "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "candidateTreeIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 503,
+        "sha256": "114148af836fe6d95d0238c33eb851a1d99dfe1fabb23e277c715df87991381b",
+        "gitTreeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5"
+      },
+      "releaseEligible": false,
+      "historicalApprovalTransferred": false,
+      "failures": []
+    },
+    "processUmask": 18,
+    "postCheckoutChmodPerformed": false,
+    "approvedReleaseCommit": false,
+    "dependencyLayout": "external-reference-focused-only",
+    "command": [
+      "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs"
+    ],
+    "node": {
+      "pid": 63434,
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "stopReason": null,
+      "timedOut": false,
+      "killError": null,
+      "outputTruncated": false,
+      "graceExpired": false,
+      "cleanupConfirmed": true,
+      "cleanup": {
+        "directChildExitObserved": true,
+        "pipesClosed": true,
+        "processGroupAbsent": true,
+        "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+      },
+      "elapsedMs": 575.9595000000008,
+      "timeoutMs": 120000,
+      "stopGraceMs": 1000,
+      "maxOutputBytes": 16777216,
+      "stdout": "TAP version 13\n# Subtest: r18a.prefreeze-p1.bound.rounded-down\nok 1 - r18a.prefreeze-p1.bound.rounded-down\n  ---\n  duration_ms: 10.499334\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.bound.rounded-down\",\"mutatedField\":\"/scientificSemantics/boundaryCompatibility/conservativeBoundaryTraceMismatchUpperBound/decimalOutwardUpper\",\"mutatedValue\":\"0.000012204318378837\",\"expectedReason\":\"boundary compatibility and outward-rounded analytic bound must exactly equal the frozen values\",\"observedReason\":\"boundary compatibility and outward-rounded analytic bound must exactly equal the frozen values\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.source\nok 2 - r18a.prefreeze-p1.dimension.source\n  ---\n  duration_ms: 8.88725\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.source\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/source/dimension\",\"mutatedValue\":\"dimensionless-rate\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.kappa\nok 3 - r18a.prefreeze-p1.dimension.kappa\n  ---\n  duration_ms: 7.836583\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.kappa\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/kappa/dimension\",\"mutatedValue\":\"reduced-length^2/reduced-time\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.discrete-l2\nok 4 - r18a.prefreeze-p1.dimension.discrete-l2\n  ---\n  duration_ms: 7.397625\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.discrete-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/discreteL2/dimension\",\"mutatedValue\":\"dimensionless-times-reduced-length\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.dimension.algebraic-residual-l2\nok 5 - r18a.prefreeze-p1.dimension.algebraic-residual-l2\n  ---\n  duration_ms: 7.383\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.dimension.algebraic-residual-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/algebraicResidualL2/dimension\",\"mutatedValue\":\"solver-equation-residual\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.source\nok 6 - r18a.prefreeze-p1.basis.source\n  ---\n  duration_ms: 6.906417\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.source\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/source/basis\",\"mutatedValue\":\"change in reduced eta per reduced time\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.kappa\nok 7 - r18a.prefreeze-p1.basis.kappa\n  ---\n  duration_ms: 6.968792\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.kappa\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/kappa/basis\",\"mutatedValue\":\"coefficient multiplying the reduced-coordinate Laplacian in the registered nondimensional PDE\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.discrete-l2\nok 8 - r18a.prefreeze-p1.basis.discrete-l2\n  ---\n  duration_ms: 7.050709\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.discrete-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/discreteL2/basis\",\"mutatedValue\":\"square root of the cell sum of squared eta differences times dx*dy; no domain normalization\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.basis.algebraic-residual-l2\nok 9 - r18a.prefreeze-p1.basis.algebraic-residual-l2\n  ---\n  duration_ms: 7.217834\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.basis.algebraic-residual-l2\",\"mutatedField\":\"/scientificSemantics/quantityRegistry/algebraicResidualL2/basis\",\"mutatedValue\":\"Euclidean norm of the frozen FiPy assembled linear-system residual; diagnostic for this algebraic solve only\",\"expectedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"observedReason\":\"quantity registry must exactly equal the frozen dimensionless registry\",\"assertionOutcome\":\"pass\"}\n# Subtest: r18a.prefreeze-p1.source-date.historical-commit\nok 10 - r18a.prefreeze-p1.source-date.historical-commit\n  ---\n  duration_ms: 6.921834\n  type: 'test'\n  ...\n# MUTATION_EVIDENCE {\"testId\":\"r18a.prefreeze-p1.source-date.historical-commit\",\"mutatedField\":\"/sourceMetadata/1/date\",\"mutatedValue\":\"2015-09-09\",\"expectedReason\":\"historical CHiMaD commit date changed\",\"observedReason\":\"historical CHiMaD commit date changed\",\"assertionOutcome\":\"pass\"}\n# Subtest: formal successor receipt passes strict schema, identity, locator, and semantic gates\nok 11 - formal successor receipt passes strict schema, identity, locator, and semantic gates\n  ---\n  duration_ms: 48.644208\n  type: 'test'\n  ...\n# Subtest: formal receipt identity rejects a one-byte whitespace mutation\nok 12 - formal receipt identity rejects a one-byte whitespace mutation\n  ---\n  duration_ms: 35.347958\n  type: 'test'\n  ...\n# Subtest: legacy identity-bypass argument cannot make mutated production bytes pass\nok 13 - legacy identity-bypass argument cannot make mutated production bytes pass\n  ---\n  duration_ms: 26.204958\n  type: 'test'\n  ...\n# Subtest: formal receipt identity is content-bound rather than temporary-path-bound\nok 14 - formal receipt identity is content-bound rather than temporary-path-bound\n  ---\n  duration_ms: 25.610458\n  type: 'test'\n  ...\n# Subtest: capability escalation and provenance rewrites are rejected\nok 15 - capability escalation and provenance rewrites are rejected\n  ---\n  duration_ms: 30.1895\n  type: 'test'\n  ...\n# Subtest: acceptance matrix deletion, text, locator, and pass-state rewrites are rejected\nok 16 - acceptance matrix deletion, text, locator, and pass-state rewrites are rejected\n  ---\n  duration_ms: 60.544208\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects a missing target\nok 17 - acceptance evidence resolver rejects a missing target\n  ---\n  duration_ms: 9.1195\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects wildcard cardinality drift\nok 18 - acceptance evidence resolver rejects wildcard cardinality drift\n  ---\n  duration_ms: 7.579416\n  type: 'test'\n  ...\n# Subtest: acceptance evidence resolver rejects a pseudo-locator identity predicate failure\nok 19 - acceptance evidence resolver rejects a pseudo-locator identity predicate failure\n  ---\n  duration_ms: 7.644791\n  type: 'test'\n  ...\n# Subtest: rich semantic probes bind modes, reasons, transforms, and measured signals\nok 20 - rich semantic probes bind modes, reasons, transforms, and measured signals\n  ---\n  duration_ms: 29.289875\n  type: 'test'\n  ...\n# Subtest: effective equation and source metadata rewrites are rejected\nok 21 - effective equation and source metadata rewrites are rejected\n  ---\n  duration_ms: 14.445333\n  type: 'test'\n  ...\n# Subtest: executed and comparison track identity rewrites are rejected\nok 22 - executed and comparison track identity rewrites are rejected\n  ---\n  duration_ms: 14.371666\n  type: 'test'\n  ...\n# Subtest: candidate source and executed worker triples are fully bound\nok 23 - candidate source and executed worker triples are fully bound\n  ---\n  duration_ms: 21.901666\n  type: 'test'\n  ...\n# Subtest: module inventory truncation cannot be hidden by recomputing count and digest\nok 24 - module inventory truncation cannot be hidden by recomputing count and digest\n  ---\n  duration_ms: 8.350042\n  type: 'test'\n  ...\n# Subtest: module and dyld inventory ordering and uniqueness are enforced\nok 25 - module and dyld inventory ordering and uniqueness are enforced\n  ---\n  duration_ms: 15.470333\n  type: 'test'\n  ...\n# Subtest: worker step and comparison digest chains are cross-bound\nok 26 - worker step and comparison digest chains are cross-bound\n  ---\n  duration_ms: 29.722375\n  type: 'test'\n  ...\n# Subtest: legacy provenance field is rejected by schema\nok 27 - legacy provenance field is rejected by schema\n  ---\n  duration_ms: 19.28125\n  type: 'test'\n  ...\n# Subtest: inventory digest canonicalization is independent of object insertion order\nok 28 - inventory digest canonicalization is independent of object insertion order\n  ---\n  duration_ms: 4.76725\n  type: 'test'\n  ...\n# Subtest: duplicate JSON members are rejected before Ajv or identity checks\nok 29 - duplicate JSON members are rejected before Ajv or identity checks\n  ---\n  duration_ms: 3.851792\n  type: 'test'\n  ...\n1..29\n# tests 29\n# suites 0\n# pass 29\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 550.15675\n",
+      "stderr": ""
+    },
+    "indexBytes": 52646,
+    "indexSha256": "df4303aa9f9fff558f24c5172c8515961c55482d732bc3244987355abff6f0a8",
+    "indexEntries": 503
+  },
+  "numerical": {
+    "schemaVersion": "tf.r18a-current-root-execution/0.2",
+    "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "candidateTreeIdentity": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 503,
+      "sha256": "114148af836fe6d95d0238c33eb851a1d99dfe1fabb23e277c715df87991381b",
+      "gitTreeOid": "1a83fd333efcaa894e9204f57c4f448448491ac5"
+    },
+    "startedAt": "2026-09-07T14:10:33.033Z",
+    "status": "pass-bounded-current-root-execution",
+    "releaseEligible": false,
+    "historicalCandidateIdentityTransferred": false,
+    "convergenceVerified": false,
+    "physicalValidation": false,
+    "reproduced": false,
+    "scientificPromotionEligible": false,
+    "commands": [
+      {
+        "label": "python-21",
+        "command": [
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py"
+        ],
+        "pid": 63496,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 22993.240583,
+        "timeoutMs": 599507,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrBytes": 3115,
+        "stderrSha256": "e398a2df5ba51aaafd7626c7242ee2cb3fa17fedf45b2ec0c6956b0952cdf655"
+      },
+      {
+        "label": "node-29",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--test",
+          "--test-reporter=tap",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs"
+        ],
+        "pid": 63639,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 590.2871249999989,
+        "timeoutMs": 576513,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 9641,
+        "stdoutSha256": "09a31897f27cb3eca45514b634889bb8fe51f927d068b12bacbbe0678ce2cdef",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "supervisor-1",
+        "command": [
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "--python-source",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/bootstrap",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+          "--output",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-1.json"
+        ],
+        "pid": 63641,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 3313.9607909999977,
+        "timeoutMs": 575923,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 248777,
+        "stdoutSha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "schema-1",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-1.json"
+        ],
+        "pid": 63676,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 96.20558399999936,
+        "timeoutMs": 572608,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 56,
+        "stdoutSha256": "7b2b84d949dce6c3081d2d9e6138305d0b4c109ebe01ba39d5d9d8fc9cf1ebb2",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "supervisor-2",
+        "command": [
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/bootstrap/bin/python3.12",
+          "-I",
+          "-S",
+          "-B",
+          "-W",
+          "error",
+          "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "--python-source",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/bootstrap",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+          "--output",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-2.json"
+        ],
+        "pid": 63677,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 3284.1287919999995,
+        "timeoutMs": 572512,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 248777,
+        "stdoutSha256": "0a6ea1111cafee1925e045dd570927dea271f1a77f782da06f245e7e47217411",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "schema-2",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-2.json"
+        ],
+        "pid": 63706,
+        "signal": null,
+        "error": null,
+        "stopReason": null,
+        "timedOut": false,
+        "killError": null,
+        "outputTruncated": false,
+        "graceExpired": false,
+        "cleanupConfirmed": true,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+        },
+        "elapsedMs": 94.1437079999996,
+        "timeoutMs": 569228,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "exitCode": 0,
+        "stdoutBytes": 56,
+        "stdoutSha256": "7b2b84d949dce6c3081d2d9e6138305d0b4c109ebe01ba39d5d9d8fc9cf1ebb2",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "bootstrap": {
+      "recordShape": [
+        "byteSize",
+        "path",
+        "rawDigest"
+      ],
+      "ordering": "UTF-8 bytewise ascending logical path",
+      "serialization": "UTF-8 compact JSON array with ASCII escaping and no trailing newline",
+      "recordCount": 747,
+      "byteSize": 32153962,
+      "recordsDigest": "sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530",
+      "verifiedBeforeExecution": true
+    },
+    "wheels": [
+      {
+        "path": "fipy-4.0.3-py3-none-any.whl",
+        "byteSize": 439565,
+        "rawDigest": "sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e"
+      },
+      {
+        "path": "numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 5445405,
+        "rawDigest": "sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0"
+      },
+      {
+        "path": "scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl",
+        "byteSize": 20475078,
+        "rawDigest": "sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12"
+      },
+      {
+        "path": "packaging-26.3-py3-none-any.whl",
+        "byteSize": 129956,
+        "rawDigest": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+      }
+    ],
+    "receipts": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-1.json",
+        "mode": 292,
+        "bytes": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/receipt-2.json",
+        "mode": 292,
+        "bytes": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      }
+    ],
+    "sourceVerifiedBeforeAndAfter": true,
+    "elapsedMs": 31052.158583,
+    "budget": {
+      "clock": "monotonic-performance.now",
+      "scientificAcceptanceMs": 600000,
+      "stopGraceMs": 1000,
+      "stopGraceExtendsAcceptance": false
+    },
+    "evidencePath": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/execution.json",
+    "evidencePersisted": true,
+    "supervisorCommandsIdenticalExceptRequiredDistinctOutputPath": true,
+    "bootstrapFilesystemSealing": {
+      "sealedFiles": 747,
+      "sealedDirs": 56,
+      "allExpectedModesVerified": true
+    }
+  },
+  "dependencyChecks": [
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5",
+      "key": "dependencyBefore",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-before.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5",
+      "key": "dependencySourceAfterCopy",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-after-copy.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5",
+      "key": "dependencySnapshotBefore",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-snapshot-before.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5",
+      "key": "dependencySourceAfter",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-after.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5",
+      "key": "dependencySnapshotAfter",
+      "pathCount": 35721,
+      "canonicalSha256": "3ee07c1f13cd8fcb8765608de5e47bdc3953380c3cbe7fce64c16735cb5f25de",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-snapshot-after.json",
+        "bytes": 5688339,
+        "sha256": "b511289f1ac5ea1d92ca2831a343959df36083ee5f35a2647702c884ac3a1e0d"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh",
+      "key": "dependencyBefore",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-before.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh",
+      "key": "dependencySourceAfterCopy",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-after-copy.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh",
+      "key": "dependencySnapshotBefore",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-snapshot-before.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh",
+      "key": "dependencySourceAfter",
+      "pathCount": 35721,
+      "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-after.json",
+        "bytes": 5688339,
+        "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+      }
+    },
+    {
+      "outputRoot": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh",
+      "key": "dependencySnapshotAfter",
+      "pathCount": 35721,
+      "canonicalSha256": "34478143feed6a008bfd5a3434bf379bd3a3ed10e21c6a64907e1f180ad42810",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-snapshot-after.json",
+        "bytes": 5688339,
+        "sha256": "c68c402acb54244f41ddf672020675bd57f40be0619399fda1d578504fde3f5b"
+      }
+    }
+  ],
+  "dependencyScope": {
+    "sourceUnchanged": true,
+    "changedCopyPaths": [
+      ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+    ],
+    "nonCacheChanges": [],
+    "physicalCopyExecutorPreviouslyIndependentlyReviewed": true,
+    "notFreshInstallOrOsNativeClosure": true
+  },
+  "artifactIdentities": [
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "mode": 420,
+      "bytes": 16518,
+      "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "mode": 420,
+      "bytes": 77179,
+      "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+    },
+    {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/independent-plan.json",
+      "mode": 420,
+      "bytes": 240399,
+      "sha256": "46d3dd418001351771241132bc3f26c8e98d6984c3851f93ffc1f236daf512d2"
+    },
+    {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "mode": 420,
+      "bytes": 22060,
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e"
+    },
+    {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "mode": 493,
+      "bytes": 120573328,
+      "sha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-before.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-after-copy.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-snapshot-before.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-source-after.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/dependency-snapshot-after.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "b511289f1ac5ea1d92ca2831a343959df36083ee5f35a2647702c884ac3a1e0d"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-before.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-after-copy.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-snapshot-before.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-source-after.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/dependency-snapshot-after.json",
+      "mode": 384,
+      "bytes": 5688339,
+      "sha256": "c68c402acb54244f41ddf672020675bd57f40be0619399fda1d578504fde3f5b"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stdout.log",
+      "mode": 384,
+      "bytes": 552,
+      "sha256": "31aa33eff0fb92238c003e14ce05345c82de98183de96d496e76b2ac85bc913d"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-before.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stdout.log",
+      "mode": 384,
+      "bytes": 80186,
+      "sha256": "9be702edbcf88adda9f624ae5d97a7d176f68611f6c23646909aeb6b4214fc6c"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-focused.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stdout.log",
+      "mode": 384,
+      "bytes": 7684,
+      "sha256": "d998a1e4f50d15df076103f9fa437adb645f37743cef0d80141e835f9042c5d0"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-numerical.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stdout.log",
+      "mode": 384,
+      "bytes": 552,
+      "sha256": "31aa33eff0fb92238c003e14ce05345c82de98183de96d496e76b2ac85bc913d"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/logs/review-admission-after.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/admission.stdout.log",
+      "mode": 384,
+      "bytes": 552,
+      "sha256": "426ca9cab360ca323738c513d6a2ad6e1d3500a96e85ebd72ff8f8f7d5c48ebb"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/admission.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/lint.stdout.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/lint.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/type.stdout.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/type.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/focused-contracts.stdout.log",
+      "mode": 384,
+      "bytes": 79928,
+      "sha256": "ab8ee9290bb8b890f8e73470b209be5c48fb2d65560f37923223809cf35c0d7b"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/focused-contracts.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/numerical.stdout.log",
+      "mode": 384,
+      "bytes": 7691,
+      "sha256": "110bf7bef7b44b2837bf0cfd3523a36f1f9dbf47861df8acc3c6923335801c21"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/numerical.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/final-admission.stdout.log",
+      "mode": 384,
+      "bytes": 552,
+      "sha256": "426ca9cab360ca323738c513d6a2ad6e1d3500a96e85ebd72ff8f8f7d5c48ebb"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/logs/final-admission.stderr.log",
+      "mode": 384,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-z2MUx5/candidate/.tf-runtime/r18a-current-root-1szGFA/execution.json",
+      "mode": 384,
+      "bytes": 558036,
+      "sha256": "c3d55c24ae7fb982be85a715d224975120614fd32f06e64121795470ebf9052a"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/results.json",
+      "mode": 420,
+      "bytes": 862553,
+      "sha256": "19b6a4426aa23dee00aae46a5df28e001d12167c502fc32560950fa5f84d519f"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/execution.json",
+      "mode": 384,
+      "bytes": 558032,
+      "sha256": "ede6d107e7ad5d528519ee2fa363516393859fa3024809b6b85b3dc7a475e064"
+    },
+    {
+      "path": "/private/tmp/tf-portable-builder.v1UHyw/plan-v1.json",
+      "mode": 420,
+      "bytes": 240548,
+      "sha256": "8f33f5554e0dd46427267fe6b6d9f2c9f068b2d52c56e7da095c8ec3ca4bc2d5"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/receipt-1.json",
+      "mode": 292,
+      "bytes": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-Dodwsh/candidate/.tf-runtime/r18a-current-root-mZJN4n/receipt-2.json",
+      "mode": 292,
+      "bytes": 248778,
+      "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+    }
+  ],
+  "probes": [
+    {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/preflight.json",
+      "mode": 420,
+      "bytes": 21873,
+      "sha256": "316591b540338ef41e8f57c63b039460346ebcf857c0127fed0fc476787e7918"
+    },
+    {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/report-binding-evidence.json",
+      "mode": 420,
+      "bytes": 3408,
+      "sha256": "e18aff213374177b836cfe19e72689b5ea3c53f88dc2d72c80647b1b08559891"
+    },
+    {
+      "path": "/private/tmp/tf-portable-software-review.vdFOWu/final-block-evidence-v2.json",
+      "mode": 420,
+      "bytes": 2285,
+      "sha256": "054aeb4ac2f0e79bc4f02bc406dcab9c9479994373e03f171cde5cc8696a923d"
+    }
+  ],
+  "findings": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+      "priority": "P1",
+      "status": "open",
+      "classification": "release-construction and evaluator/admission integration blocker, not a failure of the bounded receipt-permission experiment",
+      "introducedByCandidateIntegration": true,
+      "locations": [
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+          "line": 472
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "line": 122
+        },
+        {
+          "path": "scripts/source-scope.mjs",
+          "line": 40
+        },
+        {
+          "path": "scripts/release-report.mjs",
+          "line": 119
+        },
+        {
+          "path": "scripts/release-cloudflare.mjs",
+          "line": 219
+        }
+      ],
+      "evidence": {
+        "path": "/private/tmp/tf-portable-software-review.vdFOWu/report-binding-evidence.json",
+        "mode": 420,
+        "bytes": 3408,
+        "sha256": "e18aff213374177b836cfe19e72689b5ea3c53f88dc2d72c80647b1b08559891"
+      },
+      "reason": "The ledger requires exact historical bytes for the four derived report outputs, while evaluation includes the ledger/checker/current review files in the source root and report.sourceManifest. Current selected source is 499 files, old report is 448; release equivalence retains artifactDigest/sourceManifest/sourceFileCount and rejects the mismatch. Updating report alone violates admission; updating its pin changes the ledger hash recorded by the report, creating an unresolved cryptographic dependency cycle.",
+      "closureRequirements": [
+        "Freeze an explicit versioned acyclic protocol separating immutable source inputs, historical provenance and generated report/review outputs; preserve old evidence and keep unknown-source additions fail-closed. Scope reconciliation is required; do not silently overwrite the pinned 13-path upstream cluster.",
+        "Use executable positive and negative controls: finite generation with stable source root; report regeneration does not mutate its own source identity; a genuine source/ledger change invalidates stale evidence; generated output cannot supply approval or substitute source; cross-platform source-mode semantics remain explicit.",
+        "After root implementation and independent closure review, run all applicable complete candidate gates including evaluator/release-report equivalence. A synthetic projected report or focused pass is insufficient."
+      ],
+      "doesNotCloseInheritedCoreOrSequenceBlockers": true
+    }
+  ],
+  "inheritedOperationalBlockers": [
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "rootAssignedOperationalBlocker": true,
+      "applicability": "still applicable",
+      "status": "open",
+      "reason": "This review did not run the new candidate full core suite; isolated/focused success cannot close the old full-core deadline blocker."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "rootAssignedOperationalBlocker": true,
+      "applicability": "still applicable",
+      "status": "open",
+      "reason": "All applicable new-candidate complete gates remain required; bounded 4-gate execution does not replace the old seven not-run gates."
+    },
+    {
+      "id": "R18A-FRESH-CHECKOUT-RECEIPT-MODE",
+      "priority": "P1",
+      "rootAssignedOperationalBlocker": true,
+      "applicability": "exact one-source-path 0444/0644 incompatibility addressed by versioned /0.3 contract",
+      "status": "limited-closure-recommended-subject-to-root-disposition",
+      "reason": "Actual 503-path Git tree/index checkout without chmod correction produced exact receipt0644 and passed admission plus unchanged Node29. Unsafe modes/content/links/hidden source/control mutations rejected in independently executed frozen tests. New generated receipts remain0444 and private bootstrap sealed. This does not approve release, fresh npm installation, Linux CI or all source-mode portability."
+    }
+  ],
+  "p2Residuals": [
+    {
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "status": "retained-not-fixed",
+      "reason": "Prior warning is not resolved by these focused runs; no new such warning observed here."
+    },
+    {
+      "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "status": "accepted-nonblocking-residual-not-fixed",
+      "reason": "Preparation errors may retain running report status; real CLI exit/process handles remain terminal authority."
+    }
+  ],
+  "priorFinalReview": {
+    "identity": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "mode": 420,
+      "bytes": 101840,
+      "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+    },
+    "status": "abstain",
+    "reviewRecordComplete": true,
+    "approvalTransferred": false
+  },
+  "limits": [
+    "No full-core/observer/evaluator/build/deployment ran in this review.",
+    "Actual numerical claim remains locked dimensionless PFHub7(a) 8x4/two-step dt0.01/t0.02, not t8 convergence or physical/material/causal validation.",
+    "Source-level mode portability uses actual macOS Git checkout; Linux CI and complete fresh dependency resolution remain unverified.",
+    "Historical/fresh-focused child worktrees use an explicitly disclosed external dependency reference; parent candidate execution uses the reviewed physical copy.",
+    "Runtime lifecycle observes direct child/original process group, not escaped descendants or OS sandboxing.",
+    "Adding any final review artifacts changes actual whole-tree identity and requires final gates on that identity.",
+    "One private VM evidence metadata line reference was corrected in a retained v2 evidence artifact; exact code extraction and outcomes were unchanged."
+  ],
+  "countsOfFindings": {
+    "newP0": 0,
+    "newP1": 1,
+    "newP2": 0,
+    "inheritedRootAssignedP1Open": 2,
+    "inheritedRootAssignedP1LimitedClosureRecommended": 1,
+    "inheritedSoftwareEnvironmentP2Retained": 2
+  },
+  "releaseEligible": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "candidateEdited": false,
+  "originalEvidenceEdited": false,
+  "reviewFreezeComplete": true
+}

@@ -1,0 +1,389 @@
+{
+  "schemaVersion": "tf.scientific-preregistration/0.6",
+  "preregistrationId": "pfhub7a-r18a-independent-solver-semantic-runtime-preflight-v4",
+  "frozenAt": "2026-09-07T07:12:00Z",
+  "status": "frozen-self-contained-before-builder-candidate",
+  "boundedHypothesis": "A newly authored FiPy 4.0.3 cell-centred finite-volume adapter, executed from the exact project-private content-addressed runtime lock, can preserve and machine-distinguish the official PFHub 7(a) literal-boundary task, a literal-BVP self-comparison contract, and a non-PFHub exact-trace companion while matching a clean-room dense discretization oracle through a two-step solver smoke with finite controlled algebraic residuals. This preflight does not test spatial or temporal convergence and cannot validate a physical model, real material, causal effect or industrial process.",
+  "auditHistory": [
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v1.json",
+      "byteSize": 14694,
+      "rawDigest": "sha256:a009ca081842be32d232a8b0332ef1fc9641a88d2b9bcedd5853f6349a3e9946",
+      "status": "rejected-prefreeze-draft",
+      "effectiveSpecification": false
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v2-successor.json",
+      "byteSize": 11139,
+      "rawDigest": "sha256:d166c797bb01024ecdb143ae611c2cb3266ef87bd49768a290104f47de139079",
+      "status": "rejected-compositional-successor-draft",
+      "effectiveSpecification": false
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v3-resolved.json",
+      "byteSize": 20520,
+      "rawDigest": "sha256:7abcdaf036e172c7d64ebfd6a58341e7d6826c10c86a43db98e8877343ae899e",
+      "status": "rejected-normative-reference-residue",
+      "effectiveSpecification": false
+    }
+  ],
+  "prefreezeReviewDispositions": [
+    {
+      "findingId": "R18A-PREFREEZE-P1-CONSERVATIVE-BOUND-ROUNDED-DOWN",
+      "severity": "P1",
+      "status": "corrected-before-builder-candidate",
+      "disposition": "The alpha interval is exact rational text, the analytic bound is exact symbolic text, and its optional decimal display is rounded outward up."
+    },
+    {
+      "findingId": "R18A-PREFREEZE-P1-REDUCED-DIMENSION-CONTRADICTION",
+      "severity": "P1",
+      "status": "corrected-before-builder-candidate",
+      "disposition": "Every PFHub-native quantity is dimensionless because the benchmark declares no SI dimensional map; each basis still identifies its reduced-coordinate role."
+    },
+    {
+      "findingId": "R18A-PREFREEZE-P1-ASSEMBLED-RESIDUAL-NOT-EQUATION-ORACLE",
+      "severity": "P1",
+      "status": "corrected-before-builder-candidate",
+      "disposition": "A no-FiPy, no-R17 dense finite-volume oracle now independently assembles A and b and advances both steps for both boundary tracks."
+    },
+    {
+      "findingId": "R18A-PREFREEZE-P1-HISTORICAL-COMMIT-DATE",
+      "severity": "P1",
+      "status": "corrected-before-builder-candidate",
+      "disposition": "The linked adc0b2e commit date is corrected to 2018-03-07 and remains reference-only."
+    },
+    {
+      "findingId": "R18A-PREFREEZE-P1-LITERAL-SELF-METRIC-NOT-PFHUB-SPECIFIED",
+      "severity": "P1",
+      "status": "corrected-before-builder-candidate",
+      "disposition": "Problem boundary provenance and metric provenance are now separate booleans for every track."
+    }
+  ],
+  "whyThisPrecedesConvergence": [
+    "R17a and R17b do not provide a maintained-framework PDE lane independent of their custom numerical implementations.",
+    "The prior shared mutable Python runtime is an open R17b P2 and cannot support a stronger R18a execution claim.",
+    "Official-literal analytic discrepancy, literal-BVP self-convergence and exact-trace strict MMS answer different questions; their identities must be executable and fail-closed before an expensive convergence matrix is frozen.",
+    "All exploratory calibration values and matrices observed before this freeze are excluded from this candidate and from later formal evidence."
+  ],
+  "officialProblem": {
+    "sourceReference": {
+      "classification": "reference",
+      "repository": "https://github.com/pfhub/pfhub-benchmarks",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+      "byteSize": 90735,
+      "rawDigest": "sha256:333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+    },
+    "equation": "deta/dt = -4*eta*(eta-1)*(eta-1/2) + kappa*(d2eta/dx2+d2eta/dy2) + S(x,y,t)",
+    "manufacturedField": "eta_sol=0.5*(1-tanh((y-alpha)/sqrt(2*kappa)))",
+    "alpha": "alpha=1/4+A1*t*sin(B1*x)+A2*sin(B2*x+C2*t)",
+    "manufacturedSource": "S=sech(z)^2/(4*sqrt(kappa))*(-2*sqrt(kappa)*tanh(z)*alpha_x^2+sqrt(2)*(alpha_t-kappa*alpha_xx)); z=(y-alpha)/sqrt(2*kappa)",
+    "parameters": {
+      "kappa": "1/2500",
+      "A1": "3/400",
+      "A2": "3/100",
+      "B1": "8*pi",
+      "B2": "22*pi",
+      "C2": "pi/16"
+    },
+    "domain": {
+      "x": [
+        0,
+        1
+      ],
+      "y": [
+        0,
+        0.5
+      ],
+      "xBoundary": "periodic",
+      "officialYBoundary": {
+        "bottom": 1,
+        "top": 0,
+        "type": "literal Dirichlet face values"
+      }
+    },
+    "initialField": "manufacturedField at cell centres and t=0",
+    "officialPartAFinalTime": 8,
+    "officialPartAMetric": "sqrt(sum_cell((eta_numeric-eta_sol)^2*h^2)) for uniform square cells, with no area or count normalization"
+  },
+  "boundarySemantics": {
+    "initialBoundaryCompatibility": false,
+    "reason": "For finite positive kappa and finite alpha, the tanh tails do not equal literal 1 and 0 at finite y boundaries.",
+    "alphaConservativeIntervalForT0To8": [
+      "4/25",
+      "17/50"
+    ],
+    "conservativeBoundaryTraceMismatchUpperBound": {
+      "exact": "1/(exp(2*((4/25)/sqrt(2/2500)))+1)",
+      "decimalOutwardUpper": "0.000012204318378838",
+      "attainedMaximum": false,
+      "globalOrInteriorErrorBound": false
+    },
+    "upperBoundInterpretation": "Analytic conservative pointwise tail bound only; not the observed maximum and not an interior or global error bound.",
+    "tracks": [
+      {
+        "trackId": "official-literal",
+        "problem": "PFHub 7(a) with y=0 value 1 and y=0.5 value 0",
+        "futureMetricName": "pfhubManufacturedFieldDiscrepancyL2",
+        "allowedFutureInterpretation": "PFHub-comparable discrepancy and apparent order only",
+        "strictMms": false,
+        "problemUsesOfficialLiteralBoundary": true,
+        "metricSpecifiedByPfhub": true
+      },
+      {
+        "trackId": "literal-self",
+        "problem": "The same official-literal BVP compared across independently frozen refinements",
+        "futureMetricName": "literalBvpEndpointSelfDifferenceL2",
+        "allowedFutureInterpretation": "discrete self-convergence of the literal BVP only",
+        "restriction": "conservative 2-by-2 fine-cell volume average onto each nested coarse cell",
+        "strictMms": false,
+        "problemUsesOfficialLiteralBoundary": true,
+        "metricSpecifiedByPfhub": false
+      },
+      {
+        "trackId": "exact-trace-companion",
+        "problem": "The same PDE and initial field with time-dependent manufactured-field traces on y faces",
+        "futureMetricName": "strictMmsErrorL2",
+        "allowedFutureInterpretation": "strict manufactured-solution code verification only",
+        "strictMms": true,
+        "problemUsesOfficialLiteralBoundary": false,
+        "metricSpecifiedByPfhub": false,
+        "requiredLabel": "non-PFHub exact-trace companion"
+      }
+    ],
+    "mixingPolicy": "Track IDs, boundary values, metrics, regression inputs and evidence labels may never be merged or substituted."
+  },
+  "implementation": {
+    "framework": "FiPy 4.0.3",
+    "mesh": "PeriodicGrid2DLeftRight uniform cell-centred finite-volume mesh",
+    "spatialOperator": "FiPy DiffusionTerm with coefficient kappa",
+    "timeIntegrator": "first-order semi-implicit Euler: diffusion at n+1; nonlinear reaction and manufactured source at n; exact-trace Dirichlet data at n+1",
+    "linearSolver": "FiPy serial SciPy LinearPCGSolver with criterion='RHS', tolerance=1e-12, absolute_tolerance=1e-14, iterations=2000 and precon=None; exactly one solve per registered step",
+    "independence": "The adapter must not import, invoke or derive numerical loops, endpoint values, source helpers or pass/fail results from any R17a or R17b implementation. It may share only the official problem statement and locked source identity.",
+    "fullConvergenceMatrixExecuted": false
+  },
+  "preflightMatrix": {
+    "Nx": 8,
+    "Ny": 4,
+    "dx": 0.125,
+    "dy": 0.125,
+    "dt": 0.01,
+    "stepCount": 2,
+    "finalTime": 0.02,
+    "timeRule": "exact integer for-loop; require stepCount*dt==finalTime within 2 ulp; no while-loop endpoint, partial step, interpolation, retry or adaptation",
+    "executedSolverTracks": [
+      "official-literal",
+      "exact-trace-companion"
+    ],
+    "literalSelfPreflight": "Exercise only the conservative 2-by-2 restriction mapping on a synthetic affine cell-centred field. Do not call it a BVP convergence run.",
+    "diagnosticOnlyMetrics": "The two tiny-grid endpoint discrepancies and their field difference are smoke diagnostics and are forbidden from any convergence fit, ranking or evidence-score increase."
+  },
+  "runtime": {
+    "lockPath": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+    "lockByteSize": 7411,
+    "lockRawDigest": "sha256:cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+    "materializedRoot": ".tf-runtime/pfhub7a-r18a/<lockRawDigestHex>",
+    "privateRuntimeTrackedByGit": false,
+    "requiredFlags": [
+      "-I",
+      "-B",
+      "-W",
+      "error"
+    ],
+    "requiredEnvironment": {
+      "LANG": "C",
+      "LC_ALL": "C",
+      "TZ": "UTC",
+      "FIPY_SOLVERS": "scipy",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "dynamicInventoryRequired": true,
+    "hostResidualBoundary": "Darwin kernel, dyld, /usr/lib, /System/Library, hardware, firmware and Accelerate numerical behavior are outside byte closure and remain a reported P2 limitation."
+  },
+  "acceptanceTests": {
+    "identityAndIsolation": [
+      "Strict duplicate-key JSON parsing accepts the exact preregistration and runtime lock and rejects duplicate keys.",
+      "The source CPython closure, every wheel, expanded wheel closure and combined runtime closure exactly match the frozen counts, byte sizes and SHA-256 digests before execution.",
+      "The materialized runtime directory is named by the exact lock-byte SHA-256, contains only frozen regular files, and is sealed read-only.",
+      "The child sys.prefix, sys.base_prefix, sys.executable and every non-built-in module origin remain in the private runtime except the exact candidate worker.",
+      "Loaded Darwin native images are inventoried and every non-system image is under the private runtime.",
+      "FiPy reports 4.0.3, NumPy 2.5.3, SciPy 1.18.1, packaging 26.3 and solver suite scipy.",
+      "Only the exact registered fipy.tools.numerix numpy.core DeprecationWarning is ignored; an injected different warning must fail."
+    ],
+    "scientificSemantics": [
+      "The mesh has 32 unique cell centres, Nx=8, Ny=4, dx=dy=0.125 and a periodic left-right topology with no duplicate endpoint cells.",
+      "Both runs start from eta_sol at the exact cell centres and t=0 and execute exactly two dt=0.01 steps to t=0.02.",
+      "The official-literal face values are exactly 1 and 0; the exact-trace companion uses eta_sol face traces at every new time and is labelled non-PFHub.",
+      "The two boundary definitions and endpoint digests are distinct; neither result is relabelled as literal-self evidence.",
+      "Every state, source, pre-solve residual, post-solve residual and metric is finite; post-solve algebraic L2 residual is at most 1e-10 and solver actual iterations do not exceed 2000.",
+      "The discrete-L2 oracle for a constant two-unit cell field equals sqrt(2) within 2e-15 absolute tolerance.",
+      "Conservative restriction of a synthetic affine fine-cell field equals its coarse-cell-centre values within 2e-15 maximum absolute tolerance.",
+      "The analytic boundary-tail mismatch is positive, below the registered conservative bound and explicitly records initialBoundaryCompatibility=false."
+    ],
+    "claimAndFailure": [
+      "A passing receipt keeps reproduced, rankingEligible, convergenceVerified, strictOfficialMms, physicalModelValidated, realMaterialMapped, causalEffectIdentified, industrialRecommendationAuthorized, automaticControlAuthorized and evidenceScoreIncreaseAuthorized false.",
+      "Any identity, platform, closure, warning, topology, boundary, endpoint-time, residual, finite-value or track-separation failure emits a machine-readable abstention and no pass receipt.",
+      "No exploratory calibration output, historical FiPy output or R17 endpoint is read or included."
+    ],
+    "resolvedSpecAndCleanRoomOracle": [
+      "Every acceptance test stated in this v4 file is mandatory; every auditHistory file is non-normative and supplies identity and correction history only.",
+      "The five prefreeze P1 corrections must be represented literally in the receipt and focused mutation tests.",
+      "The frozen LinearPCGSolver arguments, single-solve-per-step count and clean-room A, b and endpoint comparisons must pass for official-literal and exact-trace-companion.",
+      "The clean-room oracle module/function source must have no import, dynamic import, file read or subprocess path to FiPy or R17 implementations; a static test and runtime import sentinel must enforce this.",
+      "Changing reaction time level, source time level, exact-trace time, periodic wrap, a Dirichlet factor of two or a track provenance boolean must fail a focused test or the semantic receipt gate.",
+      "The v1 rounded-down bound, dimensional claims, historical date and pfhubOfficial track field are forbidden in the effective receipt."
+    ]
+  },
+  "quantityRegistry": {
+    "coordinate": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced coordinate; no SI dimensional map"
+    },
+    "time": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced time; no SI dimensional map"
+    },
+    "eta": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced scalar order parameter"
+    },
+    "source": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced source value interpreted as eta change per reduced-time coordinate"
+    },
+    "kappa": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub reduced coefficient multiplying the reduced-coordinate Laplacian"
+    },
+    "discreteL2": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub cell quadrature sqrt(sum(error^2*dx*dy)); no physical length unit or SI map is asserted"
+    },
+    "algebraicResidualL2": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "Euclidean norm of the assembled reduced linear-system residual for one registered step"
+    },
+    "byteSize": {
+      "unit": "byte",
+      "dimension": "information",
+      "basis": "exact regular-file octet count"
+    },
+    "digest": {
+      "unit": "1",
+      "dimension": "identifier",
+      "basis": "SHA-256 over explicitly declared bytes or canonical record serialization"
+    },
+    "count": {
+      "unit": "1",
+      "dimension": "count",
+      "basis": "exact count of declared objects"
+    }
+  },
+  "crossScaleBridge": {
+    "present": false,
+    "reason": "This is a single reduced PDE numerical preflight. It establishes no mapping to atomistic, molecular, microstructural, reactor or plant scales.",
+    "boundariesGeometryAveragingTimeScaleConservationUncertaintyInformationLossReverseUse": "not-applicable because no cross-scale bridge is asserted"
+  },
+  "causalPolicy": {
+    "structuralEquationIdentified": false,
+    "quantitativeInterventionAllowed": false,
+    "counterfactualAllowed": false,
+    "requiredResponse": "machine-readable abstention for any causal-effect, intervention or counterfactual request"
+  },
+  "sotaEvidence": [
+    {
+      "classification": "reference",
+      "name": "FiPy 4.0.3 release",
+      "date": "2026-06-18",
+      "revision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+      "url": "https://github.com/usnistgov/fipy/releases/tag/4.0.3",
+      "rawDigest": null,
+      "use": "maintained independent finite-volume framework identity; no external PFHub result imported"
+    },
+    {
+      "classification": "reference",
+      "name": "Historical CHiMaD FiPy PFHub 7(a) implementation",
+      "date": "2018-03-07",
+      "revision": "adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "url": "https://github.com/guyer/CHiMaDPhaseFieldVI/blob/adc0b2e992386335d01cb4f6ce9924bf3fceb115/benchmark7a.py",
+      "rawDigest": "sha256:4d06657d162572d8c04e26c6776c66e4040b555123bbe0fffb8dd826ebb89026",
+      "use": "historical architecture reference only; code and outputs are not reused"
+    }
+  ],
+  "frontendCompatibilityFreeze": [
+    {
+      "path": "schemas/world-state.schema.json",
+      "contract": "tf.world/0.3",
+      "rawDigest": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795"
+    },
+    {
+      "path": "schemas/action.schema.json",
+      "contract": "tf.action/0.3",
+      "rawDigest": "sha256:f80094a63dc37e10c033b9981cfbbe423182bd4aebcff1e22cfb70cd2dd4aa18"
+    },
+    {
+      "path": "lib/simulation/thermochemical-world.ts",
+      "contracts": [
+        "tf.world/0.3",
+        "tf.action/0.3",
+        "tf.observation/0.3"
+      ],
+      "rawDigest": "sha256:79c7b904e8d569416805bdd8287bd69f2ae7f1b737c822a4fffd4268b6f540e8"
+    }
+  ],
+  "globalRepositoryBlockers": [
+    "R12 gas-catalog redistribution-rights P1",
+    "R16d-b exact CPython 3.12.13 domain unavailable",
+    "atomistic gh provenance CLI unavailable",
+    "repository-wide Vitest failures"
+  ],
+  "promotionPolicy": "A pass supports only the frozen semantic and runtime preflight. Global repository blockers remain open; no commit, push, publication, deployment, engineering recommendation or promotion is authorized.",
+  "nextIterationOnlyAfterPass": "Freeze a separate R18b like-for-like Part (a) matrix with at least three accepted levels in each direction and all three evidence tracks. Do not reuse pre-freeze exploratory outputs or this tiny-grid smoke as convergence data.",
+  "cleanRoomOracle": {
+    "languageAndDependencies": "Python standard library plus NumPy dense linear algebra; the oracle function must not import FiPy or any R17 module and must not inspect FiPy matrices while constructing its result.",
+    "layout": "index=j*Nx+i, x varies fastest; x neighbors wrap modulo Nx; no duplicate periodic endpoint",
+    "immutableOldState": "At each step, copy eta^n before evaluating reaction and source; do not read eta^(n+1) until b is complete.",
+    "timeSemantics": "reaction uses eta^n, source uses cell centres at t_n, exact-trace face values use t_(n+1), literal faces remain 1 and 0",
+    "normalizedMatrix": {
+      "rx": "dt*kappa/dx^2",
+      "ry": "dt*kappa/dy^2",
+      "interiorDiagonal": "1+2*rx+2*ry",
+      "yBoundaryDiagonal": "1+2*rx+3*ry",
+      "xNeighborCoefficients": "-rx at modulo-left and modulo-right",
+      "interiorYNeighborCoefficient": "-ry",
+      "dirichletRhsContribution": "2*ry*g at the corresponding boundary face",
+      "rhs": "eta^n+dt*(-4*eta^n*(eta^n-1)*(eta^n-1/2)+S(xc,yc,t_n))+DirichletContribution"
+    },
+    "comparison": [
+      "Normalize FiPy A and b by dt/cellVolume before comparison to the clean-room matrix and vector.",
+      "At every step and for both executed tracks, maximum absolute A-entry and b-entry differences must be at most 2e-13.",
+      "Solve the clean-room dense system exactly once with numpy.linalg.solve and require endpoint maximum absolute difference from FiPy at most 2e-12.",
+      "A mismatch is a machine abstention; no retry, matrix repair, adaptive tolerance or alternative step is allowed."
+    ]
+  },
+  "capabilityCeiling": {
+    "fullPartAConvergenceExecuted": false,
+    "convergenceVerified": false,
+    "strictOfficialMms": false,
+    "physicalModelValidated": false,
+    "realMaterialMapped": false,
+    "crossScaleBridgeValidated": false,
+    "causalEffectIdentified": false,
+    "industrialRecommendationAuthorized": false,
+    "automaticControlAuthorized": false,
+    "reproduced": false,
+    "rankingEligible": false,
+    "evidenceScoreIncreaseAuthorized": false
+  }
+}

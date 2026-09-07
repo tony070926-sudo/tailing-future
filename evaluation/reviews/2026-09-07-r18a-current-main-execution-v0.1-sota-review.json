@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "tf.review.independent-sota/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/r18a_sota_sources",
+  "role": "independent read-only dated primary-source/SOTA reviewer",
+  "recordedBy": "/root",
+  "disposition": "pass-bounded-sota-review-with-three-disclosed-P2",
+  "candidateSetSha256": "dda56144e54c6e05e31878e8851103a311430522d31fede2a823933c7e7c445b",
+  "manifest": {
+    "bytes": 8002,
+    "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+  },
+  "builderGate": {
+    "bytes": 38058,
+    "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+  },
+  "verification": {
+    "candidateFiles": 24,
+    "canonicalBytes": 4014,
+    "byteIdenticalLegacyImports": 12,
+    "matchingReceipts": 2,
+    "receiptBytesEach": 248778,
+    "receiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+    "unabridgedExecution": {
+      "bytes": 554255,
+      "sha256": "5598ff6cb4d75ef8b5c6cfba4cc2645d2af55dd0f8b2796026561539aa698483"
+    },
+    "portableCommandEvidenceMatched": 6,
+    "solverRerunByReviewer": false,
+    "sourceNoticeComparison": "Independently fetched four pinned files; 47 cells, 20 changed Markdown cells, 23 heading lines each gain one #, other fields/code/outputs/metadata unchanged."
+  },
+  "assessment": {
+    "currentEvidence": "8 by 4 cells, two updates, dt=0.01, final t=0.02 in the declared dimensionless PFHub basis. Independent assembly of the same finite-volume equations supports bounded assembly/runtime execution only.",
+    "sameDiscretizationNotIndependentDiscretization": true,
+    "boundaryTracks": {
+      "officialLiteral": "manufactured-field discrepancy, not strict MMS",
+      "literalSelf": "currently synthetic restriction check only, not full self-convergence",
+      "exactTraceCompanion": "non-PFHub strict-MMS candidate interpretation"
+    },
+    "tailBound": "Conservative boundary-tail bound is neither attained maximum nor a global solution-error bound.",
+    "observedNumericalSelfcheck": "Recorded Python21, Node29, zero numerical skips, two E2E and two strict schema/semantic passes. Reviewer audited raw evidence without claiming a new numerical run.",
+    "historicalApprovalTransferred": false
+  },
+  "findings": [
+    {
+      "id": "R18A-SOTA-01",
+      "priority": "P2",
+      "title": "Full-horizon convergence remains unexecuted",
+      "disposition": "disclosed; nonblocking only for frozen R18a execution hypothesis",
+      "nextTask": "R18b: preregister separate spatial/time studies through t=8, eligibility and continuation rules, retain every result and all three tracks. Meet the official >=3 points per study in [1e-4,5e-3] without uncontrolled nuisance error. No universal +/-0.2 pass band.",
+      "proposedNotCalibrated": "Nx=64,128,256,512 and Ny=Nx/2; any continuation to1024 must be budgeted before execution. Integer Nt with dt=8/Nt."
+    },
+    {
+      "id": "R18A-SOTA-02",
+      "priority": "P2",
+      "title": "Independent spatial discretization is absent",
+      "disposition": "disclosed; no independent-discretization claim found",
+      "nextTask": "R18b: independently authored continuous P1 FEM with consistent mass, periodic-x constraints, explicit y traces, checked forcing and registered quadrature. Initially keep semi-implicit Euler split. Compare FEM/FV via a declared common observation operator; different raw array locations or norms are not interchangeable.",
+      "methodReferences": "DOLFINx/MPC are candidate method references, not a verified compatible runtime. MOOSE provides an alternative Allen-Cahn FEM lane with mobility1, potential u^2(1-u)^2 and gradient coefficient kappa; forcing still needs independent verification."
+    },
+    {
+      "id": "R18A-SOTA-03",
+      "priority": "P2",
+      "title": "Full-study error separation and resource controls are not calibrated",
+      "disposition": "disclosed; R18b requirement",
+      "nextTask": "Preregister paired dt refinements for space studies, paired mesh refinements for time studies, tightened-solver endpoint comparisons, quadrature/projection checks, actual convergence reasons and normalized true residuals. Derive nuisance budgets from intended order precision, not R18a absolute tolerances.",
+      "orderUncertaintyRelation": "For refinement ratio2 and relative error uncertainty beta in[0,1), two-level order uncertainty is bounded by log((1+beta)/(1-beta))/log(2).",
+      "resourceWarning": "A 512x256 dense float64 system matrix alone is128GiB before factorization; keep dense oracle tiny. Sparse runtime and full-study wall time remain unmeasured. Freeze a separate resource budget.",
+      "laterTimeIntegrator": "PETSc ARK requires mass-matrix/boundary-stage verification. TSROSW's documented autonomous-system restriction prevents a direct substitution for this time-dependent source without verified reformulation."
+    }
+  ],
+  "sources": [
+    {
+      "id": "pfhub-benchmark7",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "nist-pfhub7",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/benchmarks/benchmark7.ipynb",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "sha256": "00d15bfa910f111caf6753d1e959990d5e1d432f6630c064bae77b1624007863",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "nist-notice",
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "derivative-license-link",
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/myst.yml",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "sha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "fipy-4.0.3-discretization",
+      "url": "https://raw.githubusercontent.com/usnistgov/fipy/64635bf8ed6bc51431edb7d6cf1495ff68ac18a7/docs/source/numerical/discret.rst",
+      "revision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+      "sha256": "7c3b38a7042e625baf7239de720a20f2401de3a9e18d6c45a372dfc593e90185",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "historical-chimad-implementation",
+      "url": "https://raw.githubusercontent.com/guyer/CHiMaDPhaseFieldVI/adc0b2e992386335d01cb4f6ce9924bf3fceb115/benchmark7a.py",
+      "revision": "adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "sha256": "4d06657d162572d8c04e26c6776c66e4040b555123bbe0fffb8dd826ebb89026",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "dolfinx-0.10.0-variational-demo-different-pde",
+      "url": "https://raw.githubusercontent.com/FEniCS/dolfinx/b8375fa9fb932cbfce43005eeb4a3d52293f428b/python/demo/demo_cahn-hilliard.py",
+      "revision": "b8375fa9fb932cbfce43005eeb4a3d52293f428b",
+      "sha256": "a03857a0884957d57e02d6f28a67e4ee4547216774a15117590cc631de9f6806",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "dolfinx-mpc-0.10.0-periodic-demo",
+      "url": "https://raw.githubusercontent.com/jorgensd/dolfinx_mpc/f35e025e97d5ce57199ac99545b726abb2898616/python/demos/demo_periodic_geometrical.py",
+      "revision": "f35e025e97d5ce57199ac99545b726abb2898616",
+      "sha256": "a8c98d2d99a018ef95784b28c52ada23d203044aae6106fdbcac4c187487f69e",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "petsc-3.25.2-ark-source",
+      "url": "https://gitlab.com/petsc/petsc/-/raw/6a3455c81e23ba3f57e5a2b63c12172f50356626/src/ts/impls/arkimex/arkimex.c",
+      "revision": "6a3455c81e23ba3f57e5a2b63c12172f50356626",
+      "sha256": "dac622510684bb6dc706e5b8f6a6793db2249edb0be3e06024825472ec3f955e",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    },
+    {
+      "id": "moose-2025-09-05-allencahn",
+      "url": "https://raw.githubusercontent.com/idaholab/moose/832d6f35e1f6c687880270d8bcb23156974cc031/modules/phase_field/doc/content/source/kernels/AllenCahn.md",
+      "revision": "832d6f35e1f6c687880270d8bcb23156974cc031",
+      "sha256": "cc5c52a8aa555c4fb7d2a8a0dbcb577f2ecc502e8be2fdabc7ebafcd08f400ab",
+      "classification": "auditable",
+      "classificationScope": "source bytes, not reproduced numerical performance"
+    }
+  ],
+  "unlockedReferences": [
+    {
+      "url": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/KSP/KSPSetTolerances/",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/TS/TSARKIMEX/",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://petsc.org/release/manualpages/TS/TSROSW/",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://api.github.com/repos/guyer/CHiMaDPhaseFieldVI/commits/adc0b2e992386335d01cb4f6ce9924bf3fceb115",
+      "classification": "reference",
+      "rawDigest": null
+    },
+    {
+      "url": "https://api.github.com/repos/usnistgov/fipy/releases/tags/4.0.3",
+      "classification": "reference",
+      "rawDigest": null
+    }
+  ],
+  "sourceVersionCautions": [
+    "CHiMaD pinned commit author/committer date2018-03-07; FiPy4.0.3 published2026-06-18, per official API metadata.",
+    "Rendered PETSc pages reported v3.25.5-9-g933c0de36cc, distinct from hashed3.25.2 source. No assertion all versions are latest or jointly compatible."
+  ],
+  "ceilings": {
+    "releaseEligible": false,
+    "reproduced": false,
+    "numericalRanking": false,
+    "scoreIncrease": false,
+    "physicalValidation": false,
+    "causalEffectIdentified": false,
+    "automaticControlAuthorized": false,
+    "blanketLegalClearance": false
+  },
+  "remainingGates": [
+    "independent software/numerical review and any relevant closure",
+    "root-owned post-final-fix full repository gates",
+    "completed dated final review artifact",
+    "newer-main integration and protected release pipeline"
+  ],
+  "candidateEditsDuringReview": false
+}

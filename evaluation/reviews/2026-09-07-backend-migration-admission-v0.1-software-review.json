@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "tf.backend-migration-software-review/0.1",
+  "date": "2026-09-07",
+  "reviewer": "/root/admission_software_review",
+  "readOnly": true,
+  "initialReview": {
+    "candidateSha256": "14e272dd48b134fda469776d9dc6fc3957b8fd05f7c73c814491c53b349c562e",
+    "decision": "BLOCKED",
+    "counts": {
+      "P0": 0,
+      "P1": 1,
+      "P2": 0
+    },
+    "findings": [
+      {
+        "id": "SOFTWARE-P1-EMPTY-SOURCE-INVENTORY",
+        "severity": "P1",
+        "file": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+        "line": 451,
+        "finding": "The currentRecords.length > 0 branch skips all completeness checks for an empty successful Git capture. A temporary repository missing all 449 main files was incorrectly accepted as pass-preparation-only with currentPathCount=0 and failures=[].",
+        "acceptance": "Always verify completeness after parsing the ledger, including an empty capture; test a real empty Git inventory and retain capture errors.",
+        "independentProbe": "/private/tmp/tf-admission-independent-review.5nGXC9/empty-inventory-check.mjs",
+        "expectedProbeExit": 0,
+        "observedProbeExit": 1,
+        "disposition": "Root fix implemented; independent closure pending"
+      }
+    ],
+    "evidence": {
+      "candidateCanonicalBytes": 697,
+      "legacyPathsCompared": 641,
+      "mainGitBlobsCompared": 449,
+      "ledgerEntriesCompared": 939,
+      "currentMainDrift": 0,
+      "focusedTestsPassed": 17
+    }
+  },
+  "rootFix": {
+    "candidate": {
+      "rows": [
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+          "mode": 420,
+          "size": 511225,
+          "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.1.schema.json",
+          "mode": 420,
+          "size": 9241,
+          "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+          "mode": 420,
+          "size": 24199,
+          "sha256": "f81c77118fa324613efe55da803ab5dd768d232e48f1779813180c7cb39352a7"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+          "mode": 420,
+          "size": 12876,
+          "sha256": "2e9cdd83530da766023fc843b77c2b87e81169ff672ee760506b4771b33a3267"
+        }
+      ],
+      "canonicalBytes": 697,
+      "setSha256": "e386e0e2da31939bb482b587639244a70045ffc566750a4ec357a23219342ef8"
+    },
+    "focusedTestsPassed": 19,
+    "change": "Completeness and filesystem absence checks now execute even when the captured array is empty; added actual temporary-Git empty capture and non-Git capture-error tests.",
+    "oneShotProbeRerun": {
+      "exitCode": 1,
+      "reason": "EEXIST in the reviewer's retained one-shot fixture; original reviewer evidence preserved, fresh independent rerun requested."
+    }
+  },
+  "closure": {
+    "reviewer": "/root/admission_software_review",
+    "date": "2026-09-07",
+    "candidateSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+    "canonicalBytes": 697,
+    "decision": "PASS_PREPARATION_ONLY",
+    "openFindings": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "closedFindings": [
+      "SOFTWARE-P1-EMPTY-SOURCE-INVENTORY",
+      "SOFTWARE-P1-MUTABLE-IGNORE-AUTHORITY"
+    ],
+    "independentValidation": {
+      "vitestPassed": 20,
+      "syntaxChecksPassed": 2,
+      "freshTemporaryFixtureChecksPassed": 10,
+      "actualTreePathCount": 459,
+      "actualTreeStatus": "pass-preparation-only",
+      "releaseEligible": false,
+      "probe": "/private/tmp/tf-admission-final-review.J5uKqO/final-closure-check.mjs",
+      "probeExitCode": 0
+    },
+    "legacyAndLedgerEvidenceFromInitialReviewStillApplicable": true
+  },
+  "releaseEligible": false,
+  "commitAuthorizedByThisReview": false,
+  "deploymentAuthorizedByThisReview": false,
+  "additionalReview": {
+    "candidateSha256": "e386e0e2da31939bb482b587639244a70045ffc566750a4ec357a23219342ef8",
+    "originalP1Closed": true,
+    "decision": "BLOCKED",
+    "findings": [
+      {
+        "id": "SOFTWARE-P1-MUTABLE-IGNORE-AUTHORITY",
+        "severity": "P1",
+        "finding": "An unaccounted source file was correctly rejected until a repository-local .git/info/exclude entry hid it; the complete temporary tree then incorrectly passed.",
+        "independentProbe": "/private/tmp/tf-admission-closure-review.mzMpK6/independent-closure-check.mjs",
+        "probeExitCode": 1,
+        "acceptance": "Only bound project ignore rules may filter source inventory. Reject source hiding by local or unregistered nested rules."
+      }
+    ]
+  },
+  "rootFinalFix": {
+    "candidate": {
+      "rows": [
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+          "mode": 420,
+          "size": 511225,
+          "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.1.schema.json",
+          "mode": 420,
+          "size": 9241,
+          "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+          "mode": 420,
+          "size": 24876,
+          "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+          "mode": 420,
+          "size": 15597,
+          "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+        }
+      ],
+      "canonicalBytes": 697,
+      "setSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec"
+    },
+    "change": "Read and hash-bind the main root .gitignore, then pass its captured rules in order as explicit Git --exclude arguments. Git does not reread mutable local/global/nested ignore files. Added a complete temporary-tree end-to-end regression.",
+    "focusedTestsPassed": 20,
+    "reference": "https://git-scm.com/docs/git-ls-files#_exclude_patterns"
+  }
+}

@@ -1,0 +1,1427 @@
+{
+  "schemaVersion": "tf.r18a-report-lifecycle-software-review/0.1",
+  "recordedOn": "2026-09-07",
+  "reviewer": "/root/admission_software_review",
+  "mode": "independent-read-only",
+  "builderCanApprove": false,
+  "verdict": "P1_BLOCKED_REPORT_LIFECYCLE_CLOSURE_INCOMPLETE",
+  "candidate": {
+    "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+    "base": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "records": {
+      "recordCount": 66,
+      "canonicalBytes": 11583,
+      "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394",
+      "records": [
+        {
+          "path": ".gitignore",
+          "mode": 420,
+          "size": 492,
+          "sha256": "31341236431b683b0d8c229dc36c2a8aae2c511c63d067206752f3885ec8e395"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+          "mode": 420,
+          "size": 143300,
+          "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+          "mode": 420,
+          "size": 511225,
+          "sha256": "8468e45d34780f4d8118ed4b470c6764fd69e771ad2de3a95e2fe2faecb067a7"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+          "mode": 420,
+          "size": 9064,
+          "sha256": "789eb6359676293f165edb7b21d55e6ebdf30366295a97459c38812e2e176011"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+          "mode": 420,
+          "size": 110864,
+          "sha256": "f888a7571846c3fdbcf25a0a114765258171f1c939794266d0611a2196590b04"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+          "mode": 420,
+          "size": 6031,
+          "sha256": "e4d9a458a17cb858f1a3dcf5eb1eff232ece94b7b5dfa759c193d5b9077a2955"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/PFHub-LICENSE.md",
+          "mode": 420,
+          "size": 1754,
+          "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/benchmark7-aa4774ce.ipynb",
+          "mode": 420,
+          "size": 90735,
+          "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+          "mode": 420,
+          "size": 4303,
+          "sha256": "6c54be73b7d65c0a2afc36790ecbcaabddf00449aac767056e21bbeb31011b17"
+        },
+        {
+          "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+          "mode": 420,
+          "size": 7411,
+          "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+        },
+        {
+          "path": "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        {
+          "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+          "mode": 420,
+          "size": 20908,
+          "sha256": "7f2a5bb819f9ebdedd8eb038e8c3c924c3d547593793da374021e3c04869e253"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+          "mode": 420,
+          "size": 7566,
+          "sha256": "a8111ceae1ee6d93e08351243816ebbd6ecb7f32d62e477a409c3ccb034848d0"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+          "mode": 420,
+          "size": 81228,
+          "sha256": "8ed096527bc1557a72fca40d0abce06726ca4a05c2936d2e26917243317231f7"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+          "mode": 420,
+          "size": 7584,
+          "sha256": "b6c0848e7879b178d22793b5b5867e80dda697d8d290dd17975a950c29b82870"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+          "mode": 420,
+          "size": 5167,
+          "sha256": "fec4967d3bcf6190fdd72c1475ef117f999d4f3705fdea68adf11f57820299b3"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-scope.md",
+          "mode": 420,
+          "size": 4806,
+          "sha256": "bdc02711e4865ccd2a4a34dbb767b55eacfa004445d7e6c404f2df7eb1711b36"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+          "mode": 420,
+          "size": 6330,
+          "sha256": "0574b040a44d8f6389b93c7c4b2eec5ae3bad59febc1354bcd643638584f4a4a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+          "mode": 420,
+          "size": 5705,
+          "sha256": "24bd9072324f5104558372d026f678b2b411c7628cb5491dc6c79e0dfa87a81c"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+          "mode": 420,
+          "size": 38058,
+          "sha256": "ff4745eda556e5f887c3aadd5f3c295df08789af41561b6e73ff977a13700d92"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-deadline-fix-scope.md",
+          "mode": 420,
+          "size": 4065,
+          "sha256": "39e6ce7c29a7f16bfe3b11cae65fe1c7e75aeb2b38141d40d9ede50ba603161a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+          "mode": 420,
+          "size": 101840,
+          "sha256": "9550a95c54ec4d506a8c26d348a6fe72374041812c038afeb4c391d28603f71f"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+          "mode": 420,
+          "size": 8002,
+          "sha256": "55fe70388418d3543fd8d59adbbcda8fc04c2ac921299ad0f8f0336930ad2e82"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+          "mode": 420,
+          "size": 20628,
+          "sha256": "be4d2b39a298ab8ecb15835b4ae6d80aeb440dceddddaf3f5bcc7e24e678278a"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-scope.md",
+          "mode": 420,
+          "size": 8746,
+          "sha256": "69d8b377350298c4d6ce62a4e9a981ce335feed1d957dd0ea8bb35111a1ad0d3"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+          "mode": 420,
+          "size": 14074,
+          "sha256": "96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+          "mode": 420,
+          "size": 11467,
+          "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+          "mode": 420,
+          "size": 85182,
+          "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+          "mode": 420,
+          "size": 9803,
+          "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+          "mode": 420,
+          "size": 77179,
+          "sha256": "8e6ee3aaccc45e8b3e66ddda03409ae264590414e20fc8e40b549a25c90bfb3e"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+          "mode": 420,
+          "size": 24740,
+          "sha256": "7634e215ec55d42d382b4efd7e6dfac5641553a799719dbf7e99f318c41fa13f"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+          "mode": 420,
+          "size": 16518,
+          "sha256": "11338b6cbbb9cafa364c28de3b9cd183d835ad3e54a965421119e95879fc60f5"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-science-review.json",
+          "mode": 420,
+          "size": 23098,
+          "sha256": "a2cff93fbd0f22b0df719d5f787e45d4db089464283dc938a43b7db9d9ac44ac"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-scope.md",
+          "mode": 420,
+          "size": 9214,
+          "sha256": "1be2b3e55f667e115b9d995faf84129e0db791bb6d59a977978e7f5868e20805"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-software-review.json",
+          "mode": 420,
+          "size": 94425,
+          "sha256": "16aa9651d720e2feb7352916cadde2eaa270fc9d0434c69298578d77c164fdbc"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+          "mode": 420,
+          "size": 31464,
+          "sha256": "356cd14e45b97f77e4274c350903b9ab4bfaeb1c63af0704a8c7db670d5c9bd8"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+          "mode": 420,
+          "size": 7367,
+          "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+        },
+        {
+          "path": "package.json",
+          "mode": 420,
+          "size": 3069,
+          "sha256": "b6a2ea54c991b322bf4298a2dd8bdaf843de636139477d2967f5756cf59197f0"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.1.schema.json",
+          "mode": 420,
+          "size": 9241,
+          "sha256": "6690812bec7ca8421460a2bd9b26c9eccf83cc98e6f4ff842c96f49e254f58fc"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.2.schema.json",
+          "mode": 420,
+          "size": 3202,
+          "sha256": "df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.3.schema.json",
+          "mode": 420,
+          "size": 6286,
+          "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+        },
+        {
+          "path": "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+          "mode": 420,
+          "size": 36479,
+          "sha256": "fa683c16fff2df87effdf4fa0d8b09bfcd0db51027868bde3702037ffeab0968"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs",
+          "mode": 420,
+          "size": 12652,
+          "sha256": "ace5b5f4f04e92a7835945686992eac4059eac7efcf00ff6dcf8f834ce6cc558"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs",
+          "mode": 420,
+          "size": 4535,
+          "sha256": "4b30c5cd29764d9dbf452485fbea30f68df843303f80f648575a96748b2b106e"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "mode": 420,
+          "size": 25845,
+          "sha256": "ace282e52e240452df9bf142341afce8b6116e9321f3d50e9b00dee02c415534"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "mode": 420,
+          "size": 16567,
+          "sha256": "52a666b485a23747598d62e95984f6178d36593574791f2ea426512fae613b11"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.mjs",
+          "mode": 420,
+          "size": 24876,
+          "sha256": "df7c5eb2b55a38f4a162d5b6dd78cb2414e99bf10c3d2508216e010cc26308d0"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs",
+          "mode": 420,
+          "size": 15597,
+          "sha256": "e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba"
+        },
+        {
+          "path": "scripts/derived-report-contract.mjs",
+          "mode": 420,
+          "size": 13691,
+          "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+        },
+        {
+          "path": "scripts/derived-report-contract.test.mjs",
+          "mode": 420,
+          "size": 7657,
+          "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+        },
+        {
+          "path": "scripts/evaluate-launcher.test.mjs",
+          "mode": 420,
+          "size": 23470,
+          "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+        },
+        {
+          "path": "scripts/evaluate.mjs",
+          "mode": 420,
+          "size": 22343,
+          "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root.mjs",
+          "mode": 420,
+          "size": 18023,
+          "sha256": "18847a164a2578d57a058a905db5c599650a86caf9ee574a60dbdb34ee5883e1"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "mode": 420,
+          "size": 8756,
+          "sha256": "4579efa98f0c4435a1609bcbfa38b828eb5090d936b8fa98e6666fca59836404"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "mode": 420,
+          "size": 11113,
+          "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "mode": 420,
+          "size": 6163,
+          "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+          "mode": 420,
+          "size": 6966,
+          "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py",
+          "mode": 420,
+          "size": 18417,
+          "sha256": "39d74e28460d45b39655754be2ec9328d41d6952f443cbf433117daa387542b3"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+          "mode": 420,
+          "size": 30418,
+          "sha256": "0d5c9e6f877202b03c1dfa4ef0e089a295ee4b90ce734d2850f0725c97f85946"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs",
+          "mode": 420,
+          "size": 16746,
+          "sha256": "4eb343ea1dbd1a35bb7178f84eff6532ea25c57018dad06173ee608d422294e6"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+          "mode": 420,
+          "size": 72494,
+          "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+          "mode": 420,
+          "size": 29719,
+          "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+        },
+        {
+          "path": "scripts/mesoscale/r16c_json_integrity.mjs",
+          "mode": 420,
+          "size": 8093,
+          "sha256": "0067fd639b73d7f4aa4f6354c83258745fa7e0cb74c944f870df9db409ee9cc4"
+        },
+        {
+          "path": "scripts/source-scope.mjs",
+          "mode": 420,
+          "size": 1699,
+          "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+        },
+        {
+          "path": "scripts/source-scope.test.mjs",
+          "mode": 420,
+          "size": 2001,
+          "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+        },
+        {
+          "path": "vitest.config.ts",
+          "mode": 420,
+          "size": 1406,
+          "sha256": "a42d4133a2c5b755ebcf96b99796ae1e38a07b56e2f19939e82fbc33a1f76643"
+        }
+      ]
+    },
+    "deltaFromPriorPortable507": {
+      "recordCount": 14,
+      "canonicalBytes": 2261,
+      "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc",
+      "records": [
+        {
+          "path": "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+          "mode": 420,
+          "size": 143300,
+          "sha256": "83f15e3929a0ce7cc9c232141ff5ac191e11b01c5599b61de222aab9d582f9c5"
+        },
+        {
+          "path": "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+          "mode": 420,
+          "size": 110864,
+          "sha256": "f888a7571846c3fdbcf25a0a114765258171f1c939794266d0611a2196590b04"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+          "mode": 420,
+          "size": 7367,
+          "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+        },
+        {
+          "path": "schemas/backend-migration-admission-v0.3.schema.json",
+          "mode": 420,
+          "size": 6286,
+          "sha256": "9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "mode": 420,
+          "size": 25845,
+          "sha256": "ace282e52e240452df9bf142341afce8b6116e9321f3d50e9b00dee02c415534"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "mode": 420,
+          "size": 16567,
+          "sha256": "52a666b485a23747598d62e95984f6178d36593574791f2ea426512fae613b11"
+        },
+        {
+          "path": "scripts/derived-report-contract.mjs",
+          "mode": 420,
+          "size": 13691,
+          "sha256": "a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98"
+        },
+        {
+          "path": "scripts/derived-report-contract.test.mjs",
+          "mode": 420,
+          "size": 7657,
+          "sha256": "ddf29ee7f797b7981b1687227c66a6f2bdd8f70704233e246379cc89ca517799"
+        },
+        {
+          "path": "scripts/evaluate-launcher.test.mjs",
+          "mode": 420,
+          "size": 23470,
+          "sha256": "0b41dc5aec458194e991186c38214553dad7677183d6e5fcee22ed5f5519980e"
+        },
+        {
+          "path": "scripts/evaluate.mjs",
+          "mode": 420,
+          "size": 22343,
+          "sha256": "c884a09088862afd3acccc9246af1a385a24bb6277108be8bc39ca710c63bb3c"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "mode": 420,
+          "size": 11113,
+          "sha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "mode": 420,
+          "size": 6163,
+          "sha256": "2e2a3c2241168c61ac1f603cc1ed314db3d8d265769e9c1a5edc4b43a5d2826d"
+        },
+        {
+          "path": "scripts/source-scope.mjs",
+          "mode": 420,
+          "size": 1699,
+          "sha256": "94ecad38f94d3081d01119cf0155e3a5d72b1ba37c037aa092ee580c8cfa7460"
+        },
+        {
+          "path": "scripts/source-scope.test.mjs",
+          "mode": 420,
+          "size": 2001,
+          "sha256": "1f9c14436ea9c8ffb3381b84072db3f5d81d7df6d9395baf91b8f116fef2600e"
+        }
+      ]
+    },
+    "scope": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-scope.md",
+      "mode": 420,
+      "size": 7367,
+      "sha256": "6a512093448517c6ab65fc5b940cc54ffe3094d4091a76e23ac7b4cf3149aa17"
+    },
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+      "mode": 420,
+      "size": 24001,
+      "sha256": "26f70ffb560d5f9092b1455360b325f8d0381785979a93f1c9ffcbcd0c1da602"
+    },
+    "builderEvidence": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle/evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json",
+      "mode": 420,
+      "size": 51797,
+      "sha256": "93d1ead54054ad81988d15e4fc77ea73af4862ede045e6323fb7b6f150565081"
+    },
+    "current513Posix": {
+      "pathCount": 513,
+      "sha256": "6a905cbf7e4b3d6fdfd9aad3f1f4022a4638ffd308e9f5248b9c16b392fd0180"
+    },
+    "actualGit513Posix": {
+      "pathCount": 513,
+      "sha256": "82ffe95ac4466e72f2040f17152bf87ccc64e153f4abaa1ea4232b508679d7c5"
+    },
+    "wholeObservedTree": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 513,
+      "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+      "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+    },
+    "sourceInputTree": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 509,
+      "sha256": "8a3e97a4910436a2198cdb816e8925c76bb72e0eee4d5529528e4347ae16a31b",
+      "gitTreeOid": "fe1e3eb2ba851c5aa271646ec0d7731c0ffaf497"
+    }
+  },
+  "readCoverage": {
+    "repositoryProtocol": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/AGENTS.md",
+    "fullScopeAndManifest": true,
+    "complete14RecordDiffReviewed": true,
+    "all66CandidateIdentitiesVerified": true,
+    "all452BaseBlobsVerified": true,
+    "fourHistoryReportPayloadsVerifiedAgainstBase": true,
+    "nineRemainingUpstreamFilesUnchanged": true,
+    "prior507AndOriginal641Preserved": true,
+    "oldPortableSixReviewInputsPinned": true,
+    "oldSoftwareReviewByteIdentity": "16aa9651d720e2feb7352916cadde2eaa270fc9d0434c69298578d77c164fdbc"
+  },
+  "findings": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-POSIX-DRIFT",
+      "priority": "P1",
+      "status": "open",
+      "classification": "New successor-v2 derived-report current-root consistency defect; not a numerical solver defect or withdrawal of completed passes",
+      "locations": [
+        {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle/scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "start": 212,
+          "end": 230
+        },
+        {
+          "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle/scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "start": 226,
+          "end": 227
+        }
+      ],
+      "reason": "The initial captured evaluator input includes actual POSIX mode, but final source verification only compares sourceInputIdentity normalized to Git 100644. The exact historical receipt is admitted in both 0644 and 0444. A transition between those legal modes observed by the final admission is discarded, so the function returns consistency pass and sourceVerifiedBeforeAndAfter=true although the current evaluator artifactDigest no longer matches the checked report/statement.",
+      "evidence": {
+        "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/mode-drift-probe.json",
+        "mode": 420,
+        "size": 2161,
+        "sha256": "7fb2978183d079abdd76a096c1d13f2a1aa875ce4e48b70995c4248661cb3cfa"
+      },
+      "demonstration": {
+        "exactProductionFunctionSha256": "e8ef9079f3c47cfb25927fc7daa85c4e0a410d6960452abeb6e72db8e1863ce9",
+        "fixtureRoot": "/private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-v03-checkout-iVdmWF",
+        "baseline": {
+          "status": "pass-derived-report-consistency",
+          "artifactDigest": "sha256:da54cdfde64f60ddceccf12a1504a09bbb09dd0f83111325c1a81ec020742f92"
+        },
+        "modeEvents": [
+          {
+            "at": "afterCapturedInputAndConsistency",
+            "mode": 420
+          },
+          {
+            "at": "beforeFinalRealAdmission",
+            "mode": 292
+          }
+        ],
+        "injectedResult": {
+          "status": "pass-derived-report-consistency",
+          "sourceVerifiedBeforeAndAfter": true,
+          "artifactDigest": "sha256:da54cdfde64f60ddceccf12a1504a09bbb09dd0f83111325c1a81ec020742f92",
+          "sourceInputIdentity": {
+            "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+            "pathCount": 509,
+            "sha256": "8a3e97a4910436a2198cdb816e8925c76bb72e0eee4d5529528e4347ae16a31b",
+            "gitTreeOid": "fe1e3eb2ba851c5aa271646ec0d7731c0ffaf497"
+          }
+        },
+        "freshCurrentArtifactDigest": "sha256:84ce87c557a0d3477c37a67d59578813bd9a2f36964d04171ebea422f259f760",
+        "subsequentUninjectedCheck": {
+          "status": "abstain",
+          "reasons": [
+            "GENERATION_SOURCE_OR_OUTPUT_MISMATCH"
+          ]
+        }
+      },
+      "testScope": "Deterministic private actual-Git fixture with synthetic reports. Exact production function evaluated in a VM using its real filesystem/capture/admission/consistency dependencies. One injected callback performs chmod only after pure consistency checking and before the final real admission. This establishes the observable source-mode comparison gap, not arbitrary-race/OS sandbox claims.",
+      "closureRequirements": [
+        "After checking report outputs, recapture and compare actual evaluator input identity including path set, bytes, size and POSIX mode against the initial stable capture; do not use only the normalized Git identity for this check. Preserve existing portable source-admission semantics and both legal source receipt modes.",
+        "Add deterministic regression exercising this production final verification path with 0644→0444 and 0444→0644 changes, returning abstain. A pure helper test that merely supplies an already-different captured Map does not test this gap.",
+        "Retain stable 0644 and stable 0444 positive controls, all four-report byte/public-projection checks, duplicate-key and stale-input rejection. Re-freeze and request independent closure; run all applicable final gates after the last fix."
+      ],
+      "doesNotBroadenReceiptRuntimePermissionException": true,
+      "doesNotCloseInheritedFullGateBlockers": true
+    }
+  ],
+  "originalFindingDisposition": {
+    "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+    "priority": "P1",
+    "status": "closure-incomplete-remains-open",
+    "progress": "The cryptographic cycle is structurally removed: exact four report outputs are no longer immutable current-input pins; original base report bytes survive in a pinned history snapshot; only the exact successor-v2 terminal review is excluded, prior finals remain pinned inputs. Synthetic finite regeneration leaves sourceInputIdentity unchanged, stale reports fail, public projections are exact, generation is explicitly unsigned consistency only. Final closure is withheld because actual-POSIX source stability is incomplete (new finding) and no actual final evaluator/full-gate sequence has run.",
+    "notAClaimOfRealEvaluatorSuccess": true
+  },
+  "inheritedOperationalBlockers": [
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "origin": "root-assigned operational/release blocker, not new reviewer source defect",
+      "status": "open",
+      "applicability": "Still applicable. No complete current-candidate core suite ran; 75 focused passes do not close previous full-core deadline failures."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "origin": "root-assigned operational/release blocker, not new reviewer source defect",
+      "status": "open",
+      "applicability": "Still applicable. Bounded 4 gates do not complete all required full gates or replace the previous seven not-run gates."
+    },
+    {
+      "id": "R18A-FRESH-CHECKOUT-RECEIPT-MODE",
+      "priority": "P1",
+      "origin": "root-assigned operational/release blocker",
+      "status": "limited-closure-evidence-strengthened-subject-to-root-disposition",
+      "applicability": "Actual 513-file Git index/checkout with source receipt 0644 and no chmod correction was copied preserving all modes and bytes into reviewed physical dependency executor; focused and one complete locked numerical run passed. Newly generated receipts and private bootstrap retain strict read-only modes. This supports only the exact source receipt compatibility; it is distinct from the new mid-check mode-drift defect and does not establish Linux CI, full ancestry gates or release approval."
+    }
+  ],
+  "p2Residuals": [
+    {
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "status": "retained-not-fixed",
+      "reason": "The previous full-suite worker shutdown warning is not closed by these bounded passes. None occurred in the four reviewed gate logs."
+    },
+    {
+      "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "status": "retained-accepted-nonblocking-not-fixed",
+      "reason": "Executor preparation can exit nonzero with persisted status still running. Real process/CLI terminal status remains authoritative."
+    }
+  ],
+  "execution": {
+    "rawResults": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/results.json",
+      "mode": 420,
+      "size": 874719,
+      "sha256": "334961697ba2c160fdd756ff2e7d7c410ccc4d2aaea62b2c06344b60c8feabf3"
+    },
+    "executor": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e",
+      "nodePath": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "nodeVersion": "v24.16.0",
+      "nodeSha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+    },
+    "plan": {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/independent-plan.json",
+      "bytes": 242737,
+      "sha256": "9c3e03fa3d1b346dc62fc7907a5e08a7bff375a6e06fed596feb005960b7c1a3"
+    },
+    "cliExitCode": 0,
+    "status": "pass-frozen-baseline-only",
+    "gates": [
+      {
+        "id": "review-admission-before",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-before.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-before.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:48:51.112Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:48:51.355Z",
+        "elapsedSeconds": 0.243,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-before.stdout.log",
+          "bytes": 1084,
+          "sha256": "f52d99bfe23450e319e0d4e450078ddf8906ab4960b2e35d5130dafaa318a890"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-before.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-focused",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--fileParallelism=false",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "scripts/source-scope.test.mjs",
+          "scripts/derived-report-contract.test.mjs",
+          "scripts/evaluate-launcher.test.mjs",
+          "--reporter=verbose"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate",
+        "timeoutMs": 400000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-focused.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-focused.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:48:51.356Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:49:53.703Z",
+        "elapsedSeconds": 62.347,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-focused.stdout.log",
+          "bytes": 91309,
+          "sha256": "1d4cacb2641795c3d63d386fe900f3eadb1f2d2326531e483b11f52ca95215af"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-focused.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-numerical",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate",
+        "timeoutMs": 601000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-numerical.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-numerical.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:49:53.705Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:50:19.355Z",
+        "elapsedSeconds": 25.65,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-numerical.stdout.log",
+          "bytes": 8177,
+          "sha256": "6858118e113f0819901c6a97ed4cd80325ad1707ad5748ee63d4d7ed9ea85d93"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-numerical.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "id": "review-admission-after",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-after.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-after.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:50:19.358Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:50:19.585Z",
+        "elapsedSeconds": 0.227,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-after.stdout.log",
+          "bytes": 1084,
+          "sha256": "f52d99bfe23450e319e0d4e450078ddf8906ab4960b2e35d5130dafaa318a890"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/logs/review-admission-after.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "actualGitInputMode": "0644; no source chmod repair",
+    "fullCoreRun": false,
+    "fullObserverRun": false,
+    "realEvaluatorRun": false,
+    "productionBuildRun": false,
+    "linuxCIRun": false,
+    "ancestryGateRun": false,
+    "freshNpmCiRun": false
+  },
+  "counts": {
+    "focusedFiles": 6,
+    "focusedTests": 75,
+    "focusedSkipped": 0,
+    "mandatoryHistoricalV02": 5,
+    "mandatoryNestedHistoricalV01": 20,
+    "freshCheckoutNode": 29,
+    "numericalPython": 21,
+    "numericalNode": 29,
+    "independentSupervisorRuns": 2,
+    "newReceipts": 2,
+    "receiptSchemaSemanticValidations": 2,
+    "failedTestsInTheseGates": 0,
+    "skippedTestsInTheseGates": 0,
+    "notAnAdditiveWholeRepositoryCount": true
+  },
+  "numerical": {
+    "evidence": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate/.tf-runtime/r18a-current-root-i3Ke1u/execution.json",
+      "mode": 384,
+      "size": 558589,
+      "sha256": "0e18fa68e0082e6830698dc7a5a083fa69a0f8ac42cf4e8e57dab781037d202d"
+    },
+    "schemaVersion": "tf.r18a-current-root-execution/0.3",
+    "elapsedMs": 25580.622292,
+    "budget": {
+      "clock": "monotonic-performance.now",
+      "scientificAcceptanceMs": 600000,
+      "stopGraceMs": 1000,
+      "stopGraceExtendsAcceptance": false
+    },
+    "inputIdentity": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 509,
+      "sha256": "8a3e97a4910436a2198cdb816e8925c76bb72e0eee4d5529528e4347ae16a31b",
+      "gitTreeOid": "fe1e3eb2ba851c5aa271646ec0d7731c0ffaf497"
+    },
+    "wholeObservedIdentity": {
+      "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+      "pathCount": 513,
+      "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+      "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+    },
+    "sourceInputVerifiedBeforeAndAfter": true,
+    "observedTreeUnchanged": true,
+    "allSixCommandExitsAndCleanupVerified": true,
+    "bootstrap": {
+      "files": 747,
+      "dirs": 56
+    },
+    "receipts": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate/.tf-runtime/r18a-current-root-i3Ke1u/receipt-1.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate/.tf-runtime/r18a-current-root-i3Ke1u/receipt-2.json",
+        "mode": 292,
+        "size": 248778,
+        "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      }
+    ],
+    "sameSupervisorCommandExceptDistinctOutputPath": true,
+    "sourceMode0644NotBuilder0444": true
+  },
+  "builderEvidenceScope": {
+    "raw": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/results.json",
+      "mode": 420,
+      "size": 878909,
+      "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+    },
+    "sevenGatesActuallyPassed": true,
+    "sourceCount": 511,
+    "inputCount": 507,
+    "sourceReceiptMode": "0444",
+    "notActualGitNumericalRun": true,
+    "notInheritedAsCurrent513Execution": true
+  },
+  "sourceAndDependencyChecks": {
+    "sources": [
+      {
+        "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+        "pathCount": 513,
+        "canonicalSha256": "6a905cbf7e4b3d6fdfd9aad3f1f4022a4638ffd308e9f5248b9c16b392fd0180",
+        "allBytesModesRegularSingleLinksVerified": true
+      },
+      {
+        "root": "/private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-v03-checkout-RgpkFj",
+        "pathCount": 513,
+        "canonicalSha256": "82ffe95ac4466e72f2040f17152bf87ccc64e153f4abaa1ea4232b508679d7c5",
+        "allBytesModesRegularSingleLinksVerified": true
+      },
+      {
+        "root": "/private/tmp/tf-r18a-current-main-final-gates-781Vrh/candidate",
+        "pathCount": 513,
+        "canonicalSha256": "82ffe95ac4466e72f2040f17152bf87ccc64e153f4abaa1ea4232b508679d7c5",
+        "allBytesModesRegularSingleLinksVerified": true
+      },
+      {
+        "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future",
+        "pathCount": 641,
+        "canonicalSha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+        "allBytesModesRegularSingleLinksVerified": true
+      },
+      {
+        "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-portable",
+        "pathCount": 507,
+        "canonicalSha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137",
+        "allBytesModesRegularSingleLinksVerified": true
+      }
+    ],
+    "sourceDependencyUnchanged": true,
+    "dependencySnapshotChanges": [
+      ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+    ],
+    "dependencyNonCacheChanges": [],
+    "fiveInventoryArtifactsPerRunVerified": true,
+    "rawCommandStdoutStderrHashesVerified": true,
+    "privateBootstrapModeSealVerified": true
+  },
+  "strictJSON": {
+    "paths": [
+      "evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.1.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.2.json",
+      "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json",
+      "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json",
+      "evaluation/mesoscale/dependencies/pfhub7a-r17b-cas/pfhub7-source-provenance.json",
+      "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+      "evaluation/mesoscale/fixtures/pfhub7a-r18a-independent-solver-preflight-v4-successor-v3-receipt.json",
+      "evaluation/mesoscale/preregistrations/pfhub7a-r18a-independent-solver-preflight-v4-resolved.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-builder-gates.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-final-review.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-preflight.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-science-review.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-software-review.json",
+      "evaluation/reviews/2026-09-07-backend-migration-admission-v0.1-sota-review.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-builder-gates.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-manifest.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+      "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-builder-gates.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-final-review.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-manifest.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-science-review.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-software-review.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-sota-review.json",
+      "package.json",
+      "schemas/backend-migration-admission-v0.1.schema.json",
+      "schemas/backend-migration-admission-v0.2.schema.json",
+      "schemas/backend-migration-admission-v0.3.schema.json",
+      "schemas/pfhub7a-r18a-preflight-receipt-v0.3.schema.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+      "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-builder-gates.json"
+    ],
+    "passCount": 36,
+    "decodedDuplicateNegativePassed": true
+  },
+  "independentProtocolProbes": {
+    "scope": "Synthetic read-only protocol and exact-production-block probes only; no real evaluator, no scientific validation or execution authentication.",
+    "frozenRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a-report-lifecycle",
+    "sourceInputCount": 509,
+    "all513RowsReadAndHashed": true,
+    "artifactDigestModeSensitive": {
+      "workingSource0444Receipt": "sha256:84ce87c557a0d3477c37a67d59578813bd9a2f36964d04171ebea422f259f760",
+      "gitSource0644Receipt": "sha256:da54cdfde64f60ddceccf12a1504a09bbb09dd0f83111325c1a81ec020742f92",
+      "manifestsEqual": true,
+      "crossModeGenerationRejected": [
+        "GENERATION_SOURCE_OR_OUTPUT_MISMATCH"
+      ]
+    },
+    "oldDerivedReportWithFreshUnsignedStatementRejected": [
+      "Evaluator worker report is not bound to the frozen source snapshot."
+    ],
+    "syntheticFourReports": {
+      "status": "pass-derived-report-consistency",
+      "executionAuthenticated": false,
+      "scientificValidation": false,
+      "releaseEligible": false,
+      "sourceInputIdentityInvariant": true,
+      "admissionPassMeansNoReportReadiness": true
+    },
+    "terminal": {
+      "exactOnly": true,
+      "oldFinalBound": true,
+      "lookalikeRejected": true
+    },
+    "exactFunctions": [
+      {
+        "name": "computeArtifactDigest",
+        "bytePreserved": true,
+        "size": 361,
+        "sha256": "354b5d80cf33b31737351303c398f905276bd67b798b361c0538eb8fa664387c"
+      },
+      {
+        "name": "formatMode",
+        "bytePreserved": true,
+        "size": 215,
+        "sha256": "9b9f97f559d063a29a72725ad4069d0f9c95a134e551baa746a04153dc79c8da"
+      },
+      {
+        "name": "buildPublicSummary",
+        "bytePreserved": true,
+        "size": 1032,
+        "sha256": "93150aa2b9345714a7568e902a9b75851b17c4a7e63e41d641b4a04037d15a51"
+      },
+      {
+        "name": "buildPublicProductEvaluation",
+        "bytePreserved": true,
+        "size": 3322,
+        "sha256": "13f9dd350d5dbb3f440694cba78835e6990c495d134ec8ac0cd9fae0ce1d4c49"
+      },
+      {
+        "name": "isPublicIdentifier",
+        "bytePreserved": true,
+        "size": 201,
+        "sha256": "478caa24a32bda3546babed3a4f69391903528adbe91873255806556ba9c4626"
+      },
+      {
+        "name": "isPublicText",
+        "bytePreserved": true,
+        "size": 223,
+        "sha256": "79735e61eab4a6952e9fc747b066242770f498333040224ebe1e84766f585f9f"
+      }
+    ],
+    "finalBlock": {
+      "sourceSha256": "425b8f2602bb06e1fea0eec572f855f4b58515614702762874ef397c27357a52",
+      "lineStart": 124,
+      "lineEnd": 134,
+      "bytes": 703,
+      "sha256": "3e70a2a14aa4386b8ec72809e4df4330504c45688d70ba1e1db4f17d2f027ca3",
+      "negativeControlSha256": "89ffebca6195ac3d1f93872080c2f005b7b3e4233a6357db400388a5544b4d3b",
+      "results": [
+        {
+          "variant": "production",
+          "scenario": "49ms",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "production",
+          "scenario": "50ms",
+          "pass": false,
+          "reason": "AGGREGATE_BUDGET_EXCEEDED",
+          "evidence": {
+            "status": "abstain",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "production",
+          "scenario": "51ms",
+          "pass": false,
+          "reason": "AGGREGATE_BUDGET_EXCEEDED",
+          "evidence": {
+            "status": "abstain",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "production",
+          "scenario": "input-change",
+          "pass": false,
+          "reason": "CANDIDATE_CHANGED_DURING_RUN",
+          "evidence": {
+            "status": "abstain"
+          }
+        },
+        {
+          "variant": "production",
+          "scenario": "observed-output-only-change",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": false,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "production",
+          "scenario": "failed-admission",
+          "pass": false,
+          "reason": "CURRENT_ADMISSION_FAILED",
+          "evidence": {
+            "status": "abstain"
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "49ms",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "50ms",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "51ms",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "37d89d7fa5e11629996a5c774c9bbfa62f5d704dd5a1580db4ce53fc9fc99a5d",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": true,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "input-change",
+          "pass": false,
+          "reason": "CANDIDATE_CHANGED_DURING_RUN",
+          "evidence": {
+            "status": "abstain"
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "observed-output-only-change",
+          "pass": true,
+          "reason": null,
+          "evidence": {
+            "status": "pass-bounded-current-root-execution",
+            "observedTreeAfter": {
+              "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+              "pathCount": 513,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "gitTreeOid": "557a41c6285f0b0690250696475e40f196db0b82"
+            },
+            "observedTreeUnchanged": false,
+            "sourceInputVerifiedBeforeAndAfter": true
+          }
+        },
+        {
+          "variant": "private-removed-last-assert",
+          "scenario": "failed-admission",
+          "pass": false,
+          "reason": "CURRENT_ADMISSION_FAILED",
+          "evidence": {
+            "status": "abstain"
+          }
+        }
+      ],
+      "finalGuardActuallyConstrainsProductionSuccess": true
+    }
+  },
+  "evidenceArtifacts": [
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/preflight.json",
+      "mode": 420,
+      "size": 21870,
+      "sha256": "03bdcb00e276abf331c701e42baa92efd4336fc716a2a0b7123ed7c43608abd2"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/checkout.json",
+      "mode": 420,
+      "size": 58821,
+      "sha256": "3fdfef3fb4048a517800342151f99cfd828c25c590eb5fbb051e8c622c4ca9d6"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/execution-audit.json",
+      "mode": 420,
+      "size": 63997,
+      "sha256": "0b807a81c4d4ae98052151d966bfb6d84c8cfd7e10e340d34ee69551d2a088eb"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/independent-probes.json",
+      "mode": 420,
+      "size": 8700,
+      "sha256": "fb09af3fb80ace48836b4cc14fdc2cd9725720610e121734d9012aa2db0ba15a"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/mode-drift-probe.json",
+      "mode": 420,
+      "size": 2161,
+      "sha256": "7fb2978183d079abdd76a096c1d13f2a1aa875ce4e48b70995c4248661cb3cfa"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/independent-plan.json",
+      "mode": 420,
+      "size": 242737,
+      "sha256": "9c3e03fa3d1b346dc62fc7907a5e08a7bff375a6e06fed596feb005960b7c1a3"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/frozen-source-513.json",
+      "mode": 420,
+      "size": 100371,
+      "sha256": "84856739a6b88f3e3fede58ef15a376f94326501982c06b023551ca0046d5a01"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/git-source-513.json",
+      "mode": 420,
+      "size": 100371,
+      "sha256": "b594d96424bc629edd43efc54a4f6545041f50cc3d87bb61d6c9ccf6ce26f66c"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/prior-source-507.json",
+      "mode": 420,
+      "size": 99108,
+      "sha256": "4d96ca3ec72559aa603a541f1ef6b348c2fa14f0a5e798ce7e4299ec01b0d2ce"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/prepare-review.mjs",
+      "mode": 420,
+      "size": 7163,
+      "sha256": "d06a64c8a0299160b1c7652fa157338e440441b2b140d3f3c711cbedf19c0271"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/independent-probes.mjs",
+      "mode": 420,
+      "size": 8343,
+      "sha256": "8ca3669801a2887098009b64be4d0a51768b899b172f7f5762565496c1daf82d"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/mode-drift-probe.mjs",
+      "mode": 420,
+      "size": 5434,
+      "sha256": "7fad4da5610a234d96e3ce53fdd01796302759d7336c3a6844c80eaf41b6f925"
+    },
+    {
+      "path": "/private/tmp/tf-report-lifecycle-software-review.ElkcNy/audit-evidence.mjs",
+      "mode": 420,
+      "size": 11210,
+      "sha256": "971961c0ab448218c094d173c0b5eea8bb3fa9e7c5c43380ed3ed8aaed02091c"
+    }
+  ],
+  "setupAndDiagnosticLimitations": [
+    {
+      "text": "warning: You appear to have cloned an empty repository.",
+      "meaning": "createGitCheckout materializes real tree/index with unborn HEAD. Clone/read-tree completed and exact source inventory passed. No full ancestry gate or release commit validation was run."
+    },
+    {
+      "scope": "Independent mode-drift diagnostic setup only; not a candidate test failure",
+      "firstAttempt": "VM used a separate Map constructor, so helper instanceof Map rejected the synthetic setup. Fixed by supplying the production-realm Map in the private VM; no production code changed.",
+      "secondAttempt": "An additional private createGitCheckout attempt hit its original 120000ms aggregate budget while git hash-object was running (ETIMEDOUT, SIGTERM). This failed preparation is retained as a diagnostic limitation, not erased or counted as passing.",
+      "finalAttempt": "Reused the already successfully created and uniquely synthetic-marked private Git fixture, restored only its private receipt baseline to 0644, then reproduced the exact production function mode-drift gap. No further checkout timeout or solver rerun was used."
+    },
+    {
+      "scope": "Read-only evidence display",
+      "error": "One console formatter incorrectly treated stdout identity object as string; corrected inspection succeeded. Neither command was a gate."
+    }
+  ],
+  "limits": [
+    "Unsigned generation statements are not execution authentication; a synthetic internally consistent report is deliberately not scientific evidence. Actual command exit/log attestation plus full schema and CI guards remain mandatory.",
+    "Four report renames are not one filesystem transaction. Readbacks detect tested ordinary changes but do not create an OS sandbox or arbitrary concurrent-writer guarantee.",
+    "The locked dimensionless PFHub7(a) 8x4 grid / two dt=0.01 steps / t=0.02 receipt is not t=8 convergence, physical material validation or identified industrial causality.",
+    "Numerical cleanup concerns the direct child/original process group; escaped descendants remain outside this claim.",
+    "Actual createGitCheckout is a real tree/index materialization with unborn HEAD. No complete ancestor/runtime-lock-policy/release commit test was run in this bounded review.",
+    "Adding later review inputs changes source identity and requires final gates on that new identity. Only the exact designated terminal attestation is excluded.",
+    "All previous failed whole-gate and diagnostic evidence remains retained. No approval transfers from previous abstain artifacts."
+  ],
+  "countsOfFindings": {
+    "newP0": 0,
+    "newP1": 1,
+    "newP2": 0,
+    "existingCycleP1ClosureIncomplete": 1,
+    "inheritedRootAssignedP1Open": 2,
+    "inheritedRootAssignedP1LimitedClosureEvidence": 1,
+    "retainedP2": 2
+  },
+  "releaseEligible": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false,
+  "candidateEdited": false,
+  "originalEvidenceEdited": false,
+  "reviewFreezeComplete": true
+}

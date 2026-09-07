@@ -29,4 +29,11 @@ describe('Tailing Future source scope', () => {
       'scripts/evaluate.mjs',
     ])).toEqual(['app/page.tsx', 'scripts/evaluate.mjs']);
   });
+
+  it('excludes only the named new terminal attestation, never historical reviews or lookalikes', () => {
+    const prefix = 'evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3';
+    const terminal = `${prefix}-successor-v2-final-review.json`;
+    const retained = [`${prefix}-final-review.json`, `${terminal}.extra`, `${prefix}-successor-v2-science-review.json`, 'evaluation/reviews/other-final-review.json'];
+    expect(selectProjectSourceFiles([terminal, ...retained])).toEqual(retained.sort());
+  });
 });

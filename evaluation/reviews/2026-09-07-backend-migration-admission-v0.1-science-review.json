@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "tf.backend-migration-science-review/0.1",
+  "date": "2026-09-07",
+  "reviewer": "/root/release_scope_audit",
+  "readOnly": true,
+  "role": "independent-scientific-source-and-claim-integrity",
+  "initialReview": {
+    "candidateSha256": "14e272dd48b134fda469776d9dc6fc3957b8fd05f7c73c814491c53b349c562e",
+    "canonicalBytes": 697,
+    "decision": "PASS_PREPARATION_ONLY",
+    "counts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "ledgerEntriesVerified": 939,
+    "legacyFilesVerified": 641,
+    "legacyTotalBytes": 59531074,
+    "legacyIdentityDigest": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+    "mainGitBlobsVerified": 449,
+    "mainTotalBytes": 10891323,
+    "mainIdentityDigest": "9a7e966b67070e0b614cfa1f0c3e32af0ea8f14fe44946bcc806d3d5575fd8ed",
+    "legacyOnlyFilesystemAbsencesVerified": 490,
+    "r12ExactExclusionsVerified": 9,
+    "claimMutationsRejected": 7,
+    "runtime": "Node 24.19.0 for independent read-only inventory; does not replace locked Builder gates",
+    "actualGate": {
+      "status": "pass-preparation-only",
+      "currentPathCount": 456,
+      "releaseEligible": false,
+      "failures": []
+    }
+  },
+  "scientificAssessment": {
+    "physicalImplementationImported": false,
+    "physicalQuantityOrEquationChanged": false,
+    "mainFrontendAndSciencePreserved": true,
+    "historicalApprovalTransferred": false,
+    "evidenceScoreUpgraded": false,
+    "causalOrIndustrialAuthorityAdded": false,
+    "externalResultsRelabeledReproduced": false
+  },
+  "residualReleaseBlockers": [
+    {
+      "id": "PFHUB7-NOTICE-SOURCE-BINDING",
+      "disposition": "Pending before mesoscale integration; not a defect in the inventory-only candidate",
+      "required": "Add exact Benchmark7 attribution, aa4774ce myst.yml, pinned NIST license and upstream notebook, and 23 heading-only differences. Preserve historical notebook."
+    },
+    {
+      "id": "NON-R12-ADMISSION-NOT-LICENSE-CLEARANCE",
+      "required": "R11 bounded source mapping; exact Cantera notice and NASA provenance; CRECK declaration and attribution; separately inventory redistributed native archives/runtimes."
+    },
+    {
+      "id": "INTEGRATION-AND-FULL-RELEASE-GATES",
+      "required": "Migrate and validate non-R12 capability planes against main with versioned report/release compatibility and private runtime successors."
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/myst.yml",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "byteSize": 989,
+      "sha256": "687b05507e2276dc9af0c73a05d6c159232e35c27f0012f24447c137bdd4525a"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/usnistgov/pfhub/2f9c54e34e8c91772fcb12a88a6b3edb6172451f/LICENSE.md",
+      "revision": "2f9c54e34e8c91772fcb12a88a6b3edb6172451f",
+      "byteSize": 1754,
+      "sha256": "9f5bda077de4182c0bd4fdbc2e1f64c1b6bc944c13802325093b00012fa95dba"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Cantera/cantera/4a8358eb80cfeb50474386b5f9ec0b3a83519889/License.txt",
+      "revision": "4a8358eb80cfeb50474386b5f9ec0b3a83519889",
+      "byteSize": 1796,
+      "sha256": "e92980b9712ce20e73898a97b0116889e84e07f548d6be8591e87dcad79c41bb"
+    },
+    {
+      "url": "https://zenodo.org/records/21495957",
+      "revision": "deposit 21495957",
+      "sha256": null,
+      "relatedMechanismByteSize": 495804,
+      "relatedMechanismSha256": "8f8bf791ed7017ba7d506674f2629870f779678cee0fa6f08dd916b849ef270b"
+    },
+    {
+      "url": "https://ntrs.nasa.gov/api/citations/20110010915/downloads/20110010915.pdf",
+      "revision": "NTRS 20110010915",
+      "byteSize": 368450,
+      "sha256": "55c0b9206d103efea9c8a3d721a1aaec0af9a605fa8dc69b0ba96eb7c79e0039"
+    }
+  ],
+  "limitations": [
+    "Inventory review is not a legal permission determination, experimental validation or approval of any migrated physical capability.",
+    "Exact excluded-identity checks do not detect every transformed or embedded derivative payload.",
+    "Independent review does not replace final executable gates."
+  ],
+  "postFixVerification": {
+    "reviewer": "/root/release_scope_audit",
+    "date": "2026-09-07",
+    "candidateSha256": "e28fc818f7f765a92ea293ac3ee402013d1ad4a895676adf7482310ee5d06fec",
+    "canonicalBytes": 697,
+    "decision": "PASS_PREPARATION_ONLY",
+    "identityIndependentlyRecomputed": true,
+    "ledgerAndSchemaUnchanged": true,
+    "scientificClaimsUnchanged": true,
+    "scientificCapabilitiesAdmitted": 0,
+    "r12RightsStatus": "unresolved",
+    "r12Licensed": false,
+    "r12PayloadPresent": false,
+    "historicalApprovalTransferred": false,
+    "releaseEligible": false,
+    "deploymentEligible": false,
+    "originalReviewStillApplicable": true,
+    "softwareClosureAuthority": "/root/admission_software_review",
+    "externalSourcesRequeried": false,
+    "newFindings": [],
+    "deltaMethod": "Reviewer removed only the declared fixes and three added tests in memory and recovered both original file digests exactly."
+  },
+  "releaseEligible": false,
+  "deploymentEligible": false
+}

@@ -42,3 +42,4 @@ next-env.d.ts
 /.atomistic-cache/
 /.release-artifact/
 *.tsbuildinfo
+/.tf-runtime/

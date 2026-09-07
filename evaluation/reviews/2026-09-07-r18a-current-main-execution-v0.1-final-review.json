@@ -1,0 +1,1268 @@
+{
+  "schemaVersion": "tf.r18a-current-main-final-review/0.1",
+  "recordedOn": "2026-09-07",
+  "status": "abstain",
+  "candidateId": "r18a-fixed-307e6d7-current-main-execution-v0.1-successor-v2",
+  "candidateSetSha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+  "baseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+  "latestMainValidated": false,
+  "observedNewerMain": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+  "releaseEligible": false,
+  "commitAuthorizedByThisReview": false,
+  "goalComplete": false,
+  "userR12Disposition": {
+    "instruction": "采用不含 R12 的发布版本，保留本地证据",
+    "excludedPathCount": 9,
+    "rightsCleared": false,
+    "preservedOriginalRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future"
+  },
+  "scientificBoundary": {
+    "hypothesis": "Unchanged locked R18a successor-v3 can materialize and execute in the fixed main-derived integration source tree, pass the full unchanged Python21/Node29 corpora and reproduce two exact frozen formal receipts.",
+    "mesh": [
+      8,
+      4
+    ],
+    "timeSteps": 2,
+    "timeStep": {
+      "value": 0.01,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub 7(a) native dimensionless time"
+    },
+    "horizon": {
+      "value": 0.02,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub 7(a) native dimensionless time"
+    },
+    "formalReceiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+    "trackPolicy": {
+      "officialLiteral": "Analytic-field discrepancy, not strict MMS.",
+      "literalSelf": "Self-comparison of the same literal BVP, not a third PDE.",
+      "exactTraceCompanion": "Non-PFHub strict MMS."
+    },
+    "notDemonstrated": [
+      "full t=8 space/time convergence",
+      "independent spatial discretization",
+      "experimental physical validation",
+      "identified real-material or industrial causal effects",
+      "quantitative engineering recommendation",
+      "SOTA reproduced ranking",
+      "automated safety-critical control"
+    ],
+    "evidenceScoreIncreased": false
+  },
+  "independentSuccessorReviews": {
+    "science": {
+      "recordedOn": "2026-09-07",
+      "reviewer": "/root/release_scope_audit",
+      "verdict": "PASS_SCIENCE_SOURCE_INVARIANCE_SUCCESSOR_V2",
+      "findings": {
+        "P0": [],
+        "P1": [],
+        "P2": []
+      },
+      "candidateSetSha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+      "manifest": {
+        "bytes": 9803,
+        "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+      },
+      "builderGates": {
+        "bytes": 85182,
+        "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+      },
+      "preservationVerified": {
+        "scientificImports": 12,
+        "reconciledConfigurations": 3,
+        "mainFiles": 446,
+        "historicalAdmissionFiles": 11,
+        "originalSourceFiles": 641,
+        "excludedR12Paths": 9,
+        "initialManifestAndBuilderGatesPreserved": true
+      },
+      "evidenceVerified": {
+        "frozenSelfcheckPaths": 486,
+        "frozenSourceDigest": "cc9748b54c6a9185fd1e69472a7e129ee3605c07405edfe3081a710b59bde79e",
+        "logFilesMatched": 20,
+        "numericalCommandsMatched": 6,
+        "receiptCount": 2,
+        "receiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+        "toolChunks": [
+          "a4838e",
+          "a6df78"
+        ]
+      },
+      "reviewActivity": {
+        "candidateEdits": false,
+        "newFilesWritten": false,
+        "numericalRerun": false,
+        "faultTestsRerun": false,
+        "externalSourcesRefetchedThisDelta": false
+      },
+      "limitations": [
+        "The 486 frozen selfcheck paths are not a claim that later allowed control outputs are absent.",
+        "Read-only budget semantics review is not OS hard-real-time or escaped-descendant containment.",
+        "Fresh Git checkout modes, Linux CI, newer main and full final gates remain pending.",
+        "Source notice is scoped provenance, not blanket rights/runtime redistribution/R12 clearance."
+      ],
+      "releaseEligible": false
+    },
+    "software": {
+      "recordedOn": "2026-09-07",
+      "reviewer": "/root/admission_software_review",
+      "disposition": "PASS_BOUNDED_CURRENT_ROOT_CLOSURE_ONLY",
+      "candidateSetSha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+      "closedFindings": [
+        "R18A-SOFTWARE-P1-AGGREGATE-DEADLINE",
+        "R18A-SOFTWARE-P2-HISTORICAL-REPLAY-LIFECYCLE"
+      ],
+      "newFindings": {
+        "P0": [],
+        "P1": [],
+        "P2": []
+      },
+      "independentValidation": {
+        "currentTests": 15,
+        "historicalTests": 20,
+        "numericalPython": 21,
+        "numericalNode": 29,
+        "numericalSkips": 0,
+        "numericalElapsedMs": 15050.93325,
+        "receiptCount": 2,
+        "receiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+        "allSixNumericalCommandsCleanupConfirmed": true,
+        "productionFunctionVmNegativeControl": "Injected50ms allowance:49ms passes,51ms abstains; a private function copy removing the final assertion falsely passes51ms. This is not a numerical run.",
+        "sourcePaths": 489,
+        "additionalControlsSinceSelfcheck": 3,
+        "original486Unchanged": true,
+        "legacy641Unchanged": true
+      },
+      "evidence": {
+        "path": "/private/tmp/tf-r18a-software-closure.KIl2Nc/closure-evidence.json",
+        "bytes": 16594,
+        "sha256": "4ee860d3eae2e3554a41231ab5f09209bf3884863e8208d5575e537b70d7f6af",
+        "rawUtf8": "{\n  \"schemaVersion\": \"independent-r18a-software-closure/0.1\",\n  \"inputIdentities\": [\n    {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json\",\n      \"bytes\": 14074,\n      \"sha256\": \"96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677\"\n    },\n    {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json\",\n      \"bytes\": 9803,\n      \"sha256\": \"36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55\"\n    },\n    {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json\",\n      \"bytes\": 85182,\n      \"sha256\": \"99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705\"\n    }\n  ],\n  \"initialReviewRawEvidencePreserved\": true,\n  \"before\": {\n    \"candidateFiles\": 25,\n    \"canonicalBytes\": 4209,\n    \"candidateSha256\": \"44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5\",\n    \"preservedMain\": 446,\n    \"preservedHistorical\": 11,\n    \"exactImports\": 12,\n    \"legacyFiles\": 641,\n    \"legacyCanonicalSha256\": \"33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463\"\n  },\n  \"after\": {\n    \"candidateFiles\": 25,\n    \"canonicalBytes\": 4209,\n    \"candidateSha256\": \"44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5\",\n    \"preservedMain\": 446,\n    \"preservedHistorical\": 11,\n    \"exactImports\": 12,\n    \"legacyFiles\": 641,\n    \"legacyCanonicalSha256\": \"33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463\"\n  },\n  \"builderReportVerified\": {\n    \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-Bb41Dr/results.json\",\n    \"bytes\": 851913,\n    \"sha256\": \"f582a962f99c7c115e485d6ac66122305532fec3bed8023979b8878290566e2c\"\n  },\n  \"builderLogIdentitiesVerified\": [\n    {\n      \"gate\": \"focused-contracts\",\n      \"stream\": \"stdout\",\n      \"bytes\": 5945,\n      \"sha256\": \"d25be98d14a3e52782ec0ea17d2b25b7f480f49a538cd16d6d7532f54066a6e3\"\n    },\n    {\n      \"gate\": \"focused-contracts\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"numerical-acceptance\",\n      \"stream\": \"stdout\",\n      \"bytes\": 7304,\n      \"sha256\": \"dbc5d78a21542cdbd2c31c3aac202c20c16624d0c399251b217560e5f9a0bb45\"\n    },\n    {\n      \"gate\": \"numerical-acceptance\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"candidate-lint\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"candidate-lint\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"typecheck\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"typecheck\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"node-29-required-dispatch\",\n      \"stream\": \"stdout\",\n      \"bytes\": 6573,\n      \"sha256\": \"9e5765f6850fd017d302a385009cd7c7f88231f0b11683c6426d51ad9247ef16\"\n    },\n    {\n      \"gate\": \"node-29-required-dispatch\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"current-admission\",\n      \"stream\": \"stdout\",\n      \"bytes\": 214,\n      \"sha256\": \"b72098233e7046470231fbc9a31271b2bd1b1e872128492d531d7e0b15cb2fd1\"\n    },\n    {\n      \"gate\": \"current-admission\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-1\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-1\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-2\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-2\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-3\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-3\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-4\",\n      \"stream\": \"stdout\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    },\n    {\n      \"gate\": \"syntax-4\",\n      \"stream\": \"stderr\",\n      \"bytes\": 0,\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    }\n  ],\n  \"wholeEntrypointFinalBudgetVm\": {\n    \"scope\": \"Exact production runCurrentRoot function source in VM with all I/O, commands and platform mocked; budget injected at 50ms. This is not a numerical run. Final-source verification advances the clock; removal of final assertion is a private negative-control mutation only.\",\n    \"productionFunctionSha256\": \"63136c51f164a12ae1b3152a474c969f928254a9bdb799bd0b823f5cd522a2df\",\n    \"cases\": [\n      {\n        \"mutatedFinalAssertionRemoved\": false,\n        \"finalElapsed\": 49,\n        \"status\": \"pass-bounded-current-root-execution\",\n        \"reason\": null,\n        \"finalVerificationReached\": true\n      },\n      {\n        \"mutatedFinalAssertionRemoved\": false,\n        \"finalElapsed\": 51,\n        \"status\": \"abstain\",\n        \"reason\": \"Error: AGGREGATE_BUDGET_EXCEEDED\",\n        \"finalVerificationReached\": true\n      },\n      {\n        \"mutatedFinalAssertionRemoved\": true,\n        \"finalElapsed\": 49,\n        \"status\": \"pass-bounded-current-root-execution\",\n        \"reason\": null,\n        \"finalVerificationReached\": true\n      },\n      {\n        \"mutatedFinalAssertionRemoved\": true,\n        \"finalElapsed\": 51,\n        \"status\": \"pass-bounded-current-root-execution\",\n        \"reason\": null,\n        \"finalVerificationReached\": true\n      }\n    ]\n  },\n  \"gitMode\": {\n    \"scope\": \"Synthetic Git index/checkout only, no real candidate checkout or payload normalization; no commit.\",\n    \"originalMode\": 292,\n    \"indexMode\": \"100644\",\n    \"freshMode\": 420,\n    \"currentLedgerRejectsFreshMode\": true,\n    \"currentCandidateModePreserved\": 292\n  },\n  \"runs\": [\n    {\n      \"id\": \"targeted-contracts\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"node_modules/vitest/vitest.mjs\",\n        \"run\",\n        \"--config\",\n        \"vitest.config.ts\",\n        \"scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs\",\n        \"scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.test.mjs\"\n      ],\n      \"elapsedMs\": 56800,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/targeted-contracts.stdout.log\",\n        \"bytes\": 6045,\n        \"sha256\": \"7a0fedc37a8a8752b008032f39b02b79ba7df0aa10a3b65ecc3086610009bed9\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/targeted-contracts.stderr.log\",\n        \"bytes\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    },\n    {\n      \"id\": \"actual-admission\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"scripts/backend-migration/verify-r18a-origin-main-admission-v0.2.mjs\"\n      ],\n      \"elapsedMs\": 161,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/actual-admission.stdout.log\",\n        \"bytes\": 214,\n        \"sha256\": \"8f1282e723ebd6e170d07b30a799d7efa8dcfc4412e5c373a35fbc268d318222\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/actual-admission.stderr.log\",\n        \"bytes\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    },\n    {\n      \"id\": \"numerical\",\n      \"command\": [\n        \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n        \"scripts/mesoscale/pfhub7a_r18a_current_root.mjs\",\n        \"--python-source\",\n        \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee\",\n        \"--wheelhouse\",\n        \"/private/tmp/tf-r18a-fipy-lock.LSDdK2\"\n      ],\n      \"elapsedMs\": 15077,\n      \"exitCode\": 0,\n      \"signal\": null,\n      \"error\": null,\n      \"timedOut\": false,\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/numerical.stdout.log\",\n        \"bytes\": 7423,\n        \"sha256\": \"c40aabef759836a35d774a8d28e3e4806f4f3cd74caf05970f736015cc1c2f84\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-software-closure.KIl2Nc/numerical.stderr.log\",\n        \"bytes\": 0,\n        \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n      }\n    }\n  ],\n  \"historicalReplay\": {\n    \"command\": [\n      \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n      \"node_modules/vitest/vitest.mjs\",\n      \"run\",\n      \"--config\",\n      \"vitest.config.ts\",\n      \"scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs\",\n      \"--reporter=verbose\"\n    ],\n    \"reconstructedMainFiles\": 449,\n    \"reconstructedHistoricalFiles\": 11,\n    \"exitCode\": 0,\n    \"stdout\": \"\\n RUN  v4.1.11 /private/var/folders/7n/r3bblh415gb535s1gz9y5zn00000gn/T/tf-admission-historical-PZSbrK\\n\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an empty inventory and an actual Git tree missing its trusted source inventory 210ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > does not let repository-local or unregistered nested ignore rules hide new sources 3192ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > retains a capture failure and does not mistake it for an empty valid inventory 56ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > validates the frozen ledger, schema and actual preparation tree while remaining release-ineligible 208ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > pins both raw files and rejects a byte-only ledger rewrite 39ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate decoded JSON members before schema or semantic validation 2ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a missing entry and the forged completeness counts it causes 35ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects duplicate paths even when the array length remains 939 33ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects changed content identities and modes 64ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects unknown dispositions rather than treating them as implicitly safe 34ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps all nine R12 paths absent, rights-unresolved, unlicensed and not passed 1ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects R12 inclusion and excluded-to-licensed mutations 66ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a pending-to-admitted scientific-capability mutation 30ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects an unaccounted source and does not exempt the review directory by prefix 3ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects a renamed excluded payload by digest using only a synthetic test identity 4ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > detects ignored or otherwise unenumerated legacy-only payloads directly on the filesystem 14ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects preserved-main drift including latest-main frontend bytes 2ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > keeps the R18a .gitignore conflict and historical approval non-transfer explicit 30ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects forged inventory roots even if the top-level complete flag stays true 29ms\\n ✓ scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs > backend migration admission v0.1 > rejects any attempt to turn preparation status into release eligibility 35ms\\n\\n Test Files  1 passed (1)\\n      Tests  20 passed (20)\\n   Start at  16:53:34\\n   Duration  4.57s (transform 77ms, setup 0ms, import 313ms, tests 4.09s, environment 0ms)\\n\\n\",\n    \"stderr\": \"\",\n    \"lifecycle\": {\n      \"timeoutMs\": 95887,\n      \"stopGraceMs\": 1000,\n      \"elapsedMs\": 4985.200041,\n      \"cleanupConfirmed\": true,\n      \"cleanup\": {\n        \"directChildExitObserved\": true,\n        \"pipesClosed\": true,\n        \"processGroupAbsent\": true,\n        \"scope\": \"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"\n      }\n    },\n    \"historicalOnly\": true\n  },\n  \"actualAdmission\": {\n    \"schemaVersion\": \"tf.backend-migration-admission-gate/0.2\",\n    \"status\": \"pass-bounded-integration-inventory\",\n    \"releaseEligible\": false,\n    \"historicalCandidateIdentityTransferred\": false,\n    \"currentPathCount\": 489,\n    \"failures\": []\n  },\n  \"numerical\": {\n    \"status\": \"pass-bounded-current-root-execution\",\n    \"elapsedMs\": 15050.93325,\n    \"commands\": 6,\n    \"cleanupAllConfirmed\": true,\n    \"pythonTests\": 21,\n    \"nodeTests\": 29,\n    \"skips\": 0,\n    \"releaseEligible\": false,\n    \"budget\": {\n      \"clock\": \"monotonic-performance.now\",\n      \"scientificAcceptanceMs\": 600000,\n      \"stopGraceMs\": 1000,\n      \"stopGraceExtendsAcceptance\": false\n    },\n    \"executionEvidence\": {\n      \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-r3zoIq/execution.json\",\n      \"bytes\": 557728,\n      \"sha256\": \"2835ee53777f75f6fc00ed885a0e96833b2d1b9d62e89b9bbd1e926f9207a1d1\"\n    },\n    \"receipts\": [\n      {\n        \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-r3zoIq/receipt-1.json\",\n        \"bytes\": 248778,\n        \"sha256\": \"d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"\n      },\n      {\n        \"path\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-r3zoIq/receipt-2.json\",\n        \"bytes\": 248778,\n        \"sha256\": \"d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"\n      }\n    ]\n  },\n  \"scope\": \"Closure evidence only; no full-repository final gates, fresh Git candidate validation, Linux numerical run, scientific promotion or release authority.\"\n}\n"
+      },
+      "numericalCapture": {
+        "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/.tf-runtime/r18a-current-root-r3zoIq/execution.json",
+        "bytes": 557728,
+        "sha256": "2835ee53777f75f6fc00ed885a0e96833b2d1b9d62e89b9bbd1e926f9207a1d1"
+      },
+      "verificationScript": {
+        "path": "/private/tmp/tf-r18a-software-closure.KIl2Nc/collect-closure.mjs",
+        "sha256": "66d8d6bbc2db332c83a211e096a215a7a1ff81a826ce316d6a4dfd6336fc24c5"
+      },
+      "releasePending": "Synthetic Git index/checkout confirms0444→100644→0644; current admission rejects changed mode. Verified copies do not establish fresh Git checkout/Linux CI. Original fixture mode remains preserved.",
+      "cleanupBoundary": "Direct child/original process group only; not escaped descendants or OS hard real time.",
+      "candidateEdits": false,
+      "releaseEligible": false
+    },
+    "sota": {
+      "recordedOn": "2026-09-07",
+      "reviewer": "/root/r18a_sota_sources",
+      "disposition": "scientific-source-invariance-confirmed-on-successor-v2",
+      "candidateSetSha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+      "manifest": {
+        "bytes": 9803,
+        "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+      },
+      "builderGates": {
+        "bytes": 85182,
+        "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+      },
+      "newP0": [],
+      "newP1": [],
+      "retainedP2": [
+        "R18A-SOTA-01",
+        "R18A-SOTA-02",
+        "R18A-SOTA-03"
+      ],
+      "verified": {
+        "candidateFiles": 25,
+        "canonicalBytes": 4209,
+        "changedMechanicalFiles": 6,
+        "addedScopeFiles": 1,
+        "unchangedScientificImports": 12,
+        "unchangedConfigurations": 3,
+        "all10GateLogsAndDigestsMatched": true,
+        "numericalCommandsMatched": 6,
+        "numericalCapture": {
+          "bytes": 557607,
+          "sha256": "d5d56ae4f39e2c1389a46fba656e60529d3cb0070d2d00c864299abbc36c21bc"
+        },
+        "receiptCount": 2,
+        "receiptBytesEach": 248778,
+        "receiptSha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+      },
+      "sourcePolicy": "Inherit ten unchanged pinned primary sources independently verified in same-day initial review; no new source fetch claimed.",
+      "initialReviewArtifact": {
+        "bytes": 11467,
+        "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+      },
+      "scope": "Only bounded science/source invariance; not software P1 closure, final gates, fresh Git checkout, Linux numerical CI, latest-main or release approval.",
+      "solverRerun": false,
+      "sourceEdits": false,
+      "releaseEligible": false
+    }
+  },
+  "releasePending": [
+    {
+      "id": "LATEST-MAIN-INTEGRATION",
+      "disposition": "pending-separate-versioned-candidate",
+      "detail": "The known a63415c scientific/provenance-root 13-file cluster has not been integrated or tested here. Upstream review and report bytes do not transfer approval."
+    },
+    {
+      "id": "FRESH-CHECKOUT-RECEIPT-MODE",
+      "disposition": "pending-separate-versioned-portability-contract",
+      "detail": "Independent Git experiment shows original 0444 source receipt becomes Git100644/checkout0644; current exact-mode admission rejects this. Verified copies preserve modes and are not fresh checkout validation. Original mode and bytes remain untouched."
+    },
+    {
+      "id": "PROTECTED-CI-RELEASE",
+      "disposition": "not-executed",
+      "detail": "No actual release commit, protected-main CI artifact, GitHub push or deployment is produced or approved by this bounded review."
+    }
+  ],
+  "residualLimitations": [
+    {
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "disposition": "retained-open-nonblocking-within-bounded-review",
+      "detail": "A worker termination delay warning was observed in the prior v0.1 full-gate run, with root cause unknown. Subsequent successful focused reruns did not establish a fix. Record any new warning from the current final gates separately."
+    },
+    {
+      "id": "PROCESS-CLEANUP-BOUNDARY",
+      "detail": "Process observations cover the direct child and original process group. Escaped descendants, hard realtime scheduling and OS-level isolation are not proven."
+    },
+    {
+      "id": "DEPENDENCY-REPRODUCIBILITY",
+      "detail": "The R18a numerical runtime is separately byte-locked. External executor v2 uses an independently inventoried physical copy of an existing local node_modules installation with only declared .vite/.vite-temp cache drift; it is not npm ci, Linux CI, or a hermetic OS/native dependency closure. Historical focused replay explicitly uses external dependency references."
+    },
+    {
+      "id": "SCOPED-SOURCE-PROVENANCE",
+      "detail": "Pinned PFHub notice and notebook provenance support scoped attribution only, not blanket legal approval, NIST endorsement, runtime redistribution rights or R12 clearance."
+    },
+    {
+      "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "disposition": "accepted-nonblocking-residual",
+      "detail": "External executor preparation can exit nonzero while its previously persisted report still says running. Do not infer liveness from that field; actual CLI exit/session status is authoritative. Statically observed; not fixed or promoted to a passing preparation-failure test."
+    }
+  ],
+  "nextReleaseIteration": {
+    "scope": "Versioned admission /0.3 on known a63415c plus source-checkout portability. Astra has an UNFROZEN implementation draft; this review neither tests nor approves it. A genuine prior abstaining final review is an evidence-continuation input, not an approval transfer.",
+    "base": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+    "upstreamClusterFileCount": 13,
+    "mainFileCount": 452,
+    "acceptance": [
+      "Bring all thirteen upstream scientific/provenance-root paths together, verify each Git blob; treat imported reports/review as historical source evidence only.",
+      "Preserve both historical admission versions and all scientific source bytes; ordinary tests must execute required historical suites in their correct reconstructed trees, with no skips.",
+      "Separate original POSIX receipt mode0444 from Git100644/source checkout semantics; exact original receipt content remains fixed. Never relax private runtime/produced receipt sealing rules.",
+      "Use an actual Git tree/index checkout in an empty private directory without chmod repair and record tree OID/index modes, source hashes and negative controls. Not a release commit clone until an actual approved commit exists.",
+      "Version the numerical execution entry point: separately bind historical scientificContractBaseCommit307e6d7, integrationBaseCommita63415c and verified actual candidate tree before/after execution. Do not relabel the old hardcoded base field.",
+      "Preserve frontend-facing contracts; rerun new observer/schema/determinism contracts, full repository gates and explicit locked Darwin numerical acceptance."
+    ],
+    "notAuthorizedHere": [
+      "commit",
+      "push",
+      "deployment",
+      "scientific promotion"
+    ],
+    "priorOutcomeHandling": {
+      "oldFullGatePassed": false,
+      "priorReviewMayBeAbstaining": true,
+      "approvalTransferred": false,
+      "required": "Pin and import this genuine final review unchanged. Explicitly retain applicability of old timing failures, seven not-run final gates, fresh-checkout permission incompatibility and environment limitations. Re-freeze new exact candidate and self-check; independent three-role reviews and all new-base gates remain required."
+    }
+  },
+  "nextScientificIteration": {
+    "id": "R18b-full-horizon-budgeted-pilot",
+    "state": "proposed-not-frozen-or-executed",
+    "builder": "Astra",
+    "domain": "PFHub7(a) dimensionless mathematical benchmark, not a real material or industrial reactor.",
+    "hypothesis": "Independent continuous P1 FEM and FiPy FV can each run official-literal and non-PFHub exact-trace to dimensionless t=8 within predeclared resource budgets and emit comparable auditable fields.",
+    "pilots": [
+      {
+        "nx": 64,
+        "ny": 32,
+        "nt": 1600
+      },
+      {
+        "nx": 128,
+        "ny": 64,
+        "nt": 1600,
+        "firstExecutionUnit": true
+      },
+      {
+        "nx": 256,
+        "ny": 128,
+        "nt": 1600
+      },
+      {
+        "nx": 128,
+        "ny": 64,
+        "nt": 3200
+      }
+    ],
+    "lanes": [
+      "FV-literal",
+      "FEM-literal",
+      "FV-exact-trace",
+      "FEM-exact-trace"
+    ],
+    "allPilotResultsPermanentlyFormalIneligible": true,
+    "firstUnitRunCount": 4,
+    "plannedRunCount": 16,
+    "timeUpdateCount": 32000,
+    "completionNotGuaranteedByBudget": true,
+    "minimumScienceAcceptance": [
+      "Independently assemble triangular P1 stiffness/consistent mass and derive forcing; production FEM may not import FV source/assembly functions. Shared SciPy algebra is not an independent entire solver stack.",
+      "Periodic x DOFs merge before y Dirichlet. Include M_IB*g_old-(M_IB+dt*kappa*K_IB)*g_new, fix initial interpolation/projector, retain literal initial/boundary incompatibility.",
+      "Verify constant/compatible affine patches, time-dependent Dirichlet patch, triangle monomial quadrature exact for total degree<=4, and independent nonpolynomial source/error quadrature sensitivity.",
+      "FEM PFHub area-defined h=sqrt(triangle area), distinct from rectangle spacing/triangle diameter. Common coarse-cell area averages compare with analytic area averages, not center samples. Retain native norms and information-loss disclosure.",
+      "literal-self is same-method/same-literal-BVP level comparison; first four runs do not provide it. Pilot has only two time levels and cannot certify time order or space/time-error isolation.",
+      "Check nonconserved forced Allen-Cahn discrete balance including upper/lower Dirichlet flux and cancelling periodic sides. FV uses actual face fluxes; FEM uses pre-elimination boundary reaction/residual with independent patch sign/scale checks. Do not require constant mass, monotonic energy or clip values to[0,1].",
+      "Freeze budgets and stop rules before Builder. Preserve failed/out-of-range runs and full endpoint fields. Estimate real resource/error cost before separately freezing formal convergence studies."
+    ],
+    "proposedResourceBudgets": {
+      "perRunSeconds": 900,
+      "totalSeconds": 5400,
+      "perProcessRssGiB": 8,
+      "evidenceGiB": 2,
+      "scheduling": "serial single-threaded",
+      "resourceFailureStopsEscalation": true,
+      "notYetFrozen": true
+    },
+    "primaryReferences": [
+      "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+      "https://jsdokken.com/dolfinx-tutorial/chapter2/heat_equation.html",
+      "https://pages.nist.gov/fipy/en/latest/generated/examples.phase.simple.html",
+      "https://docs.fenicsproject.org/dolfinx/v0.10.0.post5/python/installation.html"
+    ],
+    "referencePolicy": "Read-only planning references, not locally reproduced results. Pinned primary scientific records remain in the dated SOTA review."
+  },
+  "finalGateAttempts": [
+    {
+      "attempt": "v1-symlinked-dependencies",
+      "status": "fail",
+      "gateCountExecuted": 10,
+      "gateCountPlanned": 17,
+      "failedGate": "full-js-core",
+      "jsCounts": {
+        "passed": 1411,
+        "failed": 2,
+        "skipped": 5,
+        "total": 1418
+      },
+      "remainingSevenGates": "not-executed-after-failure",
+      "results": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/results.json",
+        "bytes": 858783,
+        "sha256": "2bc8ec7898be4790d27dd6a416ce32441cd700fd1f606406443dd3a5c5ed257b"
+      },
+      "sourceChanged": false,
+      "originalChanged": false,
+      "snapshotChangedPaths": [],
+      "logIdentitiesVerified": true,
+      "errors": [
+        "Turbopack: node_modules symlink outside filesystem root prevented expected server-only import diagnostic.",
+        "Playwright own-package preflight: package dependency directory noncanonical because ancestor node_modules is an external symlink."
+      ],
+      "disposition": "Failed evidence retained. No test/lock/candidate changes. Root independently changes external verification environment, and must rerun failing suites then full gates."
+    },
+    {
+      "results": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/results.json",
+        "bytes": 862572,
+        "sha256": "1ea626b13cf8b17463c204677b0d95c8e6220d53cd65a35334b5feab772f52bb"
+      },
+      "status": "fail",
+      "finishedAt": "2026-09-07T13:47:02.570Z",
+      "gateCountExecuted": 10,
+      "gates": [
+        {
+          "id": "full-lint",
+          "status": "pass",
+          "elapsedSeconds": 6.857
+        },
+        {
+          "id": "typecheck",
+          "status": "pass",
+          "elapsedSeconds": 3.971
+        },
+        {
+          "id": "current-admission",
+          "status": "pass",
+          "elapsedSeconds": 0.159
+        },
+        {
+          "id": "syntax-1",
+          "status": "pass",
+          "elapsedSeconds": 0.036
+        },
+        {
+          "id": "syntax-2",
+          "status": "pass",
+          "elapsedSeconds": 0.044
+        },
+        {
+          "id": "syntax-3",
+          "status": "pass",
+          "elapsedSeconds": 0.051
+        },
+        {
+          "id": "syntax-4",
+          "status": "pass",
+          "elapsedSeconds": 0.045
+        },
+        {
+          "id": "focused-contracts",
+          "status": "pass",
+          "elapsedSeconds": 16.32
+        },
+        {
+          "id": "numerical-acceptance",
+          "status": "pass",
+          "elapsedSeconds": 57.176
+        },
+        {
+          "id": "full-js-core",
+          "status": "fail",
+          "elapsedSeconds": 1132.449
+        }
+      ],
+      "core": {
+        "id": "full-js-core",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "test:js:core"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/candidate",
+        "timeoutMs": 1500000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stderr.log"
+        },
+        "startedAt": "2026-09-07T13:27:59.815Z",
+        "status": "fail",
+        "exitCode": 1,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T13:46:52.264Z",
+        "elapsedSeconds": 1132.449,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stdout.log",
+          "bytes": 31444,
+          "sha256": "bf2034633503731874634261811674cbf551ca7a276c1073e3d5fca127672795",
+          "tail": " 313ms\n ✓ scripts/atomistic/runtime-input-contract.test.mjs (8 tests) 276ms\n ✓ scripts/workflow-policy.test.mjs (44 tests) 261ms\n ✓ lib/simulation/lennard-jones.test.ts (12 tests) 253ms\n ✓ lib/simulation/aqueous-system-spec-schemas.test.ts (7 tests) 248ms\n ✓ lib/simulation/periodic-atomistic-schemas.test.ts (5 tests) 220ms\n ✓ lib/simulation/aqueous-foundation-verification.test.ts (3 tests) 213ms\n ✓ scripts/atomistic/openmm/fetch-ci-assets.test.mjs (12 tests) 196ms\n ✓ scripts/atomistic/openmm/verify-control.test.mjs (3 tests) 219ms\n ✓ scripts/atomistic/full-candidate-metrics.test.mjs (11 tests) 185ms\n ✓ scripts/atomistic/openmm/private-browser-harness/chromium-v049-lock.test.mjs (3 tests) 204ms\n ✓ scripts/atomistic/openmm/private-browser-harness/build-private-browser-trajectory-client-v049.test.mjs (3 tests) 163ms\n ✓ lib/structure/custom-structure-webgl-component.test.ts (7 tests) 144ms\n ✓ lib/simulation/periodic-ewald.test.ts (10 tests) 143ms\n ✓ lib/simulation/aqueous-schemas.test.ts (4 tests) 129ms\n ✓ scripts/atomistic/openmm/private-browser-harness/fetch-private-chromium-v049.test.mjs (17 tests) 135ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-envelope-v046.test.mjs (6 tests) 110ms\n ✓ scripts/atomistic/openmm/private-browser-harness/build-private-browser-client-v046.test.mjs (1 test) 96ms\n ✓ lib/simulation/periodic-coulomb-exceptions.test.ts (6 tests) 90ms\n ✓ lib/molecular/periodic-atomistic-render-frame.test.ts (2 tests) 83ms\n ✓ scripts/atomistic/bootstrap-replica-receipt-policy.test.mjs (12 tests) 77ms\n ✓ scripts/release-cloudflare.test.mjs (9 tests) 68ms\n ✓ scripts/atomistic/inspect-full-candidate-registration.test.mjs (45 tests) 68ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-chromium-runtime-preflight-v049.test.mjs (9 tests) 65ms\n ✓ lib/structure/structure-document-schema.test.ts (4 tests) 53ms\n ✓ scripts/atomistic/openmm/private-browser-harness/run-protected-browser-namespace-v049.test.mjs (10 tests) 55ms\n ✓ scripts/atomistic/private-full-candidate-handoff.test.mjs (10 tests) 48ms\n ✓ scripts/release-report.test.mjs (9 tests) 40ms\n ✓ scripts/atomistic/artifact-cache.test.mjs (4 tests) 34ms\n ✓ scripts/atomistic/inspect-full-candidate-github-readiness.test.mjs (4 tests) 32ms\n ✓ scripts/atomistic/openmm/control-metrics.test.mjs (7 tests) 28ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-production-boundary.test.mjs (2 tests) 44ms\n ✓ scripts/atomistic/verify-bootstrap-replicas.test.mjs (10 tests) 22ms\n ✓ lib/simulation/aqueous-topology.test.ts (7 tests) 21ms\n ✓ scripts/validate-production-isolation.test.mjs (3 tests) 20ms\n ✓ scripts/source-snapshot.test.mjs (3 tests) 14ms\n ✓ lib/simulation/rigid-constraints.test.ts (13 tests) 15ms\n ✓ scripts/atomistic/openmm/private-browser-harness/run-protected-private-browser-mode-v049.server.test.mjs (16 tests) 12ms\n ✓ lib/molecular/molecular-interactions.test.ts (11 tests) 11ms\n ✓ app/components/molecular-visual-guides.test.ts (6 tests) 11ms\n ✓ lib/structure/structure-render-model.test.ts (12 tests) 11ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-production-boundary-v049.test.mjs (3 tests) 9ms\n ✓ scripts/atomistic/full-candidate-producer-outcome-policy.test.mjs (9 tests) 9ms\n ✓ scripts/evaluation-report-boundary.test.mjs (4 tests) 7ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-observer-v049.test.mjs (65 tests) 6ms\n ✓ lib/simulation/periodic-cell.test.ts (15 tests) 6ms\n ✓ lib/simulation/periodic-atomistic-kernel.test.ts (8 tests) 5ms\n ✓ lib/structure/strict-json.test.ts (15 tests) 4ms\n ✓ scripts/atomistic/openmm/openmm-tip3p-schemas.test.mjs (3 tests) 5ms\n ✓ scripts/atomistic/full-candidate-github-evidence-policy.test.mjs (15 tests) 4ms\n ✓ lib/structure/custom-structure-boundary.test.ts (4 tests) 4ms\n ✓ scripts/atomistic/dataset-manifest.test.mjs (5 tests) 4ms\n ✓ scripts/atomistic/plan-policy.test.mjs (8 tests) 4ms\n ✓ scripts/comparator-evidence-policy.test.mjs (4 tests) 3ms\n ✓ lib/simulation/digest.test.ts (4 tests) 3ms\n ✓ lib/structure/element-catalog.test.ts (2 tests) 3ms\n ✓ lib/simulation/periodic-potentials.test.ts (5 tests) 2ms\n ✓ lib/molecular/aqueous-webgl-runtime-policy.test.ts (11 tests) 2ms\n ✓ lib/simulation/amber14-tip3p-parameters.test.ts (4 tests) 2ms\n ✓ scripts/github-release-policy.test.mjs (4 tests) 2ms\n ✓ scripts/source-scope.test.mjs (3 tests) 1ms\n ✓ lib/structure/structure-webgl-runtime-policy.test.ts (2 tests) 1ms\n ↓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-chromium-integration-v049.test.mjs (3 tests | 3 skipped)\n ↓ scripts/atomistic/openmm/private-browser-harness/private-browser-trajectory-manual-launcher-v049.test.mjs (1 test | 1 skipped)\n\n Test Files  3 failed | 122 passed | 2 skipped (127)\n      Tests  2 failed | 1409 passed | 7 skipped (1418)\n   Start at  17:28:00\n   Duration  1131.51s (transform 1.75s, setup 0ms, import 7.02s, tests 1115.19s, environment 1.02s)\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stderr.log",
+          "bytes": 2487,
+          "sha256": "91757c70450c246ec9457ad60004b7a51b6111039e863fd49b91ea1c118110d8",
+          "tail": "\n⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  lib/simulation/periodic-verification.test.ts > periodic atomistic executable verification\nError: Hook timed out in 120000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\".\n ❯ lib/simulation/periodic-verification.test.ts:13:3\n     11|   let report: PeriodicAtomisticVerificationReportV041;\n     12|\n     13|   beforeAll(() => {\n       |   ^\n     14|     report = runPeriodicAtomisticVerification();\n     15|   }, 120_000);\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs > V048 single-snapshot OpenMM positions trajectory loader > derives all 101 private frames from one explicitly synthetic spatial fixture\nError: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n ❯ scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs:29:3\n     27|\n     28| describe('V048 single-snapshot OpenMM positions trajectory loader', ()…\n     29|   it('derives all 101 private frames from one explicitly synthetic spa…\n       |   ^\n     30|     const fixture = makeProducerDirectory({\n     31|       positionLayout: 'synthetic-spatial-render-fixture',\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯\n\n FAIL  scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs > V049 exact V048 capability to sanitized private-browser trajectory export > exports one positions-only packet and revokes the synthetic V048 source before return\nError: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n ❯ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs:43:3\n     41|\n     42| describe('V049 exact V048 capability to sanitized private-browser traj…\n     43|   it('exports one positions-only packet and revokes the synthetic V048…\n       |   ^\n     44|     const fixture = makeProducerDirectory({\n     45|       positionLayout: 'synthetic-spatial-render-fixture',\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯\n\n"
+        }
+      },
+      "sourceBefore": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+      "sourceAfter": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+      "legacyBefore": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "legacyAfter": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "snapshotChangedPaths": [],
+      "logIdentitiesVerified": true,
+      "dependencySourceUnchanged": true,
+      "dependencySnapshotNonCacheChangedPaths": [],
+      "dependencySnapshotChangedPaths": [
+        ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+      ],
+      "dependencyInventoryArtifactsVerified": true,
+      "gateCountPlanned": 17,
+      "gateCountPassed": 9,
+      "gateCountFailed": 1,
+      "gateCountNotRun": 7,
+      "jsCounts": {
+        "files": {
+          "passed": 122,
+          "failed": 3,
+          "skipped": 2,
+          "total": 127
+        },
+        "tests": {
+          "passed": 1409,
+          "failed": 2,
+          "skipped": 7,
+          "total": 1418
+        },
+        "skips": {
+          "preexisting": 5,
+          "unexecutedFromFailedPeriodicHook": 2,
+          "allSevenOptional": false
+        }
+      },
+      "attempt": "v2-physical-dependencies-original-inner-timeouts"
+    }
+  ],
+  "environmentLayoutDiagnosis": {
+    "reviewer": "/root/admission_software_review",
+    "status": "PASS_ENVIRONMENT_FIX_ONLY",
+    "sourceInvarianceFileCount": 8,
+    "directPlaywrightControl": "Original integration read-only preflight passes; failed snapshot returns identical noncanonical-directory error.",
+    "turbopackControl": "Panic confirms dependency resolution failure before desired server-only rejection. Both actual suite assertions still need to pass on a corrected copy.",
+    "evidence": {
+      "path": "/private/tmp/tf-r18a-layout-diagnostic.TzTrdR/layout-evidence.json",
+      "bytes": 7087,
+      "sha256": "50692bfcf68be072ab511595cfe2480f13ba1a9b06ed3f5e17c370277c0c192e"
+    },
+    "rootRegression": {
+      "results": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/results.json",
+        "bytes": 828413,
+        "sha256": "8f38c5d88024be09a88431638b55a96f128918a53a601d7f69cad8dd2e46016f"
+      },
+      "status": "pass-frozen-baseline-only",
+      "sourceBefore": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+      "sourceAfter": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+      "legacyBefore": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "legacyAfter": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+      "snapshotChangedPaths": [],
+      "dependencyCopyVerified": true,
+      "dependencySourceUnchanged": true,
+      "dependencySnapshotUnchanged": false,
+      "dependencySnapshotChangedPaths": [
+        ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+      ],
+      "dependencySnapshotNonCacheChangedPaths": [],
+      "dependencyBefore": {
+        "rootMode": 493,
+        "pathCount": 35721,
+        "regularFileCount": 32221,
+        "symbolicLinkCount": 43,
+        "totalBytes": 961988058,
+        "observedHardlinks": [
+          {
+            "path": "@cloudflare/workerd-darwin-arm64/bin/workerd",
+            "nlink": 2
+          },
+          {
+            "path": "@esbuild/darwin-arm64/bin/esbuild",
+            "nlink": 2
+          },
+          {
+            "path": "esbuild/bin/esbuild",
+            "nlink": 2
+          },
+          {
+            "path": "workerd/bin/workerd",
+            "nlink": 2
+          }
+        ],
+        "canonicalBytes": 5688338,
+        "sha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+        "artifact": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-source-before.json",
+          "bytes": 5688339,
+          "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+        }
+      },
+      "dependencySnapshotBefore": {
+        "rootMode": 493,
+        "pathCount": 35721,
+        "regularFileCount": 32221,
+        "symbolicLinkCount": 43,
+        "totalBytes": 961988058,
+        "observedHardlinks": [],
+        "canonicalBytes": 5688338,
+        "sha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+        "artifact": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-snapshot-before.json",
+          "bytes": 5688339,
+          "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+        }
+      },
+      "dependencySnapshotAfter": {
+        "rootMode": 493,
+        "pathCount": 35721,
+        "regularFileCount": 32221,
+        "symbolicLinkCount": 43,
+        "totalBytes": 961988054,
+        "observedHardlinks": [],
+        "canonicalBytes": 5688338,
+        "sha256": "d1361224dbd8c060f1e394b53acfa85f19388adc571194b0d1c3e52eadfd5d29",
+        "artifact": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-snapshot-after.json",
+          "bytes": 5688339,
+          "sha256": "f62bf4e16419933f7c2cf1d0f7b66e617f25f98814a0f8fe5d5a23f882c47702"
+        }
+      },
+      "dependencyInventoryArtifactsVerified": true,
+      "logIdentitiesVerified": true,
+      "gates": [
+        {
+          "id": "dependency-layout-regressions",
+          "command": [
+            "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "--config",
+            "vitest.config.ts",
+            "lib/simulation/openmm-world-session-loader.server.test.ts",
+            "scripts/atomistic/openmm/private-browser-harness/private-playwright-package-preflight-v049.test.mjs"
+          ],
+          "cwd": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/candidate",
+          "timeoutMs": 300000,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "partialLogPaths": {
+            "stdout": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stdout.log",
+            "stderr": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stderr.log"
+          },
+          "startedAt": "2026-09-07T13:20:10.420Z",
+          "status": "pass",
+          "exitCode": 0,
+          "signal": null,
+          "error": null,
+          "timedOut": false,
+          "stopReason": null,
+          "killError": null,
+          "graceExpired": false,
+          "outputTruncated": false,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+          },
+          "finishedAt": "2026-09-07T13:20:14.832Z",
+          "elapsedSeconds": 4.412,
+          "stdout": {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stdout.log",
+            "bytes": 552,
+            "sha256": "c25c42c056ef8cd7a1e06562d8c90bd187cf9780605e920634e4d48f01d8bc7c",
+            "tail": "\n RUN  v4.1.11 /private/tmp/tf-r18a-current-main-final-gates-j5gibG/candidate\n\n ✓ lib/simulation/openmm-world-session-loader.server.test.ts (5 tests) 2503ms\n     ✓ uses the framework server-only marker and rejects a client import chain at build time  2490ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-playwright-package-preflight-v049.test.mjs (10 tests) 76ms\n\n Test Files  2 passed (2)\n      Tests  15 passed (15)\n   Start at  17:20:11\n   Duration  2.83s (transform 93ms, setup 0ms, import 126ms, tests 2.58s, environment 0ms)\n\n"
+          },
+          "stderr": {
+            "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "tail": ""
+          }
+        }
+      ]
+    },
+    "executorV2": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e",
+      "dependencyCopy": "Physical regular files with no destination hardlink sharing; 43 preserved closed internal relative symlinks.",
+      "cachePolicy": "Full inventories include caches. After root regression exactly one declared .vite cache result changed; no non-cache or source dependency changes. Not entire dependency-tree immutability.",
+      "notClaimed": [
+        "fresh npm ci",
+        "fresh Git checkout",
+        "Linux CI",
+        "complete OS/native dependency closure",
+        "scientific promotion",
+        "deployment"
+      ]
+    },
+    "independentClosure": {
+      "path": "/private/tmp/tf-r18a-executor-v2-review.AcEUnP/v2-closure-evidence.json",
+      "bytes": 8814,
+      "sha256": "44b6a83cc79e00d28a86cc9315ae54f6140ef2c6e604994de5ec07dd82a16043",
+      "verdict": "PASS_ENVIRONMENT_FIX_ONLY",
+      "p0": 0,
+      "p1": 0,
+      "p2": 1,
+      "acceptedP2": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "rawEvidence": {
+        "schemaVersion": "independent-r18a-executor-v2-environment-closure/0.1",
+        "scope": "External executor dependency-layout delta only. No suites rerun by reviewer. Complete frozen helper text and exact copy statement used only in private synthetic fixtures; actual source/dependency inventories and existing 15-test evidence independently rechecked.",
+        "frozenExecutor": {
+          "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+          "bytes": 22060,
+          "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e"
+        },
+        "preservedV1": {
+          "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates.mjs",
+          "bytes": 15020,
+          "sha256": "45eefb65fff344df7c6c769a0d18243dabcadbc95b25956b4ec7c65bb508fcd7"
+        },
+        "preservedFailedFullReport": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/results.json",
+          "bytes": 858783,
+          "sha256": "2bc8ec7898be4790d27dd6a416ce32441cd700fd1f606406443dd3a5c5ed257b"
+        },
+        "actualRegressionReport": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/results.json",
+          "bytes": 828413,
+          "sha256": "8f38c5d88024be09a88431638b55a96f128918a53a601d7f69cad8dd2e46016f"
+        },
+        "extraction": {
+          "dependencyHelperBlockSha256": "98b56b49774f37eb4e204c8a0a70f9140c88d09166366dc5063204b69bb3730b",
+          "safePathBlockSha256": "bccf092b3d7fb6f7d3c76815f797f6c751f3bfa95f48c9c2110192acc38c0f17",
+          "copyStatementSha256": "d693398b514db97198ff9cd971d2bd8f143db7e4ad283293310c18580f6916e9"
+        },
+        "syntheticCases": [
+          {
+            "name": "internal-relative-symlink",
+            "outcome": "pass",
+            "digest": "d393010e400dfcf3113cc94578d95f000f9b494831a3c6f25506f08c0e249ba7"
+          },
+          {
+            "name": "absolute",
+            "outcome": "rejected",
+            "reason": "Dependency symlink is absolute, escaping, dangling or cyclic: link"
+          },
+          {
+            "name": "escape",
+            "outcome": "rejected",
+            "reason": "Dependency symlink is absolute, escaping, dangling or cyclic: link"
+          },
+          {
+            "name": "dangling",
+            "outcome": "rejected",
+            "reason": "ENOENT: no such file or directory, stat '/private/tmp/tf-r18a-executor-v2-review.AcEUnP/dangling/link'"
+          },
+          {
+            "name": "cycle",
+            "outcome": "rejected",
+            "reason": "ELOOP: too many symbolic links encountered, stat '/private/tmp/tf-r18a-executor-v2-review.AcEUnP/cycle/a'"
+          },
+          {
+            "name": "cache-escape",
+            "outcome": "rejected",
+            "reason": "Dependency symlink is absolute, escaping, dangling or cyclic: .vite/link"
+          },
+          {
+            "name": "source-hardlinks-to-independent-copy",
+            "outcome": "pass",
+            "sourceHardlinkPaths": [
+              {
+                "path": "pkg/alias",
+                "nlink": 2
+              },
+              {
+                "path": "pkg/payload",
+                "nlink": 2
+              }
+            ],
+            "copiedHardlinks": [],
+            "copiedSingleLinkRequirementRejectsSource": "Copied dependency shares a hardlink: pkg/alias",
+            "identicalBoundInventory": true
+          },
+          {
+            "name": "copy-preserves-raw-relative-target",
+            "outcome": "pass",
+            "resolvesInsideCopy": true
+          },
+          {
+            "name": "cache-prefix-boundaries-and-noncache-diff",
+            "outcome": "pass",
+            "classifications": [
+              {
+                "path": ".vite",
+                "mutable": true
+              },
+              {
+                "path": ".vite/results.json",
+                "mutable": true
+              },
+              {
+                "path": ".vite-temp/tmp.mjs",
+                "mutable": true
+              },
+              {
+                "path": ".vite-other/x",
+                "mutable": false
+              },
+              {
+                "path": ".vite-tempest/x",
+                "mutable": false
+              },
+              {
+                "path": "package/.vite/x",
+                "mutable": false
+              }
+            ],
+            "differences": [
+              ".vite/results",
+              "pkg/file"
+            ]
+          }
+        ],
+        "inventoryEvidence": [
+          {
+            "name": "dependencyBefore",
+            "artifact": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-source-before.json",
+              "bytes": 5688339,
+              "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+            },
+            "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+            "pathCount": 35721
+          },
+          {
+            "name": "dependencySourceAfterCopy",
+            "artifact": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-source-after-copy.json",
+              "bytes": 5688339,
+              "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+            },
+            "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+            "pathCount": 35721
+          },
+          {
+            "name": "dependencySnapshotBefore",
+            "artifact": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-snapshot-before.json",
+              "bytes": 5688339,
+              "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+            },
+            "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+            "pathCount": 35721
+          },
+          {
+            "name": "dependencySourceAfter",
+            "artifact": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-source-after.json",
+              "bytes": 5688339,
+              "sha256": "e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45"
+            },
+            "canonicalSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+            "pathCount": 35721
+          },
+          {
+            "name": "dependencySnapshotAfter",
+            "artifact": {
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/dependency-snapshot-after.json",
+              "bytes": 5688339,
+              "sha256": "f62bf4e16419933f7c2cf1d0f7b66e617f25f98814a0f8fe5d5a23f882c47702"
+            },
+            "canonicalSha256": "d1361224dbd8c060f1e394b53acfa85f19388adc571194b0d1c3e52eadfd5d29",
+            "pathCount": 35721
+          }
+        ],
+        "actualDependencyVerification": {
+          "sourcePaths": 35721,
+          "copiedPaths": 35721,
+          "copiedIndependentRegularFiles": 32221,
+          "symbolicLinks": 43,
+          "sourceHardlinks": [
+            {
+              "path": "@cloudflare/workerd-darwin-arm64/bin/workerd",
+              "nlink": 2
+            },
+            {
+              "path": "@esbuild/darwin-arm64/bin/esbuild",
+              "nlink": 2
+            },
+            {
+              "path": "esbuild/bin/esbuild",
+              "nlink": 2
+            },
+            {
+              "path": "workerd/bin/workerd",
+              "nlink": 2
+            }
+          ],
+          "copiedHardlinks": [],
+          "sourceSha256": "06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0",
+          "copiedPostRunSha256": "d1361224dbd8c060f1e394b53acfa85f19388adc571194b0d1c3e52eadfd5d29",
+          "copiedMutableCacheChangedPaths": [
+            ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+          ],
+          "copiedFullTreeUnchanged": false,
+          "nonCacheChanges": [],
+          "noExternalSymlinkOrSharedInode": true
+        },
+        "verifiedSourceStates": [
+          {
+            "name": "sourceAfter",
+            "pathCount": 489,
+            "sha256": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527"
+          },
+          {
+            "name": "snapshotAfter",
+            "pathCount": 489,
+            "sha256": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527"
+          },
+          {
+            "name": "legacyAfter",
+            "pathCount": 641,
+            "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+          }
+        ],
+        "regression": {
+          "suites": 2,
+          "testsPassed": 15,
+          "testsSkipped": 0,
+          "testsFailed": 0,
+          "elapsedSeconds": 4.412,
+          "logIdentities": [
+            {
+              "stream": "stdout",
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stdout.log",
+              "bytes": 552,
+              "sha256": "c25c42c056ef8cd7a1e06562d8c90bd187cf9780605e920634e4d48f01d8bc7c"
+            },
+            {
+              "stream": "stderr",
+              "path": "/private/tmp/tf-r18a-current-main-final-gates-j5gibG/logs/dependency-layout-regressions.stderr.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        "findings": [
+          {
+            "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+            "priority": "P2",
+            "disposition": "accepted-nonblocking-residual",
+            "lines": [
+              154,
+              181,
+              252
+            ],
+            "description": "Preparation/copy checks occur before the outer try. A preparation exception can exit nonzero while a previously persisted report remains running. No pass is inferred from it: actual CLI exit/process handle is terminal authority. This was statically reviewed, not an executed setup-failure test; no source fix claimed."
+          }
+        ],
+        "disposition": "PASS_ENVIRONMENT_FIX_ONLY",
+        "releaseEligible": false,
+        "finalFullGatesPassed": false
+      }
+    }
+  },
+  "inProgressRegressionObservations": {
+    "scope": "Completed full-core run sub-observation only; full-core failed. Same-code repeat does not establish an independent physical validation.",
+    "aqueousSameCodeRepeat": {
+      "identical": true,
+      "comparedFields": 18,
+      "canonicalJsonSha256": "cc00819572f1a4c932a38bab4c30e6f46fc09f96951b4ebabb874103a75f55ae",
+      "independentPhysicalValidation": false,
+      "sourceChunks": [
+        "1d7733"
+      ]
+    },
+    "suiteTestsPassed": 31,
+    "suiteElapsedMs": 407831
+  },
+  "fullGateDisposition": "Blocked by three actual inner Vitest deadline failures; seven remaining final gates did not execute. No hardware cause established.",
+  "unexecutedFinalGates": [
+    "node-29-required-dispatch",
+    "full-python",
+    "atomistic-validate",
+    "npm-audit",
+    "observer-snapshot",
+    "full-evaluate",
+    "production-build"
+  ],
+  "timingDiagnosis": {
+    "path": "/private/tmp/tf-r18a-timing-diagnostic.CaWoDQ/timing-evidence.json",
+    "bytes": 44513,
+    "sha256": "a6d471fcc8c9dfbde6595448fe98348bb0304f6aec9b0585dcfb18dc98eff8d1",
+    "verdict": "Three genuine inner test/hook deadline failures; no source cause or hardware cause identified; original failed full run retained."
+  },
+  "isolatedTimingDiagnostic": {
+    "results": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/results.json",
+      "bytes": 830146,
+      "sha256": "2f1ed9e15c276d16fd51e28734cb7079fa48b83dff426803c8af860875eac0f0"
+    },
+    "status": "pass-frozen-baseline-only",
+    "startedAt": "2026-09-07T13:52:45.043Z",
+    "finishedAt": "2026-09-07T13:54:34.099Z",
+    "gates": [
+      {
+        "id": "three-suite-original-timeout-diagnostic",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "--eval",
+          "import { spawn } from 'node:child_process';\nconst child = spawn('/usr/bin/time', ['-l', '-p', process.execPath, 'node_modules/vitest/vitest.mjs', 'run', '--config', 'vitest.config.ts', ...[\"lib/simulation/periodic-verification.test.ts\",\"scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs\",\"scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs\"]], { stdio: 'inherit', detached: false });\nchild.once('error', (error) => { console.error('Diagnostic time wrapper spawn failure:', error.message); process.exitCode = 1; });\nchild.once('close', (code, signal) => { process.exitCode = Number.isInteger(code) && code !== 0 ? code : (code === 0 && signal === null ? 0 : 1); });\n"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/candidate",
+        "timeoutMs": 600000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stderr.log"
+        },
+        "startedAt": "2026-09-07T13:53:09.081Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T13:54:23.554Z",
+        "elapsedSeconds": 74.473,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stdout.log",
+          "bytes": 915,
+          "sha256": "338c0acd4dd3087cf1c079c990e2edde43b74f45a6d3beff48ea116ce7f4025e",
+          "tail": "\n RUN  v4.1.11 /private/tmp/tf-r18a-current-main-final-gates-AOM6nf/candidate\n\n ✓ lib/simulation/periodic-verification.test.ts (2 tests) 26916ms\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs (3 tests) 25840ms\n     ✓ exports one positions-only packet and revokes the synthetic V048 source before return  12915ms\n     ✓ does not export from a revoked or cloned materialization capability  12921ms\n ✓ scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs (3 tests) 19193ms\n     ✓ derives all 101 private frames from one explicitly synthetic spatial fixture  12979ms\n     ✓ rejects the legacy collapsed verifier fixture at the V048 spatial gate  6213ms\n\n Test Files  3 passed (3)\n      Tests  8 passed (8)\n   Start at  17:53:11\n   Duration  72.34s (transform 139ms, setup 0ms, import 206ms, tests 71.95s, environment 0ms)\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stderr.log",
+          "bytes": 755,
+          "sha256": "e73752def52494cbaabbb3dddad0fabe586a57425dbd022e3246a57b71363d96",
+          "tail": "real 74.43\nuser 72.64\nsys 1.45\n           479707136  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              642226  page reclaims\n                 457  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                 176  messages sent\n                 153  messages received\n                   3  signals received\n                  80  voluntary context switches\n               67312  involuntary context switches\n          5126493652  instructions retired\n          1895177257  cycles elapsed\n           138872544  peak memory footprint\n"
+        }
+      }
+    ],
+    "sourceBefore": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+    "sourceAfter": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527",
+    "legacyBefore": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+    "legacyAfter": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463",
+    "snapshotChangedPaths": [],
+    "dependencySourceUnchanged": true,
+    "dependencyCopyVerified": true,
+    "dependencySnapshotChangedPaths": [
+      ".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json"
+    ],
+    "dependencySnapshotNonCacheChangedPaths": [],
+    "dependencyInventoryArtifactsVerified": true,
+    "logIdentitiesVerified": true,
+    "rawStderr": "real 74.43\nuser 72.64\nsys 1.45\n           479707136  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              642226  page reclaims\n                 457  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                 176  messages sent\n                 153  messages received\n                   3  signals received\n                  80  voluntary context switches\n               67312  involuntary context switches\n          5126493652  instructions retired\n          1895177257  cycles elapsed\n           138872544  peak memory footprint\n",
+    "plan": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/r18a-three-suite-original-timeout-diagnostic-plan-v1.json",
+      "bytes": 238037,
+      "sha256": "2ac51a2ad361554600915ce91bd1a4a8cdadc28f1e4e1d9f5f8e2562f97e1a92"
+    },
+    "planReview": {
+      "reviewer": "/root/admission_software_review",
+      "verdict": "PASS_DIAGNOSTIC_PLAN_ONLY",
+      "wrapper": {
+        "bytes": 743,
+        "sha256": "06d40da08cd4ceb4a3fbba546dc0d163b3a429ad7dd74245ce00709293f06ba0"
+      },
+      "timeBinary": {
+        "path": "/usr/bin/time",
+        "bytes": 134960,
+        "sha256": "e1e98e68fd988f353cc51842f5a576bc2cb4c341ae24fd2ca4f625f33b38f23a"
+      },
+      "scope": "One frozen serial original-timeout three-suite diagnostic; not full-gate pass; raw stderr includes time stats. Missing stats are incomplete, no inference."
+    },
+    "scope": "Diagnostic only. Three suites and eight tests passed once with unchanged inner deadlines; this does not replace the retained failed full-core run, explain hardware causes, or establish full-gate approval.",
+    "independentReview": {
+      "path": "/private/tmp/tf-r18a-timing-diagnostic.CaWoDQ/three-suite-diagnostic-review.json",
+      "bytes": 16049,
+      "sha256": "eec8e63248ee255a6a093566916479c5d9781a7eb6b8202ee6b6bf02ef0344af",
+      "rawUtf8": "{\n  \"schemaVersion\": \"tf.r18a-readonly-three-suite-diagnostic-review/0.1\",\n  \"reviewer\": \"/root/admission_software_review\",\n  \"capturedAt\": \"2026-09-07T13:57:50.281Z\",\n  \"verdict\": \"PASS_DIAGNOSTIC_ONLY\",\n  \"scope\": \"Read-only plan, terminal logs, all recorded inventories, actual source/legacy/dependency filesystem validation. No tests or solver were run by the reviewer. Not candidate approval or full-gate replacement.\",\n  \"script\": {\n    \"path\": \"/private/tmp/tf-r18a-timing-diagnostic.CaWoDQ/review-three-suite-result.mjs\",\n    \"bytes\": 11786,\n    \"sha256\": \"8d98006e971d6e075b8f3a5b43e5f1b0c8cc5626383d8a0d118a5ae841d58a2e\"\n  },\n  \"checkedArtifactIdentities\": [\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/results.json\",\n      \"bytes\": 830146,\n      \"sha256\": \"2f1ed9e15c276d16fd51e28734cb7079fa48b83dff426803c8af860875eac0f0\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-backend-release-tools.re0t54/r18a-three-suite-original-timeout-diagnostic-plan-v1.json\",\n      \"bytes\": 238037,\n      \"sha256\": \"2ac51a2ad361554600915ce91bd1a4a8cdadc28f1e4e1d9f5f8e2562f97e1a92\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs\",\n      \"bytes\": 22060,\n      \"sha256\": \"5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\n      \"bytes\": 120573328,\n      \"sha256\": \"1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/results.json\",\n      \"bytes\": 862572,\n      \"sha256\": \"1ea626b13cf8b17463c204677b0d95c8e6220d53cd65a35334b5feab772f52bb\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-executor-v2-review.AcEUnP/v2-closure-evidence.json\",\n      \"bytes\": 8814,\n      \"sha256\": \"44b6a83cc79e00d28a86cc9315ae54f6140ef2c6e604994de5ec07dd82a16043\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-timing-diagnostic.CaWoDQ/timing-evidence.json\",\n      \"bytes\": 44513,\n      \"sha256\": \"a6d471fcc8c9dfbde6595448fe98348bb0304f6aec9b0585dcfb18dc98eff8d1\"\n    },\n    {\n      \"path\": \"/usr/bin/time\",\n      \"bytes\": 134960,\n      \"sha256\": \"e1e98e68fd988f353cc51842f5a576bc2cb4c341ae24fd2ca4f625f33b38f23a\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stdout.log\",\n      \"bytes\": 915,\n      \"sha256\": \"338c0acd4dd3087cf1c079c990e2edde43b74f45a6d3beff48ea116ce7f4025e\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stderr.log\",\n      \"bytes\": 755,\n      \"sha256\": \"e73752def52494cbaabbb3dddad0fabe586a57425dbd022e3246a57b71363d96\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-before.json\",\n      \"bytes\": 5688339,\n      \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-after-copy.json\",\n      \"bytes\": 5688339,\n      \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-snapshot-before.json\",\n      \"bytes\": 5688339,\n      \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-after.json\",\n      \"bytes\": 5688339,\n      \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-snapshot-after.json\",\n      \"bytes\": 5688339,\n      \"sha256\": \"650646a0eb068877ee9c4d40c6f8d74e2ab85680287ec58ab187e6cf0c60049d\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/logs/full-js-core.stdout.log\",\n      \"bytes\": 31721,\n      \"sha256\": \"bf0a68ac5df2d1c9f52eba7c82760acca940648e781b840b783600b3cfac1a54\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/logs/full-js-core.stderr.log\",\n      \"bytes\": 5071,\n      \"sha256\": \"60ca7d516f346f648448c999912de6a7367697ab62332f43dfc89d3263480639\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stdout.log\",\n      \"bytes\": 31444,\n      \"sha256\": \"bf2034633503731874634261811674cbf551ca7a276c1073e3d5fca127672795\"\n    },\n    {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stderr.log\",\n      \"bytes\": 2487,\n      \"sha256\": \"91757c70450c246ec9457ad60004b7a51b6111039e863fd49b91ea1c118110d8\"\n    }\n  ],\n  \"wrapper\": {\n    \"bytes\": 743,\n    \"sha256\": \"06d40da08cd4ceb4a3fbba546dc0d163b3a429ad7dd74245ce00709293f06ba0\"\n  },\n  \"resources\": {\n    \"realSeconds\": 74.43,\n    \"userSeconds\": 72.64,\n    \"sysSeconds\": 1.45,\n    \"maximumResidentSetSizeBytes\": 479707136\n  },\n  \"resourceBoundary\": {\n    \"hostUtility\": {\n      \"path\": \"/usr/bin/time\",\n      \"bytes\": 134960,\n      \"sha256\": \"e1e98e68fd988f353cc51842f5a576bc2cb4c341ae24fd2ca4f625f33b38f23a\"\n    },\n    \"rawStderr\": {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stderr.log\",\n      \"bytes\": 755,\n      \"sha256\": \"e73752def52494cbaabbb3dddad0fabe586a57425dbd022e3246a57b71363d96\",\n      \"tail\": \"real 74.43\\nuser 72.64\\nsys 1.45\\n           479707136  maximum resident set size\\n                   0  average shared memory size\\n                   0  average unshared data size\\n                   0  average unshared stack size\\n              642226  page reclaims\\n                 457  page faults\\n                   0  swaps\\n                   0  block input operations\\n                   0  block output operations\\n                 176  messages sent\\n                 153  messages received\\n                   3  signals received\\n                  80  voluntary context switches\\n               67312  involuntary context switches\\n          5126493652  instructions retired\\n          1895177257  cycles elapsed\\n           138872544  peak memory footprint\\n\"\n    },\n    \"scope\": \"One Vitest invocation and child usage summarized by the host utility, excluding executor copy/preparation, not per-suite attribution or host-wide sampling.\",\n    \"units\": \"real/user/sys seconds; macOS getrusage(2) documents ru_maxrss in bytes.\",\n    \"noFrequencyOrHardwareRootCauseClaim\": true,\n    \"localDocumentationRead\": [\n      \"man 1 time\",\n      \"man 2 wait4\",\n      \"man 2 getrusage\"\n    ]\n  },\n  \"testResult\": {\n    \"filesPassed\": 3,\n    \"testsPassed\": 8,\n    \"failed\": 0,\n    \"skipped\": 0,\n    \"rawStdout\": {\n      \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/logs/three-suite-original-timeout-diagnostic.stdout.log\",\n      \"bytes\": 915,\n      \"sha256\": \"338c0acd4dd3087cf1c079c990e2edde43b74f45a6d3beff48ea116ce7f4025e\",\n      \"tail\": \"\\n RUN  v4.1.11 /private/tmp/tf-r18a-current-main-final-gates-AOM6nf/candidate\\n\\n ✓ lib/simulation/periodic-verification.test.ts (2 tests) 26916ms\\n ✓ scripts/atomistic/openmm/private-browser-harness/private-position-trajectory-export-v049.server.test.mjs (3 tests) 25840ms\\n     ✓ exports one positions-only packet and revokes the synthetic V048 source before return  12915ms\\n     ✓ does not export from a revoked or cloned materialization capability  12921ms\\n ✓ scripts/atomistic/openmm/private-position-trajectory-v048.server.test.mjs (3 tests) 19193ms\\n     ✓ derives all 101 private frames from one explicitly synthetic spatial fixture  12979ms\\n     ✓ rejects the legacy collapsed verifier fixture at the V048 spatial gate  6213ms\\n\\n Test Files  3 passed (3)\\n      Tests  8 passed (8)\\n   Start at  17:53:11\\n   Duration  72.34s (transform 139ms, setup 0ms, import 206ms, tests 71.95s, environment 0ms)\\n\\n\"\n    },\n    \"exitCode\": 0,\n    \"signal\": null,\n    \"outputTruncated\": false,\n    \"cleanup\": {\n      \"directChildExitObserved\": true,\n      \"pipesClosed\": true,\n      \"processGroupAbsent\": true,\n      \"claim\": \"Direct child / original process-group observation only; escaped descendants are not verified.\"\n    }\n  },\n  \"sourceChecks\": [\n    {\n      \"root\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a\",\n      \"pathCount\": 489,\n      \"canonicalSha256\": \"f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527\",\n      \"actualBytesModesKindsLinksAndPathSetMatch\": true\n    },\n    {\n      \"root\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/candidate\",\n      \"pathCount\": 489,\n      \"canonicalSha256\": \"f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527\",\n      \"actualBytesModesKindsLinksAndPathSetMatch\": true\n    },\n    {\n      \"root\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future\",\n      \"pathCount\": 641,\n      \"canonicalSha256\": \"33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463\",\n      \"actualBytesModesKindsLinksAndPathSetMatch\": true\n    }\n  ],\n  \"inventoryChecks\": [\n    {\n      \"key\": \"dependencyBefore\",\n      \"artifact\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-before.json\",\n        \"bytes\": 5688339,\n        \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n      },\n      \"pathCount\": 35721,\n      \"canonicalSha256\": \"06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0\",\n      \"allRowsRecomputed\": true\n    },\n    {\n      \"key\": \"dependencySourceAfterCopy\",\n      \"artifact\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-after-copy.json\",\n        \"bytes\": 5688339,\n        \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n      },\n      \"pathCount\": 35721,\n      \"canonicalSha256\": \"06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0\",\n      \"allRowsRecomputed\": true\n    },\n    {\n      \"key\": \"dependencySnapshotBefore\",\n      \"artifact\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-snapshot-before.json\",\n        \"bytes\": 5688339,\n        \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n      },\n      \"pathCount\": 35721,\n      \"canonicalSha256\": \"06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0\",\n      \"allRowsRecomputed\": true\n    },\n    {\n      \"key\": \"dependencySourceAfter\",\n      \"artifact\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-source-after.json\",\n        \"bytes\": 5688339,\n        \"sha256\": \"e6aaaf246891cae48954c86ff003d9d96222304f837ee788b285f774d4923a45\"\n      },\n      \"pathCount\": 35721,\n      \"canonicalSha256\": \"06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0\",\n      \"allRowsRecomputed\": true\n    },\n    {\n      \"key\": \"dependencySnapshotAfter\",\n      \"artifact\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/dependency-snapshot-after.json\",\n        \"bytes\": 5688339,\n        \"sha256\": \"650646a0eb068877ee9c4d40c6f8d74e2ab85680287ec58ab187e6cf0c60049d\"\n      },\n      \"pathCount\": 35721,\n      \"canonicalSha256\": \"a30be97079f328046e8465768b44137734b6a88eb92212570917f157e443bfd3\",\n      \"allRowsRecomputed\": true\n    }\n  ],\n  \"physicalChecks\": [\n    {\n      \"root\": \"/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/node_modules\",\n      \"pathCount\": 35721,\n      \"sha256\": \"06ca4231cf43acdee1d7c13b65279d8a851c3dbb4604c58c0ed9aa643d5709e0\",\n      \"independentDestinationRegularFiles\": 0,\n      \"sourceSymlinksClosedWithinTheirOwnTree\": true,\n      \"allActualBytesModesKindsAndLinkTargetsMatch\": true\n    },\n    {\n      \"root\": \"/private/tmp/tf-r18a-current-main-final-gates-AOM6nf/candidate/node_modules\",\n      \"pathCount\": 35721,\n      \"sha256\": \"a30be97079f328046e8465768b44137734b6a88eb92212570917f157e443bfd3\",\n      \"independentDestinationRegularFiles\": 32221,\n      \"sourceSymlinksClosedWithinTheirOwnTree\": true,\n      \"allActualBytesModesKindsAndLinkTargetsMatch\": true\n    }\n  ],\n  \"dependencyChanges\": [\n    \".vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json\"\n  ],\n  \"oldFailedRuns\": [\n    {\n      \"results\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/results.json\",\n        \"bytes\": 858783,\n        \"sha256\": \"2bc8ec7898be4790d27dd6a416ce32441cd700fd1f606406443dd3a5c5ed257b\"\n      },\n      \"status\": \"fail\",\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/logs/full-js-core.stdout.log\",\n        \"bytes\": 31721,\n        \"sha256\": \"bf0a68ac5df2d1c9f52eba7c82760acca940648e781b840b783600b3cfac1a54\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/logs/full-js-core.stderr.log\",\n        \"bytes\": 5071,\n        \"sha256\": \"60ca7d516f346f648448c999912de6a7367697ab62332f43dfc89d3263480639\"\n      },\n      \"unchangedFailureRetained\": true\n    },\n    {\n      \"results\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/results.json\",\n        \"bytes\": 862572,\n        \"sha256\": \"1ea626b13cf8b17463c204677b0d95c8e6220d53cd65a35334b5feab772f52bb\"\n      },\n      \"status\": \"fail\",\n      \"stdout\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stdout.log\",\n        \"bytes\": 31444,\n        \"sha256\": \"bf2034633503731874634261811674cbf551ca7a276c1073e3d5fca127672795\"\n      },\n      \"stderr\": {\n        \"path\": \"/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/logs/full-js-core.stderr.log\",\n        \"bytes\": 2487,\n        \"sha256\": \"91757c70450c246ec9457ad60004b7a51b6111039e863fd49b91ea1c118110d8\"\n      },\n      \"unchangedFailureRetained\": true\n    }\n  ],\n  \"priorFullGate\": {\n    \"planned\": 17,\n    \"executed\": 10,\n    \"passed\": 9,\n    \"failed\": 1,\n    \"notRun\": [\n      \"node-29-required-dispatch\",\n      \"full-python\",\n      \"atomistic-validate\",\n      \"npm-audit\",\n      \"observer-snapshot\",\n      \"full-evaluate\",\n      \"production-build\"\n    ]\n  },\n  \"findings\": {\n    \"newSourceP0\": 0,\n    \"newSourceP1\": 0,\n    \"newDiagnosticIntegrityP0\": 0,\n    \"newDiagnosticIntegrityP1\": 0,\n    \"inheritedAcceptedP2\": [\n      {\n        \"id\": \"R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT\",\n        \"disposition\": \"Retained, not fixed; preparation exception can leave report.running, so CLI exit/process-handle terminal state remains authority. This successful run did not encounter it.\"\n      }\n    ],\n    \"rootAssignedOperationalReleaseBlockers\": [\n      {\n        \"id\": \"R18A-FINAL-GATE-CORE-DEADLINES\",\n        \"priority\": \"P1\",\n        \"status\": \"open\",\n        \"notReviewerNewSourceDefect\": true\n      },\n      {\n        \"id\": \"R18A-FINAL-GATE-SEQUENCE-INCOMPLETE\",\n        \"priority\": \"P1\",\n        \"status\": \"open\",\n        \"notReviewerNewSourceDefect\": true\n      },\n      {\n        \"id\": \"R18A-FRESH-CHECKOUT-RECEIPT-MODE\",\n        \"priority\": \"P1\",\n        \"status\": \"open\",\n        \"notReviewerNewSourceDefect\": true\n      }\n    ]\n  },\n  \"disposition\": {\n    \"oldFinalReview\": \"machine-readable abstain, releaseEligible:false\",\n    \"isolatedPassDoesNotClosePriorFullGateFailure\": true,\n    \"rootCauseUnresolved\": true,\n    \"releaseEligible\": false,\n    \"promotionEligible\": false,\n    \"portableMayIngestCompletedAbstainingReviewButNotApproval\": true,\n    \"portableImplementationNotInspectedHere\": true,\n    \"portableMustRetainApplicableBlockersAndRunOwnIndependentReviewsAndCompleteGates\": true\n  },\n  \"limitations\": [\n    \"Single isolated diagnostic attempt; no full-run reproduction, profiling, thermal or hardware attribution.\",\n    \"Native-library closure, OS sandbox and escaped descendants unverified.\",\n    \"Physical copy preserves existing local installation, not npm ci or cross-platform/fresh Git compatibility.\",\n    \"Previous worker warning and prior scientific/release limitations are not reclassified or silently closed by this diagnostic.\"\n  ]\n}\n",
+      "verdict": "PASS_DIAGNOSTIC_ONLY",
+      "reviewer": "/root/admission_software_review",
+      "candidateEdits": false
+    }
+  },
+  "evidenceRootIdentityChecks": [
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+      "bytes": 9803,
+      "mode": 420,
+      "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+      "bytes": 85182,
+      "mode": 420,
+      "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-science-review.json",
+      "bytes": 20628,
+      "mode": 420,
+      "sha256": "be4d2b39a298ab8ecb15835b4ae6d80aeb440dceddddaf3f5bcc7e24e678278a"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-software-review.json",
+      "bytes": 14074,
+      "mode": 420,
+      "sha256": "96d7348b0e3fc4334426ee6a4510efa47bb789c6f2b4488a16214950561b0677"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-sota-review.json",
+      "bytes": 11467,
+      "mode": 420,
+      "sha256": "25d06efe5ffe97e38fa9ca9f871c77bf1e77503cee4cc29df30e3831d4de158b"
+    },
+    {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/r18a-post-review-full-gates-plan-v2.json",
+      "bytes": 241375,
+      "mode": 420,
+      "sha256": "8734081b482ad9add66d9b8e8dee2da0c1d9c57908310f51f92f4abcd35f4ae6"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-5EGXGJ/results.json",
+      "bytes": 858783,
+      "mode": 420,
+      "sha256": "2bc8ec7898be4790d27dd6a416ce32441cd700fd1f606406443dd3a5c5ed257b"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-OoNBfZ/results.json",
+      "bytes": 862572,
+      "mode": 420,
+      "sha256": "1ea626b13cf8b17463c204677b0d95c8e6220d53cd65a35334b5feab772f52bb"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-software-closure.KIl2Nc/closure-evidence.json",
+      "bytes": 16594,
+      "mode": 420,
+      "sha256": "4ee860d3eae2e3554a41231ab5f09209bf3884863e8208d5575e537b70d7f6af"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-executor-v2-review.AcEUnP/v2-closure-evidence.json",
+      "bytes": 8814,
+      "mode": 420,
+      "sha256": "44b6a83cc79e00d28a86cc9315ae54f6140ef2c6e604994de5ec07dd82a16043"
+    },
+    {
+      "path": "/private/tmp/tf-r18a-timing-diagnostic.CaWoDQ/timing-evidence.json",
+      "bytes": 44513,
+      "mode": 420,
+      "sha256": "a6d471fcc8c9dfbde6595448fe98348bb0304f6aec9b0585dcfb18dc98eff8d1"
+    }
+  ],
+  "findingsDisposition": [
+    {
+      "id": "R18A-SOFTWARE-P1-AGGREGATE-DEADLINE",
+      "priority": "P1",
+      "status": "closed-by-fix-and-independent-successor-review",
+      "evidence": "independentSuccessorReviews.software"
+    },
+    {
+      "id": "R18A-SOFTWARE-P2-HISTORICAL-REPLAY-LIFECYCLE",
+      "priority": "P2",
+      "status": "closed-by-fix-and-independent-successor-review",
+      "evidence": "independentSuccessorReviews.software"
+    },
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "status": "open-release-blocking-gate-failure",
+      "rootAssignedClassification": true,
+      "detail": "The second full-core gate failed three inner deadlines. A subsequent single isolated 3-suite/8-test pass with unchanged inputs does not close full-gate failure or identify a source defect/host root cause. New candidate must independently satisfy the complete core gate; original failure remains historical evidence."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "status": "open-release-blocking-validation-gap",
+      "rootAssignedClassification": true,
+      "detail": "Seven of seventeen post-review gates did not execute after core failure. No passes are borrowed from other rounds."
+    },
+    {
+      "id": "R18A-FRESH-CHECKOUT-RECEIPT-MODE",
+      "priority": "P1",
+      "status": "open-release-blocking-portability-gap",
+      "rootAssignedClassification": true,
+      "detail": "The existing current-root admission rejects the ordinary Git checkout 0644 mode of the exact original 0444 receipt. A separate /0.3 candidate must validate its strictly source-path-only compatibility rule and retain private runtime sealing."
+    },
+    {
+      "id": "SOFTWARE-P2-WORKER-SHUTDOWN-DELAY",
+      "priority": "P2",
+      "status": "retained-open-nonblocking-within-bounded-review",
+      "detail": "A worker termination delay warning was observed in the prior v0.1 full-gate run, with root cause unknown. Subsequent successful focused reruns did not establish a fix. Record any new warning from the current final gates separately."
+    },
+    {
+      "id": "R18A-EXECUTOR-V2-P2-PREPARATION-TERMINAL-REPORT",
+      "priority": "P2",
+      "status": "accepted-nonblocking-residual",
+      "detail": "External executor preparation can exit nonzero while its previously persisted report still says running. Do not infer liveness from that field; actual CLI exit/session status is authoritative. Statically observed; not fixed or promoted to a passing preparation-failure test."
+    },
+    {
+      "id": "R18A-SOTA-01",
+      "priority": "P2",
+      "status": "open-scientific-next-gap-not-an-approval",
+      "detail": "Full t=8 spatial/time convergence remains unverified."
+    },
+    {
+      "id": "R18A-SOTA-02",
+      "priority": "P2",
+      "status": "open-scientific-next-gap-not-an-approval",
+      "detail": "Independent spatial discretization remains unverified."
+    },
+    {
+      "id": "R18A-SOTA-03",
+      "priority": "P2",
+      "status": "open-scientific-next-gap-not-an-approval",
+      "detail": "Complete error/resource calibration remains unverified."
+    }
+  ],
+  "reviewRecordComplete": true,
+  "finalGateDisposition": "Terminal full-gate failure retained. A single unchanged 3-suite/8-test isolation run passed, but does not replace failed full-core or seven unexecuted final gates. Cause remains unresolved. No more old-base full rerun is planned without new evidence; continue only through independently reviewed versioned successor.",
+  "fullGatePassed": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "abstention": {
+    "status": "abstain",
+    "reasonCodes": [
+      "FINAL_CORE_GATE_FAILED",
+      "FINAL_GATE_SEQUENCE_INCOMPLETE",
+      "FRESH_CHECKOUT_PORTABILITY_NOT_VALIDATED",
+      "PROTECTED_RELEASE_NOT_EXECUTED"
+    ],
+    "reviewArtifactCompletionIsApproval": false,
+    "goalStillActive": true
+  },
+  "recordedAt": "2026-09-07 13:58:59 UTC",
+  "postReviewGatePlan": {
+    "path": "/private/tmp/tf-backend-release-tools.re0t54/r18a-post-review-full-gates-plan-v2.json",
+    "bytes": 241375,
+    "mode": 420,
+    "sha256": "8734081b482ad9add66d9b8e8dee2da0c1d9c57908310f51f92f4abcd35f4ae6"
+  },
+  "frozenDiffIdentity": {
+    "candidateRecordCount": 25,
+    "canonicalByteSize": 4209,
+    "sha256": "44b1e1d0c9f4208d87faa0b5dae49fa93302ea10217da1e7af59aae8e1e203a5",
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-manifest.json",
+      "bytes": 9803,
+      "mode": 420,
+      "sha256": "36bd0cec6c14176a4471784a912328118dd5f0c5f4cb8d64466ec12759381c55"
+    },
+    "builderEvidence": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-backend-release-r18a/evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-successor-v2-builder-gates.json",
+      "bytes": 85182,
+      "mode": 420,
+      "sha256": "99e6a8917ef7d88f98479876ba2d8eef0e62a0b165096958aa5255f370334705"
+    },
+    "fullGateInput": {
+      "pathCount": 489,
+      "sha256": "f5d3278137026fffe70cbbc9e86ca22e4442bdc6a4c029a0d467086c14970527"
+    },
+    "originalPreservedInput": {
+      "pathCount": 641,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    }
+  },
+  "recordClosurePolicy": {
+    "finalReviewIsAdditionalControlOutput": true,
+    "sourceAndEvidenceUnderReviewWereNotChanged": true,
+    "postArtifactPathCount": 490,
+    "extraPath": "evaluation/reviews/2026-09-07-r18a-current-main-execution-v0.1-final-review.json",
+    "fullGatesApplyToPreArtifact489Paths": true,
+    "finalReviewDoesNotRetroactivelyEnterItsOwnFrozenSet": true,
+    "goalStatus": "active"
+  }
+}

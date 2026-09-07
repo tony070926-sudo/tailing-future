@@ -1,0 +1,962 @@
+{
+  "schemaVersion": "tf.r18a-report-lifecycle-builder-gates/0.1",
+  "recordedOn": "2026-09-07",
+  "status": "builder-bounded-self-check-pass-awaiting-independent-review",
+  "builder": "root",
+  "planningAssistance": "Astra (read-only)",
+  "builderApproval": false,
+  "releaseEligible": false,
+  "commitEligible": false,
+  "pushEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false,
+  "manifest": {
+    "path": "evaluation/reviews/2026-09-07-r18a-portable-main-admission-v0.3-successor-v2-manifest.json",
+    "mode": 420,
+    "size": 24001,
+    "sha256": "26f70ffb560d5f9092b1455360b325f8d0381785979a93f1c9ffcbcd0c1da602"
+  },
+  "candidate": {
+    "recordCount": 66,
+    "sha256": "914ae219fccf9e95ce5f76c50aea5a101af650f13be1c156d0df7c788d954394"
+  },
+  "deltaFromPriorPortable": {
+    "recordCount": 14,
+    "sha256": "495b1351836738196b5f1acabef05466fd29dbe1f059240e9ab225d31b3e2abc"
+  },
+  "evidence": {
+    "resultIdentity": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/results.json",
+      "mode": 420,
+      "size": 878909,
+      "sha256": "f43f33ee25e8f297c216c242b42440f119bbf4b8f253f938807b5bfc5a09440f"
+    },
+    "planIdentity": {
+      "path": "/private/tmp/tf-report-lifecycle-builder.32Zoja/plan-v1.json",
+      "mode": 420,
+      "size": 244348,
+      "sha256": "8da2ef01ac8cc3ee410b3fe9ee9fad41cf416af0298d64063c13467f8d9869b6"
+    },
+    "executor": {
+      "path": "/private/tmp/tf-backend-release-tools.re0t54/run-r18a-current-main-final-gates-v2.mjs",
+      "sha256": "5fa8a9aa200bb46163b2060264e6238a47c7475ad0d6a99fad1404562e3fac4e",
+      "nodePath": "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+      "nodeVersion": "v24.16.0",
+      "nodeSha256": "1ee75375e33b94fc34b3b19aede049e11dae90efb63b374dc96d6bdace70c4b8"
+    },
+    "status": "pass-frozen-baseline-only",
+    "startedAt": "2026-09-07T14:37:43.306Z",
+    "completedAt": "2026-09-07T14:39:54.122Z",
+    "gates": [
+      {
+        "id": "admission",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:38:06.535Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:38:06.817Z",
+        "elapsedSeconds": 0.282,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stdout.log",
+          "bytes": 1084,
+          "sha256": "1c6e2256d042a5c99b429a08258d723d9c77faa5de60d1622d2f1581785693d1",
+          "tail": "{\"schemaVersion\":\"tf.backend-migration-admission-gate/0.3\",\"lifecycleRevision\":\"successor-v2\",\"status\":\"pass-portable-source-admission\",\"integrationBaseCommit\":\"a63415c174dcfaa0dc5370ecc777b6ccdcda86aa\",\"scientificContractBaseCommit\":\"307e6d723086fe41b6d89e9f9b4b532364ccaeff\",\"candidateTreeIdentity\":{\"algorithm\":\"sha256-UTF8-JSON-path-gitMode-size-sha256/v1\",\"pathCount\":511,\"sha256\":\"c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35\",\"gitTreeOid\":\"24385ea3ec1a41ef8468abddc85173eb729624bf\"},\"sourceInputIdentity\":{\"algorithm\":\"sha256-UTF8-JSON-path-gitMode-size-sha256/v1\",\"pathCount\":507,\"sha256\":\"161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60\",\"gitTreeOid\":\"911abbe20373e2b1e4ba9265f43e210bbc6576cc\"},\"derivedReports\":{\"state\":\"present-unvalidated\",\"presentPaths\":[\"evaluation/latest-report.json\",\"evaluation/latest-report.md\",\"evaluation/public-product-evaluation.json\",\"evaluation/public-summary.json\"],\"validated\":false},\"terminalAttestationInInputIdentity\":false,\"releaseEligible\":false,\"historicalApprovalTransferred\":false,\"failures\":[]}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/admission.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "lint",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/eslint/bin/eslint.js",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "scripts/derived-report-contract.mjs",
+          "scripts/derived-report-contract.test.mjs",
+          "scripts/evaluate-launcher.test.mjs",
+          "scripts/evaluate.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "scripts/source-scope.mjs",
+          "scripts/source-scope.test.mjs",
+          "vitest.config.ts"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 120000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:38:06.818Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:38:09.041Z",
+        "elapsedSeconds": 2.223,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/lint.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "type",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 120000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:38:06.820Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:38:09.928Z",
+        "elapsedSeconds": 3.108,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/type.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "syntax-strict-json",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "--input-type=module",
+          "-e",
+          "import {readFileSync} from 'node:fs'; import {execFileSync} from 'node:child_process'; import {parseJsonRejectDuplicateKeys} from './scripts/atomistic/runtime-input-contract.mjs'; for (const file of [\"scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs\",\"scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs\",\"scripts/derived-report-contract.mjs\",\"scripts/derived-report-contract.test.mjs\",\"scripts/evaluate-launcher.test.mjs\",\"scripts/evaluate.mjs\",\"scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs\",\"scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs\",\"scripts/source-scope.mjs\",\"scripts/source-scope.test.mjs\"]) execFileSync(process.execPath,['--check',file],{stdio:'pipe'}); for(const file of ['evaluation/backend-migration/r18a-origin-main-admission-v0.3.json','schemas/backend-migration-admission-v0.3.schema.json','evaluation/backend-migration/r18a-a63415c-report-history-v0.1.json']) parseJsonRejectDuplicateKeys(readFileSync(file),file); console.log(JSON.stringify({status:'pass',syntaxFiles:10,strictJsonFiles:3,scientificValidation:false}));"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:38:06.821Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:38:07.084Z",
+        "elapsedSeconds": 0.263,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stdout.log",
+          "bytes": 84,
+          "sha256": "0c504f38af0dc3967e2a8e178d851de36a66c1297eff66ed96f565605c5c6c83",
+          "tail": "{\"status\":\"pass\",\"syntaxFiles\":10,\"strictJsonFiles\":3,\"scientificValidation\":false}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/syntax-strict-json.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "focused-contracts",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--fileParallelism=false",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root.test.mjs",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs",
+          "scripts/source-scope.test.mjs",
+          "scripts/derived-report-contract.test.mjs",
+          "scripts/evaluate-launcher.test.mjs",
+          "--reporter=verbose"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 400000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:38:09.929Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:39:12.661Z",
+        "elapsedSeconds": 62.732,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stdout.log",
+          "bytes": 91015,
+          "sha256": "3676025fbbe7de3229e7efed5ec0dd52211a9b14c26781e2cdbe742e051bf789",
+          "tail": "bstains 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > missing evaluation/latest-report.json abstains 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > missing evaluation/latest-report.md abstains 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > missing evaluation/public-product-evaluation.json abstains 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > missing evaluation/public-summary.json abstains 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > partial publication abstains 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > detects any changed output bytes: evaluation/latest-report.json 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > detects any changed output bytes: evaluation/latest-report.md 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > detects any changed output bytes: evaluation/public-product-evaluation.json 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > detects any changed output bytes: evaluation/public-summary.json 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > detects Markdown body changes even if verdict and source digest survive 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects a stale sourceManifest even with a refreshed byte statement 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects a stale sourceFileCount even with a refreshed byte statement 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects a stale artifactDigest even with a refreshed byte statement 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects a stale sourceRevision even with a refreshed byte statement 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects duplicate decoded JSON keys in evaluation/latest-report.json 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects duplicate decoded JSON keys in evaluation/public-product-evaluation.json 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects duplicate decoded JSON keys in evaluation/public-summary.json 0ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects absent, unsuccessful, wrong-revision and extra-field generation evidence 3ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects altered public projections even if the unsigned byte statement is refreshed 2ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects changed captured source or control, bad captured digest, and mode drift 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects worker reject/nonzero rather than treating output presence as success 1ms\n ✓ scripts/derived-report-contract.test.mjs > derived report byte consistency, not execution or scientific authentication > rejects empty and invalid UTF-8 output rather than replacing bytes 1ms\n ✓ scripts/source-scope.test.mjs > Tailing Future source scope > includes declared project roots and excludes adjacent projects 1ms\n ✓ scripts/source-scope.test.mjs > Tailing Future source scope > rejects traversal, platform-ambiguous and malformed paths 0ms\n ✓ scripts/source-scope.test.mjs > Tailing Future source scope > sorts and de-duplicates while excluding self-referential reports 0ms\n ✓ scripts/source-scope.test.mjs > Tailing Future source scope > excludes only the named new terminal attestation, never historical reviews or lookalikes 0ms\n\n Test Files  6 passed (6)\n      Tests  75 passed (75)\n   Start at  18:38:11\n   Duration  60.85s (transform 70ms, setup 0ms, import 170ms, tests 60.33s, environment 0ms)\n\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/focused-contracts.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "numerical",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/mesoscale/pfhub7a_r18a_current_root_v2.mjs",
+          "--python-source",
+          "/Users/tonywilliam/Documents/ChatGPT/Tailing Future/.tf-runtime/pfhub7a-r18a/cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+          "--wheelhouse",
+          "/private/tmp/tf-r18a-fipy-lock.LSDdK2"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 601000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:39:12.663Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:39:43.711Z",
+        "elapsedSeconds": 31.048,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stdout.log",
+          "bytes": 8176,
+          "sha256": "2ccfa216f1d19659d2248a88c46f100eeb0c69e97d05c85afde3f01474ed7d5b",
+          "tail": "cessGroupAbsent\":true,\"scope\":\"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"},\"elapsedMs\":3229.405290999999,\"timeoutMs\":576056,\"stopGraceMs\":1000,\"maxOutputBytes\":16777216,\"exitCode\":0,\"stdoutBytes\":248777,\"stderrBytes\":0},{\"label\":\"schema-1\",\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs\",\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json\"],\"pid\":76755,\"signal\":null,\"error\":null,\"stopReason\":null,\"timedOut\":false,\"killError\":null,\"outputTruncated\":false,\"graceExpired\":false,\"cleanupConfirmed\":true,\"cleanup\":{\"directChildExitObserved\":true,\"pipesClosed\":true,\"processGroupAbsent\":true,\"scope\":\"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"},\"elapsedMs\":93.9844170000033,\"timeoutMs\":572826,\"stopGraceMs\":1000,\"maxOutputBytes\":16777216,\"exitCode\":0,\"stdoutBytes\":56,\"stderrBytes\":0},{\"label\":\"supervisor-2\",\"command\":[\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap/bin/python3.12\",\"-I\",\"-S\",\"-B\",\"-W\",\"error\",\"scripts/mesoscale/pfhub7a_r18a_supervise_v3.py\",\"--python-source\",\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap\",\"--wheelhouse\",\"/private/tmp/tf-r18a-fipy-lock.LSDdK2\",\"--output\",\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json\"],\"pid\":76756,\"signal\":null,\"error\":null,\"stopReason\":null,\"timedOut\":false,\"killError\":null,\"outputTruncated\":false,\"graceExpired\":false,\"cleanupConfirmed\":true,\"cleanup\":{\"directChildExitObserved\":true,\"pipesClosed\":true,\"processGroupAbsent\":true,\"scope\":\"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"},\"elapsedMs\":3407.559541999999,\"timeoutMs\":572732,\"stopGraceMs\":1000,\"maxOutputBytes\":16777216,\"exitCode\":0,\"stdoutBytes\":248777,\"stderrBytes\":0},{\"label\":\"schema-2\",\"command\":[\"/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node\",\"scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs\",\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json\"],\"pid\":76805,\"signal\":null,\"error\":null,\"stopReason\":null,\"timedOut\":false,\"killError\":null,\"outputTruncated\":false,\"graceExpired\":false,\"cleanupConfirmed\":true,\"cleanup\":{\"directChildExitObserved\":true,\"pipesClosed\":true,\"processGroupAbsent\":true,\"scope\":\"Direct child and original process group only; escaped descendants and OS-level isolation are not verified.\"},\"elapsedMs\":94.79462500000227,\"timeoutMs\":569324,\"stopGraceMs\":1000,\"maxOutputBytes\":16777216,\"exitCode\":0,\"stdoutBytes\":56,\"stderrBytes\":0}],\"bootstrap\":{\"recordShape\":[\"byteSize\",\"path\",\"rawDigest\"],\"ordering\":\"UTF-8 bytewise ascending logical path\",\"serialization\":\"UTF-8 compact JSON array with ASCII escaping and no trailing newline\",\"recordCount\":747,\"byteSize\":32153962,\"recordsDigest\":\"sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530\",\"verifiedBeforeExecution\":true},\"wheels\":[{\"path\":\"fipy-4.0.3-py3-none-any.whl\",\"byteSize\":439565,\"rawDigest\":\"sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e\"},{\"path\":\"numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl\",\"byteSize\":5445405,\"rawDigest\":\"sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0\"},{\"path\":\"scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl\",\"byteSize\":20475078,\"rawDigest\":\"sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12\"},{\"path\":\"packaging-26.3-py3-none-any.whl\",\"byteSize\":129956,\"rawDigest\":\"sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c\"}],\"receipts\":[{\"path\":\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json\",\"byteSize\":248778,\"rawDigest\":\"sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"},{\"path\":\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json\",\"byteSize\":248778,\"rawDigest\":\"sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c\"}],\"observedTreeAfter\":{\"algorithm\":\"sha256-UTF8-JSON-path-gitMode-size-sha256/v1\",\"pathCount\":511,\"sha256\":\"c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35\",\"gitTreeOid\":\"24385ea3ec1a41ef8468abddc85173eb729624bf\"},\"observedTreeUnchanged\":true,\"sourceInputVerifiedBeforeAndAfter\":true,\"elapsedMs\":30989.920583,\"budget\":{\"clock\":\"monotonic-performance.now\",\"scientificAcceptanceMs\":600000,\"stopGraceMs\":1000,\"stopGraceExtendsAcceptance\":false},\"evidencePath\":\"/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/execution.json\",\"evidencePersisted\":true}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/numerical.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      },
+      {
+        "id": "final-admission",
+        "command": [
+          "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+          "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs"
+        ],
+        "cwd": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate",
+        "timeoutMs": 30000,
+        "stopGraceMs": 1000,
+        "maxOutputBytes": 16777216,
+        "partialLogPaths": {
+          "stdout": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stdout.log",
+          "stderr": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stderr.log"
+        },
+        "startedAt": "2026-09-07T14:39:43.713Z",
+        "status": "pass",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "timedOut": false,
+        "stopReason": null,
+        "killError": null,
+        "graceExpired": false,
+        "outputTruncated": false,
+        "cleanup": {
+          "directChildExitObserved": true,
+          "pipesClosed": true,
+          "processGroupAbsent": true,
+          "claim": "Direct child / original process-group observation only; escaped descendants are not verified."
+        },
+        "finishedAt": "2026-09-07T14:39:43.937Z",
+        "elapsedSeconds": 0.224,
+        "stdout": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stdout.log",
+          "bytes": 1084,
+          "sha256": "1c6e2256d042a5c99b429a08258d723d9c77faa5de60d1622d2f1581785693d1",
+          "tail": "{\"schemaVersion\":\"tf.backend-migration-admission-gate/0.3\",\"lifecycleRevision\":\"successor-v2\",\"status\":\"pass-portable-source-admission\",\"integrationBaseCommit\":\"a63415c174dcfaa0dc5370ecc777b6ccdcda86aa\",\"scientificContractBaseCommit\":\"307e6d723086fe41b6d89e9f9b4b532364ccaeff\",\"candidateTreeIdentity\":{\"algorithm\":\"sha256-UTF8-JSON-path-gitMode-size-sha256/v1\",\"pathCount\":511,\"sha256\":\"c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35\",\"gitTreeOid\":\"24385ea3ec1a41ef8468abddc85173eb729624bf\"},\"sourceInputIdentity\":{\"algorithm\":\"sha256-UTF8-JSON-path-gitMode-size-sha256/v1\",\"pathCount\":507,\"sha256\":\"161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60\",\"gitTreeOid\":\"911abbe20373e2b1e4ba9265f43e210bbc6576cc\"},\"derivedReports\":{\"state\":\"present-unvalidated\",\"presentPaths\":[\"evaluation/latest-report.json\",\"evaluation/latest-report.md\",\"evaluation/public-product-evaluation.json\",\"evaluation/public-summary.json\"],\"validated\":false},\"terminalAttestationInInputIdentity\":false,\"releaseEligible\":false,\"historicalApprovalTransferred\":false,\"failures\":[]}\n"
+        },
+        "stderr": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/logs/final-admission.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      }
+    ],
+    "sourceBefore": {
+      "pathCount": 511,
+      "totalBytes": 13288948,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0"
+    },
+    "sourceAfter": {
+      "pathCount": 511,
+      "totalBytes": 13288948,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0"
+    },
+    "legacyBefore": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "legacyAfter": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "snapshotBefore": {
+      "pathCount": 511,
+      "totalBytes": 13288948,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0"
+    },
+    "snapshotAfter": {
+      "pathCount": 511,
+      "totalBytes": 13288948,
+      "canonicalBytes": 84570,
+      "sha256": "9b687a57af1ede54f0506372b764cd099dadffb04d401c6da9d56022286152d0"
+    },
+    "snapshotChangedPaths": [],
+    "dependencyCopyVerified": true,
+    "dependencyPolicy": "Independent physical copy of the existing local node_modules; not npm ci or fresh dependency resolution. Full path/type/mode/content or raw symlink-target inventories are retained. Source hardlinked package binaries are normalized to independent destination files; cache changes are explicitly enumerated, not claimed immutable. This does not prove an OS sandbox or external native-library closure.",
+    "dependencyBefore": {
+      "rootMode": 493,
+      "pathCount": 35721,
+      "regularFileCount": 32221,
+      "symbolicLinkCount": 43,
+      "totalBytes": 961988371,
+      "observedHardlinks": [
+        {
+          "path": "@cloudflare/workerd-darwin-arm64/bin/workerd",
+          "nlink": 2
+        },
+        {
+          "path": "@esbuild/darwin-arm64/bin/esbuild",
+          "nlink": 2
+        },
+        {
+          "path": "esbuild/bin/esbuild",
+          "nlink": 2
+        },
+        {
+          "path": "workerd/bin/workerd",
+          "nlink": 2
+        }
+      ],
+      "canonicalBytes": 5688338,
+      "sha256": "bde48cc9dad170aa9f6cd3605c123ebe99c295c2e91545570dde8bbe7f896acb",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/dependency-source-before.json",
+        "bytes": 5688339,
+        "sha256": "10bab35aa0e2177782b1167c60344eb01df9577aebdd8bf3bdbe5bda7d53e5d5"
+      }
+    },
+    "dependencySourceAfter": {
+      "rootMode": 493,
+      "pathCount": 35721,
+      "regularFileCount": 32221,
+      "symbolicLinkCount": 43,
+      "totalBytes": 961988371,
+      "observedHardlinks": [
+        {
+          "path": "@cloudflare/workerd-darwin-arm64/bin/workerd",
+          "nlink": 2
+        },
+        {
+          "path": "@esbuild/darwin-arm64/bin/esbuild",
+          "nlink": 2
+        },
+        {
+          "path": "esbuild/bin/esbuild",
+          "nlink": 2
+        },
+        {
+          "path": "workerd/bin/workerd",
+          "nlink": 2
+        }
+      ],
+      "canonicalBytes": 5688338,
+      "sha256": "bde48cc9dad170aa9f6cd3605c123ebe99c295c2e91545570dde8bbe7f896acb",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/dependency-source-after.json",
+        "bytes": 5688339,
+        "sha256": "10bab35aa0e2177782b1167c60344eb01df9577aebdd8bf3bdbe5bda7d53e5d5"
+      }
+    },
+    "dependencySnapshotAfter": {
+      "rootMode": 493,
+      "pathCount": 35721,
+      "regularFileCount": 32221,
+      "symbolicLinkCount": 43,
+      "totalBytes": 961988368,
+      "observedHardlinks": [],
+      "canonicalBytes": 5688338,
+      "sha256": "3106ce6a2d7bdb614e697903caaf4ce05ee20ff59cdb0a0cd8884df8dedecba9",
+      "artifact": {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/dependency-snapshot-after.json",
+        "bytes": 5688339,
+        "sha256": "e775e284c38db309203cf6f08faf87441e2dfeb27c77c93610f1f9dd9fef63d4"
+      }
+    },
+    "executionIdentity": {
+      "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/execution.json",
+      "mode": 384,
+      "size": 558577,
+      "sha256": "676ab507a7f5405b356793e642568364eb5ef5559c34957be6a7085ae15b4a50"
+    },
+    "numeric": {
+      "schemaVersion": "tf.r18a-current-root-execution/0.3",
+      "scientificContractBaseCommit": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+      "integrationBaseCommit": "a63415c174dcfaa0dc5370ecc777b6ccdcda86aa",
+      "candidateTreeIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 511,
+        "sha256": "c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35",
+        "gitTreeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf"
+      },
+      "sourceInputIdentity": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 507,
+        "sha256": "161b8f8a36668581c2e34d73512cbbbab77b8a8ad06f72d56b93d238a81c1f60",
+        "gitTreeOid": "911abbe20373e2b1e4ba9265f43e210bbc6576cc"
+      },
+      "startedAt": "2026-09-07T14:39:12.710Z",
+      "status": "pass-bounded-current-root-execution",
+      "releaseEligible": false,
+      "historicalCandidateIdentityTransferred": false,
+      "convergenceVerified": false,
+      "physicalValidation": false,
+      "reproduced": false,
+      "scientificPromotionEligible": false,
+      "commands": [
+        {
+          "label": "python-21",
+          "command": [
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap/bin/python3.12",
+            "-I",
+            "-S",
+            "-B",
+            "-W",
+            "error",
+            "scripts/mesoscale/pfhub7a_r18a_preflight_v3_test.py"
+          ],
+          "pid": 76675,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 22814.858708,
+          "timeoutMs": 599453,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 0,
+          "stderrBytes": 3115
+        },
+        {
+          "label": "node-29",
+          "command": [
+            "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.node-test.mjs"
+          ],
+          "pid": 76733,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 582.3496669999986,
+          "timeoutMs": 576638,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 9624,
+          "stderrBytes": 0
+        },
+        {
+          "label": "supervisor-1",
+          "command": [
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap/bin/python3.12",
+            "-I",
+            "-S",
+            "-B",
+            "-W",
+            "error",
+            "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+            "--python-source",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap",
+            "--wheelhouse",
+            "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+            "--output",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json"
+          ],
+          "pid": 76736,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 3229.405290999999,
+          "timeoutMs": 576056,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 248777,
+          "stderrBytes": 0
+        },
+        {
+          "label": "schema-1",
+          "command": [
+            "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+            "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json"
+          ],
+          "pid": 76755,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 93.9844170000033,
+          "timeoutMs": 572826,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 56,
+          "stderrBytes": 0
+        },
+        {
+          "label": "supervisor-2",
+          "command": [
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap/bin/python3.12",
+            "-I",
+            "-S",
+            "-B",
+            "-W",
+            "error",
+            "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+            "--python-source",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/bootstrap",
+            "--wheelhouse",
+            "/private/tmp/tf-r18a-fipy-lock.LSDdK2",
+            "--output",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json"
+          ],
+          "pid": 76756,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 3407.559541999999,
+          "timeoutMs": 572732,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 248777,
+          "stderrBytes": 0
+        },
+        {
+          "label": "schema-2",
+          "command": [
+            "/private/tmp/tf-backend-release-tools.re0t54/node-v24.16.0-darwin-arm64/bin/node",
+            "scripts/mesoscale/pfhub7a_r18a_schema_gate_v3.mjs",
+            "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json"
+          ],
+          "pid": 76805,
+          "signal": null,
+          "error": null,
+          "stopReason": null,
+          "timedOut": false,
+          "killError": null,
+          "outputTruncated": false,
+          "graceExpired": false,
+          "cleanupConfirmed": true,
+          "cleanup": {
+            "directChildExitObserved": true,
+            "pipesClosed": true,
+            "processGroupAbsent": true,
+            "scope": "Direct child and original process group only; escaped descendants and OS-level isolation are not verified."
+          },
+          "elapsedMs": 94.79462500000227,
+          "timeoutMs": 569324,
+          "stopGraceMs": 1000,
+          "maxOutputBytes": 16777216,
+          "exitCode": 0,
+          "stdoutBytes": 56,
+          "stderrBytes": 0
+        }
+      ],
+      "bootstrap": {
+        "recordShape": [
+          "byteSize",
+          "path",
+          "rawDigest"
+        ],
+        "ordering": "UTF-8 bytewise ascending logical path",
+        "serialization": "UTF-8 compact JSON array with ASCII escaping and no trailing newline",
+        "recordCount": 747,
+        "byteSize": 32153962,
+        "recordsDigest": "sha256:a856964f3a3668fe62d5f7c53896621756462f91d96bab3d50a61b4926ee5530",
+        "verifiedBeforeExecution": true
+      },
+      "wheels": [
+        {
+          "path": "fipy-4.0.3-py3-none-any.whl",
+          "byteSize": 439565,
+          "rawDigest": "sha256:e72551569d9622e2f515915acb4d296dc25e38c3a7c1891e4be59a037240129e"
+        },
+        {
+          "path": "numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl",
+          "byteSize": 5445405,
+          "rawDigest": "sha256:a72f874bc9e10e4b8f80426fb49716d5141f64442a0c8418065093ec8017fbb0"
+        },
+        {
+          "path": "scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl",
+          "byteSize": 20475078,
+          "rawDigest": "sha256:7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12"
+        },
+        {
+          "path": "packaging-26.3-py3-none-any.whl",
+          "byteSize": 129956,
+          "rawDigest": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json",
+          "byteSize": 248778,
+          "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        },
+        {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json",
+          "byteSize": 248778,
+          "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        }
+      ],
+      "observedTreeAfter": {
+        "algorithm": "sha256-UTF8-JSON-path-gitMode-size-sha256/v1",
+        "pathCount": 511,
+        "sha256": "c44822eaa93d90fce24f0aab84dd71e1657d918bf33bd382e645c3a1cfd67a35",
+        "gitTreeOid": "24385ea3ec1a41ef8468abddc85173eb729624bf"
+      },
+      "observedTreeUnchanged": true,
+      "sourceInputVerifiedBeforeAndAfter": true,
+      "elapsedMs": 30989.920583,
+      "budget": {
+        "clock": "monotonic-performance.now",
+        "scientificAcceptanceMs": 600000,
+        "stopGraceMs": 1000,
+        "stopGraceExtendsAcceptance": false
+      },
+      "evidencePath": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/execution.json",
+      "evidencePersisted": true
+    },
+    "receipts": [
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json",
+        "byteSize": 248778,
+        "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+        "actualIdentity": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-1.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        }
+      },
+      {
+        "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json",
+        "byteSize": 248778,
+        "rawDigest": "sha256:d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c",
+        "actualIdentity": {
+          "path": "/private/tmp/tf-r18a-current-main-final-gates-r2NmFS/candidate/.tf-runtime/r18a-current-root-c2HLCc/receipt-2.json",
+          "mode": 292,
+          "size": 248778,
+          "sha256": "d91e31d261bf77f99b17e810f5f51aab131dd5339e281839933e45fa79855e5c"
+        }
+      }
+    ],
+    "resultKeys": [
+      "schemaVersion",
+      "root",
+      "snapshotRoot",
+      "outputRoot",
+      "baseRevision",
+      "startedAt",
+      "plan",
+      "executor",
+      "releaseEligible",
+      "gates",
+      "status",
+      "scope",
+      "dependencyPolicy",
+      "mutableDependencyCacheRoots",
+      "sourceBefore",
+      "legacyBefore",
+      "dependencyTarget",
+      "dependencyBefore",
+      "dependencySourceAfterCopy",
+      "dependencySnapshotBefore",
+      "dependencyCopyVerified",
+      "snapshotBefore",
+      "sourceAfterCopy",
+      "sourceAfter",
+      "legacyAfter",
+      "dependencySourceAfter",
+      "dependencySnapshotAfter",
+      "dependencySourceChangedPaths",
+      "dependencySnapshotChangedPaths",
+      "dependencySourceUnchanged",
+      "dependencySnapshotUnchanged",
+      "dependencySnapshotNonCacheChangedPaths",
+      "dependencyInventoryArtifactsVerified",
+      "snapshotAfter",
+      "snapshotChangedPaths",
+      "snapshotPathSetUnchanged",
+      "logIdentitiesVerified",
+      "finishedAt"
+    ]
+  },
+  "counts": {
+    "topLevelGates": 7,
+    "focusedFiles": 6,
+    "focusedTests": 75,
+    "focusedSkipped": 0,
+    "unchangedHistoricalV02": 5,
+    "unchangedNestedHistoricalV01": 20,
+    "actualGitCheckoutNodeTests": 29,
+    "actualGitCheckoutNumericalRun": false,
+    "numericalPythonTests": 21,
+    "numericalNodeTests": 29,
+    "numericalNewReceipts": 2
+  },
+  "selfCheckOnly": {
+    "digestAlgorithmBytePreserved": true,
+    "publicSummaryAlgorithmBytePreserved": true,
+    "publicProductAlgorithmBytePreserved": true,
+    "publicIdentifiersBytePreserved": true,
+    "builderSelfCheckOnly": true,
+    "releaseEligible": false
+  },
+  "testScope": {
+    "fullCoreRun": false,
+    "fullPythonRun": false,
+    "fullObserverRun": false,
+    "realEvaluatorRun": false,
+    "productionBuildRun": false,
+    "LinuxCIRun": false,
+    "freshNpmCiRun": false,
+    "innerTimeoutsChanged": false,
+    "syntheticLauncherTestsAreScientificEvidence": false,
+    "generationStatementsAreExecutionAuthenticated": false,
+    "dependencyLayout": "Independent verified physical copy for outer focused/numerical execution; nested focused historical/Git-checkout tests explicitly use external dependency references."
+  },
+  "preservedSources": {
+    "priorPortable507": {
+      "sha256": "e1d16b5702c41c5d7ee4c5ba27155484df253e0ce3c96fc7bc9e4e20a366d137",
+      "pathCount": 507
+    },
+    "original641": {
+      "pathCount": 641,
+      "totalBytes": 59531074,
+      "canonicalBytes": 106952,
+      "sha256": "33d01f4018832e228e92a78c179ce75225aca37c6bff9c44cf389288ebd78463"
+    },
+    "previousVersionEvidenceOverwritten": false,
+    "R12": "Excluded from candidate; local original evidence preserved; no rights-clearance claim."
+  },
+  "openBlockers": [
+    {
+      "id": "R18A-PORTABLE-P1-DERIVED-REPORT-SOURCE-CYCLE",
+      "priority": "P1",
+      "status": "root-fix-awaiting-independent-review",
+      "claim": "Source-role split, exact terminal exception, report consistency and finite final ordering now implemented; no self-approval."
+    },
+    {
+      "id": "R18A-FINAL-GATE-CORE-DEADLINES",
+      "priority": "P1",
+      "status": "open",
+      "claim": "Old complete-core deadline failures remain. No complete-core successor run yet."
+    },
+    {
+      "id": "R18A-FINAL-GATE-SEQUENCE-INCOMPLETE",
+      "priority": "P1",
+      "status": "open",
+      "claim": "Complete post-review gates, actual evaluator and production build still required."
+    }
+  ],
+  "residualLimitations": [
+    "Unsigned generation statement does not prove genuine execution or scientific validity; actual terminal exit/log evidence and existing complete release-artifact/CI checks remain necessary.",
+    "No four-file atomic transaction; partial publication abstains.",
+    "Builder does not approve its candidate; the new terminal review is the only late non-input record.",
+    "Original R18a is bounded tiny-grid non-promotional evidence, not full PFHub convergence or a real-material/process model.",
+    "Original worker shutdown/environment P2 limitations retained."
+  ],
+  "nextSteps": [
+    "Independent science, software/numerical/evaluator, and dated SOTA review (at most three next scientific gaps).",
+    "Fix any P0/P1 and obtain reviewer closure; rerun applicable full gates on the final source input in ordinary Git modes.",
+    "Keep generation evidence out of source; generate four reports last, verify actual command exit and report consistency, then write only the named terminal review."
+  ]
+}
