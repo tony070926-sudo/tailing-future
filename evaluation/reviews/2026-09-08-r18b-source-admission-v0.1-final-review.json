@@ -1,0 +1,469 @@
+{
+  "schemaVersion": "tf.r18b-source-admission-final-review/0.1",
+  "date": "2026-09-08",
+  "timezone": "Asia/Dubai",
+  "author": "/root",
+  "status": "bounded-review-complete-final-gate-attestation-required",
+  "reviewRecordCompleteFor": "Frozen R18b tiny-prerequisite source integration on dc6e, independent corrective reviews and actual standalone historical compatibility. Final gate/A10/CI/release observations are necessarily subsequent external attestations, not claims of this pre-gate input.",
+  "roles": {
+    "builder": "Astra /root/astra_r18b_plan_recovery supplied the initial integration and v4 reconciliation; /root owns post-review v2/v3/v5 fixes and this record.",
+    "scientificReviewer": "/root/lifecycle_science_review",
+    "softwareNumericalEvaluatorReviewer": "/root/admission_software_review",
+    "datedSotaReviewer": "/root/lifecycle_science_review",
+    "independence": "Two read-only reviewers cover three roles; science and SOTA share a reviewer. No Builder self-approval. Review is not an independent solver, experiment or qualified engineering approval."
+  },
+  "hypothesis": {
+    "id": "H-ADMISSION-R18b",
+    "statement": "An exact-source successor can integrate the unchanged tiny prerequisite with fixed dc6e source while rejecting unregistered drift and preserving unchanged compatibility tests through one fixed historical baseline.",
+    "acceptance": "A01–A10 plus corrective v2/v3, R01–R07 reconciliation and v5 default-reporter scope. Actual A10 and full final gates are post-review requirements; all earlier executed evidence is listed without promoting pending gates.",
+    "scientificChangeInThisIntegration": "None: no altered equation, quantity, material parameter, causal identification, solver threshold, scientific dispatch, public contract or evidence score.",
+    "legacyNumericEntryScope": "version-bound-history-only",
+    "newR18bNumericExecutionEnabled": false
+  },
+  "frozenImplementation": {
+    "baseCommit": "dc6e7f1af19f5398eb03b94d8ffaee2182d07f55",
+    "baseTree": "5522f1ee4eb9a3cf83176afeb874e504c11347d0",
+    "baseBlobCount": 527,
+    "oldCompatibilityBase": "84f7720e9ac14fcb50fb54fdcb96d1df7473c365",
+    "oldCompatibilityTree": "e673c40ee6144b510223caf8cf6d6b30bc4f9eb6",
+    "oldBaseBlobCount": 517,
+    "scientificContractBase": "307e6d723086fe41b6d89e9f9b4b532364ccaeff",
+    "candidateFreeze": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/candidate-freeze-v5.json",
+      "size": 7293,
+      "sha256": "f99df0d1725d83999e32e2426a3c235f024132012df5ea0d264276451e9551fb"
+    },
+    "diff": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/candidate.diff",
+      "size": 236455,
+      "mode": 420,
+      "sha256": "b27489d516624c816bb042d7be4b0f60d27e287105226d3c373944cab19181aa"
+    },
+    "deltaFromV4": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/delta-v4.diff",
+      "size": 17318,
+      "mode": 420,
+      "sha256": "2962a5b103907cf74b64de1a3fb857d8f226e790e45df9bc0b97196f58f8cde5"
+    },
+    "changedFileIdentity": {
+      "algorithm": "SHA256 UTF8 JSON.stringify({baseCommit,records}), records property order path,size,mode,sha256",
+      "sha256": "5548a7d8882a24872b7495aa1322e016e2c48e88a9af9b4ce17744bbcada0308",
+      "records": [
+        {
+          "path": "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
+          "size": 3229,
+          "mode": 420,
+          "sha256": "d4828f8f93ae1b93a7e225637249e66ecdebfa5482d1224b3df5237f9e1d3407"
+        },
+        {
+          "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+          "size": 9878,
+          "mode": 420,
+          "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-07-r18b-csr-p1-tiny-v1-builder-evidence.json",
+          "size": 5804,
+          "mode": 420,
+          "sha256": "ed80a70da0a63e00db924d1693e2139f7d24bbff02bcab47023501e6b5e1de13"
+        },
+        {
+          "path": "evaluation/reviews/2026-09-08-r18b-tiny-prerequisite-review.json",
+          "size": 28996,
+          "mode": 420,
+          "sha256": "e9c8f93b83022c7a6071a63a7249219980293304fbf4bc000e0647dab705f619"
+        },
+        {
+          "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
+          "size": 2624,
+          "mode": 420,
+          "sha256": "c7aa09acc8a39b25e68e14d506159a55eec08bba38c738cea451a8ca3a332a65"
+        },
+        {
+          "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+          "size": 16749,
+          "mode": 420,
+          "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
+          "size": 32044,
+          "mode": 420,
+          "sha256": "27b53dbd74afa88edeca0a8d10ef7bb132ac7872592b5604d33e4c4fc5f1927a"
+        },
+        {
+          "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
+          "size": 44169,
+          "mode": 420,
+          "sha256": "d76c89937278e209320b26682270a65460f3b8e75f6cecf52b2ab0ce0c422629"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+          "size": 28194,
+          "mode": 420,
+          "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+          "size": 28699,
+          "mode": 420,
+          "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+          "size": 6713,
+          "mode": 420,
+          "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+        },
+        {
+          "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+          "size": 20116,
+          "mode": 420,
+          "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+        },
+        {
+          "path": "vitest.config.ts",
+          "size": 1693,
+          "mode": 420,
+          "sha256": "d29d3d4768e9d33154f1656a57b3c6dfa1780e06a83dba0150f14fbb470a7689"
+        }
+      ]
+    }
+  },
+  "completePrereviewSourceIdentity": {
+    "sourceFileCount": 535,
+    "observedFileCount": 539,
+    "sha256": "2745de174be734e2de2587549f089b08cf105d493bbc1145f49f6fe6af7e9fa8",
+    "algorithm": "SHA256 UTF8 JSON.stringify(records), records sorted by path; record key order path,mode,size,sha256. Only the four named derived reports excluded. Every inherited/new review is included; this final review did not yet exist.",
+    "manifest": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-history-driver-v1-HEvhDa/manifest-v5.json",
+      "mode": 420,
+      "size": 114966,
+      "sha256": "ac0c63e298efb2923e17e876f2db034adf36f0b24a33e688a3e92ab266c6d518"
+    },
+    "finalization": "Adding this sole declared review yields536 non-derived sources/540 observed paths if all four reports exist. A later external manifest pins all536 raw files including this review. No self-hash or review-directory exclusion. verifyManifest only matches an unauthenticated input and cannot grant approval.",
+    "derivedExclusions": [
+      "evaluation/latest-report.json",
+      "evaluation/latest-report.md",
+      "evaluation/public-product-evaluation.json",
+      "evaluation/public-summary.json"
+    ],
+    "evaluatorBoundary": "The unchanged historical evaluator has one named old terminal-review exception; the stronger source manifest used here includes that old review too."
+  },
+  "preservedTinyEvidence": {
+    "review": {
+      "path": "evaluation/reviews/2026-09-08-r18b-tiny-prerequisite-review.json",
+      "size": 28996,
+      "sha256": "e9c8f93b83022c7a6071a63a7249219980293304fbf4bc000e0647dab705f619"
+    },
+    "allEightScientificEvidenceFilesUnchanged": true,
+    "scope": {
+      "Nx": 8,
+      "Ny": 4,
+      "Nt": 2,
+      "dt": 0.01,
+      "finalTime": 0.02,
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "Native PFHub nondimensional coordinates/time/field; FV cell averages versus P1 nodal weak-form representation remain distinct."
+    },
+    "acceptedScope": "Previously reviewed tiny assembly, actual-system algebraic residual, balance, method-field separation and stored-system verification only; not rerun in this source-admission round.",
+    "pdeAccounting": {
+      "totalUsedSteps": 16,
+      "remainingSteps": 0,
+      "newStepsInAdmission": 0
+    },
+    "historyPreserved": "Initial tiny residual failure, subsequent final tiny success, failed output-limited replay and separately authorized stored-system recovery remain immutable in the linked tiny record.",
+    "lanes": {
+      "officialLiteral": "Official analytic-field discrepancy only; not strict MMS.",
+      "literalSelf": "Same literal-BVP self-convergence candidate; full refinement study not complete.",
+      "exactTraceCompanion": "Explicit non-PFHub strict-MMS companion; full convergence study not complete."
+    },
+    "bridges": "Existing tiny4x2 area-average transfer is lossy, not an inverse or a process-scale calibration; no new cross-scale bridge is introduced.",
+    "physicalValidation": false,
+    "fullConvergenceComplete": false
+  },
+  "findings": [
+    {
+      "id": "R18B-INTEGRATION-P1-LEGACY-CURRENT-TREE-ADMISSION",
+      "priority": "P1",
+      "disposition": "The source-integration conflict is addressed by explicit versioned source admission and fixed dc6e history migration; actual17/default15/deeper5/20/Node29 passed. Current R18b numerical execution remains disabled, not silently admitted.",
+      "remaining": "Final A10 and full applicable gates must still pass before commit."
+    },
+    {
+      "id": "R18B-ADMISSION-P1-CI-RUNTIME-PORTABILITY",
+      "priority": "P1",
+      "disposition": "Closed in independently reviewed v2 code: portable Node/version/package policy, local runtime hashes are observations; no cross-OS byte-equivalence claim.",
+      "closureSha256": "c98055fefc50cc3183c6246af43c658ff79bb73544b14da2072291d94f32e0e0"
+    },
+    {
+      "id": "R18B-ADMISSION-P1-HISTORY-EVIDENCE-EXACTNESS",
+      "priority": "P1",
+      "disposition": "Closed in v2; v4 explicitly adds real intermediate default-reporter semantics, and v5 closes optional-slow compatibility. Exact hierarchical provenance/status/count and complete verbose/Node corpora retained.",
+      "closureSha256": "c98055fefc50cc3183c6246af43c658ff79bb73544b14da2072291d94f32e0e0"
+    },
+    {
+      "id": "R18B-ADMISSION-P1-HISTORY-TERMINAL-PRESERVATION",
+      "priority": "P1",
+      "disposition": "Closed in v2. Outer checkout retained both paths; observations remain nonterminal until returned status plus root-observed actual tool exit. Actual v5 success independently checked.",
+      "closureSha256": "c98055fefc50cc3183c6246af43c658ff79bb73544b14da2072291d94f32e0e0"
+    },
+    {
+      "id": "R18B-ADMISSION-P2-SYNCHRONOUS-BUDGET-COVERAGE",
+      "priority": "P2",
+      "disposition": "Mitigated by propagated remaining-time checks and the independently closed v3 absolute caller deadline; residual synchronous/escaped-descendant limits explicitly accepted, not called hard OS containment.",
+      "deadlineClosureSha256": "0474c59530caae770626aaae1a8861b63eeb343fa19ccead79a77a862c532ec3"
+    },
+    {
+      "id": "R18B-ADMISSION-P1-DEFAULT-SLOW-DETAIL",
+      "priority": "P1",
+      "disposition": "Closed in v5 by original reviewer using actual installed DefaultReporter inert methods and original failing transcript. Actual historical run subsequently retained4 legal slow details and passed.",
+      "closureSha256": "9ed78eedc95a988b071757cfa7e72b1eae35b1a26d9e969025fcfa22723b59a2"
+    }
+  ],
+  "independentEvidence": [
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/v5-independent-closures/software-closure.json",
+      "size": 6873,
+      "mode": 420,
+      "sha256": "9ed78eedc95a988b071757cfa7e72b1eae35b1a26d9e969025fcfa22723b59a2"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/v5-independent-closures/driver-binding-review.json",
+      "size": 4720,
+      "mode": 420,
+      "sha256": "fd23f59452729c6ecc716a5e9ad6f996432e477e9d07a59d1c9dc9e35d6c8039"
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/v5-independent-closures/science-sota-review.json",
+      "size": 10890,
+      "mode": 420,
+      "sha256": "ede2a87ae3967925c5bb1f31318130d229a6c910dec1dc5af7eb844c443eccfb"
+    }
+  ],
+  "actualHistory": {
+    "rootTerminal": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-history-driver-v1-HEvhDa/root-terminal-observation-v5.json",
+      "sha256": "7bf22885cd4e6799372cfa8d1adb3b80b9d2325f4b36041cb5c533c6a9fba9a9"
+    },
+    "independentTerminalReview": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/finalization-ResFqH/2026-09-08-actual-compatibility-review.json",
+      "size": 5299,
+      "sha256": "45e771d81826cf738bdd7515bb555117edf29a08b1256ce3de9f9febf7fdbbfa"
+    },
+    "launchToolChunk": "b62710",
+    "sessionId": 84167,
+    "terminalToolChunk": "11df99",
+    "exitCode": 0,
+    "standaloneInvocations": 1,
+    "automaticRetries": 0,
+    "driverElapsedMs": 130633.911208,
+    "sharedAcceptanceMs": 300000,
+    "counts": {
+      "outerVerbose17": 17,
+      "intermediateDefault15": 15,
+      "nestedVerbose5": 5,
+      "nestedVerbose20": 20,
+      "node29": 29
+    },
+    "failedOrSkippedCorpusResults": 0,
+    "observedDefaultSlowDetails": [
+      {
+        "file": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "suite": "portable admission on the fixed upstream integration base",
+        "name": "mandatorily executes unchanged /0.2 and nested /0.1 historical tests",
+        "displayedDurationMs": 17300
+      },
+      {
+        "file": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "suite": "portable admission on the fixed upstream integration base",
+        "name": "tests the exact production report check against bidirectional legal POSIX receipt-mode drift",
+        "displayedDurationMs": 12644
+      },
+      {
+        "file": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "suite": "portable admission on the fixed upstream integration base",
+        "name": "admits complete, absent, partial and regenerated outputs without report readiness or input drift",
+        "displayedDurationMs": 31870
+      },
+      {
+        "file": "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs",
+        "suite": "portable admission on the fixed upstream integration base",
+        "name": "executes admission and unchanged Node29 in an actual uncorrected Git checkout, then rejects mutations",
+        "displayedDurationMs": 10384
+      }
+    ],
+    "defaultReporterEvidenceLevel": "Exact selected15 static registrations and2 successful file/aggregate summaries;4 printed short-name/rounded-duration observations. File comes from validated file context, suite is static registration enrichment. No complete individual-name corpus claimed.",
+    "beforeAfter": "All535 source inputs,4 derived outputs, local Node/four metadata and fixed symlink matched. Full dependency-code/OS closure not claimed.",
+    "cleanup": "Direct child, pipes and original process group confirmed. Outer checkout retained. Escaped descendants/inner directory preservation not proven.",
+    "logs": [
+      {
+        "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-history-driver-v1-HEvhDa/r18b-history-9W1ZCd/stdout.log",
+        "size": 88146,
+        "mode": 420,
+        "sha256": "e680e65173dc38fc1648657b3f4aab4340c7ff902eda17c6510bed5d3e2222c9"
+      },
+      {
+        "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-history-driver-v1-HEvhDa/r18b-history-9W1ZCd/stderr.log",
+        "size": 0,
+        "mode": 420,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "textEncoding": "UTF8 strings returned by the bounded helper; original raw buffers unavailable.",
+    "independentLogReparseToolChunk": "43d337",
+    "newScientificExecution": false
+  },
+  "selfchecks": {
+    "v5": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/root-v5-corrective-iDmOHR/selfcheck.json",
+      "size": 12851,
+      "mode": 420,
+      "sha256": "f36a917b7a8ac72e7cfe9e7f6e858ee1b004f7b595a3d4967695921b90dcc467"
+    },
+    "syntaxExitCodes": [
+      0,
+      0
+    ],
+    "focusedLintExitCode": 0,
+    "selectedPassed": 18,
+    "mandatoryHistoryIntentionallyUnselected": 1,
+    "installedReporterBuilderControls": {
+      "positive": 5,
+      "negative": 26
+    },
+    "installedReporterIndependentControls": {
+      "positive": 7,
+      "negative": 26,
+      "originalV4FailedTranscriptAccepted": true
+    },
+    "otherMalformedControlsRetained": 69,
+    "scope": "Synthetic/metadata controls are not counted as scientific runs or historical passes.",
+    "preservedFailure": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/astra-v4-builder-KUNHVk/first-selfcheck-failure.json",
+      "size": 10155,
+      "sha256": "865b4da1771bcc72d139c9e8055786947d13fa5b4439ec41a342d8e705a62fe9",
+      "fixtureMs": 22411,
+      "timeoutMs": 20000,
+      "status": "failed, preserved",
+      "cause": "Unknown; later passes do not prove a cause or a performance repair."
+    }
+  },
+  "scopePreservation": {
+    "frontendUnchanged": true,
+    "publicContracts": [
+      "tf.world/0.3",
+      "tf.action/0.3",
+      "tf.observation/0.3"
+    ],
+    "packageLockDependenciesUnchanged": true,
+    "codeFromDc6ePreservedExceptScopedVitestExclusions": true,
+    "incomingEncryptedAuthPreserved": true,
+    "oldEvidencePreserved": true,
+    "R12": "No R12 content added. Literal paths and known content hashes remain excluded; original local evidence preserved. This is a release exclusion decision, not a new rights-clearance conclusion.",
+    "scores": "No score increase, numerical ranking or SOTA-performance attribution.",
+    "industrialSafety": "No PLC/DCS/SIS integration or automatic control. Any future industrial advice requires independent validation and qualified human review.",
+    "causalBoundary": "Graph/taxonomy/correlation/mechanism paths are not identified causal effects. Quantitative intervention/counterfactual claims still require identified equations, evidence, factual/intervention values, exogenous context, system boundary/horizon and calibrated domain; otherwise abstain."
+  },
+  "datedSota": {
+    "review": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/science-sota-v5-semantics.JAds5m/review.json",
+      "size": 10890,
+      "sha256": "ede2a87ae3967925c5bb1f31318130d229a6c910dec1dc5af7eb844c443eccfb"
+    },
+    "primaryRecord": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/science-sota-preparation.K7HbeP/dated-primary-comparison-preparation.json",
+      "size": 12919,
+      "sha256": "21f34051b0218da0e6213fa1ba6f00b38c83290b511b658f8ddd947a427b5f56"
+    },
+    "accessDates": "Reused official rendered access UTC2026-09-07 21:15:01–21:15:48 (Dubai2026-09-08); locked raw PFHub/FiPy access2026-09-07. No new scientific-source visit or latest-model panorama claimed.",
+    "comparisons": [
+      {
+        "source": "PFHub7(a)",
+        "url": "https://raw.githubusercontent.com/pfhub/pfhub-benchmarks/aa4774ce73c5a87455c942564cf994fc0020e335/benchmarks/benchmark7.ipynb",
+        "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+        "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+        "classification": "auditable",
+        "gap": "Tiny t0.02 is not full t8; spatial and temporal convergence with complementary error control remain missing."
+      },
+      {
+        "source": "FiPy4.0.3 CG/Krylov",
+        "url": "https://raw.githubusercontent.com/usnistgov/fipy/64635bf8ed6bc51431edb7d6cf1495ff68ac18a7/fipy/solvers/scipy/scipyKrylovSolver.py",
+        "revision": "64635bf8ed6bc51431edb7d6cf1495ff68ac18a7",
+        "sha256": "654532680e9dfde2305820a35f9a50991b56f2ba31ecbfc240566f1e6ccb688b",
+        "classification": "auditable",
+        "gap": "Library lineage and project-owned actual-residual stopping do not establish general native convergence or physical validation."
+      },
+      {
+        "source": "PETSc KSPConvergedDefault",
+        "url": "https://petsc.org/release/manualpages/KSP/KSPConvergedDefault/",
+        "revision": null,
+        "sha256": null,
+        "classification": "reference",
+        "gap": "Stopping-norm semantics are methodological reference, not matched local accuracy/performance results."
+      },
+      {
+        "source": "FEniCSx P1 Poisson",
+        "url": "https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_poisson.html",
+        "revision": null,
+        "sha256": null,
+        "classification": "reference",
+        "gap": "Weak-form and boundary practice reference, not a reproduced Tailing Future comparison."
+      },
+      {
+        "source": "MOOSE MMS",
+        "url": "https://mooseframework.inl.gov/python/mms.html",
+        "revision": null,
+        "sha256": null,
+        "classification": "reference",
+        "gap": "Verification methodology reference; full Tailing Future mesh/time refinement remains incomplete."
+      }
+    ],
+    "externalResultsReproduced": false,
+    "numericalRankingEligible": false,
+    "evidenceScoreIncreased": false
+  },
+  "residualLimitations": [
+    "Only local source/history compatibility has completed; actual final ordinary-checkout/index A10 and full gates remain subsequent requirements.",
+    "General-regression Python is distinct from the sealed scientific Python; this integration enables no new scientific runtime.",
+    "Version-bound legacy numerical command rejects new R18b source before bootstrap; not a successful current numeric gate.",
+    "Default reporter provides partial name observations; nested innermost lifecycle has unobserved raw fields.",
+    "Existing installed dependency code/host libraries are trusted beyond explicit metadata pins; no OS sandbox or whole-descendant containment.",
+    "Unexplained prior timing failure preserved without timeout relaxation.",
+    "Full t8 pilot needs scalable sparse/blocked operators and honestly enforceable resource limits; tiny timing cannot predict large-grid cost.",
+    "Neither tiny nor future benchmark convergence alone identifies real material/process causal effects."
+  ],
+  "nextRoundTasks": [
+    "Complete this exact final review/536-source freeze, applicable full gates, A10 and protected-main release workflow with R12 excluded; do not add another recursive admission/history layer.",
+    "Astra to separately freeze scalable full-t8 pilot: sparse/blocked assembly, bounded outputs and unchanged scientific diagnostics; establish honest memory/time/evidence caps before new execution.",
+    "Complete spatial AND temporal convergence with complementary temporal/spatial, algebraic, quadrature and transfer errors controlled; retain official-literal discrepancy, literal-self and non-PFHub exact-trace separation."
+  ],
+  "finalGateAttestationPolicy": {
+    "required": true,
+    "source": "A separately generated external record after these review bytes are frozen, containing actual commands/exits, before/after536-source manifest and A10 index/working-tree equality.",
+    "selfAuthorization": false,
+    "ciAndDeployment": "Local passes permit only a later scoped commit/PR decision. Actual protected-main CI and existing artifact release gates are required before deployment; user-approved encrypted credentials are used only then.",
+    "currentLocalGatesPassed": false,
+    "currentCandidateCIPassed": false,
+    "commitApproved": false,
+    "deploymentApproved": false
+  },
+  "priorCorrectiveReviews": [
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/software-v2-closure-archive-dO7kkl/2026-09-08-software-closure.json",
+      "size": 10885,
+      "sha256": "c98055fefc50cc3183c6246af43c658ff79bb73544b14da2072291d94f32e0e0",
+      "meaning": "Original independent closure of the three v1 P1s; earlier failures remain preserved."
+    },
+    {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/software-v3-closure-archive-vNinfJ/2026-09-08-deadline-seam-closure.json",
+      "size": 4456,
+      "sha256": "0474c59530caae770626aaae1a8861b63eeb343fa19ccead79a77a862c532ec3",
+      "meaning": "Original independent deadline-seam closure, unchanged through v5."
+    }
+  ],
+  "fullConvergenceComplete": false,
+  "scientificPromotionEligible": false,
+  "releaseEligible": false,
+  "goalComplete": false
+}

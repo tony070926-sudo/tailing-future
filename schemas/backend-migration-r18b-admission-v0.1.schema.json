@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "baseCommit",
+    "baseTree",
+    "inputs",
+    "controls",
+    "node",
+    "dependencies",
+    "legacyNumericEntryScope",
+    "newR18bNumericExecutionEnabled"
+  ],
+  "properties": {
+    "legacyNumericEntryScope": { "const": "version-bound-history-only" },
+    "newR18bNumericExecutionEnabled": { "const": false },
+    "schemaVersion": {
+      "const": "tf.r18b-source-admission/0.1"
+    },
+    "baseCommit": {
+      "const": "dc6e7f1af19f5398eb03b94d8ffaee2182d07f55"
+    },
+    "baseTree": {
+      "const": "5522f1ee4eb9a3cf83176afeb874e504c11347d0"
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 22,
+      "maxItems": 22,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "mode",
+          "size",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "mode": {
+            "type": "integer",
+            "enum": [
+              420,
+              493
+            ]
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string"
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version"
+      ],
+      "properties": {
+        "version": {
+          "const": "24.16.0"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "mode",
+          "size",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "mode": {
+            "type": "integer",
+            "enum": [
+              420,
+              493
+            ]
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "tf.r18b-source-admission/0.1",
+  "baseCommit": "dc6e7f1af19f5398eb03b94d8ffaee2182d07f55",
+  "baseTree": "5522f1ee4eb9a3cf83176afeb874e504c11347d0",
+  "inputs": [
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+      "mode": 420,
+      "size": 28194,
+      "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+      "mode": 420,
+      "size": 6713,
+      "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+      "mode": 420,
+      "size": 28699,
+      "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+      "mode": 420,
+      "size": 20116,
+      "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+      "mode": 420,
+      "size": 9878,
+      "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+    },
+    {
+      "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+      "mode": 420,
+      "size": 16749,
+      "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-07-r18b-csr-p1-tiny-v1-builder-evidence.json",
+      "mode": 420,
+      "size": 5804,
+      "sha256": "ed80a70da0a63e00db924d1693e2139f7d24bbff02bcab47023501e6b5e1de13"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-08-r18b-tiny-prerequisite-review.json",
+      "mode": 420,
+      "size": 28996,
+      "sha256": "e9c8f93b83022c7a6071a63a7249219980293304fbf4bc000e0647dab705f619"
+    },
+    {
+      "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
+      "mode": 420,
+      "size": 2624,
+      "sha256": "049d61d3e33430d32ccfa545a5cf6959c11c5e2829573aef4f3ada7ad5b54ad7"
+    },
+    {
+      "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
+      "mode": 420,
+      "size": 48194,
+      "sha256": "7d835ca4a67940de994bed0e70ba722007260201bd1970b0f64bf41105153bc9"
+    },
+    {
+      "path": "vitest.config.ts",
+      "mode": 420,
+      "size": 1693,
+      "sha256": "d29d3d4768e9d33154f1656a57b3c6dfa1780e06a83dba0150f14fbb470a7689"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.ts",
+      "mode": 420,
+      "size": 42717,
+      "sha256": "8d731d4394dba11d4e6f96d17324aabf90a5707d83f4c4f17d83511820fc50bd"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.test.ts",
+      "mode": 420,
+      "size": 22826,
+      "sha256": "64dabf42b5f475a5f9efeda398d2b06217ab0b2f8a7a34eab6ec217b6ef61f19"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-08-r18b-source-admission-v0.1-final-review.json",
+      "mode": 420,
+      "size": 25794,
+      "sha256": "9219bfdc7215f933083e0c60d65cbd8d78a0a9eec2f10bf704e2a6fe4dd7168a"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.test-fixture.ts",
+      "mode": 420,
+      "size": 11234,
+      "sha256": "530e02a913dcf814f6c4829acb85637342d25137a8926cff6d353257a578729f"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-position-trajectory-v048.fixture-hash.test.ts",
+      "mode": 420,
+      "size": 20901,
+      "sha256": "344f245921eb9d1c1cadccbd76992388d850959d3684e4e943dba970bb6b66d6"
+    },
+    {
+      "path": "lib/simulation/atomistic-world-session.ts",
+      "mode": 420,
+      "size": 46457,
+      "sha256": "be5edb0378d230fb40897273e5a4d08369ec56c74091c91411cb24203580bff2"
+    },
+    {
+      "path": "lib/simulation/atomistic-world-session.test.ts",
+      "mode": 420,
+      "size": 22164,
+      "sha256": "fd3451032fb7f41016b0914fc61fbb26193b5b3da744fe8884ba2b72091ec875"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-oxygen-minimum-distance-v048.ts",
+      "mode": 420,
+      "size": 1968,
+      "sha256": "c381c8511965f3ddc3c981abe6aa7e551b570441b703cc4bba5cccafa583c850"
+    },
+    {
+      "path": "lib/simulation/atomistic-private-oxygen-minimum-distance-v048.test.ts",
+      "mode": 420,
+      "size": 6532,
+      "sha256": "336ed1d3fb01d9509f2ad32609d820ce6d6be0dce028d73b7f0c84b4a898c206"
+    },
+    {
+      "path": "package.json",
+      "mode": 420,
+      "size": 3159,
+      "sha256": "0631ec8732a6652b3c1cb843fdc6ca9de0e72ab73e1c6de2692ba399f842eb38"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": 420,
+      "size": 367103,
+      "sha256": "0792424e6a7eb74c15b44a4d98384d535a439a74f5fc5403f038088ed60366a5"
+    }
+  ],
+  "controls": [
+    "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
+    "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
+    "evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json"
+  ],
+  "node": {
+    "version": "24.16.0"
+  },
+  "dependencies": [
+    {
+      "path": "package.json",
+      "mode": 420,
+      "size": 3159,
+      "sha256": "0631ec8732a6652b3c1cb843fdc6ca9de0e72ab73e1c6de2692ba399f842eb38"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": 420,
+      "size": 367103,
+      "sha256": "0792424e6a7eb74c15b44a4d98384d535a439a74f5fc5403f038088ed60366a5"
+    }
+  ],
+  "legacyNumericEntryScope": "version-bound-history-only",
+  "newR18bNumericExecutionEnabled": false
+}

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { digestValue } from './digest.ts';
 import {
   ATOMISTIC_F64_TRAJECTORY_BYTE_LENGTH_V045,
@@ -162,6 +162,114 @@ describe('v0.4.5 execution-unattested atomistic world session', () => {
     expect(() => assertAtomisticWorldSessionV045(stale)).toThrow(/ordered frame digest/i);
   });
 });
+
+describe('module-owned immutable session reuse', () => {
+  it('reuses only owned snapshots across all 101 reads without cloning, retaining ordinal checks', () => {
+    const session = createAtomisticWorldSessionV045(sessionInput());
+    const expected = structuredClone(session);
+    const cloneSpy = vi.spyOn(globalThis, 'structuredClone');
+    try {
+      expect(assertAtomisticWorldSessionV045(session)).toBe(session);
+      for (let ordinal = 0; ordinal < 101; ordinal += 1) {
+        const frame = getAtomisticWorldSessionFrameV045(session, ordinal);
+        expect(frame).toBe(session.trajectory.chunks[0].frames[ordinal]);
+        expect(frame).toEqual(expected.trajectory.chunks[0].frames[ordinal]);
+        expectRecursivelyFrozen(frame);
+      }
+      for (const ordinal of [-1, 101, 0.5, NaN, Infinity]) {
+        expect(() => getAtomisticWorldSessionFrameV045(session, ordinal)).toThrow();
+      }
+      expect(cloneSpy).not.toHaveBeenCalled();
+      expect(session).toEqual(expected);
+      expect(session.executionAuthenticityVerified).toBe(false);
+      expect(session.promotionEligible).toBe(false);
+    } finally {
+      cloneSpy.mockRestore();
+    }
+  });
+
+  it('fully clones external mutable, frozen and parsed copies without transferring owned identity', () => {
+    const original = createAtomisticWorldSessionV045(sessionInput());
+    const copies = [
+      structuredClone(original),
+      freezeTree(structuredClone(original)),
+      JSON.parse(JSON.stringify(original)) as typeof original,
+    ];
+    for (const external of copies) {
+      const cloneSpy = vi.spyOn(globalThis, 'structuredClone');
+      let accepted: typeof original;
+      try {
+        accepted = assertAtomisticWorldSessionV045(external);
+        expect(cloneSpy).toHaveBeenCalled();
+      } finally {
+        cloneSpy.mockRestore();
+      }
+      expect(accepted).not.toBe(external);
+      expect(accepted).toEqual(original);
+      expectRecursivelyFrozen(accepted);
+      expect(assertAtomisticWorldSessionV045(accepted)).toBe(accepted);
+      expect(assertAtomisticWorldSessionV045(external)).not.toBe(accepted);
+    }
+    const external = structuredClone(original) as MutableSession;
+    const accepted = assertAtomisticWorldSessionV045(external);
+    external.trajectory.chunks[0].frames[0].frameOrdinal = 1;
+    rehashSession(external);
+    expect(() => assertAtomisticWorldSessionV045(external)).toThrow();
+    expect(accepted).toEqual(original);
+    expect(createAtomisticWorldSessionV045(sessionInput())).not.toBe(original);
+  });
+
+  it.each([
+    ['frame order', (value: MutableSession) => { value.trajectory.chunks[0].frames[0].frameOrdinal = 1; }],
+    ['unit', (value: MutableSession) => {
+      value.trajectory.chunks[0].artifacts.positionsNanometer.manifestDescriptor.unit = 'angstrom' as 'nanometer';
+    }],
+    ['nested digest', (value: MutableSession) => {
+      value.trajectory.chunks[0].frames[0].frameDigest = digest('corrupted-frame');
+    }],
+    ['authenticity', (value: MutableSession) => { value.executionAuthenticityVerified = true as false; }],
+    ['promotion', (value: MutableSession) => { value.promotionEligible = true as false; }],
+  ])('does not trust frozen external %s corruption with a recomputed outer digest', (_label, mutate) => {
+    const original = createAtomisticWorldSessionV045(sessionInput());
+    const corrupt = structuredClone(original) as MutableSession;
+    mutate(corrupt);
+    rehashSession(corrupt);
+    freezeTree(corrupt);
+    expect(() => assertAtomisticWorldSessionV045(corrupt)).toThrow();
+    expect(() => assertAtomisticWorldSessionV045(corrupt)).toThrow();
+    expect(assertAtomisticWorldSessionV045(original)).toBe(original);
+  });
+
+  it('rejects accessor, alias, nonplain and proxy inputs without granting wrapper identity', () => {
+    const session = createAtomisticWorldSessionV045(sessionInput());
+    const accessor = structuredClone(session);
+    const getter = vi.fn(() => session.sessionId);
+    Object.defineProperty(accessor, 'sessionId', { enumerable: true, get: getter });
+    expect(() => assertAtomisticWorldSessionV045(accessor)).toThrow();
+    expect(getter).not.toHaveBeenCalled();
+    const aliased = structuredClone(session) as MutableSession;
+    aliased.cell.vectorsNanometer[1] = aliased.cell.vectorsNanometer[0];
+    expect(() => assertAtomisticWorldSessionV045(aliased)).toThrow();
+    const nonplain = structuredClone(session);
+    Object.setPrototypeOf(nonplain, { external: true });
+    expect(() => assertAtomisticWorldSessionV045(nonplain)).toThrow();
+    expect(() => assertAtomisticWorldSessionV045(new Proxy(session, {}))).toThrow();
+    const revocable = Proxy.revocable(session, {});
+    revocable.revoke();
+    expect(() => assertAtomisticWorldSessionV045(revocable.proxy)).toThrow();
+    expect(assertAtomisticWorldSessionV045(session)).toBe(session);
+  });
+});
+
+type MutableSession = DeepMutable<ReturnType<typeof createAtomisticWorldSessionV045>>;
+
+function freezeTree<T>(value: T): T {
+  if (value !== null && typeof value === 'object') {
+    for (const child of Object.values(value)) freezeTree(child);
+    Object.freeze(value);
+  }
+  return value;
+}
 
 describe('v0.4.5 world presentation controls', () => {
   it('keeps playback, seek, selection, and interpolation outside scientific evidence', () => {

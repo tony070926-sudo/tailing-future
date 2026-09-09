@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "tf.r18b-trajectory-snapshot-review/0.1",
+  "date": "2026-09-09",
+  "timezone": "Asia/Dubai",
+  "status": "dependency-remediation-candidate-independent-review-and-full-final-gates-pending",
+  "scope": "Preserved backend private positions-only snapshot and fixed-cell numerical work, plus a scoped Miniflare sharp security dependency correction and exact package/lock source admission. No frontend contract migration or new physical model.",
+  "dependencyRemediation": {
+    "id": "H-MINIFLARE-SHARP-0354",
+    "hypothesis": "The exact Miniflare 5.20260826.0-alpha child override to sharp 0.35.4 removes the reported audit finding while preserving upstream versions, scientific code and frontend contracts. This is a software compatibility hypothesis, not new scientific validation.",
+    "evidenceDirectory": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/sharp-remediation-v8.cCkh3r",
+    "scopeSha256": "f7f8af7e6939a46f3e8f322d0aae87c721083fbd57795e3b64c85158279bcf30",
+    "stage2EvidenceSha256": "782ef39c3bd52359fd0ba1c7583e89f850d54c6be1252d9702b21e83361639de",
+    "packageSha256": "0631ec8732a6652b3c1cb843fdc6ca9de0e72ab73e1c6de2692ba399f842eb38",
+    "packageLockSha256": "0792424e6a7eb74c15b44a4d98384d535a439a74f5fc5403f038088ed60366a5",
+    "dependencyDelta": "719 to 691 lock nodes: 25 changed, 28 removed, none added; sharp/platform/semver closure and deduplication only. Wrangler 4.127.0, Vite plugin 1.54.1, Miniflare 5.20260826.0-alpha and workerd nodes unchanged.",
+    "sourceAdmission": "Candidate requires exactly 22 input records including package.json/package-lock.json, identical dependency records and unchanged three controls. Preserve existing R12, mode, history and numeric dispatch restrictions; no new recursive history layer.",
+    "scratchChecks": "Fresh npm ci --ignore-scripts passed (b9e38b); complete npm audit --audit-level=low --json passed with zero findings including dev (4b02a4); local Miniflare-context sharp 0.35.4/libheif 1.23.2, synthetic PNG/AVIF codecs and Images info/transform passed (63bff3).",
+    "selfCheckCorrection": "Original smoke harness failed before codec/runtime work because sharp/package.json is not an exported subpath. Original script and failure retained; corrected entry-relative metadata lookup passed. No dependency reinstall or audit retry was needed.",
+    "limits": "Scratch compatibility is not full application acceptance, Linux runtime validation, production exploitability assessment or release approval. All final gates must run after final source fixes; the audit moves first without changing its threshold or coverage.",
+    "independentReviewStatus": "PENDING_AT_SOURCE_DOCUMENT_FREEZE",
+    "preservedV7Control": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/sharp-remediation-v8.cCkh3r/before/trajectory-snapshot-final-review-v7.json",
+      "sha256": "46bac9616e2048be26ee995e924e2703f5cbdb4b75ee71b05c1bb784366d6b89"
+    },
+    "v7FinalDisposition": {
+      "review": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-finalization-v7.Lhnc66/evaluation/reviews/2026-09-09-v7-final-gate-software-review.json",
+      "sha256": "c44347fe60f1354d98b97268332b4661ed74d4632bd8edb2a49b8416c3478313",
+      "rootDecision": "Adopted: seven gates passed, dependency audit failed, standalone evaluate/build not run. Five deadline findings await complete final closure; actual A10 integration remains required. No release approval."
+    }
+  },
+  "preservedPriorVersion": {
+    "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-finalization-v7.Lhnc66/preserved-v6-review.json",
+    "byteSize": 15921,
+    "sha256": "547f55ec42c10258752140ea6adec9dcdb143e04bcf27ae1c904a212bcb96d32",
+    "disposition": "Complete previous control preserved byte-identically, retaining all older review chains, resource-policy decisions and failed gates. Its 538/542 counts and four-P1 statements are historical, not current acceptance."
+  },
+  "inheritedWork": {
+    "snapshot": "Private ownership-bound indexing and WeakSet reuse only for fully validated, isolated, deeply frozen owned metadata; mutable/frozen/JSON external inputs retain complete validation, cloning and rejection boundaries.",
+    "fixture": "Incremental hash over identical ordered frame bytes, with independent old concatenation/Node crypto regression retained.",
+    "resourcePolicy": "Existing explicit source-fixture and snapshot-ownership 60000ms policies retained; other original per-test limits including default20000ms are unchanged.",
+    "ownedSessionReview": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/owned-session-reuse-v1.58yMZs/successor.3Yg1bM/evaluation/reviews/2026-09-09-owned-session-root-disposition.json",
+    "priorForcingClosure": "Prior alpha_xx scientific P1 was closed only for its independently reviewed, separately locked finite forcing workload; no new grid/time/solver applicability follows."
+  },
+  "hypothesis": {
+    "id": "H-OO-AXIS-PRUNE-1",
+    "subhypothesis": "H-OO-ORACLE-NATIVE-CAPTURE-1",
+    "builder": "/root/astra_boundary_release_builder (Astra)",
+    "root": "/root",
+    "statement": "Skip native hypot only when a computed absolute component is strictly greater than the current minimum, within the declared fixed wrapped domain and pinned-runtime applicability. Retain pair order, original minimum-image arithmetic and original Math.min/hypot reduction for evaluated pairs. Unknown runtime retains old complete scan.",
+    "applicability": "Unmodified Math intrinsics in Node24.16.0/V8 13.6.233.17-node.49, already-wrapped finite oxygen positions in the fixed3nm cubic periodic cell. Version text selects applicability, not authenticity.",
+    "testIsolation": "The independent old full-pair oracle uses its already captured native hypot reference, with all three arguments and ordering unchanged, independently of transparent helper-call counting.",
+    "limitation": "Not an all-engine proof, physical validity assessment, identified timeout cause or measured performance gain. Complexity remains quadratic in anchor count."
+  },
+  "frozenCodeCandidate": {
+    "applicability": "Historical native numerical-code candidate; not the current dependency-remediation source freeze.",
+    "baseCommit": "dc6e7f1af19f5398eb03b94d8ffaee2182d07f55",
+    "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/candidate-freeze.json",
+    "sha256": "6b452f2d506e72b0331ac3e8a57f9bb2060143431920850928447890e5d91ca2",
+    "deltaPath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/candidate-delta.patch",
+    "deltaSha256": "01af93a24bbe371fa8ef858ac8ad1d77edb7494b369a2f40898db8dc69d06a94",
+    "sourceInputDigestBeforeThisDocument": "d99bb8895d098ef4682188acdaf9d1a4e6bfb39723d1e9dd7a866b3c9fcb1c5a",
+    "sourceRecords": 540,
+    "observedRecords": 544,
+    "admission": "Historical native/V7 policy had 20 exact inputs and three controls. Dependency successor adds only the two exact package/lock inputs; this existing control remains part of the full source manifest.",
+    "finalFreezeRequirement": "V8 must bind its six permitted dependency/admission file edits plus this root-owned control and verify all other V7 records unchanged. Freeze complete Git candidate paths, snapshots and source digest; no prior source identity transfers."
+  },
+  "inheritedReviewApplicability": "The following three reviews and root disposition cover preserved native numerical code only. Dependency successor review and final closure are separately bound externally to the final source; no automatic approval transfer.",
+  "independentReviewers": [
+    {
+      "role": "science",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/evaluation/reviews/2026-09-09-native-science-review.json",
+      "sha256": "4411074cb95b4219c83ba2a76f959a69a00b2670554eee48fd33d0ef17958bbe"
+    },
+    {
+      "role": "software",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/evaluation/reviews/2026-09-09-native-software-review.json",
+      "sha256": "149b68b6bae923de3373934742d4cc8c67e7a9265912ac09b1482e23fefb516c"
+    },
+    {
+      "role": "sota",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/evaluation/reviews/2026-09-09-native-sota-review.json",
+      "sha256": "c08cb203be3fa8ecc634c8ad156063ee7f937d2139e5a3adff1864b08fb1a2ec"
+    }
+  ],
+  "rootDisposition": {
+    "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/evaluation/reviews/2026-09-09-native-root-disposition.json",
+    "sha256": "6c4009ff4f0b5c15f60067e0553b672b6dbfb62b8ad9327f0202442a9e67aca0",
+    "meaning": "All three independent reviews complete, no new P0/P1/P2. Bounded code and finite regressions accepted; five release P1 remain OPEN. Review statements do not replace full gates, independent solvers or engineering validation."
+  },
+  "evidence": {
+    "builderFreeze": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/builder-evidence-freeze.json",
+    "builderFreezeSha256": "7a25035b2203aeb53f6b87669e895819a38a975adf6ba7dba92bdd7c26770da7",
+    "actualTerminal": "e3a459/session81667 -> bbebf0 -> 23b117 -> fa2547 exit0",
+    "checks": [
+      "lint",
+      "typecheck",
+      "helper4",
+      "trajectory12",
+      "fixtureHash20",
+      "admissionNoHistory19"
+    ],
+    "selectedPassed": 55,
+    "historyUnselected": 1,
+    "fullFinalGatesPassed": false,
+    "oldPairEvaluations": 80813130,
+    "supportedHypotEvaluations": 59215,
+    "coverage": "All101 frames in F64/F32 with original full-pair oracle, Object.is minima and dependent gate/state/metadata digests. Unchanged payload fields are explicitly reused; not a fully independent geometry or molecular solver.",
+    "priorFailure": "Boundary predecessor: 202 old-oracle20499ms exceeded20000ms; preserved as a failure, not retroactively corrected."
+  },
+  "environment": {
+    "observation": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/host-sleep-observation.json",
+      "sha256": "60773b03d9946ead8f9d060dfbdfd295df7d0c7b3595aa75dc74303f70a3603f"
+    },
+    "guardProbe": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/temporary-sleep-guard-probe.json",
+      "sha256": "30005bbec54a79e85914f713ae59d5001730602662d537c3d0a9841c85757535"
+    },
+    "finding": "Host Maintenance Sleep04:19:44–04:20:04 and04:29:31–04:29:51 overlaps the two recent trajectory invocations. This documents environment interruption, not per-case CPU cost or every historical timeout cause.",
+    "mitigation": "Use only /usr/bin/caffeinate -is with the exact bounded validation utility on AC. Observe actual assertions and terminal release; preserve all test/outer limits. No permanent pmset, display wake or persistent holder. Does not guarantee protection from lid/forced sleep or power changes.",
+    "localRuntime": "Node24.16.0; ordinary local Python3.12.13. Protected CI pins Python3.12.11; local execution is not an identical CI-environment claim."
+  },
+  "findings": [
+    {
+      "id": "R18B-FINAL-GATE-V7-P1-DEPENDENCY-AUDIT",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Independently review the dependency correction and exact lock/source bindings, then pass required audit and all final gates on the final candidate. Scratch success alone does not close this release finding."
+    },
+    {
+      "id": "R18B-INTEGRATION-P1-LEGACY-CURRENT-TREE-ADMISSION",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "After final gates and derived-output verification, actual A10 must compare precisely staged Git paths, blob bytes and modes against the reviewed working tree. Unit coverage is not actual index verification; independent disposition is required before commit."
+    },
+    {
+      "id": "R18B-FINAL-GATE-P1-TRAJECTORY-DEADLINE",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Complete frozen-source final gate chain, exact source/dependency closure and independent external final disposition."
+    },
+    {
+      "id": "R18B-FINAL-GATE-P1-SOURCE-FIXTURE-DEADLINE",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Complete frozen-source final gate chain, exact source/dependency closure and independent external final disposition."
+    },
+    {
+      "id": "R18B-FINAL-GATE-P1-SNAPSHOT-OWNERSHIP-DEADLINE",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Complete frozen-source final gate chain, exact source/dependency closure and independent external final disposition."
+    },
+    {
+      "id": "R18B-FINAL-GATE-P1-NONFINITE-ORDER-DEADLINE",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Complete frozen-source final gate chain, exact source/dependency closure and independent external final disposition."
+    },
+    {
+      "id": "R18B-FINAL-GATE-V6-P1-CORE-DEADLINE",
+      "priority": "P1",
+      "status": "OPEN_AT_SOURCE_FREEZE",
+      "closure": "Complete frozen-source final gate chain, exact source/dependency closure and independent external final disposition."
+    },
+    {
+      "id": "H-OO-AXIS-P2-WRAPPED-ADJACENCY-COVERAGE",
+      "priority": "P2",
+      "status": "CLOSED_LIMITED",
+      "basis": "Actual post-wrap adjacent-value and equality/strict-greater regressions passed; independent science/software closure retained."
+    },
+    {
+      "id": "H-FORCE-LOAD-SCI-P2-PROFILE-SELF-COMPARISON",
+      "priority": "P2",
+      "status": "OPEN_NONBLOCKING",
+      "basis": "Self-comparison is not independent same-BVP solver validation."
+    }
+  ],
+  "finalGatePlan": {
+    "status": "NOT_RUN_ON_THIS_FINAL_SOURCE_AT_DOCUMENT_FREEZE",
+    "required": [
+      "npm-audit",
+      "lint",
+      "typecheck",
+      "full-JS-core-including-pinned-history",
+      "observer-snapshot",
+      "current-root-Node29",
+      "ordinary-Python-tests",
+      "atomistic-manifest-and-runtime-lock",
+      "evaluate",
+      "production-build"
+    ],
+    "policy": "Freeze this document and all source before execution; no mid-gate source/control edits. Preserve existing timeouts, assertions, historical cases and fail-fast policy. Actual results and subsequent closure disposition are externally bound to this source to avoid self-hash cycles.",
+    "sourceAndDependencies": "Exact source checks before/after each gate and full dependency inventory before/after. Only the existing exact Vitest result-cache exception; four existing derived reports remain separately validated outputs.",
+    "releaseBoundary": "Local full-gate success is not protected-main CI/artifact release. CI install/build/status-bound evaluate/report-build/release-manifest and artifact-bound deployment remain separately required. Never fabricate upstream status or reuse local dist as an approved CI artifact."
+  },
+  "scientificBoundaries": {
+    "positions": "nm; length dimension L; fixed periodic cubic-cell coordinate basis",
+    "time": "ps; time dimension T; unchanged discrete frame labels",
+    "representation": "Positions-only F64 to F32, precision loss declared; no integrator, interpolation, new state creation or reverse reconstruction guarantee.",
+    "executionOriginVerified": false,
+    "physicalCalibrationAdded": false,
+    "causalEffectIdentified": false,
+    "externalResultReproduced": false,
+    "scoreIncrease": false,
+    "industrialRecommendation": false,
+    "automaticPlcDcsSisPath": false,
+    "frontendContracts": "tf.world/0.3, tf.action/0.3 and tf.observation/0.3 unchanged",
+    "r2Boundary": "Reduced-unit Lennard-Jones/heat/A-to-B is a teaching toy, not a real material, chemical mechanism, reactor or industrial process.",
+    "tinyScope": "Existing dimensionless native PFHub tiny prerequisite only; no fullt*=8/refinement evidence. No new PDE/OpenMM execution. Prior tiny budget16 used/0 remaining stays exhausted.",
+    "causalPolicy": "Taxonomy, graph paths, correlations and geometry identify no causal effect. Quantitative interventions require identified structural equations, factual/intervention values, exogenous context where applicable, boundary, horizon, parameter evidence and calibrated domain; otherwise machine-readable abstention.",
+    "crossScalePolicy": "Declare units/dimensions/bases and boundary, geometry, averaging, time assumptions, conservation, uncertainty, information loss and reverse-use policy. Preserve competing mechanisms and excluded regimes; no validated new cross-scale bridge claimed."
+  },
+  "datedComparison": {
+    "asOf": "2026-09-09",
+    "report": {
+      "role": "sota",
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-admission-evidence-20260908.I9RB3u/oxygen-axis-prune-v1.rQnP2m/successor-native.qgHJwr/evaluation/reviews/2026-09-09-native-sota-review.json",
+      "sha256": "c08cb203be3fa8ecc634c8ad156063ee7f937d2139e5a3adff1864b08fb1a2ec"
+    },
+    "conclusion": "Software/numerical regression only; no SOTA or evidence-maturity increase. Prior dated official PFHub, FiPy, DOLFINx, MOOSE and OpenMM source catalog retained with reference/auditable classifications and null digests when not locked; no reproduced or ranking claim."
+  },
+  "nextRoundTasks": [
+    "Complete frozen final gates with temporary sleep protection and independent release-P1 closure; user approved R12-excluded publication, preserving local evidence, only through protected-main/artifact release after all required checks.",
+    "Complete PFHub7a to dimensionless t*=8 with separate spatial/time convergence and independently assembled same-BVP comparison, retaining official-literal discrepancy, literal-self self-convergence and non-PFHub exact-trace strict MMS lanes.",
+    "Obtain locked same-system molecular validation of forces, energies and conservation before any calibrated materials/process/causal claim."
+  ],
+  "commitApproved": false,
+  "releaseEligible": false,
+  "scientificPromotionEligible": false,
+  "goalComplete": false
+}

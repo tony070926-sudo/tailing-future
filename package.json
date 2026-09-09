@@ -62,5 +62,10 @@
     "vitest": "4.1.11",
     "wrangler": "4.127.0"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "miniflare@5.20260826.0-alpha": {
+      "sharp": "0.35.4"
+    }
+  }
 }

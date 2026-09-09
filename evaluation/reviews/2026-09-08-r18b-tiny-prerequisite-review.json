@@ -1,0 +1,619 @@
+{
+  "schemaVersion": "tf.r18b-tiny-prerequisite-review/0.1",
+  "date": "2026-09-08",
+  "timezone": "Asia/Dubai",
+  "author": "/root",
+  "status": "independent-tiny-execution-closure-only-integration-pending",
+  "reviewRecordCompleteFor": "The exact v9 tiny prerequisite and v10/v4 one-shot operational recovery; not the eventual integrated/release candidate.",
+  "roles": {
+    "builder": "/root owns fixes; /root/astra_r18b_plan_recovery supplied the stopping design and manufactured-test function",
+    "scienceReviewer": "/root/lifecycle_science_review",
+    "softwareReviewer": "/root/admission_software_review",
+    "sotaReviewer": "/root/lifecycle_science_review",
+    "independence": "Two independent reviewers cover three requested review roles; science and SOTA share a reviewer because of the available agent limit. Neither reviewer authored the candidate. Builder does not approve its own candidate."
+  },
+  "hypothesis": {
+    "scope": {
+      "Nx": 8,
+      "Ny": 4,
+      "Nt": 2,
+      "dt": 0.01,
+      "finalTime": 0.02,
+      "methods": [
+        "FV",
+        "P1"
+      ],
+      "lanes": [
+        "official-literal",
+        "exact-trace-companion"
+      ]
+    },
+    "statement": "For this fixed tiny case, a single locked SciPy CG invocation using a fresh actual-system componentwise certificate can satisfy the unchanged FV residual gate; method-specific FV/P1 records remain non-interchangeable. No general convergence or physical applicability is inferred.",
+    "frozenAcceptance": "T01 runtime, T02 scope, T03 sparse/dense matvec, T04 geometry, T05 monomial quadrature, T06 independent assembly, T07 old-boundary/RHS, T08 actual residual plus independent dense solve, T09 balance, T10 full-DOF load, T11 checkpoints/bases, T12 finite/schema/claims. Six manufactured STOP groups precede the final baseline; all 43 frozen mutation/guard/load cases must pass.",
+    "thresholds": {
+      "componentwiseBackwardResidual": 1e-11,
+      "denseSolutionRelativeScaled": 1e-10,
+      "balanceRelativeScaled": 1e-11
+    },
+    "unchangedControls": "No denominator floor, clipping, rescaling, solver restart, fallback, refinement or tolerance search. FV stopping owner is the project callback certificate, not fabricated native FiPy/global convergence."
+  },
+  "frozenScientificCandidate": {
+    "baseCommit": "84f7720e9ac14fcb50fb54fdcb96d1df7473c365",
+    "freeze": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/v9-candidate-freeze-v2.json",
+      "sizeBytes": 9324,
+      "sha256": "edfe16935e3aef1ac1ec4b1e8a703e0f0e4a39cc0db9037155c017ad1ec79df0"
+    },
+    "diffIdentity": {
+      "sha256": "ea8df8e118a79c49aa50d707c32d37f132034be5ba75b17386bb54254b7c9396",
+      "encoding": "SHA256 of UTF-8 JSON.stringify(payload), no newline; insertion order base,kind,files, and per-file path,sizeBytes,sha256",
+      "payload": {
+        "base": "84f7720e9ac14fcb50fb54fdcb96d1df7473c365",
+        "kind": "seven-new-file-additions",
+        "files": [
+          {
+            "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+            "sizeBytes": 9878,
+            "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+          },
+          {
+            "path": "evaluation/reviews/2026-09-07-r18b-csr-p1-tiny-v1-builder-evidence.json",
+            "sizeBytes": 5804,
+            "sha256": "ed80a70da0a63e00db924d1693e2139f7d24bbff02bcab47023501e6b5e1de13"
+          },
+          {
+            "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+            "sizeBytes": 16749,
+            "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+          },
+          {
+            "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+            "sizeBytes": 28194,
+            "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+          },
+          {
+            "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+            "sizeBytes": 28699,
+            "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+          },
+          {
+            "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+            "sizeBytes": 6713,
+            "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+          },
+          {
+            "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+            "sizeBytes": 20116,
+            "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+          }
+        ]
+      }
+    },
+    "allElevenFrozenInputs": [
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+        "sizeBytes": 7411,
+        "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+      },
+      {
+        "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+        "sizeBytes": 9878,
+        "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+      },
+      {
+        "path": "evaluation/reviews/2026-09-07-r18b-csr-p1-tiny-v1-builder-evidence.json",
+        "sizeBytes": 5804,
+        "sha256": "ed80a70da0a63e00db924d1693e2139f7d24bbff02bcab47023501e6b5e1de13"
+      },
+      {
+        "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+        "sizeBytes": 16749,
+        "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+        "sizeBytes": 6966,
+        "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+        "sizeBytes": 72494,
+        "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+        "sizeBytes": 29719,
+        "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+        "sizeBytes": 28194,
+        "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+        "sizeBytes": 28699,
+        "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+        "sizeBytes": 6713,
+        "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+        "sizeBytes": 20116,
+        "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+      }
+    ],
+    "executionInputs": [
+      {
+        "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+        "sizeBytes": 7411,
+        "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+      },
+      {
+        "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+        "sizeBytes": 9878,
+        "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+      },
+      {
+        "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+        "sizeBytes": 16749,
+        "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+        "sizeBytes": 6966,
+        "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+        "sizeBytes": 72494,
+        "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+        "sizeBytes": 29719,
+        "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+        "sizeBytes": 28194,
+        "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+        "sizeBytes": 28699,
+        "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+        "sizeBytes": 6713,
+        "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+      },
+      {
+        "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+        "sizeBytes": 20116,
+        "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+      }
+    ],
+    "newReviewBoundary": "This dated review is a later outcome artifact, not a retrospectively inserted input to the reviewed seven-file diff. The future source-admission successor must include and hash this exact file as a normal source input.",
+    "builderReportHistory": "The existing 2026-09-07-r18b-csr-p1-tiny-v1-builder-evidence.json, SHA256 ed80a70da0a63e00db924d1693e2139f7d24bbff02bcab47023501e6b5e1de13, remains unchanged. Its pending/unexecuted fields describe the v9 preexecution freeze, not current outcome. This review records the later actual execution without rewriting that historical evidence."
+  },
+  "authority": {
+    "v6": "16cbc07d2469d875f7d7b9d72e5befaa5b5033acd83b7b7500f104df71109e41",
+    "v7": "0671c765e5ccadecd78527c8efa187228945efdb88cbc112063b7e4ddcb63c50",
+    "v8": "4ae33f61061241691e45cddd8e7b4b2ddc07a0081419b8a370b893650d6d9e04",
+    "v9": "7638803c9bd75120421e7ec7d7c95e2026cec5b4956735fe3aa633ebd1d96322",
+    "v10": "bb89a9e1073ca40a28240a8a701fa7828e679fdd99e4b76df749e9e68695cd7b",
+    "driverV4": "d220f268b0ad9af2d3879235f1a4e21441969e75f45745b376a42336b2c8ad40",
+    "meaning": "v10 explicitly added one verifier-only recovery after the original output-limit failure. It did not authorize another baseline or change any scientific source/array/threshold. Each actual launch had its own root authorization and exclusive records."
+  },
+  "executionHistory": [
+    {
+      "stage": "initial",
+      "outcome": "failed-ALGEBRAIC_RESIDUAL",
+      "pdeSteps": 8,
+      "mutations": 0,
+      "chargedMs": 13000,
+      "terminalSha256": "29932d93fc1312daa396b95f6f52962254294b03c706d9c95299f001a074041d",
+      "receiptSha256": "d52a64ad7de8ee58402242b52e82c04c3dde0adc3fec061eaeeae7d39b558b2b",
+      "note": "Original failure permanently retained; no retrospective pass."
+    },
+    {
+      "stage": "diagnostic",
+      "outcome": "passed-read-only-residual-audit",
+      "systems": 8,
+      "syntheticCases": 8,
+      "pdeSteps": 0,
+      "chargedMs": 3000,
+      "resultSha256": "0e418596b403d3267433b2c980f56cbb206d06236d020d556bbd007b743306b0",
+      "note": "Stored-system global/componentwise mismatch confirmed for four FV systems, not an identified unique internal-CG root cause or a rerun."
+    },
+    {
+      "stage": "final",
+      "outcome": "pass-for-tiny-interface-only",
+      "pdeSteps": 8,
+      "stoppingProtocolGroups": 6,
+      "stoppingProtocolSubcases": 40,
+      "mutationGuardLoadCases": 43,
+      "chargedMs": 7000,
+      "terminalSha256": "751cb8674a86bb9ee0dc4ba9d79e59b7aab6a0ded37718c50f5e98e222e404e3",
+      "receiptSha256": "51bfa22dda1b42ba05122c7a7e435ace40659c1747148873bdead924496a0fb9",
+      "testsSha256": "2bd6986d944de4c83c11abd05fca7ee22c0fc611ce63fffc31b7a02705185843"
+    },
+    {
+      "stage": "replay",
+      "outcome": "failed-OUTPUT_LIMIT_EXCEEDED",
+      "driverExitCode": 1,
+      "childExitCode": null,
+      "signal": "SIGKILL",
+      "outputTruncated": true,
+      "combinedCaptureLimitBytes": 262144,
+      "pdeSteps": 0,
+      "chargedMs": 7000,
+      "terminalSha256": "607130842a02fdd639cffd8246096e12096288097bf666ca9ec4551928c0ffce",
+      "stdoutSha256": "8f38d065c39f3c74098923269709c4b9367bc3309c667aa71ede39da5527210b",
+      "note": "Incomplete JSON is not replay success. The failed v3 runner did not reach post-identity checks; subsequent independent file observations are not retroactive runner checks."
+    },
+    {
+      "stage": "replay-recovery",
+      "outcome": "pass-for-tiny-interface-only",
+      "driverExitCode": 0,
+      "childExitCode": 0,
+      "newPdeSteps": 0,
+      "storedSystemsReplayed": 8,
+      "chargedMs": 7000,
+      "terminalSha256": "deb6f95561c23b8c5d79ab6f704858e42d69a56e0bf572fc6d130b2785ba3779",
+      "observationSha256": "32fb6ddb016897007de2856d4c8e2d35d2d5dd63ceecb11dec4fd78c9f180c33",
+      "stdoutBytes": 267176,
+      "stdoutSha256": "60aaea694c4ec61cab649009cd70c4b17e5f9e8be4f78d3f7f0f1936e5d76ddb",
+      "stderrBytes": 0,
+      "combinedCaptureLimitBytes": 1048576,
+      "completeStrictJson": true,
+      "exactFinalBaselineEquality": true,
+      "postExecutionIdentityChecks": true,
+      "note": "Same final-source, source manifest, interpreter and final evidence. This separate successful invocation does not relabel the original replay."
+    }
+  ],
+  "executionTotals": {
+    "baselineSteps": 16,
+    "newPdeStepsAvailable": 0,
+    "aggregateObservedMs": 37000,
+    "aggregateLimitMs": 300000,
+    "remainingMs": 263000,
+    "newExecutionAuthorized": false,
+    "chargeBasis": "Whole-command root tool-clock before launch/after terminal plus 2000 ms, including conservative polling overhead. Not solver-only time. General repository gates, coding and review waits are separate.",
+    "captureAndStorage": "Existing 64 MiB logical evidence total (63 MiB normal plus 1 MiB emergency), 12 MiB control and other v7 partitions remain; single-writer accounting is not an OS quota.",
+    "cleanup": "All actual stages have direct-child exit, closed pipes and original process-group absence confirmed. Escaped descendants and OS-level containment are not verified."
+  },
+  "jointResult": {
+    "allT01ThroughT12PassedForEightSystems": true,
+    "stopSubcaseCounts": [
+      2,
+      1,
+      5,
+      12,
+      7,
+      13
+    ],
+    "all43UniqueMutationIdsMatchPreregistration": true,
+    "allExpectedReasonsMatchObserved": true,
+    "methodSeparationNegativeCases": 8,
+    "fvNativeCallsPerStep": 1,
+    "fvAdapterCallsPerStep": 1,
+    "fvCallbackCounts": [
+      5,
+      4,
+      5,
+      4
+    ],
+    "fvMode": "callback-certificate",
+    "fvNativeCgInfo": null,
+    "p1Iterations": [
+      12,
+      13,
+      12,
+      13
+    ],
+    "p1FvStopFieldAbsent": true,
+    "eightSidecarsIndependentlyByteConsistent": true,
+    "receiptVerifierAuthority": "Receipt remains authoritative; sidecar equality was independently checked for these exact artifacts.",
+    "residualInterpretation": "All eight recorded componentwise ratios are <=1e-11. FV step-2 values near 9.10e-12 establish no robustness margin or forward-error guarantee beyond this tiny case."
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "fipy": "4.0.3",
+    "packaging": "26.3",
+    "platform": "Darwin arm64",
+    "lockSha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+    "combinedClosure": {
+      "files": 3415,
+      "totalBytes": 125336192,
+      "recordsSha256": "55f3f0353e053a0eca5cf92af57019c16cdf33f50a126922993ed8cdbf2a2b7c"
+    },
+    "recoveryInventory": {
+      "modules": 722,
+      "nativeImages": 382,
+      "reviewedSourceModules": 5,
+      "registeredSynthetic": 9,
+      "runtimeNamespaces": 2,
+      "runtimeNativeImages": 33,
+      "hostSystemNativeImages": 349
+    },
+    "boundary": "Actual locked verifier initialization checked materialized runtime closure and origins. Reviewers inspected recorded evidence; software reviewer additionally hashed 635 distinct referenced files without new Python/dyld sampling. Host Darwin system libraries are explicitly not byte-locked."
+  },
+  "scientificBoundary": {
+    "quantity": {
+      "unit": "1",
+      "dimension": "dimensionless",
+      "basis": "PFHub7a native nondimensional"
+    },
+    "equationBasis": {
+      "FV": "actual unscaled cell-area/time equation",
+      "P1": "consistent-mass increment equation"
+    },
+    "normBasis": {
+      "FV": "cell-centre area-weighted L2",
+      "P1": "continuous reconstructed P1 area-integrated L2",
+      "normalization": "No division by domain area"
+    },
+    "projection": {
+      "grid": "4x2 aligned coarse cells",
+      "basis": "area average",
+      "informationLoss": "Subcell information lost",
+      "reverseUse": "No reverse reconstruction or fine-scale inference"
+    },
+    "claimLanes": {
+      "officialLiteral": "Analytic-field discrepancy for literal 1/0 Dirichlet BVP; not strict MMS.",
+      "literalSelf": "Not executed as a refinement study in this tiny round; requires same-BVP self-convergence.",
+      "exactTraceCompanion": "Non-PFHub strict MMS companion with analytic boundary trace; never an official-literal reproduction."
+    },
+    "excluded": "Full t=8, spatial or temporal convergence, real material/constitutive calibration, catalyst/reactor/process validity, identified causal effect, industrial advice and automatic PLC/DCS/SIS control. The earlier reduced-unit R2 toy is not upgraded into a real material or reactor model.",
+    "compatibility": "No frontend changes or migration of tf.world/0.3, tf.action/0.3 or tf.observation/0.3."
+  },
+  "independentReviews": {
+    "preexecution": {
+      "science": {
+        "path": "/private/tmp/tf-r18b-v9-science-sota-review.w745EP/science-review.json",
+        "sha256": "2d946847fe797f1120b6ddc5a5834dcb3e07d2a2c049b6b00afac1593623a8cf",
+        "bytes": 15397,
+        "fullyRead": true,
+        "noNewFindings": true
+      },
+      "software": {
+        "path": "/private/tmp/tf-r18b-v9-software-review.MOfxD2/review.json",
+        "sha256": "8ec5c66241cac960989182a4ead5efb58faa70461214b08fc70c4f1216dfc0d9",
+        "bytes": 13305,
+        "fullyRead": true,
+        "noNewFindings": true
+      },
+      "datedSota": {
+        "path": "/private/tmp/tf-r18b-v9-science-sota-review.w745EP/sota-review.json",
+        "sha256": "e2612e47adbf02198a8e85c7493e303cbee64cdc575e9166aeb4006dc95911ee",
+        "bytes": 20144,
+        "fullyRead": true,
+        "noNewFindings": true
+      }
+    },
+    "finalAndFailedReplay": {
+      "science": {
+        "path": "/private/tmp/tf-r18b-v9-execution-science.VaCK8H/review.json",
+        "sizeBytes": 17162,
+        "sha256": "0d6975898687dff2a2f4cecea27fc62ae2c6870e6d060d0a5c0ae9ade245826e",
+        "fullyRead": true
+      },
+      "software": {
+        "path": "/private/tmp/tf-r18b-v9-execution-review.2RirgG/2026-09-08-v9-final-and-replay-review.json",
+        "sizeBytes": 13347,
+        "sha256": "529b840aaba4c62035afdb4b51514f6485b066c380f317a06213c2a3b6b983af",
+        "fullyRead": true
+      }
+    },
+    "recoveryImplementation": {
+      "science": {
+        "path": "/private/tmp/tf-r18b-driver-v4-science-boundary.K3YsqH/review.json",
+        "sizeBytes": 7866,
+        "sha256": "e1cd826b846a3cdaed0310e147579827c9ea658a33e3e5c6da88d0fb3d8a045c",
+        "fullyRead": true
+      },
+      "software": {
+        "path": "/private/tmp/tf-r18b-driver-v4-review.8wT0t5/2026-09-08-driver-v4-review.json",
+        "sizeBytes": 10245,
+        "sha256": "fc0c9b94e52dca4a753ce343cef305d1058dcdbbdd04d69d45430ee4b11ee326",
+        "fullyRead": true
+      }
+    },
+    "executionClosure": {
+      "science": {
+        "path": "/private/tmp/tf-r18b-recovery-science-closure.KwXP39/review.json",
+        "sizeBytes": 15161,
+        "sha256": "f00b8179133773cebf813db461a1d19829799f40023b66c94904c56d10943ef5",
+        "fullyRead": true,
+        "durablePath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/recovery-closure-archive-ThcsDg/review.json"
+      },
+      "software": {
+        "path": "/private/tmp/tf-r18b-recovery-closure.D0cSKX/2026-09-08-recovery-execution-closure.json",
+        "sizeBytes": 10412,
+        "sha256": "6f060a2ed48784c0223c960e391f3269d40ec99afdb7bd5948d4c85b4f1c6037",
+        "fullyRead": true,
+        "durablePath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/recovery-closure-archive-ThcsDg/2026-09-08-recovery-execution-closure.json"
+      }
+    },
+    "scope": "Independent reviewers explicitly closed the three listed P1s for exact tiny execution only. Their read-only audits did not add numerical replays and do not approve integrated source or release."
+  },
+  "dispositions": {
+    "closedP1": [
+      {
+        "id": "R18B-TINY-P1-ALGEBRAIC-RESIDUAL",
+        "status": "closed-for-exact-tiny-execution-only",
+        "authority": "Both independent execution closure records; not Builder self-approval"
+      },
+      {
+        "id": "R18B-TINY-P1-METHOD-FIELD-SEPARATION",
+        "status": "closed-for-exact-tiny-execution-only",
+        "authority": "Both independent execution closure records; not Builder self-approval"
+      },
+      {
+        "id": "R18B-TINY-P1-REPLAY-OUTPUT-ENVELOPE",
+        "status": "closed-for-exact-tiny-execution-only",
+        "authority": "Both independent execution closure records; not Builder self-approval"
+      }
+    ],
+    "aliases": {
+      "R18B-P1-INDEPENDENT-REPLAY-OUTPUT-ENVELOPE": "R18B-TINY-P1-REPLAY-OUTPUT-ENVELOPE",
+      "R18B-TINY-P1-REPLAY-OUTPUT-LIMIT": "R18B-TINY-P1-REPLAY-OUTPUT-ENVELOPE"
+    },
+    "newTinyP0": [],
+    "newTinyP1": [],
+    "retainedP2": [
+      "Incomplete general CSR structural preflight before native sparse construction.",
+      "Receipt-only verifier authority; sidecar consistency is established only for these exact independently compared artifacts.",
+      "Persisted-runtime semantic scope, unpinned host-system images, sampled/current byte observations and original-group-only cleanup remain limited."
+    ],
+    "openIntegrationP1": {
+      "id": "R18B-INTEGRATION-P1-LEGACY-CURRENT-TREE-ADMISSION",
+      "status": "open-static-confirmed",
+      "basis": "Legacy v0.3 current-tree inventory rejects each unregistered R18b path. Its current-root suite and current_root_v2 suite are in ordinary test dispatch and must be retained unchanged in a fixed historical tree by a reviewed successor.",
+      "references": [
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.mjs:151",
+        "scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs:26",
+        "scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs:37",
+        "vitest.config.ts:20"
+      ],
+      "actualFullSuiteRunForThisFinding": false
+    }
+  },
+  "preservedCorrections": {
+    "rootInventoryInspection": "First added read-only metadata check omitted already-frozen namespace/registered-synthetic branches and failed. The root result retains it; corrected inspection follows existing code. No new origin exception or numerical rerun.",
+    "reviewerMetadataInspection": "Science reviewer retains an initial inline Node syntax error and corrected read-only checks in its closure record.",
+    "builderReportAndFailures": "All seven v9 files, sealed candidate/source, initial failure, original replay failure, D1, final and recovery evidence remain unchanged.",
+    "r12": "User-selected exclusion of unresolved R12 redistribution content remains in force. Local original evidence is preserved; no R12 capability or content is admitted by this round."
+  },
+  "applicableGates": {
+    "scientific": "Actual final and successful stored-state recovery passed after the last scientific source fix. No scientific source changed afterward.",
+    "static": {
+      "astFiles": 4,
+      "astExitCode": 0,
+      "rootAjv": {
+        "positive": 4,
+        "negative": 15,
+        "exitCode": 0
+      },
+      "independentV9SoftwareSchema": {
+        "positive": 6,
+        "negative": 38,
+        "exitCode": 0
+      },
+      "driverV4": {
+        "rootTests": 161,
+        "independentTests": 161,
+        "additionalIndependentMetadataProbes": 14,
+        "exactProductionBlockVmCases": 7,
+        "allPassed": true
+      }
+    },
+    "repositoryProgress": {
+      "evidence": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/repository-gates-progress-v1.json",
+      "lint": {
+        "exitCode": 0,
+        "toolChunk": "616d95"
+      },
+      "typecheck": {
+        "exitCode": 0,
+        "toolChunk": "ddbc01"
+      },
+      "npmAudit": {
+        "exitCode": 0,
+        "vulnerabilitiesReported": 0
+      },
+      "atomisticValidate": {
+        "exitCode": 0,
+        "initialMissingExplicitGhPathFailurePreserved": true
+      },
+      "python": {
+        "exitCode": 0,
+        "passed": 135,
+        "skipped": 1,
+        "skipReason": "Existing frozen Random-TP cache absent; not counted as a pass"
+      },
+      "r18aNode": {
+        "exitCode": 0,
+        "passed": 29,
+        "skipped": 0
+      },
+      "jsCore": "not run on this new candidate; legacy source-admission blocker identified",
+      "observerSnapshot": "not run",
+      "evaluator": "not run",
+      "productionBuild": "not run"
+    },
+    "eligibility": "These are partial prerequisite/regression observations, not final whole-repository gates on an integrated frozen candidate. All applicable final gates must run after integration/review freeze."
+  },
+  "evidence": {
+    "localRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu",
+    "controlRoot": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1",
+    "rootRecoveryResult": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/v10-recovery-root-result-v1.json",
+      "sha256": "418fe9944bb6c088014df4d3a54f54f54ba22f20db8cf0a723c0a5732e0cf466"
+    },
+    "dataTrees": {
+      "initial": "d36b117c92d6adfffbf2916cb73e13e500379a417def38a7df17140ac497392c",
+      "diagnostic": "200c9e7861c8d3d95d9d794b23b7a0db2de3f3da82e416b9a412cb2e77c0e6de",
+      "final": "704d905bff574d2323804cac7eb48bf4c3034db78021b341b8b0171e7ce08a7a"
+    },
+    "closureArchive": {
+      "path": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-r18b-evidence-20260907.Ix6DIu/execution-control-notlf1/recovery-closure-archive-ThcsDg",
+      "indexSha256": "268c2a337c29e4314131ac49ec41ece8183708a14e079a9c39d8bd0fbf5e74f1",
+      "totalBytes": 295111,
+      "rootReadbackVerified": true
+    },
+    "availability": "Full immutable numerical/source/runtime/control evidence is retained locally, outside the repository. This review provides identities and dispositions, not a claim that those local paths are publicly retrievable or that external benchmark reproduction occurred."
+  },
+  "datedSota": {
+    "asOf": "2026-09-08",
+    "primarySourcesLastAccessed": "2026-09-07",
+    "newNetworkVisitClaimed": false,
+    "priorReviewSha256": "e2612e47adbf02198a8e85c7493e303cbee64cdc575e9166aeb4006dc95911ee",
+    "primaryReference": {
+      "url": "https://pages.nist.gov/pfhub/benchmarks/benchmark7.ipynb/",
+      "revision": "aa4774ce73c5a87455c942564cf994fc0020e335",
+      "sha256": "333c096923e9b1f882867f9ac0caeab21570ab817387e5c07fb9ff13077e3c1a",
+      "classification": "auditable",
+      "classificationBoundary": "Locally locked primary reference; not a reproduced full benchmark"
+    },
+    "comparisonBoundary": "Prior like-for-like task/domain distinctions and FiPy/PETSc/FEniCSx/MOOSE references remain. This round adds no external numerical ranking, SOTA percentage or evidence-score increase.",
+    "nextGaps": [
+      {
+        "id": 1,
+        "task": "Versioned source-admission integration with unchanged historical suites, exact reviewed source identities and full repository gates."
+      },
+      {
+        "id": 2,
+        "task": "Separately freeze scalable full-t=8 pilot with resource/linear/quadrature controls; current tiny success grants no pilot execution authority."
+      },
+      {
+        "id": 3,
+        "task": "Complete both spatial and temporal convergence with at least three effective points per applicable direction and controlled complementary, algebraic, quadrature and transfer errors. Pilot/tiny results cannot substitute."
+      }
+    ]
+  },
+  "decision": {
+    "independentTinyExecutionClosureRecorded": true,
+    "originalFailuresRelabeledPass": false,
+    "integratedCandidateApproved": false,
+    "formalEligible": false,
+    "fullConvergenceComplete": false,
+    "physicalValidation": false,
+    "identifiedCausalEffect": false,
+    "rankingEligible": false,
+    "evidenceScoreIncreaseAuthorized": false,
+    "commitEligible": false,
+    "pushEligible": false,
+    "deploymentEligible": false,
+    "newNumericalExecutionAuthorized": false,
+    "goalComplete": false
+  }
+}

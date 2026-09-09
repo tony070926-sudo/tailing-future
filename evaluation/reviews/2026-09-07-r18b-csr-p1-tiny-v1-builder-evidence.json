@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "tf.private-builder-evidence/0.1",
+  "date": "2026-09-08",
+  "timestampBasis": "Asia/Dubai local date; original frozen artifacts retain their original 2026-09-07 dates",
+  "builder": "/root (fix owner), Astra patch design and manufactured test contribution",
+  "status": "v9-integrated-statically-checked-awaiting-independent-source-review-and-final-execution",
+  "baseCommit": "84f7720e9ac14fcb50fb54fdcb96d1df7473c365",
+  "authorities": {
+    "v6": "16cbc07d2469d875f7d7b9d72e5befaa5b5033acd83b7b7500f104df71109e41",
+    "v7": "0671c765e5ccadecd78527c8efa187228945efdb88cbc112063b7e4ddcb63c50",
+    "v8": "4ae33f61061241691e45cddd8e7b4b2ddc07a0081419b8a370b893650d6d9e04",
+    "v9": "7638803c9bd75120421e7ec7d7c95e2026cec5b4956735fe3aa633ebd1d96322"
+  },
+  "preservedInitial": {
+    "builderEvidenceSha256": "d075b290529862e15d46ba11a74d31c59b6f5ff0a5e5d1e8d22f0bf590b3da20",
+    "failedCandidateFreezeSha256": "fa8cd5ac0ecee57216dd9f9703ccd4e98bf1a3aec87a454ecadf7c0ff469213d",
+    "receiptSha256": "d52a64ad7de8ee58402242b52e82c04c3dde0adc3fec061eaeeae7d39b558b2b",
+    "completedSteps": 8,
+    "mutationsExecuted": 0,
+    "status": "ALGEBRAIC_RESIDUAL failed, retained unchanged"
+  },
+  "diagnostic": {
+    "resultSha256": "0e418596b403d3267433b2c980f56cbb206d06236d020d556bbd007b743306b0",
+    "syntheticPassed": 8,
+    "systems": 8,
+    "pdeSteps": 0,
+    "reviewSha256": "7dd9b890cbee5370c898e3d053d8648571a271f2959d7cf093998a7c60e4b47d",
+    "status": "stored FV global/componentwise mismatch; not candidate closure"
+  },
+  "staticChecks": {
+    "astParse": {
+      "files": 4,
+      "actualExitCode": 0,
+      "toolChunk": "8f28bf",
+      "candidateImports": 0,
+      "plannedMutationSetMatched": 43
+    },
+    "ajv2020": {
+      "actualExitCode": 0,
+      "toolChunk": "492de6",
+      "strictJsonFiles": 2,
+      "positiveCases": 4,
+      "negativeCases": 15,
+      "fixtureBasis": "constructed schema shapes, not scientific/PDE records",
+      "checkerSha256": "0b0756f7eb642c8fdc5e855d6c1aee2b4012eeac915fe06b373f5faafc3fa26f"
+    },
+    "astraStopFunctionAstUnchanged": {
+      "actualExitCode": 0,
+      "toolChunk": "9d05dc"
+    },
+    "pythonStoppingProtocolExecution": false
+  },
+  "executionSourceFiles": [
+    {
+      "path": "evaluation/mesoscale/dependencies/pfhub7a-r18a-fipy/runtime-lock-v1.json",
+      "sizeBytes": 7411,
+      "sha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+    },
+    {
+      "path": "evaluation/mesoscale/preregistrations/pfhub7a-r18b-csr-p1-tiny-v1.json",
+      "sizeBytes": 9878,
+      "sha256": "1d993a2b6de83457fd258083bdde81391c9d685addcf5a5530b687da494ef4c7"
+    },
+    {
+      "path": "schemas/pfhub7a-r18b-tiny-interface-v0.1.schema.json",
+      "sizeBytes": 16749,
+      "sha256": "0359bbac2204eef4c13f301613df941cb5b300c0d0e7249582c1f605b8dad6d3"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_oracle.py",
+      "sizeBytes": 6966,
+      "sha256": "32bf106747aa04015c91fea4ae9293961325f7d217b2a8560ab6d3a0c1656539"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_supervise_v3.py",
+      "sizeBytes": 72494,
+      "sha256": "8d7f001b9cd2d865f62a4ce7ba9b70040b6544eeb7847f0afdcb2eaa66ca61af"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18a_worker.py",
+      "sizeBytes": 29719,
+      "sha256": "3ad9a7c9d7ef6c968042acd7c365c2ef2e3ed049ecdb531240aa1d527f03568f"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface.py",
+      "sizeBytes": 28194,
+      "sha256": "e2b2abf3c1062f2ad79427011d7c066817d2d05b622af8b74febaaf0380b3264"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_interface_test.py",
+      "sizeBytes": 28699,
+      "sha256": "371efc7f09d8d78517891d56a001fead154a7ab18b9d2ce62458e5cbad169041"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_oracle.py",
+      "sizeBytes": 6713,
+      "sha256": "d275ab2d77d4500d28d6b50fe7ea72d6a57efd327c672357fc0f09b4d1ca6e0b"
+    },
+    {
+      "path": "scripts/mesoscale/pfhub7a_r18b_tiny_verify.py",
+      "sizeBytes": 20116,
+      "sha256": "387065d7359d84fe1c419f38df55107f7ad755e329d0c72f9a0bda229f9612a5"
+    }
+  ],
+  "currentCandidateExecution": {
+    "baselinePdeSteps": 0,
+    "stoppingProtocolGroupsExecuted": 0,
+    "mutationsExecuted": 0,
+    "fullVerifierReplaysExecuted": 0,
+    "authorizationCreated": false
+  },
+  "plannedFinal": {
+    "stoppingProtocolGroups": 6,
+    "manufacturedSubcases": 40,
+    "baselineSteps": 8,
+    "baselineMutationVariants": 43,
+    "fullVerifierReplay": 1
+  },
+  "budgets": {
+    "alreadyObservedMs": 16000,
+    "remainingMs": 284000,
+    "totalPdeStepsCap": 16,
+    "remainingPdeSteps": 8,
+    "maxChildMs": 120000,
+    "maxEvidenceBytes": 67108864
+  },
+  "findings": [
+    {
+      "id": "R18B-TINY-P1-ALGEBRAIC-RESIDUAL",
+      "status": "open-pending-new-source-review-and-actual-final-replay"
+    },
+    {
+      "id": "R18B-TINY-P1-METHOD-FIELD-SEPARATION",
+      "status": "M1-only-static-closure-4f33af0c5b272282a1f6c6372a47795a5a132a2347ea02d75dc996424afe02de; merged-v9-and-executable-closure-pending"
+    }
+  ],
+  "limitations": [
+    "Builder cannot approve own work; static shape tests do not validate numerical output",
+    "The added adapter changes FV stopping ownership, not the PDE or scientific tolerances; success is unknown until actual bounded run",
+    "Existing CSR structural-preflight, checkpoint-sidecar authority and persisted-runtime-metadata P2 limitations remain",
+    "No current full-horizon spatial or temporal convergence result; no real-material/industrial/causal-effect/automatic-control validation"
+  ],
+  "candidateApproved": false,
+  "formalEligible": false,
+  "rankingEligible": false,
+  "physicalValidation": false,
+  "fullConvergenceComplete": false,
+  "promotionEligible": false
+}

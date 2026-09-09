@@ -1,6 +1,8 @@
 import { sha256 } from '@noble/hashes/sha256';
 import { bytesToHex } from '@noble/hashes/utils';
 import { digestValue } from './digest.ts';
+import { minimumWrappedOxygenDistanceNanometerV048 } from
+  './atomistic-private-oxygen-minimum-distance-v048.ts';
 import {
   ATOMISTIC_COMPONENT_COUNT_V045,
   ATOMISTIC_F32_FRAME_BYTE_LENGTH_V045,
@@ -9,7 +11,6 @@ import {
 } from './atomistic-trajectory-chunk.ts';
 import {
   assertAtomisticWorldSessionV045,
-  getAtomisticWorldSessionFrameV045,
   type AtomisticWorldSessionV045,
 } from './atomistic-world-session.ts';
 
@@ -209,6 +210,9 @@ export function createAtomisticPrivatePositionTrajectoryControllerV048(
   sourceFramesInput: ReadonlyArray<AtomisticPrivatePositionTrajectorySourceFrameInputV048>,
 ): AtomisticPrivatePositionTrajectoryControllerV048 {
   const session = assertAtomisticWorldSessionV045(sessionInput);
+  // Only this controller-owned, validated and deeply frozen clone is trusted.
+  // Public callers still use the validating world-session getter unchanged.
+  const authoritativeFrames = session.trajectory.chunks.flatMap((chunk) => chunk.frames);
   assertDenseSourceFrameArray(sourceFramesInput);
   let ownedTrajectory: Uint8Array | null = new Uint8Array(
     ATOMISTIC_PRIVATE_POSITION_TRAJECTORY_BYTE_LENGTH_V048,
@@ -221,7 +225,11 @@ export function createAtomisticPrivatePositionTrajectoryControllerV048(
     for (let frameOrdinal = 0; frameOrdinal < sourceFramesInput.length; frameOrdinal += 1) {
       const input = parseSourceFrameInput(sourceFramesInput[frameOrdinal], frameOrdinal);
       try {
-        const sourceFrame = getAtomisticWorldSessionFrameV045(session, frameOrdinal);
+        assertFrameOrdinal(frameOrdinal);
+        const sourceFrame = authoritativeFrames[frameOrdinal];
+        if (!sourceFrame || sourceFrame.frameOrdinal !== frameOrdinal) {
+          throw new Error('atomistic requested frame is missing from the authoritative trajectory');
+        }
         const sourceDescriptor = sourceFrame.arrays.positionsNanometer;
         if (input.sourcePositionsF64Digest !== sourceDescriptor.frameByteDigest
           || digestBytes(input.positionsF64LeBytes) !== sourceDescriptor.frameByteDigest) {
@@ -687,16 +695,7 @@ function validateGeometry(
   if (octants.some((count) => count === 0)) {
     throw new Error(`private position trajectory frame ${frameOrdinal} does not occupy all cell octants`);
   }
-  let minimumOxygenDistance = Number.POSITIVE_INFINITY;
-  for (let left = 0; left < oxygenAnchors.length; left += 1) {
-    for (let right = left + 1; right < oxygenAnchors.length; right += 1) {
-      minimumOxygenDistance = Math.min(minimumOxygenDistance, Math.hypot(
-        minimumImage(oxygenAnchors[right][0] - oxygenAnchors[left][0]),
-        minimumImage(oxygenAnchors[right][1] - oxygenAnchors[left][1]),
-        minimumImage(oxygenAnchors[right][2] - oxygenAnchors[left][2]),
-      ));
-    }
-  }
+  const minimumOxygenDistance = minimumWrappedOxygenDistanceNanometerV048(oxygenAnchors);
   if (!Number.isFinite(minimumOxygenDistance) || minimumOxygenDistance <= 0) {
     throw new Error(`private position trajectory frame ${frameOrdinal} has zero O-O separation`);
   }

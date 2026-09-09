@@ -281,7 +281,15 @@ export function createAtomisticWorldSessionV045(
   });
 }
 
+// Identity records only this module's isolated, fully validated frozen outputs.
+// It carries no execution-authenticity or scientific-promotion authority.
+const ownedValidatedSessions = new WeakSet<AtomisticWorldSessionV045>();
+
 export function assertAtomisticWorldSessionV045(candidate: unknown): AtomisticWorldSessionV045 {
+  if (candidate !== null && typeof candidate === 'object'
+    && ownedValidatedSessions.has(candidate as AtomisticWorldSessionV045)) {
+    return candidate as AtomisticWorldSessionV045;
+  }
   const clone = safePlainClone(candidate, 'atomistic world session') as AtomisticWorldSessionV045;
   assertExactKeys(clone, [
     'schemaVersion', 'status', 'verificationBoundary', 'sessionId', 'worldId',
@@ -362,7 +370,9 @@ export function assertAtomisticWorldSessionV045(candidate: unknown): AtomisticWo
   assertDigest(clone.sessionDigest, 'atomistic session digest');
   const { sessionDigest, ...payload } = clone;
   if (sessionDigest !== digestValue(payload)) throw new Error('atomistic session digest is stale');
-  return deepFreeze(clone);
+  const owned = deepFreeze(clone);
+  ownedValidatedSessions.add(owned);
+  return owned;
 }
 
 export function getAtomisticWorldSessionFrameV045(

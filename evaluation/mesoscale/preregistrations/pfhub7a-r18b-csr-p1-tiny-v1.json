@@ -1,0 +1,261 @@
+{
+  "schemaVersion": "tf.private-preregistration/0.1",
+  "status": "frozen-for-bounded-builder-not-scientific-pass",
+  "hypothesis": "At 8x4 and two IMEX Euler steps, actual FiPy CSR and independent P1 consistent-mass systems preserve their distinct discrete problems and emit independently recomputable evidence rejecting the frozen mutations.",
+  "authority": {
+    "proposalSha256": "f48181695388fba445551fd24a956e31857a2ef89af928527b664c82b86a7c42",
+    "rootFreezeSha256": "16cbc07d2469d875f7d7b9d72e5befaa5b5033acd83b7b7500f104df71109e41",
+    "quadratureAddendumSha256": "90da33cc6b0de9aad6f8a387072510c8e582d6b18fe4041f35c9b56457d080e0",
+    "baseCommit": "84f7720e9ac14fcb50fb54fdcb96d1df7473c365",
+    "stoppingRootFreezeSha256": "7638803c9bd75120421e7ec7d7c95e2026cec5b4956735fe3aa633ebd1d96322",
+    "stoppingPlanningClosureSha256": "b171d20ecf98201525f851bcb9771287f794b124227ec6d1652e4559e5bad33f"
+  },
+  "scope": {
+    "Nx": 8,
+    "Ny": 4,
+    "Nt": 2,
+    "dt": 0.01,
+    "methods": [
+      "FV",
+      "P1"
+    ],
+    "boundaryLanes": [
+      "official-literal",
+      "exact-trace-companion"
+    ],
+    "projectionNx": 4,
+    "projectionNy": 2
+  },
+  "method": {
+    "integrator": "IMEX Euler: reaction and Q0 source at old time; diffusion and boundary at new time",
+    "initialBoundary": "true analytical nodal initial vector; literal imposed first at t=0.01; preserve mismatch",
+    "mass": "consistent",
+    "periodicBeforeDirichlet": true,
+    "triangles": "each rectangle southwest-to-northeast diagonal, both CCW",
+    "quadrature": "3x3 Gauss-Legendre Duffy with Jacobian; Q1/Q2 one/two uniform four-way refinements",
+    "forcingSensitivity": "full periodic-unique DOFs including B, w=M1, sqrt(sum(w*(dt*deltaF/w)^2)); Q0 actual RHS",
+    "relativeForceScale": null,
+    "relativeForceReason": "relative-force-scale-unfrozen"
+  },
+  "tolerances": {
+    "eps64": 2.220446049250313e-16,
+    "componentwiseActualResidual": 1e-11,
+    "boundaryEpsMultiple": 32,
+    "geometryAndMonomialEpsMultiple": 256,
+    "assemblyProjectionAndAuditEpsMultiple": 512,
+    "boundaryRhsRelativeScaleMax1": 1e-12,
+    "denseSolutionRelativeScaleMax1": 1e-10,
+    "balanceRelativeSumScale": 1e-11,
+    "solverMaxIterations": 2000,
+    "calibratedFullHorizonThresholds": false,
+    "p1SolverRtol": 1e-12,
+    "p1SolverAtol": 1e-14
+  },
+  "testIds": [
+    "T01-runtime",
+    "T02-scope",
+    "T03-csr",
+    "T04-geometry",
+    "T05-monomial",
+    "T06-assembly",
+    "T07-initial-boundary",
+    "T08-solve",
+    "T09-balance",
+    "T10-quadrature-record",
+    "T11-checkpoint",
+    "T12-integrity"
+  ],
+  "mutationIds": [
+    "T01-M01-lock",
+    "T02-M01-nx",
+    "T02-M02-nt",
+    "T02-M03-nontiny-dense",
+    "T02-M04-nx-before-solve",
+    "T02-M05-nt-before-solve",
+    "T03-M01-csr",
+    "T04-M01-periodic",
+    "T04-M02-orientation",
+    "T05-M01-jacobian",
+    "T06-M01-mass-reaction",
+    "T07-M01-old-boundary",
+    "T07-M02-mass-boundary",
+    "T08-M01-state",
+    "T08-M02-source-time",
+    "T08-M03-source-time-metadata",
+    "T09-M01-omitted-source",
+    "T09-M02-boundary-sign",
+    "T10-M01-omitted-boundary-dofs",
+    "T10-M02-actual-q2",
+    "T10-M03-q2-metadata",
+    "T10-M04-omitted-boundary-dofs-metadata",
+    "T11-M01-missing-old",
+    "T11-M02-projection-native",
+    "T12-M01-nonfinite",
+    "T12-M02-missing-track",
+    "T12-M03-formal",
+    "T12-M04-version",
+    "T12-M05-dimension",
+    "T12-M06-basis",
+    "T12-M07-lane",
+    "T11-M03-fv-extra-native-q",
+    "T11-M04-p1-extra-native",
+    "T11-M05-fv-missing-native",
+    "T11-M06-p1-missing-native-q",
+    "T11-M07-fv-extra-p1-step",
+    "T11-M08-p1-extra-fv-step",
+    "T11-M09-fv-extra-p1-track",
+    "T11-M10-p1-extra-track",
+    "T08-M04-stop-owner",
+    "T08-M05-stop-system",
+    "T08-M06-stop-native-info",
+    "T08-M07-stop-state"
+  ],
+  "mutationInputSemantics": {
+    "T08-M02-source-time": "actual new-time forcing and corresponding FV RHS; old-time metadata retained",
+    "T10-M02-actual-q2": "actual Q2 forcing and corresponding FEM RHS; Q0 claim retained",
+    "T10-M01-omitted-boundary-dofs": "manufactured algebraic boundary-only deltaF=w/dt on B; production full result compared to wrong I-only result at unchanged tolerance; no PDE trajectory",
+    "T02-M04-nx-before-solve": "direct guard rejection before allocation or solve",
+    "T02-M05-nt-before-solve": "direct guard rejection before allocation or solve",
+    "T11-M03-fv-extra-native-q": {
+      "change": "FV field adds unvalidated P1 nativeL2Q channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M04-p1-extra-native": {
+      "change": "P1 field adds unvalidated FV nativeL2 channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M05-fv-missing-native": {
+      "change": "FV field removes required nativeL2",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M06-p1-missing-native-q": {
+      "change": "P1 field removes required nativeL2Q",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M07-fv-extra-p1-step": {
+      "change": "FV step adds P1 reaction channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M08-p1-extra-fv-step": {
+      "change": "P1 step adds FV normalization channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M09-fv-extra-p1-track": {
+      "change": "FV track adds P1 mass matrix channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T11-M10-p1-extra-track": {
+      "change": "P1 track adds undefined normalization channel",
+      "expected": "METHOD_FIELD_SEPARATION",
+      "newTrajectorySteps": 0
+    },
+    "T08-M04-stop-owner": {
+      "change": "false scipy-native-global owner",
+      "expected": "STOP_CERTIFICATE",
+      "newTrajectorySteps": 0
+    },
+    "T08-M05-stop-system": {
+      "change": "changed actual CSR identity in stop certificate",
+      "expected": "STOP_CERTIFICATE",
+      "newTrajectorySteps": 0
+    },
+    "T08-M06-stop-native-info": {
+      "change": "swap null/0 native info while keeping termination mode",
+      "expected": "STOP_CERTIFICATE",
+      "newTrajectorySteps": 0
+    },
+    "T08-M07-stop-state": {
+      "change": "changed accepted state identity in stop certificate",
+      "expected": "STOP_CERTIFICATE",
+      "newTrajectorySteps": 0
+    }
+  },
+  "runtime": {
+    "lockSha256": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee",
+    "combinedRecordsSha256": "55f3f0353e053a0eca5cf92af57019c16cdf33f50a126922993ed8cdbf2a2b7c",
+    "python": "3.12.14",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "fipy": "4.0.3",
+    "packaging": "26.3",
+    "flags": [
+      "-I",
+      "-B"
+    ],
+    "threads": 1,
+    "hostLibrariesByteLocked": false,
+    "snapshotInputs": "six new code/config inputs plus three R18a Python dependencies and runtime lock; builder evidence excluded to avoid cycle"
+  },
+  "execution": {
+    "rootLauncherRequired": true,
+    "maxSuiteExecutions": 2,
+    "maxBaselineGlobalStepsTotal": 16,
+    "maxIndependentReplayExecutions": 1,
+    "mutationTrajectorySteps": 0,
+    "maxAggregateActiveCommandSeconds": 300,
+    "maxChildSeconds": 120,
+    "globalEvidenceBytes": 67108864,
+    "maxPerSuiteReservationBytes": 25165824,
+    "perSuiteFailureReserveBytes": 1048576,
+    "cleanup": "unchanged runBoundedCommand SIGKILL with 1000ms cleanup grace, original process group, cleanupConfirmed required",
+    "hardMemoryPeakPromise": false
+  },
+  "claims": {
+    "formalEligible": false,
+    "rankingEligible": false,
+    "physicalValidation": false,
+    "fullConvergenceComplete": false
+  },
+  "remaining": [
+    "separately freeze full-t8 16-run pilot with uncalibrated diagnostic/resource decisions resolved",
+    "full spatial AND temporal study with at least three effective points each and complementary pollution controls",
+    "three scientific lines remain discrepancy, same-BVP self-convergence, and non-PFHub exact-trace strict MMS"
+  ],
+  "methodRecordSeparation": {
+    "rootDisposition": "2026-09-07-r18b-method-record-correction-v8.md",
+    "required": "Exact method-specific track/step/field property sets; nativeL2 only for FV, nativeL2Q only for P1; schema oneOf and semantic shape gate",
+    "plannedMutationCount": 43,
+    "v9Addition": "FV-only stop record required; P1 forbids it; all v8 native error channel separation remains"
+  },
+  "fvStopping": {
+    "owner": "project-true-componentwise",
+    "effectiveRtol": 0,
+    "effectiveAtol": 0,
+    "maxIterations": 2000,
+    "preconditioner": "none",
+    "nativeCallsPerSuccessfulStep": 1,
+    "callback": "fresh actual unscaled CSR componentwise backward residual at each callback; per-invocation exception with copied state; nativeCgInfo=null",
+    "nativeReturn": "only genuine info=0 and fresh same-system certificate; all nonzero/maxiter returns fail",
+    "initialAlreadyCertified": "INITIAL_ALREADY_SOLVED_REQUIRES_DISPOSITION; zero native calls and no successful step",
+    "historicalInitialOnly": {
+      "solverRtol": 1e-12,
+      "solverAtol": 1e-14,
+      "result": "failed; preserved unchanged"
+    },
+    "independentAcceptanceUnchanged": true,
+    "noFallbackOrRestart": true
+  },
+  "stoppingProtocolTests": {
+    "ids": [
+      "STOP-01",
+      "STOP-02",
+      "STOP-03",
+      "STOP-04",
+      "STOP-05",
+      "STOP-06"
+    ],
+    "execution": "once inside final child, after runtime initialization before final baseline",
+    "inputs": "manufactured 2x2 SPD algebra and fake CG only; no historical arrays",
+    "realSolverCalls": 0,
+    "pdeSteps": 0,
+    "stopOnAnyFailure": true,
+    "finalEvidenceId": "STOP-07: final eight steps plus independent replay; not another numerical command"
+  }
+}

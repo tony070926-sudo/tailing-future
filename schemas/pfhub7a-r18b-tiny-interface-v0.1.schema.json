@@ -1,0 +1,806 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tf.pfhub7a-r18b-tiny/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scope",
+    "quantity",
+    "quantityBases",
+    "formalEligible",
+    "rankingEligible",
+    "physicalValidation",
+    "runtime",
+    "tracks",
+    "quadratureRule",
+    "limitations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "tf.pfhub7a-r18b-tiny/0.1"
+    },
+    "scope": {
+      "const": {
+        "Nx": 8,
+        "Ny": 4,
+        "Nt": 2,
+        "dt": 0.01
+      }
+    },
+    "quantity": {
+      "const": {
+        "unit": "1",
+        "dimension": "dimensionless",
+        "basis": "PFHub7a native nondimensional"
+      }
+    },
+    "quantityBases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "formalEligible": {
+      "const": false
+    },
+    "rankingEligible": {
+      "const": false
+    },
+    "physicalValidation": {
+      "const": false
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lockSha256",
+        "snapshot",
+        "warnings",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "lockSha256": {
+          "const": "cd7f8e8a47d67596c025a8035890e99f5a367be562289e84ae4f6d87e79c08ee"
+        },
+        "snapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "files"
+          ],
+          "properties": {
+            "files": {
+              "type": "array",
+              "minItems": 10,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "before": {
+          "$ref": "#/$defs/inventory"
+        },
+        "after": {
+          "$ref": "#/$defs/inventory"
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/track"
+      }
+    },
+    "quadratureRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "barycentric",
+        "weights"
+      ],
+      "properties": {
+        "barycentric": {
+          "$ref": "#/$defs/rows"
+        },
+        "weights": {
+          "$ref": "#/$defs/numbers"
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "numbers": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "integers": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/numbers"
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modules",
+        "nativeImages"
+      ],
+      "properties": {
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "nativeImages": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "csr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shape",
+        "indptr",
+        "indices",
+        "data",
+        "dtype",
+        "endian",
+        "sha256"
+      ],
+      "properties": {
+        "shape": {
+          "$ref": "#/$defs/integers"
+        },
+        "indptr": {
+          "$ref": "#/$defs/integers"
+        },
+        "indices": {
+          "$ref": "#/$defs/integers"
+        },
+        "data": {
+          "$ref": "#/$defs/numbers"
+        },
+        "dtype": {
+          "const": "float64"
+        },
+        "endian": {
+          "const": "little"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      }
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full",
+        "interiorSquared",
+        "boundarySquared"
+      ],
+      "properties": {
+        "full": {
+          "type": "number"
+        },
+        "interiorSquared": {
+          "type": "number"
+        },
+        "boundarySquared": {
+          "type": "number"
+        }
+      }
+    },
+    "track": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/fvTrack"
+        },
+        {
+          "$ref": "#/$defs/p1Track"
+        }
+      ]
+    },
+    "fvField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "time",
+        "state",
+        "projectionBasis",
+        "projection",
+        "nativeBasis",
+        "scientificLabel",
+        "nativeL2"
+      ],
+      "properties": {
+        "time": {
+          "type": "number"
+        },
+        "state": {
+          "$ref": "#/$defs/numbers"
+        },
+        "projectionBasis": {
+          "const": "4x2 aligned coarse-cell area averages"
+        },
+        "projection": {
+          "$ref": "#/$defs/numbers"
+        },
+        "nativeBasis": {
+          "const": "cell-centre discrete area-weighted L2"
+        },
+        "scientificLabel": {
+          "enum": [
+            "discrepancy",
+            "non-PFHub strict MMS error"
+          ]
+        },
+        "nativeL2": {
+          "type": "number"
+        }
+      }
+    },
+    "p1Field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "time",
+        "state",
+        "projectionBasis",
+        "projection",
+        "nativeBasis",
+        "scientificLabel",
+        "nativeL2Q"
+      ],
+      "properties": {
+        "time": {
+          "type": "number"
+        },
+        "state": {
+          "$ref": "#/$defs/numbers"
+        },
+        "projectionBasis": {
+          "const": "4x2 aligned coarse-cell area averages"
+        },
+        "projection": {
+          "$ref": "#/$defs/numbers"
+        },
+        "nativeBasis": {
+          "const": "continuous P1 area-integrated L2"
+        },
+        "scientificLabel": {
+          "enum": [
+            "discrepancy",
+            "non-PFHub strict MMS error"
+          ]
+        },
+        "nativeL2Q": {
+          "$ref": "#/$defs/numbers"
+        }
+      }
+    },
+    "fvStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "timeOld",
+        "timeNew",
+        "dt",
+        "sourceTime",
+        "old",
+        "new",
+        "A",
+        "b",
+        "F",
+        "solveCount",
+        "iterations",
+        "normalization",
+        "bottom",
+        "top",
+        "actualBottom",
+        "actualTop",
+        "stop"
+      ],
+      "properties": {
+        "step": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "timeOld": {
+          "type": "number"
+        },
+        "timeNew": {
+          "type": "number"
+        },
+        "dt": {
+          "const": 0.01
+        },
+        "sourceTime": {
+          "type": "number"
+        },
+        "old": {
+          "$ref": "#/$defs/numbers"
+        },
+        "new": {
+          "$ref": "#/$defs/numbers"
+        },
+        "A": {
+          "$ref": "#/$defs/csr"
+        },
+        "b": {
+          "$ref": "#/$defs/numbers"
+        },
+        "F": {
+          "$ref": "#/$defs/numbers"
+        },
+        "solveCount": {
+          "const": 1
+        },
+        "iterations": {
+          "type": "integer"
+        },
+        "normalization": {
+          "const": 0.64
+        },
+        "bottom": {
+          "$ref": "#/$defs/numbers"
+        },
+        "top": {
+          "$ref": "#/$defs/numbers"
+        },
+        "actualBottom": {
+          "$ref": "#/$defs/numbers"
+        },
+        "actualTop": {
+          "$ref": "#/$defs/numbers"
+        },
+        "stop": {
+          "$ref": "#/$defs/fvStop"
+        }
+      }
+    },
+    "p1Step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "timeOld",
+        "timeNew",
+        "dt",
+        "sourceTime",
+        "old",
+        "new",
+        "A",
+        "b",
+        "F",
+        "solveCount",
+        "iterations",
+        "g",
+        "R",
+        "forcesQ",
+        "actualForcingRule",
+        "loadDOFs",
+        "loadSensitivity",
+        "relativeForceSensitivity",
+        "relativeForceReason",
+        "d",
+        "boundaryReaction",
+        "C",
+        "solverInfo"
+      ],
+      "properties": {
+        "step": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "timeOld": {
+          "type": "number"
+        },
+        "timeNew": {
+          "type": "number"
+        },
+        "dt": {
+          "const": 0.01
+        },
+        "sourceTime": {
+          "type": "number"
+        },
+        "old": {
+          "$ref": "#/$defs/numbers"
+        },
+        "new": {
+          "$ref": "#/$defs/numbers"
+        },
+        "A": {
+          "$ref": "#/$defs/csr"
+        },
+        "b": {
+          "$ref": "#/$defs/numbers"
+        },
+        "F": {
+          "$ref": "#/$defs/numbers"
+        },
+        "solveCount": {
+          "const": 1
+        },
+        "iterations": {
+          "type": "integer"
+        },
+        "g": {
+          "$ref": "#/$defs/numbers"
+        },
+        "R": {
+          "$ref": "#/$defs/numbers"
+        },
+        "forcesQ": {
+          "$ref": "#/$defs/rows"
+        },
+        "actualForcingRule": {
+          "const": "Q0"
+        },
+        "loadDOFs": {
+          "$ref": "#/$defs/integers"
+        },
+        "loadSensitivity": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/sensitivity"
+          }
+        },
+        "relativeForceSensitivity": {
+          "type": "null"
+        },
+        "relativeForceReason": {
+          "const": "relative-force-scale-unfrozen"
+        },
+        "d": {
+          "$ref": "#/$defs/numbers"
+        },
+        "boundaryReaction": {
+          "$ref": "#/$defs/numbers"
+        },
+        "C": {
+          "type": "number"
+        },
+        "solverInfo": {
+          "const": 0
+        }
+      }
+    },
+    "fvTrack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "lane",
+        "fields",
+        "steps",
+        "initialBoundaryMismatch"
+      ],
+      "properties": {
+        "method": {
+          "const": "FV"
+        },
+        "lane": {
+          "enum": [
+            "official-literal",
+            "exact-trace-companion"
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/fvField"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/fvStep"
+          }
+        },
+        "initialBoundaryMismatch": {
+          "$ref": "#/$defs/numbers"
+        }
+      }
+    },
+    "p1Track": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "lane",
+        "fields",
+        "steps",
+        "initialBoundaryMismatch",
+        "coords",
+        "mapping",
+        "triangles",
+        "I",
+        "B",
+        "M",
+        "K",
+        "w"
+      ],
+      "properties": {
+        "method": {
+          "const": "P1"
+        },
+        "lane": {
+          "enum": [
+            "official-literal",
+            "exact-trace-companion"
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/p1Field"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/p1Step"
+          }
+        },
+        "initialBoundaryMismatch": {
+          "$ref": "#/$defs/numbers"
+        },
+        "coords": {
+          "$ref": "#/$defs/rows"
+        },
+        "mapping": {
+          "$ref": "#/$defs/integers"
+        },
+        "triangles": {
+          "$ref": "#/$defs/rows"
+        },
+        "I": {
+          "$ref": "#/$defs/integers"
+        },
+        "B": {
+          "$ref": "#/$defs/integers"
+        },
+        "M": {
+          "$ref": "#/$defs/csr"
+        },
+        "K": {
+          "$ref": "#/$defs/csr"
+        },
+        "w": {
+          "$ref": "#/$defs/numbers"
+        }
+      }
+    },
+    "stopResidual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "componentwise",
+        "linf",
+        "l2"
+      ],
+      "properties": {
+        "componentwise": {
+          "type": "number"
+        },
+        "linf": {
+          "type": "number"
+        },
+        "l2": {
+          "type": "number"
+        }
+      }
+    },
+    "stopCertificate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Asha256",
+        "bsha256",
+        "xsha256",
+        "residual"
+      ],
+      "properties": {
+        "Asha256": {
+          "type": "string"
+        },
+        "bsha256": {
+          "type": "string"
+        },
+        "xsha256": {
+          "type": "string"
+        },
+        "residual": {
+          "$ref": "#/$defs/stopResidual"
+        }
+      }
+    },
+    "fvStop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminationOwner",
+        "mode",
+        "nativeCgInfo",
+        "effectiveRtol",
+        "effectiveAtol",
+        "maxIterations",
+        "preconditioner",
+        "adapterCalls",
+        "cgCalls",
+        "callbackCount",
+        "certificate",
+        "unit",
+        "dimension",
+        "equationBasis",
+        "ratioBasis"
+      ],
+      "properties": {
+        "terminationOwner": {
+          "const": "project-true-componentwise"
+        },
+        "mode": {
+          "enum": [
+            "callback-certificate",
+            "native-return-certified"
+          ]
+        },
+        "nativeCgInfo": {
+          "oneOf": [
+            {
+              "const": null
+            },
+            {
+              "const": 0
+            }
+          ]
+        },
+        "effectiveRtol": {
+          "const": 0
+        },
+        "effectiveAtol": {
+          "const": 0
+        },
+        "maxIterations": {
+          "const": 2000
+        },
+        "preconditioner": {
+          "const": "none"
+        },
+        "adapterCalls": {
+          "const": 1
+        },
+        "cgCalls": {
+          "const": 1
+        },
+        "callbackCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "certificate": {
+          "$ref": "#/$defs/stopCertificate"
+        },
+        "unit": {
+          "const": "1"
+        },
+        "dimension": {
+          "const": "dimensionless"
+        },
+        "equationBasis": {
+          "const": "FV actual cell-area/time equation"
+        },
+        "ratioBasis": {
+          "const": "max abs(A*x-b)/(abs(A)*abs(x)+abs(b)); componentwise backward residual, not forward error"
+        }
+      },
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "mode",
+            "nativeCgInfo",
+            "callbackCount"
+          ],
+          "properties": {
+            "mode": {
+              "const": "callback-certificate"
+            },
+            "nativeCgInfo": {
+              "const": null
+            },
+            "callbackCount": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2000
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "mode",
+            "nativeCgInfo",
+            "callbackCount"
+          ],
+          "properties": {
+            "mode": {
+              "const": "native-return-certified"
+            },
+            "nativeCgInfo": {
+              "const": 0
+            },
+            "callbackCount": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2000
+            }
+          }
+        }
+      ]
+    }
+  }
+}
