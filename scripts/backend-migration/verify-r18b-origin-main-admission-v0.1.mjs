@@ -23,8 +23,8 @@ const numericBoundary = { legacyNumericEntryScope: 'version-bound-history-only',
 export const LEDGER = 'evaluation/backend-migration/r18b-origin-main-admission-v0.1.json';
 export const SCHEMA = 'schemas/backend-migration-r18b-admission-v0.1.schema.json';
 export const CHECKER = 'scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs';
-export const REVIEW = 'evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json';
-export const EXPECTED_LEDGER_SHA256 = 'fa614b1a91b238f8b975b2878f6a987a4b170a41a7a24bdf81870794d55ced4e';
+export const REVIEW = 'evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json';
+export const EXPECTED_LEDGER_SHA256 = '917ed9e36dd3c7ee803cf1aad12689530d03f16a60ab2ef7cadc64fb60e363f0';
 export const HISTORY_FILES = Object.freeze([
   'scripts/backend-migration/verify-r18a-origin-main-admission-v0.3.test.mjs',
   'scripts/mesoscale/pfhub7a_r18a_current_root_v2.test.mjs',
@@ -96,7 +96,8 @@ export function readPolicy(root, budget = null) {
   const schema = parseJsonRejectDuplicateKeys(regularBytes(path.join(root, SCHEMA)), 'R18b schema');
   need(new Ajv2020({ strict: true, allErrors: true }).compile(schema)(ledger), 'LEDGER_SCHEMA');
   need(ledger.baseCommit === BASE && ledger.baseTree === TREE && isDeepStrictEqual(ledger.controls, [LEDGER, CHECKER, REVIEW]), 'LEDGER_POLICY');
-  need(new Set(ledger.inputs.map(record => record.path)).size === 22, 'INPUT_PATH_SET');
+  need(ledger.bindingRevision === 3, 'BINDING_REVISION');
+  need(new Set(ledger.inputs.map(record => record.path)).size === 40, 'INPUT_PATH_SET');
   validateDependencyInputs(ledger);
   budget?.assertRemaining();
   return ledger;
@@ -145,7 +146,7 @@ export function verifySource(root) {
       need(parsed && typeof parsed === 'object' && !Array.isArray(parsed), 'REVIEW_JSON_OBJECT');
     }
     const sourceInputs = records.filter(record => !DERIVED_REPORT_PATHS.includes(record.path));
-    return { status: failures.length ? 'fail-closed' : 'source-consistent', reviewState: review ? 'present-unvalidated' : 'absent', records, observedTreeDigest: hash(JSON.stringify(records)), sourceInputDigest: hash(JSON.stringify(sourceInputs)), observedOutputs: records.filter(record => DERIVED_REPORT_PATHS.includes(record.path)), sourceInputExclusions: [...DERIVED_REPORT_PATHS], evaluatorLegacyTerminalExclusionApplied: false, failures, ...numericBoundary, ...flags() };
+    return { status: failures.length ? 'fail-closed' : 'source-consistent', bindingRevision: ledger.bindingRevision, reviewState: review ? 'present-unvalidated' : 'absent', records, observedTreeDigest: hash(JSON.stringify(records)), sourceInputDigest: hash(JSON.stringify(sourceInputs)), observedOutputs: records.filter(record => DERIVED_REPORT_PATHS.includes(record.path)), sourceInputExclusions: [...DERIVED_REPORT_PATHS], evaluatorLegacyTerminalExclusionApplied: false, failures, ...numericBoundary, ...flags() };
   } catch (error) { return { status: 'fail-closed', failures: [error.message], ...numericBoundary, ...flags() }; }
 }
 export function validateManifest(records, manifest) {

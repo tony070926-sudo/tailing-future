@@ -5,8 +5,11 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as THREE from 'three';
 import { CustomStructureWebgl } from '../../app/components/custom-structure-webgl';
-import { createDefaultStructureDraft, finalizeStructureDocument } from './structure-document';
+import { createDefaultStructureDraft, finalizeStructureDocument, createValidationReceipt, makeFiniteNetCharge } from './structure-document';
+import { AR_INTERPRETATION, createCustomArAction, computeCustomArSinglePoint, createCustomArForceOverlay } from './custom-ar-singlepoint';
 import { createStructureRenderModel } from './structure-render-model';
+import { initialize } from './ar-vv-adapter';
+import { projectDynamicsState } from './custom-ar-dynamics-session';
 
 let container: HTMLDivElement;
 let root: Root;
@@ -235,6 +238,91 @@ describe('real custom WebGL component fallback lifecycle', () => {
     expect(announcement).toHaveBeenCalledWith(expect.stringContaining('render failed'));
     expect(harness.renderers[0].dispose).toHaveBeenCalledOnce();
     expect(harness.controls[0].dispose).toHaveBeenCalledOnce();
+  });
+});
+
+describe('bound finite Ar force overlay lifecycle', () => {
+  it('rejects a different physical state at identical geometry in the ready component harness', async () => {
+    const harness = installReadyRuntimeHarness();
+    const draft = createDefaultStructureDraft(); draft.finiteSystem!.netCharge = makeFiniteNetCharge(0);
+    draft.atoms = [[0, 0, 0], [4.1, 0, 0], [0, 4.2, 0.1]].map((p, i) => ({ id: `dynamic-${i}`, element: { atomicNumber: 18, symbol: 'Ar' }, position: { x: p[0], y: p[1], z: p[2] }, isotope: null, formalCharge: null }));
+    const document = finalizeStructureDocument(draft);
+    const initial = { document, velocities: draft.atoms.map(a => ({ atomId: a.id, velocity: [0, 0, 0] })), dtTicks: 2, confirmation: AR_INTERPRETATION };
+    const a = initialize(initial);
+    const b = initialize({ ...initial, velocities: initial.velocities.map((row, i) => ({ ...row, velocity: [i * 0.00001, 0, 0] })) });
+    expect(a.document.semanticDigest).toBe(b.document.semanticDigest);
+    expect(a.physicalDigest).not.toBe(b.physicalDigest);
+    const pa = projectDynamicsState(a), pb = projectDynamicsState(b), announcement = vi.fn();
+    const props = { active: true, model: pa.model, physicalDigest: a.physicalDigest, selectedAtomId: null, onAtomSelect: vi.fn(), onAnnouncement: announcement, loadRuntime: harness.loader };
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, props)); await flushRuntime(); });
+    act(() => harness.rafCallbacks.shift()?.(1));
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: pa.overlay })); });
+    act(() => harness.rafCallbacks.shift()?.(2));
+    const [scene, camera] = harness.renderers[0].render.mock.calls.at(-1)! as unknown as [THREE.Scene, THREE.PerspectiveCamera];
+    const cameraPosition = camera.position.clone();
+    const group = scene.getObjectByName('bound-ar-force-vectors')!;
+    expect(group.children.length).toBeGreaterThan(0);
+    const disposals = group.children.flatMap(object => {
+      const arrow = object as THREE.ArrowHelper;
+      return [vi.spyOn(arrow.line.geometry, 'dispose'), vi.spyOn(arrow.cone.geometry, 'dispose')];
+    });
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: pb.overlay })); });
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeUndefined();
+    expect(announcement).toHaveBeenCalledWith(expect.stringContaining('Dynamics physical digest mismatch'));
+    expect(disposals.every(spy => spy.mock.calls.length === 1)).toBe(true);
+    expect(camera.position.equals(cameraPosition)).toBe(true);
+    expect(harness.renderers).toHaveLength(1);
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, physicalDigest: b.physicalDigest, forceOverlay: pb.overlay })); });
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeDefined();
+    expect(camera.position.equals(cameraPosition)).toBe(true);
+    const { physicalDigest: omittedDigest, ...withoutIdentity } = pb.overlay;
+    expect(omittedDigest).toBe(b.physicalDigest);
+    await act(async () => {
+      // @ts-expect-error Deliberately missing identity tests the runtime rejection boundary.
+      root.render(React.createElement(CustomStructureWebgl, { ...props, physicalDigest: b.physicalDigest, forceOverlay: withoutIdentity }));
+    });
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeUndefined();
+    expect(announcement).toHaveBeenCalledWith(expect.stringContaining('Dynamics physical digest mismatch'));
+  });
+  it('renders real arrow objects with common scale, preserves camera, rejects stale identity and disposes replaced arrows', async () => {
+    const harness = installReadyRuntimeHarness();
+    const draft = createDefaultStructureDraft(); draft.finiteSystem!.netCharge = makeFiniteNetCharge(0);
+    draft.atoms = Array.from({ length: 12 }, (_, i) => ({ id: `ar-${String(i).padStart(3, '0')}`, element: { atomicNumber: 18, symbol: 'Ar' },
+      position: { x: (i % 4) * 3.8, y: Math.floor(i / 4) * 3.8, z: 0 }, isotope: null, formalCharge: null }));
+    const document = finalizeStructureDocument(draft), receipt = createValidationReceipt(document), action = createCustomArAction(document, receipt, AR_INTERPRETATION);
+    const result = computeCustomArSinglePoint(document, receipt, action);
+    if (result.decision !== 'computed') throw new Error(result.reason);
+    const model = createStructureRenderModel(document), overlay = createCustomArForceOverlay(document, receipt, action, result), announcement = vi.fn();
+    const props = { active: true, model, selectedAtomId: null, onAtomSelect: vi.fn(), onAnnouncement: announcement, loadRuntime: harness.loader };
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, props)); await flushRuntime(); });
+    act(() => harness.rafCallbacks.shift()?.(1));
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: overlay })); });
+    act(() => harness.rafCallbacks.shift()?.(2));
+    const render = harness.renderers[0].render;
+    const [scene, camera] = render.mock.calls.at(-1)! as unknown as [THREE.Scene, THREE.PerspectiveCamera];
+    const cameraPosition = camera.position.clone();
+    const group = scene.getObjectByName('bound-ar-force-vectors')!;
+    expect(group).toBeDefined(); expect(group.children.length).toBeGreaterThan(2);
+    const geometryDisposals: ReturnType<typeof vi.spyOn>[] = [];
+    group.children.forEach((object) => {
+      const arrow = object as THREE.ArrowHelper;
+      const vector = overlay.vectors.find((v) => v.atomId === arrow.name)!;
+      expect(arrow.position.toArray()).toEqual(vector.start.map(Math.fround));
+      const length = Math.hypot(...vector.end.map((v, i) => Math.fround(v) - Math.fround(vector.start[i])));
+      expect(arrow.line.scale.y + arrow.cone.scale.y).toBeCloseTo(length, 5);
+      geometryDisposals.push(vi.spyOn(arrow.line.geometry, 'dispose'), vi.spyOn(arrow.cone.geometry, 'dispose'));
+    });
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: { ...overlay, semanticDigest: 'sha256:stale' } })); });
+    expect(geometryDisposals.every((spy) => spy.mock.calls.length === 1)).toBe(true);
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeUndefined();
+    expect(announcement).toHaveBeenCalledWith(expect.stringContaining('input mismatch'));
+    expect(camera.position.equals(cameraPosition)).toBe(true);
+    expect(harness.renderers).toHaveLength(1);
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: overlay })); });
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeDefined();
+    await act(async () => { root.render(React.createElement(CustomStructureWebgl, { ...props, forceOverlay: null })); });
+    expect(scene.getObjectByName('bound-ar-force-vectors')).toBeUndefined();
+    expect(camera.position.equals(cameraPosition)).toBe(true);
   });
 });
 

@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "tf.independent-review-record/0.1",
+  "date": "2026-09-09",
+  "status": "code-and-prefinal-ui-reviewed-post-record-terminal-validation-required",
+  "scope": "Strict XYZ and finite Ar single-point UI/replay migration onto real main, with explicit R18b bindingRevision 2",
+  "baseCommit": "48fea6836864014637eacd217912ce3935aed2d3",
+  "baselineSourceDigest": "sha256:f0399b51931627d3220d1a26788d3cc5b64038bd6bcb44ee41ab83345358770f",
+  "donorSourceDigest": "sha256:c6358f13dddd11f6043166d09b0b2a584bfa0ecec1f8856988b05c1936df0949",
+  "baselineEvidence": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-evidence/2026-09-09-custom-lab-main-migration-r4",
+  "baseline": {
+    "cleanMainPaths": 544,
+    "sourceConsistent": true,
+    "selectedAdmissionCasesPassed": 3,
+    "selectedAdmissionCasesSkipped": 18,
+    "structureAndPotentialFilesPassed": 10,
+    "structureAndPotentialCasesPassed": 72,
+    "installScriptsExecuted": false,
+    "initialInstallConfigFailurePreserved": true,
+    "fullGatesPassed": false,
+    "historicalReplayExecuted": false
+  },
+  "roles": {
+    "builderAndGapPlanner": "/root/astra_failed_replay",
+    "scientificEvaluator": "/root/packet_scientific_review",
+    "softwareNumericalReviewerAndSotaScout": "/root/qualification_software_review",
+    "reviewersReadOnly": true,
+    "builderMayApprove": false,
+    "fixesAndFinalRecordOwner": "/root"
+  },
+  "candidateFreeze": {
+    "reviewedCodeRevision": "r5-before-this-review-record-update",
+    "sourceDigest": "sha256:3c6e9c21080976ebf586a3e6a439cec5632521a58d2c152c190164c8448ca93c",
+    "recordPath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-evidence/2026-09-09-custom-lab-main-migration-r5-p2/candidate-r5.json",
+    "recordSha256": "68e425c9bb99f96502e38085f4101955ee67e5e01ed8013a96ebad482b996fe5",
+    "paths": 549,
+    "changedOrAddedPaths": 18,
+    "note": "Fourteen migration paths plus four actually regenerated reports. The next full source freeze must include this ordinary review update. This record does not contain its own hash or inherit full-gate approval. Final terminal results must bind this record externally, without another self-referential rewrite."
+  },
+  "findings": [
+    {
+      "id": "R18B-MIGRATION-SW-P2-01",
+      "priority": "P2",
+      "description": "The added manifest negative included derived reports and lacked a passing positive control; its array hash check did not exercise production sourceInputDigest.",
+      "fix": "Filter exact derived paths and require a valid manifest first; extend the existing private Git fixture to verify actual review identity change, unchanged other records, independently recomputed sourceInputDigest and changed-manifest rejection. Healthy source output now reports bindingRevision from the verified ledger.",
+      "status": "closed-by-independent-software-review",
+      "evidenceSha256": "f8757633f512e6dcf6966a714f923e5fa1716ad13c5b081c3459ae513f12c332"
+    },
+    {
+      "id": "R18B-UI-SW-P2-01",
+      "priority": "P2",
+      "description": "Browser duplicate-download numbering changed the compound Ar extension and prevented direct reimport of an otherwise valid product export.",
+      "fix": "Only the Ar filename hint recognizes a positive integer duplicate counter before the final .json. Original filenames, bytes, size limits, strict parsing, schema/digest validation, explicit model confirmation and recomputation are preserved. Other import formats are unchanged.",
+      "status": "closed-by-independent-software-review-code-regression-and-cua",
+      "redEvidenceSha256": "2874c8c39d12864032096f781215bb6cb79bf635793bb0bbdb0be669a1fa94b2",
+      "greenEvidenceSha256": "a662140e02c7caf76e2608afeb5904e7d66a303ce9bc1ea69880205d844282e6",
+      "cuaEvidenceSha256": "495659f6958af71c6447d3ba0cdab74e118ea813dc6d06a2ecbe8bda0f3b64ed",
+      "residual": "CUA filechooser.setFiles to the real input was tested, not the native OS picker accept-filter experience."
+    },
+    {
+      "id": "R18B-EVALUATOR-COLLECT-SW-P2-01",
+      "priority": "P2",
+      "scope": "external evidence method, not product source",
+      "description": "Evaluator evidence collection needed independent failure-scene capture, the actual weightedScore field and post-execution identity verification.",
+      "status": "closed-by-independent-software-review",
+      "methodSha256": "fefa372dcb38d406a292e89a71cb249527f26531346bd25dc2c0e4e4994aee68"
+    },
+    {
+      "id": "R18B-UI-SERVE-SW-P2-01",
+      "priority": "P2",
+      "scope": "external evidence method, not product source",
+      "description": "Preview closure needed server.close before closeAllConnections, an actual close callback, honest startup-failure handling, cwd checks and a correctly described soft serving window.",
+      "status": "closed-by-independent-software-review",
+      "methodSha256": "a569b959afb028f7f0abdecc9316294e86effe544744291cd75d1bcd4d558e90"
+    }
+  ],
+  "independentCandidateReviewComplete": true,
+  "reviewScope": "Independent r3 complete local gate/evaluator review, r4 broad localhost production UI, and r5 minimal P2 code/regression/numbered-filename UI review, each bound to its own recorded source. The full source after this ordinary review update still requires final gates, evaluator and production/UI binding.",
+  "independentReviewResults": {
+    "scientific": { "newP0": 0, "newP1": 0, "newP2": 0, "sharedSoftwareFindingTrackedSeparately": true },
+    "software": { "newP0": 0, "newP1": 0, "closedProductOrBindingP2": 2, "closedExternalMethodP2": 2, "remainingP2": 0 },
+    "reviewStatementsAreCryptographicSignatures": false
+  },
+  "candidateFiniteTests": [
+    {
+      "revision": "r1",
+      "scope": "selected source checks",
+      "passed": 4,
+      "filteredSkipped": 18,
+      "receiptSha256": "d91f1eb56b360dd04a9afd4b76bbba8113abfe7cb438ea528bd97e8d22268a35"
+    },
+    {
+      "revision": "r1",
+      "scope": "structure and periodic-potential tests, not a new native comparison",
+      "passed": 216,
+      "files": 12,
+      "receiptSha256": "85ff4b6d4c2d0e692a151014f86dd0563f0797fc3ee05507fc4989358b91cb1d"
+    },
+    {
+      "revision": "r2",
+      "scope": "five source checks including actual private Git fixture; not history",
+      "passed": 5,
+      "filteredSkipped": 17,
+      "receiptSha256": "f8757633f512e6dcf6966a714f923e5fa1716ad13c5b081c3459ae513f12c332",
+      "stderr": "47 bytes from the expected missing-object rejection; retained, not described as empty"
+    }
+  ],
+  "completedEvidenceBySource": {
+    "r3": {
+      "sourceDigest": "sha256:4f289585208876a205b1ea394dc826b4c8c37be60826b070cf4fdf5e7ac61f9a",
+      "freezeSha256": "71c09c6f2e41efe547eec86f0a48d9aeb1c3b6cd75394c998dc43d95ece8e022",
+      "gateReceiptSha256": {
+        "lint": "28306ad396b056199e4f52c89df2401bbeb3a9cdb0c03ee5e97ec3ae714b0b01",
+        "typecheck": "da114aadac07b7209a2f908c52a7c03de1cde65a980c8cd960bdfc27ac6a8c4f",
+        "atomistic": "5c1837217020b2df611760629c725e0b0dd084186a0a52031a1d1e7b123beb10",
+        "test": "d48b249e6fca909d285d939d77c0d65a15d07f81da810f515bafbb2871c9aa43",
+        "audit": "43be6eb691a7c8d705b6e8156da6336985580c706469f8a50b11e29624e88d4c",
+        "preEvaluatorBuild": "09970cf76ba18d47c12ebb38c0cadc1793fdb145955557eab77ac10d7b651235"
+      },
+      "actualTestCoverage": {
+        "core": {"passed":1703,"skipped":5,"passedFiles":130,"skippedFiles":2},
+        "observer": {"passed":2,"privateEvaluatorInvocations":6,"conditional":2,"rejected":4},
+        "node": {"passed":29},
+        "pythonAtomistic": {"run":91,"skipped":1},
+        "pythonOpenmmContracts": {"passed":42,"nativeOpenmmExecuted":false},
+        "zip": {"passed":3},
+        "mandatoryHistoryExecuted": true,
+        "skipBoundary": "Five JS skips cover one absent Random-TP cache case, three opt-in Chromium cases and one manual opt-in launcher. A separate Python Random-TP case also skipped. Six historical excluded paths are unchanged and are not these five JS skips."
+      },
+      "testElapsedMs": 1661988.557708,
+      "testStderrBytes": 712,
+      "knownDependencyVulnerabilities": 0,
+      "installBoundary": "npm ci --ignore-scripts was separately observed; canonical CI lifecycle installation was not claimed. Native sharp sanity was a separate dependency check, not physics.",
+      "rootEvaluator": {
+        "receiptSha256": "cdff71c4601e161a8958d257d767d0a4b1985aa004eb56d75f884664a6d1703a",
+        "actualTerminalCode": 0,
+        "elapsedMs": 168740.033833,
+        "inputFiles": 544,
+        "inputArtifactDigest": "sha256:c40cc8e604517ea8b79d02dd87689f121c615c0a325488696bbb03cdf9fde151",
+        "verdict": "conditional",
+        "weightedScore": 41,
+        "hardGateFailures": [],
+        "scorecardUnchanged": true,
+        "unsignedPublication": true,
+        "executionAuthenticated": false,
+        "note": "Four derived reports and one pre-existing legacy terminal-review exclusion are not evaluator inputs. The separate complete tree has 549 files; the new ordinary review is not excluded."
+      }
+    },
+    "r4": {
+      "sourceDigest": "sha256:1c0b9eb94025a4b65dd023886a78b4217b27f40914c742f82f6ffddddf64ccdd",
+      "changeFromR3": "Only four actual derived report bytes and their 0644-to-0600 modes; other 545 files unchanged.",
+      "buildReceiptSha256": "c4e07b09ca9a04feecaa7154e55436fa71551a5d7e5dac8b16d17d50a69bc745",
+      "productionDigest": "sha256:f7801c62e7352728e9853c508be512372c1d781cf43582a88394cd57ff29b0f7",
+      "productionFiles": 78,
+      "productionBytes": 5763069,
+      "cuaEvidenceSha256": "659ce9ee9e786ec219bc34b409491c1e0a1cb6d1d15e0423dbfe0639324a55f9",
+      "uiScope": "Explicit angstrom/nonperiodic XYZ, unsupported metadata rejection retaining accepted coordinates, N12 result staging, confirmation/recompute, coordinate edit invalidation, validate/reconfirm/compute, whole-packet export and normalized-filename replay, selected-atom readout, actual WebGL2, visible arrows and console.",
+      "directNumberedFilenameReplay": false,
+      "normalizedFilenameReplay": true,
+      "wholePacketBytes": 6688,
+      "wholePacketSha256": "0d7b85a45e7f897fe441dfe68d4d5daf1ee4d858cb07d90a5270ca1a2c7e1214",
+      "actualForceComponentsCompared": 36,
+      "serverClosed": true,
+      "canonicalSmoke": false
+    },
+    "r5": {
+      "sourceDigest": "sha256:3c6e9c21080976ebf586a3e6a439cec5632521a58d2c152c190164c8448ca93c",
+      "changeFromR4": "Only workbench filename recognition, 12 new workbench cases, two ledger size/hash bindings and the checker ledger pin; four reports and ordinary review unchanged at that freeze.",
+      "workbenchTestsPassed": 55,
+      "redTestsFailedAsExpected": 2,
+      "newTests": "Two positive numbered names, nine rejected names, one additional numbered tamper case; staging and confirmation remain zero-invocation, explicit replay invokes the solver.",
+      "buildReceiptSha256": "f5bde5aab720cb5e01cc1315b4f9dc25d62f35781fec88d22c41006580f359e8",
+      "productionDigest": "sha256:a59cd9e2012836dadab0f27f8c4b22d848bec711d1b151103c294b600020be20",
+      "productionFiles": 78,
+      "productionBytes": 5763205,
+      "cuaEvidenceSha256": "495659f6958af71c6447d3ba0cdab74e118ea813dc6d06a2ecbe8bda0f3b64ed",
+      "uiScope": "Original numbered Downloads (2), (3), and the same-build new (4) entered the actual input via CUA filechooser, staged without displaying results, then explicitly confirmed and recomputed. No renamed import copies were used. Full new export bytes equal the earlier N12 edited packet.",
+      "directNumberedFilenameReplay": true,
+      "nativeOsPickerTested": false,
+      "serverClosed": true,
+      "newRootEvaluatorRun": false,
+      "canonicalSmoke": false
+    }
+  },
+  "durableEvidence": [
+    {
+      "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-evidence/2026-09-09-custom-lab-main-migration-r4",
+      "receiptSha256": "a6ada83979e1b719b4cea2b458d3dead9a53a9da6327880bc8321ac6abb68b67",
+      "payloadFiles": 120,
+      "payloadBytes": 8023230,
+      "totalFiles": 123,
+      "rootIndependentlyRehashedEveryPayload": true,
+      "limitation": "Cache, repeated checkout/vendor and synthetic fixture directories are excluded. Only four exact history logs are preserved, not the complete historical filesystem. One intermediate directory was corrected from 0755 to 0700; no payload bytes changed. The correction audit is preserved in the r5-p2 archive."
+    },
+    {
+      "root": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-evidence/2026-09-09-custom-lab-main-migration-r5-p2",
+      "receiptSha256": "440e38fc504dcf01b2d04e2b4db41e9326dadbe13c888bb0e4680906454d346f",
+      "payloadFiles": 24,
+      "payloadBytes": 1179150,
+      "totalFiles": 27,
+      "rootIndependentlyRehashedEveryPayload": true,
+      "allDirectories0700": true,
+      "allFiles0600": true
+    }
+  ],
+  "datedPrimarySourceComparison": {
+    "asOf": "2026-09-09",
+    "classification": "reference",
+    "sources": [
+      "https://raw.githubusercontent.com/lammps/lammps/9c5ab448c78a14fd534619622162ba418d6a1fb1/doc/src/run.rst",
+      "https://raw.githubusercontent.com/lammps/lammps/9c5ab448c78a14fd534619622162ba418d6a1fb1/doc/src/pair_lj_smooth_linear.rst",
+      "https://raw.githubusercontent.com/openbabel/openbabel/openbabel-3-1-1/src/formats/xyzformat.cpp"
+    ],
+    "comparison": "Finite force-shifted LJ static implementation checks and an explicitly interpreted XYZ subset. Existing periodic/molecular MD regressions did run, but this custom-structure feature adds no trajectory, material calibration or numerical SOTA ranking. The comparator snapshot and scorecard remain unchanged."
+  },
+  "newTreeUiVerified": false,
+  "fullCandidateGatesPassed": false,
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "historicalApprovalTransferred": false,
+  "approvalAuthenticated": false,
+  "postRecordValidationPolicy": "The booleans above are the state at this record's finalization, not an assertion about future terminal runs. Freeze the complete source including this record, rerun all applicable final gates, actual root evaluator, report build and necessary production UI binding. Record their exact source/review hashes in external terminal evidence rather than writing this record's own hash back into itself. Any code fix or new material finding requires a new freeze and review. No commit while a relevant gate fails or a P0/P1 is open.",
+  "nextTasks": [
+    "Freeze this final reviewed code and ordinary review record; run the unchanged complete local gate sequence with actual terminal evidence, including mandatory history and observer evaluations.",
+    "Only after final gates and necessary new-source UI binding close, re-fetch main and proceed through separate commit, PR, candidate CI, main merge/first CI, exact artifact-gated authorized deployment and canonical smoke states.",
+    "Continue the next authorized scientific compute milestone after delivery. Random-TP rights still block all693 dispatch; keep the v0.5 bridge ahead of PFHub Benchmark 3 and Cantera CSTR, without turning preparatory assets into reproduced results."
+  ],
+  "limitations": [
+    "Baseline tests and main CI do not approve the migrated candidate.",
+    "118-element representation is not universal validated prediction; the admitted single point remains finite nonperiodic Ar 2–64.",
+    "Donor native results remain donor-bound. r4 broad UI and r5 narrow filename UI each bind only their exact source and production artifact; they do not validate this later review-modified full source identity.",
+    "Custom finite Ar remains two to 64 nonperiodic neutral-atom-assumption sites, static E/F only. There is no calibrated material accuracy or UQ, electronic structure, identified causal effect or SOTA claim.",
+    "Existing periodic Ar regressions ran 10000 steps and a full same-implementation replay; aqueous regressions ran 10000 steps with only a 10-step prefix replay. These results cannot be transferred to the new custom finite-Ar feature.",
+    "Force arrows use one result-specific scale, maximum 2 angstrom, and may amplify tiny forces; cross-result arrow length comparison is invalid. XYZ native export does not preserve the raw comment or transport receipt.",
+    "Original chunk-size build warnings and route classification notices remain. No Cloudflare edge runtime, canonical served SHA or release artifact approval was established by localhost UI testing.",
+    "Random-TP three rights remain ABSTAIN; no all693 inference, PFHub Benchmark 3 or Cantera CSTR reproduction.",
+    "Default exact-dc6 historical obligations, commands and budgets remain mandatory and unmodified.",
+    "This is an ordinary source-bound review record, not a cryptographic reviewer signature or authorization."
+  ]
+}

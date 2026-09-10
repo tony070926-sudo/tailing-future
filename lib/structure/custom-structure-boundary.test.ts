@@ -1,11 +1,17 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, extname, normalize, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
 
 const productionPaths = [
   ...walkProductionFiles('lib/structure'),
   'app/components/custom-structure-webgl.tsx',
   'app/components/custom-structure-workbench.tsx',
+  'app/components/custom-ar-dynamics-controls.tsx',
+  // Explicit action 0.1: only the existing pure radial formula and its exact imports.
+  'lib/simulation/periodic-potentials.ts',
+  'lib/molecular/molecular-interactions.ts',
+  'lib/simulation/digest.ts',
 ].sort();
 const customSources = productionPaths.map((path) => ({ path, source: readFileSync(path, 'utf8') }));
 const allowedExternalImports = new Set([
@@ -16,7 +22,7 @@ const allowedExternalImports = new Set([
   'three/addons/controls/OrbitControls.js',
 ]);
 
-describe('custom structure static solver and motion boundary', () => {
+describe('custom structure explicit single-point and bounded dynamics with static rendering', () => {
   it('walks the complete production import graph through an explicit allowlist', () => {
     expect(productionPaths).toContain('lib/structure/canonical-json.ts');
     expect(productionPaths).toContain('lib/structure/strict-json.ts');
@@ -33,13 +39,28 @@ describe('custom structure static solver and motion boundary', () => {
     }
   });
 
-  it('has no solver dependency or adaptation path anywhere in production structure sources', () => {
+  it('allows the finite Ar radial kernel and bounded dynamics adapter without other solver adaptation', () => {
+    const inherited = {
+      'lib/simulation/periodic-potentials.ts': 'fe772e235558d19c4b38efda6bd9936b2c790e7fb8a0bce940d71c7aca944765',
+      'lib/molecular/molecular-interactions.ts': '31174d60fca0b1ff071f22207ca23e1e4722e222a17e128a0b5d37e2378ab7e0',
+      'lib/simulation/digest.ts': 'a671ae7c6b0d2dc34fa97f19f4ac677c8e97337ea46ca0cf760420b67fe74cc0',
+    };
+    for (const [path, digest] of Object.entries(inherited)) expect(createHash('sha256').update(readFileSync(path)).digest('hex')).toBe(digest);
+    const kernel = readFileSync('lib/simulation/periodic-potentials.ts', 'utf8');
+    expect(kernel.match(/^import[^\n]+$/gm)).toEqual([
+      "import type { Vector3 } from '../molecular/molecular-interactions.ts';",
+      "import { COULOMB_CONSTANT_KJ_MOL_ANGSTROM_E2 } from '../molecular/molecular-interactions.ts';",
+    ]);
     const forbidden = [
       'molecular-world', 'periodic-atomistic-world', 'aqueous-dynamics-world',
       'OpenMM', 'MatterSim', 'MACE', 'DFT', 'LennardJonesSimulation', 'VelocityVerlet',
     ];
     for (const { path, source } of customSources) {
-      for (const token of forbidden) expect(source, `${path} contains ${token}`).not.toContain(token);
+      for (const token of forbidden) {
+        // Only unchanged inherited parameter-source prose; no OpenMM invocation import.
+        if (token === 'OpenMM' && path === 'lib/molecular/molecular-interactions.ts') continue;
+        expect(source, `${path} contains ${token}`).not.toContain(token);
+      }
     }
   });
 

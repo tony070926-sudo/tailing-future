@@ -4,6 +4,7 @@
   "additionalProperties": false,
   "required": [
     "schemaVersion",
+    "bindingRevision",
     "baseCommit",
     "baseTree",
     "inputs",
@@ -14,6 +15,7 @@
     "newR18bNumericExecutionEnabled"
   ],
   "properties": {
+    "bindingRevision": { "const": 3 },
     "legacyNumericEntryScope": { "const": "version-bound-history-only" },
     "newR18bNumericExecutionEnabled": { "const": false },
     "schemaVersion": {
@@ -27,8 +29,8 @@
     },
     "inputs": {
       "type": "array",
-      "minItems": 22,
-      "maxItems": 22,
+      "minItems": 40,
+      "maxItems": 40,
       "items": {
         "type": "object",
         "additionalProperties": false,

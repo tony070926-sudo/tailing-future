@@ -54,14 +54,14 @@
     {
       "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
       "mode": 420,
-      "size": 2624,
-      "sha256": "049d61d3e33430d32ccfa545a5cf6959c11c5e2829573aef4f3ada7ad5b54ad7"
+      "size": 2686,
+      "sha256": "ce6a2329a3f850ce9845b43019b08e5979070575f03866aa7662dbbfc0781964"
     },
     {
       "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
       "mode": 420,
-      "size": 48194,
-      "sha256": "7d835ca4a67940de994bed0e70ba722007260201bd1970b0f64bf41105153bc9"
+      "size": 51738,
+      "sha256": "3fedf85463d324db01f6c072eb71701f37c7643ed44e8536a0a98222ff2eef66"
     },
     {
       "path": "vitest.config.ts",
@@ -134,12 +134,120 @@
       "mode": 420,
       "size": 367103,
       "sha256": "0792424e6a7eb74c15b44a4d98384d535a439a74f5fc5403f038088ed60366a5"
+    },
+    {
+      "path": "lib/structure/xyz-import.ts",
+      "mode": 420,
+      "size": 4709,
+      "sha256": "4d88be5ba2d8ac6ab6303eb5f530ec4c573bd7a4bc0289707e5ef2934c12dc7a"
+    },
+    {
+      "path": "lib/structure/xyz-import.test.ts",
+      "mode": 420,
+      "size": 5746,
+      "sha256": "e07a0c71e39b26658c09496b7c8d9320e11daf26d8e8a0052313087a08e82abb"
+    },
+    {
+      "path": "lib/structure/custom-ar-singlepoint.ts",
+      "mode": 420,
+      "size": 10134,
+      "sha256": "7528f2ed4fc5ad61bb6c81ec042625ef61c22bbf81787e709dce795dcf171602"
+    },
+    {
+      "path": "lib/structure/custom-ar-singlepoint.test.ts",
+      "mode": 420,
+      "size": 15087,
+      "sha256": "83d8278f5ab6735c0d0a96a4496bcd82e9013cbc0f28cd0f5f4bd84998a3b065"
+    },
+    {
+      "path": "app/components/custom-structure-workbench.tsx",
+      "mode": 420,
+      "size": 46061,
+      "sha256": "87db1a816be1253c90a60cac4d176e529a4530177c7877e6eb16ca8b061426f1"
+    },
+    {
+      "path": "app/components/custom-structure-webgl.tsx",
+      "mode": 420,
+      "size": 22719,
+      "sha256": "32519e5451f71c563970332e53a067d583a88c951c2ad34ad552bf21fa1ebe62"
+    },
+    {
+      "path": "lib/structure/custom-structure-workbench.test.ts",
+      "mode": 420,
+      "size": 39371,
+      "sha256": "8a5d0e9e4ace862e6df978570a05e72b63d8021ca2d679ebb34a7ad37b3dbded"
+    },
+    {
+      "path": "lib/structure/custom-structure-webgl-component.test.ts",
+      "mode": 420,
+      "size": 22210,
+      "sha256": "f4fe415e491d413f3dee6d53bcfb1c4a0651ae409b8958c126e056d783855a31"
+    },
+    {
+      "path": "lib/structure/custom-structure-boundary.test.ts",
+      "mode": 420,
+      "size": 6353,
+      "sha256": "2d02c1d70e4e0d1b8b65f83b9a0ac60b540c8dcf6770029589bf805cb00f2024"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json",
+      "mode": 420,
+      "size": 18954,
+      "sha256": "a4a582dfbba1f6edb6b147207a7bdd65bc18de51aca7858ec3fb9812db5be750"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-09-custom-lab-main-v01-review.json",
+      "mode": 420,
+      "size": 16804,
+      "sha256": "bfff7a62a9ad8c1eb6067b1cfc38431b0d0b42baf8c374083712c5b8a269e224"
+    },
+    {
+      "path": "lib/structure/ar-vv-core.ts",
+      "mode": 420,
+      "size": 3292,
+      "sha256": "7c4960be1f6c30274eb028f3efe68e006bb7118c51e241c3367c70bad0e14ccc"
+    },
+    {
+      "path": "lib/structure/ar-vv-adapter.ts",
+      "mode": 420,
+      "size": 10681,
+      "sha256": "ab7a0f8d46aa4121c1e7c1615a8ea6adafb2903ce8360362ec021194b66bc4a5"
+    },
+    {
+      "path": "lib/structure/ar-vv-core.test.ts",
+      "mode": 420,
+      "size": 7847,
+      "sha256": "9ebc5f1e76cfad9bcd25368ec6846f5827a58ca547971331b576e5e9e1ba7ea9"
+    },
+    {
+      "path": "lib/structure/custom-ar-dynamics-session.ts",
+      "mode": 420,
+      "size": 5525,
+      "sha256": "656dec6829990eb021faa5e4ed3b31466707a31c281bd3f84f9bd4e18ce74377"
+    },
+    {
+      "path": "lib/structure/custom-ar-dynamics-session.test.ts",
+      "mode": 420,
+      "size": 5537,
+      "sha256": "e9343a90c5a9856cd8aa24f5915c7ea2f6e7b0bfd5866b22d036ec30c338fbc2"
+    },
+    {
+      "path": "lib/structure/custom-ar-dynamics-workbench.test.ts",
+      "mode": 420,
+      "size": 13414,
+      "sha256": "f959e02df42e5676c61bb4ebf4134cb4ef379595e8f246904471a3a8a24f3688"
+    },
+    {
+      "path": "app/components/custom-ar-dynamics-controls.tsx",
+      "mode": 420,
+      "size": 12441,
+      "sha256": "424c135266f871b5250ea570449a553074dac58a9a08448a917f287b8e9e0c23"
     }
   ],
   "controls": [
     "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
     "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
-    "evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json"
+    "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json"
   ],
   "node": {
     "version": "24.16.0"
@@ -159,5 +267,6 @@
     }
   ],
   "legacyNumericEntryScope": "version-bound-history-only",
-  "newR18bNumericExecutionEnabled": false
+  "newR18bNumericExecutionEnabled": false,
+  "bindingRevision": 3
 }

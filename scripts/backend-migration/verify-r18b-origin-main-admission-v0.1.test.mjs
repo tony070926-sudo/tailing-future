@@ -11,6 +11,7 @@ import { runBoundedCommand } from '../mesoscale/pfhub7a_r18a_current_root.mjs';
 import { BASE, TREE, OLD_BASE, OLD_TREE, COMPATIBILITY_FILES, REVIEW, LEDGER, CHECKER, SCHEMA, HISTORY_FILES, hash, identity, verifyMaterialized, readPolicy, validateDependencyInputs, baseRecords, verifySource, validateRecords, validateManifest, historicalNames, validateHistory, replayHistory, createHistoryBudget, flags, validateRuntimeObservation, observeRuntime } from './verify-r18b-origin-main-admission-v0.1.mjs';
 import { R12_EXCLUDED_PATHS } from './verify-r18a-origin-main-admission.mjs';
 import { selectProjectSourceFiles } from '../source-scope.mjs';
+import { DERIVED_REPORT_PATHS } from '../derived-report-contract.mjs';
 import { verifyAdmissionAtRoot as verifyLegacyAdmission } from './verify-r18a-wrangler-admission-v0.4.mjs';
 
 const root = process.cwd();
@@ -118,10 +119,10 @@ describe('R18b no-history synthetic/unit checks', () => {
       'lib/simulation/atomistic-world-session.test.ts',
       'evaluation/reviews/2026-09-08-r18b-source-admission-v0.1-final-review.json',
     ];
-    expect(ledger.inputs).toHaveLength(22);
+    expect(ledger.inputs).toHaveLength(40);
     expect(current.status).toBe('source-consistent');
     expect(current.failures).toEqual([]);
-    expect(REVIEW).toBe('evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json');
+    expect(REVIEW).toBe('evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json');
     for (const relative of paths) {
       expect(ledger.inputs.filter(row => row.path === relative)).toEqual([identity(root, relative)]);
       expect(validateRecords(current.records.filter(row => row.path !== relative), base, ledger, []).join('\n')).toContain('missing-source:' + relative);
@@ -579,11 +580,21 @@ describe('R18b no-history synthetic/unit checks regression coverage', () => {
       const savedReview = current.records.some(row => row.path === REVIEW) ? readFileSync(review) : null;
       writeFileSync(review, '{"status":"pending","P1":["synthetic"]}\n');
       expect(verifySource(target)).toMatchObject({ status: 'source-consistent', reviewState: 'present-unvalidated', ...flags() });
-      const records = verifySource(target).records;
-      const manifest = { files: records.filter(row => !row.path.startsWith('evaluation/latest-report.') && !['evaluation/public-summary.json', 'evaluation/public-product-evaluation.json'].includes(row.path)) };
+      const beforeReviewChange = verifySource(target);
+      const records = beforeReviewChange.records;
+      const manifest = { files: records.filter(row => !DERIVED_REPORT_PATHS.includes(row.path)) };
+      expect(beforeReviewChange.bindingRevision).toBe(3);
+      expect(beforeReviewChange.sourceInputDigest).toBe(hash(JSON.stringify(manifest.files)));
       expect(validateManifest(records, manifest)).toMatchObject(flags());
       writeFileSync(review, '{"status":"failed"}\n');
-      expect(() => validateManifest(verifySource(target).records, manifest)).toThrow('MANIFEST_DRIFT');
+      const afterReviewChange = verifySource(target);
+      expect(afterReviewChange).toMatchObject({ status: 'source-consistent', bindingRevision: 3, ...flags() });
+      expect(afterReviewChange.records.find(row => row.path === REVIEW)).toEqual(identity(target, REVIEW));
+      expect(afterReviewChange.records.find(row => row.path === REVIEW)).not.toEqual(records.find(row => row.path === REVIEW));
+      expect(afterReviewChange.records.filter(row => row.path !== REVIEW)).toEqual(records.filter(row => row.path !== REVIEW));
+      expect(afterReviewChange.sourceInputDigest).toBe(hash(JSON.stringify(afterReviewChange.records.filter(row => !DERIVED_REPORT_PATHS.includes(row.path)))));
+      expect(afterReviewChange.sourceInputDigest).not.toBe(beforeReviewChange.sourceInputDigest);
+      expect(() => validateManifest(afterReviewChange.records, manifest)).toThrow('MANIFEST_DRIFT');
       writeFileSync(review, '{"x":1,"x":2}\n');
       expect(verifySource(target).status).toBe('fail-closed');
       writeFileSync(review, '{}\n'); chmodSync(review, 0o755);
@@ -627,4 +638,44 @@ describe('mandatory unchanged pinned-base history', () => {
     expect(result.status).toBe('pass-history');
     console.log(JSON.stringify({ r18bHistory: result }));
   }, 305000);
+});
+
+describe('custom laboratory dynamics binding revision 3', () => {
+  it('rejects revision and exact input drift without running history', () => {
+    const ledger=readPolicy(root), base=baseRecords(root), current=verifySource(root);
+    expect(current.status).toBe('source-consistent');
+    expect(current.bindingRevision).toBe(3);
+    expect(ledger.bindingRevision).toBe(3);
+    const validate=new Ajv2020({strict:true}).compile(JSON.parse(readFileSync(path.join(root,SCHEMA))));
+    for(const revision of [undefined,1,2,4,'3',null]) {
+      const changed={...ledger,bindingRevision:revision};
+      if(revision===undefined)delete changed.bindingRevision;
+      expect(validate(changed)).toBe(false);
+    }
+    expect(ledger.inputs).toHaveLength(40);
+    expect(ledger.inputs.some(r=>r.path==='evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json')).toBe(true);
+    for(const relative of [
+      'evaluation/reviews/2026-09-09-custom-lab-main-v01-review.json',
+      'lib/structure/ar-vv-core.ts',
+      'lib/structure/ar-vv-adapter.ts',
+      'lib/structure/ar-vv-core.test.ts',
+      'lib/structure/custom-ar-dynamics-session.ts',
+      'lib/structure/custom-ar-dynamics-session.test.ts',
+      'lib/structure/custom-ar-dynamics-workbench.test.ts',
+      'app/components/custom-ar-dynamics-controls.tsx',
+    ]) expect(ledger.inputs.filter(r=>r.path===relative)).toEqual([identity(root,relative)]);
+    for(const entry of ledger.inputs) {
+      expect(validateRecords(current.records.filter(r=>r.path!==entry.path),base,ledger,[])).toContain('missing-source:'+entry.path);
+      for(const mutation of [{sha256:'0'.repeat(64)},{mode:entry.mode===420?493:420}])
+        expect(validateRecords(current.records.map(r=>r.path===entry.path?{...r,...mutation}:r),base,ledger,[])).toContain('source-identity:'+entry.path);
+    }
+    expect(validateRecords([...current.records,record('unexpected-source.ts')],base,ledger,[])).toContain('unaccounted-source:unexpected-source.ts');
+    const manifest={files:current.records.filter(r=>!DERIVED_REPORT_PATHS.includes(r.path))};
+    expect(validateManifest(current.records,manifest)).toMatchObject(flags());
+    expect(current.sourceInputDigest).toBe(hash(JSON.stringify(manifest.files)));
+    const changed=current.records.map(r=>r.path===REVIEW?{...r,sha256:'f'.repeat(64)}:r);
+    expect(hash(JSON.stringify(changed.filter(r=>!DERIVED_REPORT_PATHS.includes(r.path))))).not.toBe(current.sourceInputDigest);
+    expect(()=>validateManifest(changed,manifest)).toThrow('MANIFEST_DRIFT');
+    expect(current).toMatchObject(flags());
+  });
 });

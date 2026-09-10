@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CustomArForceOverlay } from '@/lib/structure/custom-ar-singlepoint';
+import type { projectDynamicsState } from '@/lib/structure/custom-ar-dynamics-session';
 import type {
   Group,
   InstancedMesh,
@@ -62,6 +64,8 @@ type Runtime = {
 type Props = Readonly<{
   active: boolean;
   model: StructureRenderModel;
+  forceOverlay?: CustomArForceOverlay | ReturnType<typeof projectDynamicsState>['overlay'] | null;
+  physicalDigest?: string | null;
   selectedAtomId: string | null;
   onAtomSelect: (atomId: string) => void;
   onAnnouncement: (message: string) => void;
@@ -72,6 +76,8 @@ type Props = Readonly<{
 export function CustomStructureWebgl({
   active,
   model,
+  forceOverlay = null,
+  physicalDigest = null,
   selectedAtomId,
   onAtomSelect,
   onAnnouncement,
@@ -86,6 +92,7 @@ export function CustomStructureWebgl({
   const onAnnouncementRef = useRef(onAnnouncement);
   const [status, setStatus] = useState<CustomStructureWebglStatus>('checking-webgl2');
   const [contextEpoch, setContextEpoch] = useState(0);
+
 
   useEffect(() => {
     activeRef.current = active;
@@ -130,6 +137,53 @@ export function CustomStructureWebgl({
       }
     });
   }, []);
+
+  // Overlay-only updates preserve the camera when the render model is unchanged.
+  // A new model still reconstructs the scene; endpoint-to-endpoint camera retention is not claimed.
+  useEffect(() => {
+    const runtime = runtimeRef.current;
+    if (!runtime || runtime.disposed || status !== 'ready' || !forceOverlay) return;
+    const resources: DisposableResource[] = [];
+    const group = new runtime.three.Group();
+    group.name = 'bound-ar-force-vectors';
+    try {
+      if (forceOverlay.semanticDigest !== model.sourceSemanticDigest) throw new Error('Force overlay input mismatch.');
+      if (physicalDigest !== null && (!('physicalDigest' in forceOverlay) || forceOverlay.physicalDigest !== physicalDigest)) throw new Error('Dynamics physical digest mismatch.');
+      if (forceOverlay.vectors.length !== model.atoms.length || (forceOverlay.scale !== null && !(Number.isFinite(forceOverlay.scale) && forceOverlay.scale > 0))) throw new Error('Force overlay shape or scale mismatch.');
+      const seenIds = new Set<string>();
+      for (const vector of forceOverlay.vectors) {
+        const atom = model.atoms.find((entry) => entry.id === vector.atomId);
+        if (!atom || seenIds.has(vector.atomId) || vector.start.length !== 3 || vector.end.length !== 3
+          || vector.start.some((v, i) => v !== atom.exactPositionAngstrom[i])) throw new Error('Force overlay atom binding mismatch.');
+        seenIds.add(vector.atomId);
+      }
+      if (forceOverlay.scale !== null) for (const vector of forceOverlay.vectors) {
+        const start = new runtime.three.Vector3(...vector.start.map((v) => uploadFloat(v, 'force.start')) as [number, number, number]);
+        const end = new runtime.three.Vector3(...vector.end.map((v) => uploadFloat(v, 'force.end')) as [number, number, number]);
+        const direction = end.clone().sub(start);
+        const length = direction.length();
+        if (length === 0) continue;
+        const arrow = new runtime.three.ArrowHelper(direction.normalize(), start, length, 0xffc857, length * 0.2, length * 0.08);
+        // ArrowHelper's defaults share geometry. Own clones for this result's disposal.
+        arrow.line.geometry = arrow.line.geometry.clone();
+        arrow.cone.geometry = arrow.cone.geometry.clone();
+        resources.push(arrow.line.geometry, arrow.cone.geometry);
+        for (const material of [arrow.line.material, arrow.cone.material]) resources.push(...(Array.isArray(material) ? material : [material]));
+        arrow.name = vector.atomId;
+        group.add(arrow);
+      }
+      runtime.scene.add(group);
+      // One static frame; no integration, animation or coordinate mutation.
+      requestStaticRender();
+    } catch (error) {
+      onAnnouncementRef.current(`Force overlay unavailable: ${error instanceof Error ? error.message : 'invalid geometry'}`);
+    }
+    return () => {
+      runtime.scene.remove(group);
+      resources.forEach((resource) => resource.dispose());
+      if (!runtime.disposed) requestStaticRender();
+    };
+  }, [forceOverlay, model, physicalDigest, status, contextEpoch, requestStaticRender]);
 
   useEffect(() => {
     if (!active) return;
@@ -390,7 +444,7 @@ export function CustomStructureWebgl({
   }, [model, requestStaticRender, selectedAtomId]);
 
   return (
-    <section className="custom-structure-viewer" aria-label="Static validated structure viewer">
+    <section className="custom-structure-viewer" aria-label="Static validated structure viewer" data-physical-digest={physicalDigest ?? undefined}>
       <div className="custom-structure-canvas-wrap">
         <canvas
           ref={canvasRef}

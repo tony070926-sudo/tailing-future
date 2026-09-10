@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { CustomStructureWebgl, type CustomStructureWebglStatus } from './custom-structure-webgl';
+import { CustomArDynamicsControls } from './custom-ar-dynamics-controls';
+import { dynamicsView, projectDynamicsState, type DynamicsSession } from '@/lib/structure/custom-ar-dynamics-session';
 import { ELEMENT_IDENTITIES } from '@/lib/structure/element-catalog';
 import {
   createDefaultStructureDraft,
@@ -24,6 +26,9 @@ import {
 } from '@/lib/structure/structure-document';
 import { STRUCTURE_MAX_FILE_BYTES, STRUCTURE_NATIVE_EXTENSION } from '@/lib/structure/strict-json';
 import { createStructureRenderModel, type StructureRenderModel } from '@/lib/structure/structure-render-model';
+import { parseAndValidateXyz, XYZ_INTERPRETATION, type XyzImportReceipt } from '@/lib/structure/xyz-import';
+
+import { AR_INTERPRETATION, AR_RESULT_EXTENSION, stageCustomArResult, replayCustomArResult, createCustomArAction, computeCustomArSinglePoint, createCustomArForceOverlay, exportCustomArResult, type CustomArAction, type CustomArResult } from '@/lib/structure/custom-ar-singlepoint';
 
 const EDITOR_PAGE_SIZE = 64;
 
@@ -56,14 +61,44 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
   const [draftIssue, setDraftIssue] = useState<string | null>(null);
   const [draftDirty, setDraftDirty] = useState(false);
   const [transportIssue, setTransportIssue] = useState<string | null>(null);
-  const [transportReceipt, setTransportReceipt] = useState<StructureTransportReceipt | null>(null);
+  const [transportReceipt, setTransportReceipt] = useState<StructureTransportReceipt | XyzImportReceipt | ReturnType<typeof stageCustomArResult>['transportReceipt'] | null>(null);
+  const [importFormat, setImportFormat] = useState('native');
+  const [xyzConfirmed, setXyzConfirmed] = useState(false);
   const [announcement, setAnnouncement] = useState('Static custom structure workbench ready.');
   const [webglStatus, setWebglStatus] = useState<CustomStructureWebglStatus>('checking-webgl2');
+  const [arConfirmed, setArConfirmed] = useState(false);
+  const [arState, setArState] = useState<Readonly<{ action: CustomArAction; result: CustomArResult }> | null>(null);
+  const [arIssue, setArIssue] = useState<string | null>(null);
+  const [stagedAr, setStagedAr] = useState<ReturnType<typeof stageCustomArResult> | null>(null);
+  const [importPending, setImportPending] = useState(false);
+  const [previousActive, setPreviousActive] = useState(active);
+  const [dynamics, setDynamics] = useState<DynamicsSession | null>(null);
+  const [dynamicsEpoch, setDynamicsEpoch] = useState(0);
+  const invalidateDynamics = () => { setDynamics(null); setDynamicsEpoch(epoch => epoch + 1); };
+  const invalidateAr = () => { setArState(null); setArConfirmed(false); setArIssue(null); setStagedAr(null); invalidateDynamics(); };
   const [atomPage, setAtomPage] = useState(0);
   const [connectionPage, setConnectionPage] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importSequenceRef = useRef(0);
   const mountedRef = useRef(true);
+
+  // Reset derived action state before committing a changed visibility state.
+  if (previousActive !== active) {
+    setPreviousActive(active);
+    if (!active) {
+      setArState(null);
+      setArConfirmed(false);
+      setArIssue(null);
+      setStagedAr(null);
+      setImportPending(false);
+      setDynamics(null);
+      setDynamicsEpoch(epoch => epoch + 1);
+    }
+  }
+
+  useEffect(() => {
+    if (!active) importSequenceRef.current += 1;
+  }, [active]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -79,6 +114,8 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
   const currentConnectionPage = Math.min(connectionPage, connectionPageCount - 1);
 
   const applyDraft = () => {
+    importSequenceRef.current += 1;
+    invalidateAr(); setImportPending(false);
     try {
       const nextAccepted = acceptDocument(finalizeStructureDocument(draft));
       setAccepted(nextAccepted);
@@ -99,6 +136,8 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
   };
 
   const mutateDraft = (mutate: (next: StructureDocumentDraft) => void, scope: DraftMutationScope = {}) => {
+    importSequenceRef.current += 1;
+    invalidateAr(); setImportPending(false);
     setDraft((current) => {
       const next = cloneDraftForMutation(current, scope);
       mutate(next);
@@ -172,23 +211,47 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
     setConnectionPage(Math.floor(draft.connections.length / EDITOR_PAGE_SIZE));
   };
 
-  const importNative = async (event: ChangeEvent<HTMLInputElement>) => {
+  const importStructure = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
-    if (!file) return;
     const importSequence = ++importSequenceRef.current;
-    if (!file.name.endsWith(STRUCTURE_NATIVE_EXTENSION)) {
-      setTransportIssue(`Only native ${STRUCTURE_NATIVE_EXTENSION} files are accepted.`);
+    invalidateAr();
+    setImportPending(false);
+    if (!file) return;
+    const selectedFormat = importFormat;
+    const confirmed = xyzConfirmed;
+    if (selectedFormat === 'xyz' && !confirmed) {
+      setTransportIssue('Confirm the XYZ interpretation before importing.');
+      return;
+    }
+    const extension = selectedFormat === 'ar-result' ? AR_RESULT_EXTENSION : selectedFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION;
+    // Browsers may insert a positive duplicate counter before the final .json.
+    // Only the Ar filename hint is normalized; bytes and replay validation are unchanged.
+    const importName = selectedFormat === 'ar-result'
+      ? file.name.replace(/ \([1-9][0-9]*\)(?=\.json$)/u, '')
+      : file.name;
+    if (!importName.endsWith(extension)) {
+      setTransportIssue(`Only ${extension} files are accepted.`);
       return;
     }
     if (file.size > STRUCTURE_MAX_FILE_BYTES) {
-      setTransportIssue(`Native structure file exceeds ${STRUCTURE_MAX_FILE_BYTES} bytes.`);
+      setTransportIssue(`Structure file exceeds ${STRUCTURE_MAX_FILE_BYTES} bytes.`);
       return;
     }
     try {
+      setImportPending(true);
       const bytes = new Uint8Array(await file.arrayBuffer());
       if (!mountedRef.current || importSequence !== importSequenceRef.current) return;
-      const parsed = parseAndValidateStructureNativeJson(bytes, file.name);
+      invalidateAr(); setImportPending(false);
+      if (selectedFormat === 'ar-result') {
+        const staged = stageCustomArResult(bytes, file.name);
+        setStagedAr(staged); setTransportIssue(null);
+        setAnnouncement('Ar result package staged, unverified. Confirm the model and explicitly recompute before accepting any imported result.');
+        return;
+      }
+      const parsed = selectedFormat === 'xyz'
+        ? parseAndValidateXyz(bytes, file.name, XYZ_INTERPRETATION)
+        : parseAndValidateStructureNativeJson(bytes, file.name);
       const nextAccepted: AcceptedState = {
         document: parsed.document,
         renderModel: createStructureRenderModel(parsed.document),
@@ -204,10 +267,11 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
       setSelectedAtomId(parsed.document.atoms[0]?.id ?? null);
       setAtomPage(0);
       setConnectionPage(0);
-      setAnnouncement(`Imported native structure bytes ${parsed.transportReceipt.rawSha256.slice(0, 23)}…; source provenance was not inferred.`);
+      setAnnouncement(`Imported ${selectedFormat} structure bytes ${parsed.transportReceipt.rawSha256.slice(0, 23)}…; source provenance was not inferred.`);
     } catch (error) {
       if (!mountedRef.current || importSequence !== importSequenceRef.current) return;
-      setTransportIssue(error instanceof Error ? error.message : 'Native import failed.');
+      invalidateAr(); setImportPending(false);
+      setTransportIssue(error instanceof Error ? error.message : 'Structure import failed.');
     }
   };
 
@@ -229,6 +293,59 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
     }
   };
 
+  const arOverlay = useMemo(() => {
+    if (!arState) return null;
+    try { return createCustomArForceOverlay(accepted.document, accepted.validationReceipt, arState.action, arState.result); }
+    catch { return null; }
+  }, [accepted, arState]);
+  const computeAr = () => {
+    if (!active || draftDirty || draftIssue || importPending || !arConfirmed) return;
+    invalidateDynamics();
+    const action = createCustomArAction(accepted.document, accepted.validationReceipt, AR_INTERPRETATION);
+    const result = computeCustomArSinglePoint(accepted.document, accepted.validationReceipt, action);
+    if (result.decision === 'abstain') { setArState(null); setArIssue(result.reason); return; }
+    setArState({ action, result }); setArIssue(null);
+  };
+  const replayAr = () => {
+    if (!active || importPending || !arConfirmed || !stagedAr) return;
+    invalidateDynamics();
+    try {
+      const replay = replayCustomArResult(stagedAr.value, AR_INTERPRETATION);
+      const next = acceptDocument(replay.document);
+      // Complete all validation/render preparation before committing either structure or result.
+      createCustomArForceOverlay(replay.document, replay.validationReceipt, replay.action, replay.result);
+      setAccepted(next); setDraft(structureDocumentToDraft(replay.document));
+      setArState({ action: replay.action, result: replay.result });
+      setTransportReceipt(stagedAr.transportReceipt); setStagedAr(null);
+      setDraftIssue(null); setDraftDirty(false); setTransportIssue(null); setArIssue(null);
+      setSelectedAtomId(replay.document.atoms[0]?.id ?? null); setAtomPage(0); setConnectionPage(0);
+      setAnnouncement('Imported Ar package explicitly recomputed and accepted with bound structure and result. Local exploratory single point only; no external backend or trajectory invocation.');
+    } catch (error) { setArIssue(error instanceof Error ? error.message : 'Ar replay failed.'); setStagedAr(null); setArConfirmed(false); setArState(null); }
+  };
+  const exportAr = () => {
+    if (!arState) return;
+    const bytes = exportCustomArResult(accepted.document, accepted.validationReceipt, arState.action, arState.result);
+    const url = URL.createObjectURL(new Blob([bytes.buffer as ArrayBuffer], { type: 'application/json' }));
+    const anchor = document.createElement('a');
+    anchor.href = url; anchor.download = accepted.document.documentId + '.tf-ar-singlepoint.json'; anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  const selectedForce = arState?.result.atomicForces.values.find((f) => f.atomId === selectedAtomId);
+  const dynamicsState = dynamics ? dynamicsView(dynamics) : null;
+  const dynamicsProjection = useMemo(() => dynamicsState ? projectDynamicsState(dynamicsState) : null, [dynamicsState]);
+  const selectedDynamicsSite = dynamicsState?.physical.sites.find(site => site.atomId === selectedAtomId);
+  const acceptDynamics = (next: DynamicsSession) => {
+    const state = dynamicsView(next);
+    projectDynamicsState(state);
+    const document = acceptDocument(state.document);
+    const nextDraft = structureDocumentToDraft(state.document);
+    // Prepare every bound representation before committing any UI state.
+    setAccepted(document); setDraft(nextDraft); setDynamics(next);
+    setArState(null); setArIssue(null); setArConfirmed(false); setStagedAr(null);
+    setDraftDirty(false); setDraftIssue(null); setTransportIssue(null); setTransportReceipt(null);
+    setSelectedAtomId(id => state.document.atoms.some(atom => atom.id === id) ? id : state.document.atoms[0]?.id ?? null);
+    setAnnouncement(`Accepted discrete dynamics state ${state.physicalDigest}; ${state.physical.timeFs} fs. Exploratory model only.`);
+  };
   const atomRows = draft.atoms.slice(currentAtomPage * EDITOR_PAGE_SIZE, (currentAtomPage + 1) * EDITOR_PAGE_SIZE);
   const connectionRows = draft.connections.slice(
     currentConnectionPage * EDITOR_PAGE_SIZE,
@@ -243,15 +360,15 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
   return (
     <main className="custom-structure-workbench" data-testid="custom-structure-workbench" hidden={!active}>
       <header className="custom-structure-header">
-        <button type="button" onClick={onBack}>← Molecular lab</button>
+        <button type="button" onClick={() => { invalidateAr(); onBack(); }}>← Molecular lab</button>
         <div>
           <p className="custom-structure-kicker">H-CUSTOM-STRUCTURE / 0.1</p>
           <h1>Custom Structure Workbench</h1>
-          <p>All 118 element identities · finite or fully periodic topology · native JSON only</p>
+          <p>All 118 element identities · finite or fully periodic topology · native JSON + limited plain XYZ</p>
         </div>
         <div className="custom-structure-lock" role="status">
-          <strong>STRUCTURE ONLY</strong>
-          <span>SOLVER NOT RUN</span>
+          <strong>{dynamicsState ? 'EXPLORATORY DYNAMICS' : arState ? 'EXPLORATORY SINGLE POINT' : 'STRUCTURE ONLY'}</strong>
+          <span>{dynamicsState ? 'FINITE Ar ACCEPTED DISCRETE STATE' : arState ? 'FINITE Ar ENERGY + FORCES' : 'SOLVER NOT RUN'}</span>
         </div>
       </header>
 
@@ -272,6 +389,8 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
           <CustomStructureWebgl
             active={active}
             model={accepted.renderModel}
+            forceOverlay={dynamicsProjection?.overlay ?? arOverlay}
+            physicalDigest={dynamicsState?.physicalDigest ?? null}
             selectedAtomId={selectedAtomId}
             onAtomSelect={setSelectedAtomId}
             onAnnouncement={setAnnouncement}
@@ -285,6 +404,12 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
                 <div><dt>ID</dt><dd>{selectedAtom.id}</dd></div>
                 <div><dt>Identity</dt><dd>Z={selectedAtom.element.atomicNumber} · {selectedAtom.element.symbol}</dd></div>
                 <div><dt>x / y / z</dt><dd>{selectedAtom.position.x} / {selectedAtom.position.y} / {selectedAtom.position.z} Å</dd></div>
+                {selectedForce && <div><dt>Fx / Fy / Fz</dt><dd data-testid="selected-ar-force">{selectedForce.x} / {selectedForce.y} / {selectedForce.z} kJ mol^-1 Å^-1</dd></div>}
+                {selectedDynamicsSite && <>
+                  <div><dt>Dynamics position x / y / z</dt><dd data-testid="selected-dynamics-position" data-physical-digest={dynamicsState?.physicalDigest}>{selectedDynamicsSite.position.join(' / ')} Å</dd></div>
+                  <div><dt>vx / vy / vz</dt><dd data-testid="selected-dynamics-velocity">{selectedDynamicsSite.velocity.join(' / ')} Å/fs, per atom</dd></div>
+                  <div><dt>Fx / Fy / Fz</dt><dd data-testid="selected-dynamics-force">{selectedDynamicsSite.force.join(' / ')} kJ mol^-1 Å^-1, per atom per mole identical finite systems</dd></div>
+                </>}
                 <div><dt>Isotope</dt><dd>{selectedAtom.isotope ? `A=${selectedAtom.isotope.massNumber} · user-declared, existence unverified` : 'not declared'}</dd></div>
                 <div><dt>Formal charge</dt><dd>{selectedAtom.formalCharge ? `${selectedAtom.formalCharge.value} e · user-declared, unverified bookkeeping` : 'not declared'}</dd></div>
               </dl>
@@ -296,6 +421,29 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
         </div>
 
         <aside className="custom-structure-controls" aria-label="Custom structure editor">
+          <section aria-label="Exploratory finite Ar single point">
+            <h2>Finite Ar single point · exploratory, not calibrated</h2>
+            <p>2–64 Ar; nonperiodic; ε=0.997 kJ/mol, σ=3.405 Å, force-shift cutoff 4.5 Å; every pair ≥2.724 Å. No stress, pressure, electrons, trajectory or calibrated uncertainty.</p>
+            <p>Declared total charge zero is unverified bookkeeping, not proof of neutral atoms. This model separately assumes neutral atoms and excludes isotope, spin and bonded descriptions.</p>
+            <label><input type="checkbox" aria-label="Confirm exploratory finite Ar model" checked={arConfirmed} disabled={(!stagedAr && (draftDirty || !!draftIssue)) || importPending || !active} onChange={(event) => { importSequenceRef.current += 1; invalidateDynamics(); setArConfirmed(event.target.checked); setArState(null); setArIssue(null); if (!event.target.checked) setStagedAr(null); }} />I explicitly accept the exploratory neutral-atom finite-system interpretation; no calibrated material applicability.</label>
+            <button type="button" onClick={computeAr} disabled={!!stagedAr || !active || !arConfirmed || draftDirty || !!draftIssue || importPending}>Compute Ar single point</button>
+            {stagedAr && <div data-testid="ar-staged-package">
+              <p>Unverified imported result package — no calculation performed during loading.</p>
+              <p>Raw tf-ar-singlepoint-json: {stagedAr.transportReceipt.rawSha256}</p>
+              <button type="button" onClick={replayAr} disabled={!active || !arConfirmed || importPending}>Recompute &amp; accept Ar result package</button>
+            </div>}
+            {arIssue && <p role="status">ABSTAIN: {arIssue}</p>}
+            {arState && <>
+              <p data-testid="ar-energy">Energy: {arState.result.energy.value} kJ/mol · per mole of identical finite systems</p>
+              <p>Forces: negative Cartesian energy gradient per atom; binary64 inspector, binary32 GPU display.</p>
+              <p data-testid="ar-result-digest">{arState.result.resultDigest}</p>
+              <p data-testid="ar-action-digest">{arState.action.actionDigest}</p>
+              <p data-testid="ar-input-digest">{arState.result.semanticDigest}</p>
+              <p data-testid="ar-force-scale">{arOverlay ? (arOverlay.scale === null ? 'All forces zero: no arrows.' : 'Common force scale: ' + arOverlay.scale + ' Å/(kJ mol^-1 Å^-1); maximum arrow 2 Å.') : 'Force overlay unavailable; numeric result preserved.'}</p>
+              <p>Scale dimension length²/energy, one shared scale per result. Arrow lengths cannot be compared across results; tiny forces may be amplified and weak arrows occluded. Raw forces and coordinates are unchanged.</p>
+              <button type="button" onClick={exportAr}>Export Ar single-point result</button>
+            </>}
+          </section>
           <section className="custom-structure-apply-panel">
             <h2>Draft transaction</h2>
             <button type="button" onClick={applyDraft} disabled={!draftDirty && !draftIssue}>Validate &amp; update preview</button>
@@ -409,6 +557,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
                 return (
                   <fieldset className="custom-structure-atom-row" key={`atom-editor-${atomIndex}`}>
                     <legend>Atom {atomIndex + 1}</legend>
+                    <button type="button" aria-label={`Inspect atom ${atom.id}`} disabled={draftDirty || !!draftIssue || !accepted.document.atoms.some((a) => a.id === atom.id)} onClick={() => setSelectedAtomId(atom.id)}>Inspect accepted atom</button>
                     <label>ID
                       <input value={atom.id} onChange={(event) => mutateDraft((next) => { next.atoms[atomIndex].id = event.target.value; }, { atomIndex })} />
                     </label>
@@ -537,30 +686,67 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
           </section>
 
           <section>
-            <h2>Native transport</h2>
+            <h2>Structure file transport</h2>
+            <label>Import format
+              <select aria-label="Import format" value={importFormat} onChange={(event) => {
+                importSequenceRef.current += 1;
+                invalidateAr(); setImportPending(false);
+                setImportFormat(event.target.value);
+                setXyzConfirmed(false);
+              }}>
+                <option value="native">Native JSON</option>
+                <option value="xyz">Limited plain XYZ</option>
+                <option value="ar-result">Ar single-point result package</option>
+              </select>
+            </label>
+            {importFormat === 'xyz' && <label>
+              <input type="checkbox" aria-label="Confirm XYZ interpretation" checked={xyzConfirmed} onChange={(event) => {
+                importSequenceRef.current += 1;
+                invalidateAr(); setImportPending(false);
+                setXyzConfirmed(event.target.checked);
+              }} />
+              I explicitly interpret coordinates as Å, finite/nonperiodic, and the comment as uninterpreted text.
+            </label>}
             <div className="custom-structure-file-actions">
               <input
                 ref={fileInputRef}
                 className="custom-structure-file-input"
                 type="file"
-                accept={STRUCTURE_NATIVE_EXTENSION}
-                onChange={importNative}
+                accept={importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}
+                onChange={importStructure}
               />
-              <button type="button" onClick={() => fileInputRef.current?.click()}>Import {STRUCTURE_NATIVE_EXTENSION}</button>
+              <button type="button" onClick={() => fileInputRef.current?.click()}>Import {importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}</button>
               <button type="button" onClick={exportNative}>Export native JSON</button>
             </div>
-            <p className="custom-structure-note">XYZ, extXYZ, CIF and V3000 are intentionally unavailable. File transport never fabricates scientific source, revision or license clearance.</p>
+            <p className="custom-structure-note">Limited plain XYZ only: one frame, four columns, no = in comments (even ordinary prose). extXYZ, CIF and V3000 remain unavailable. Decimal coordinates round to binary64; GPU display rounds to binary32. File transport never fabricates scientific source, revision or license clearance.</p>
+            <p className="custom-structure-note">Native JSON export preserves the structure, not the XYZ comment or transport receipt. Generated XYZ row IDs are not persistent physical identities.</p>
             <p className="custom-structure-note">Accepted native size: {acceptedByteLength.toLocaleString('en-US')} / {STRUCTURE_MAX_FILE_BYTES.toLocaleString('en-US')} bytes.</p>
             <dl className="custom-structure-receipt">
-              <div><dt>Raw import receipt</dt><dd>{transportReceipt?.rawSha256 ?? 'none — no bound native import receipt'}</dd></div>
+              <div><dt>Raw import receipt</dt><dd>{transportReceipt?.rawSha256 ?? 'none — no bound import receipt'}</dd></div>
+              <div><dt>Actual imported format</dt><dd>{transportReceipt?.format ?? 'none'}</dd></div>
+              {transportReceipt?.format === 'plain-xyz-single-frame' && <>
+                <div><dt>XYZ comment (uninterpreted)</dt><dd style={{ whiteSpace: 'pre-wrap' }}>{transportReceipt.comment}</dd></div>
+                <div><dt>XYZ interpretation</dt><dd>{transportReceipt.interpretation}</dd></div>
+                <div><dt>XYZ receipt</dt><dd>{transportReceipt.receiptDigest}</dd></div>
+                <div><dt>Not provided by XYZ</dt><dd>{transportReceipt.omittedProperties.join(', ')}</dd></div>
+              </>}
               <div><dt>License</dt><dd>{accepted.document.provenance.license.spdxExpression} · projectVerified=false</dd></div>
               <div><dt>Validation</dt><dd>{accepted.validationReceipt.receiptDigest}</dd></div>
             </dl>
           </section>
+          {active && <CustomArDynamicsControls
+            key={dynamicsEpoch}
+            document={accepted.document}
+            disabled={draftDirty || !!draftIssue || importPending}
+            session={dynamics}
+            onCommit={acceptDynamics}
+            onBegin={() => { importSequenceRef.current += 1; setImportPending(false); setArState(null); setArConfirmed(false); setArIssue(null); setStagedAr(null); }}
+          />}
         </aside>
       </section>
 
       <section className="custom-structure-abstentions" aria-label="Solver admission abstentions">
+        <h2>Import / validation receipt: zero automatic calls (not the current explicit action)</h2>
         {accepted.admissionReceipt.channels.map((channel) => (
           <article key={channel.channel}>
             <span>{channel.channel}</span>
