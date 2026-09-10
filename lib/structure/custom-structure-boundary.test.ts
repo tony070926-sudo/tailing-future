@@ -8,6 +8,7 @@ const productionPaths = [
   'app/components/custom-structure-webgl.tsx',
   'app/components/custom-structure-workbench.tsx',
   'app/components/custom-ar-dynamics-controls.tsx',
+  'app/components/custom-ar-branch-comparison.tsx',
   // Explicit action 0.1: only the existing pure radial formula and its exact imports.
   'lib/simulation/periodic-potentials.ts',
   'lib/molecular/molecular-interactions.ts',
@@ -61,6 +62,28 @@ describe('custom structure explicit single-point and bounded dynamics with stati
         if (token === 'OpenMM' && path === 'lib/molecular/molecular-interactions.ts') continue;
         expect(source, `${path} contains ${token}`).not.toContain(token);
       }
+    }
+  });
+
+  it('admits the comparison edges without admitting the host, another solver or external capabilities', () => {
+    const productionAbsolutePaths = new Set(productionPaths.map((path) => normalize(resolve(path))));
+    const admitted = (importer: string, specifier: string) => {
+      if (allowedExternalImports.has(specifier)) return true;
+      const target = resolveProductionImport(importer, specifier);
+      return target !== null && productionAbsolutePaths.has(normalize(target));
+    };
+    const component = 'app/components/custom-ar-branch-comparison.tsx';
+    expect(productionPaths).toContain(component);
+    expect(productionPaths).toContain('lib/structure/custom-ar-branch-comparison.ts');
+    expect(admitted('app/components/custom-ar-dynamics-controls.tsx', './custom-ar-branch-comparison')).toBe(true);
+    expect(admitted(component, '@/lib/structure/custom-ar-branch-comparison')).toBe(true);
+    for (const specifier of ['./molecular-lab', '../../lib/simulation/aqueous-dynamics-world']) {
+      expect(resolveProductionImport(component, specifier)).not.toBeNull();
+      expect(admitted(component, specifier)).toBe(false);
+    }
+    for (const specifier of ['node:fs', '@/lib/simulation/aqueous-dynamics-world', '@/scripts/evaluate']) {
+      expect(resolveProductionImport(component, specifier)).toBeNull();
+      expect(admitted(component, specifier)).toBe(false);
     }
   });
 

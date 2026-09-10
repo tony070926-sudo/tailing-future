@@ -55,13 +55,13 @@
       "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
       "mode": 420,
       "size": 2686,
-      "sha256": "ce6a2329a3f850ce9845b43019b08e5979070575f03866aa7662dbbfc0781964"
+      "sha256": "1e796684139ec46bc919ae530c880c91dda4ea58503d4c824c448ca4c362e29e"
     },
     {
       "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
       "mode": 420,
-      "size": 51738,
-      "sha256": "3fedf85463d324db01f6c072eb71701f37c7643ed44e8536a0a98222ff2eef66"
+      "size": 52070,
+      "sha256": "0da38d0727c4d3e84c80cdaed003518227542dd9fbc1ac1f89fc8ab5c7e28e84"
     },
     {
       "path": "vitest.config.ts",
@@ -162,8 +162,8 @@
     {
       "path": "app/components/custom-structure-workbench.tsx",
       "mode": 420,
-      "size": 46061,
-      "sha256": "87db1a816be1253c90a60cac4d176e529a4530177c7877e6eb16ca8b061426f1"
+      "size": 46194,
+      "sha256": "7bb08b436595da6eea4a6d7dc5450a299ff40cdba832b914b8ed54592d356bf1"
     },
     {
       "path": "app/components/custom-structure-webgl.tsx",
@@ -186,8 +186,8 @@
     {
       "path": "lib/structure/custom-structure-boundary.test.ts",
       "mode": 420,
-      "size": 6353,
-      "sha256": "2d02c1d70e4e0d1b8b65f83b9a0ac60b540c8dcf6770029589bf805cb00f2024"
+      "size": 7804,
+      "sha256": "66ea8d4b19f569beb7d41c68d1e75df9210bd252d892acb550f371b53f69476b"
     },
     {
       "path": "evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json",
@@ -234,20 +234,50 @@
     {
       "path": "lib/structure/custom-ar-dynamics-workbench.test.ts",
       "mode": 420,
-      "size": 13414,
-      "sha256": "f959e02df42e5676c61bb4ebf4134cb4ef379595e8f246904471a3a8a24f3688"
+      "size": 14909,
+      "sha256": "d0c1dc5a8a6cc4710fb57dffe6b895d8b8c7d82e0e327f96acd1405c3f5e3035"
     },
     {
       "path": "app/components/custom-ar-dynamics-controls.tsx",
       "mode": 420,
-      "size": 12441,
-      "sha256": "424c135266f871b5250ea570449a553074dac58a9a08448a917f287b8e9e0c23"
+      "size": 12847,
+      "sha256": "5946bc7da009a919cf9d7c874e34184d5156155eeeadb2ff189c9a760e817f88"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json",
+      "mode": 420,
+      "size": 16787,
+      "sha256": "15ea7d8780afad9377729f05ce6f53a94095cf1eef25b8cf3c666532b2118987"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison.ts",
+      "mode": 420,
+      "size": 6832,
+      "sha256": "83ffbcc6ae45a91b3a2c183c3a454435849c31e4388a23ad4a18b4919e22fa57"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison.test.ts",
+      "mode": 420,
+      "size": 6946,
+      "sha256": "c3a0370ad142da9ea94966702313e15b44e6934777328866f4c6e6288dca9408"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison-component.test.ts",
+      "mode": 420,
+      "size": 5887,
+      "sha256": "2fac36e03e374a92a4ae85e70250c64e86e19b0fe96edc8c6b947d346a894c97"
+    },
+    {
+      "path": "app/components/custom-ar-branch-comparison.tsx",
+      "mode": 420,
+      "size": 7534,
+      "sha256": "53b35acaca4de16ed0454d3ad0afaa0e2a943fae5d27a98bdebec99a38cb43e7"
     }
   ],
   "controls": [
     "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
     "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
-    "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json"
+    "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json"
   ],
   "node": {
     "version": "24.16.0"
@@ -268,5 +298,5 @@
   ],
   "legacyNumericEntryScope": "version-bound-history-only",
   "newR18bNumericExecutionEnabled": false,
-  "bindingRevision": 3
+  "bindingRevision": 4
 }

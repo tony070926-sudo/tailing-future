@@ -420,7 +420,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
           </section>
         </div>
 
-        <aside className="custom-structure-controls" aria-label="Custom structure editor">
+        <aside className="custom-structure-controls" aria-label="Custom structure editor" style={{ minWidth: 0, gridTemplateColumns: 'minmax(0, 1fr)', overflowWrap: 'anywhere' }}>
           <section aria-label="Exploratory finite Ar single point">
             <h2>Finite Ar single point · exploratory, not calibrated</h2>
             <p>2–64 Ar; nonperiodic; ε=0.997 kJ/mol, σ=3.405 Å, force-shift cutoff 4.5 Å; every pair ≥2.724 Å. No stress, pressure, electrons, trajectory or calibrated uncertainty.</p>
@@ -739,6 +739,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
             document={accepted.document}
             disabled={draftDirty || !!draftIssue || importPending}
             session={dynamics}
+            selectedAtomId={selectedAtomId}
             onCommit={acceptDynamics}
             onBegin={() => { importSequenceRef.current += 1; setImportPending(false); setArState(null); setArConfirmed(false); setArIssue(null); setStagedAr(null); }}
           />}

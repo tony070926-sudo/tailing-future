@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "tf.custom-ar-branch-comparison-review/0.1",
+  "date": "2026-09-10",
+  "status": "product-reviewed-P2-closed-awaiting-complete-candidate-validation",
+  "scope": "Read-only accepted-state comparison for finite neutral-Ar coordinate branches; not new physics or model qualification.",
+  "hypothesis": "A retained accepted coordinate-fork continuation can be compared with an unedited continuation from the same retained parent at the exact same final time without executing a solver or mutating the session.",
+  "planSha256": "65d8381f9c581048e56d8a4b188ffaca9ac1f44bfbe58fe4b84c4be1783a4244",
+  "baseline": {
+    "dependentCommit": "481b5a765c2a788036b64d394c77cc0d01d800ca",
+    "gitTree": "9b73515997e9f61bcff5dac40cccfca37975a175",
+    "observedRemoteMain": "48fea6836864014637eacd217912ce3935aed2d3",
+    "sourceFiles": 557,
+    "sourceBytes": 14429760,
+    "observedUtc": "2026-09-10T06:27:23.190Z",
+    "sourceSha256": "c3f27bba98faee931d5c5446fda47424b5139106bbe90c91b40c96b2fe4bde61",
+    "comparison": "All bytes equal the reviewed parent; four generated-report modes changed from 0600 to the permitted Git checkout mode 0644. Parent local gates are baseline evidence, not approval of this changed candidate. Parent PR39 CI was pending at worktree creation.",
+    "parentFinalReviewSha256": "248ce1944b80e1ec1044d949ed8c3952b6be691cd39d4a6c9cd15bbbffe104c1"
+  },
+  "builder": "astra_branch_compare_builder",
+  "integrationOwner": "root",
+  "frozenProductFiles": {
+    "app/components/custom-ar-branch-comparison.tsx": "88b4bd8d092789511fea4101b93e81e711bc3bc24e5fd9c694e5935b8c52a7d3",
+    "app/components/custom-ar-dynamics-controls.tsx": "5946bc7da009a919cf9d7c874e34184d5156155eeeadb2ff189c9a760e817f88",
+    "app/components/custom-structure-workbench.tsx": "f9b78723ee2c625ca9fbfeddca0f67ff372dfad38beecfef99f26fe1f65650e1",
+    "lib/structure/custom-ar-branch-comparison.ts": "83ffbcc6ae45a91b3a2c183c3a454435849c31e4388a23ad4a18b4919e22fa57",
+    "lib/structure/custom-ar-branch-comparison.test.ts": "7db231f62c02f4f5610406ffc61479bb784d14aad1a5fdcbc447fe2d9ff692c8",
+    "lib/structure/custom-ar-branch-comparison-component.test.ts": "5cb4fc42aa13ab53085976a27b345c221f3b5bcb07f8a0a9fa00840f50ae8488",
+    "lib/structure/custom-ar-dynamics-workbench.test.ts": "d0c1dc5a8a6cc4710fb57dffe6b895d8b8c7d82e0e327f96acd1405c3f5e3035"
+  },
+  "builderSelfCheck": {
+    "focused": {"testsPassed": 25, "filesPassed": 4, "terminalTool": "374511", "exitCode": 0},
+    "nonincrementalTypecheck": {"terminalTool": "5a5da1", "exitCode": 0},
+    "changedFileLint": {"files": 7, "terminalTool": "4424b9", "exitCode": 0, "warnings": 0},
+    "diffCheck": {"terminalTool": "dc93da", "exitCode": 0},
+    "firstTypecheckFailure": "Two DOM-test cast errors were fixed before the final frozen check; the earlier failure is not reclassified.",
+    "independentExecution": false,
+    "realBrowser": false
+  },
+  "sourceAdmissionMigration": {
+    "fromBindingRevision": 3,
+    "toBindingRevision": 4,
+    "inputCount": 45,
+    "policy": "Keep the historical base and all existing source safeguards; pin the four new product files and the complete former review, refresh only the five changed existing inputs, and move the bounded review control to this dated record. Dependencies and all historical review bytes remain unchanged. The current review is an input to the complete candidate freeze; it does not claim its own digest or approval."
+  },
+  "readOnlyReviews": [
+    {"reviewer": "qualification_software_review/remote_observation_review", "role": "scientific", "scope": "Frozen seven-file product diff and plan", "P0": 0, "P1": 0, "P2": 0, "status": "approved-scoped-product-science", "execution": "Static inspection only; no independent test or solver execution."},
+    {"reviewer": "branch_compare_software_review", "role": "software-numerical-evaluator", "scope": "Frozen seven-file product diff and Root two-line test closure", "P0": 0, "P1": 0, "openP2": 0, "status": "approved-scoped-product-no-open-findings", "execution": "Static inspection only; no independent test or solver execution."},
+    {"reviewer": "branch_compare_sota_scout", "role": "dated-primary-source-comparison", "status": "completed-plan-comparison-not-code-approval"}
+  ],
+  "findings": [
+    {"id": "BRANCH-COMPARE-SW-P2-01", "priority": "P2", "reviewer": "branch_compare_software_review", "status": "closed", "finding": "Initial negative cases did not directly exercise rejection of a forked A at the same final time.", "fix": "Root added an accepted identity-forked A, advanced it from P to B's exact time, retained it and asserted a-not-unedited-continuation. No production logic changed.", "testPath": "lib/structure/custom-ar-branch-comparison.test.ts", "postFixSha256": "c3a0370ad142da9ea94966702313e15b44e6934777328866f4c6e6288dca9408", "actualRootTest": {"terminalTool": "eda8f6", "exitCode": 0, "testsPassed": 25, "filesPassed": 4}, "closure": "The same independent reviewer verified exactly the two-line delta, new test digest, unchanged other six files and baseline HEAD. This does not approve source-admission integration or pending gates."}
+  ],
+  "sota": {
+    "date": "2026-09-10",
+    "comparison": "Stable-ID trajectory output and restart are mature MD workflows. This feature adds explicit pairing, provenance and simultaneous differences in the product; no new numerical ranking or accuracy claim.",
+    "revision": "d71abe6102c44577442ba7f03b7378a83166b9fd",
+    "references": [
+      {"class": "reference", "url": "https://raw.githubusercontent.com/lammps/lammps/d71abe6102c44577442ba7f03b7378a83166b9fd/doc/src/dump.rst", "sha256": null},
+      {"class": "reference", "url": "https://raw.githubusercontent.com/lammps/lammps/d71abe6102c44577442ba7f03b7378a83166b9fd/doc/src/read_restart.rst", "sha256": null},
+      {"class": "reference", "url": "https://raw.githubusercontent.com/lammps/lammps/d71abe6102c44577442ba7f03b7378a83166b9fd/doc/src/units.rst", "sha256": null}
+    ],
+    "digestBoundary": "This review used rendered source text, not captured complete raw response bytes. No fresh content digest is claimed.",
+    "scoreChanged": false
+  },
+  "scientificBoundaries": [
+    "Only accepted, retained finite neutral-Ar states with exact common parent, initializer, units, model, atom identities and endpoint time qualify; otherwise machine-readable abstention.",
+    "Derived energy and force dimensions explicitly include molar normalization; unchanged source contracts and numerical values are retained without rescaling.",
+    "Signed endpoint differences are exploratory model-state comparisons, not identified causal effects or calibrated predictions. Coordinate-fork deltaH is not work. Stored branch H0 and maximum drift may include pre-parent history.",
+    "Prior native and browser experiments keep their own locked inputs and horizons. They are not a new independent solver or browser validation of this comparison feature.",
+    "118-element representation is not universal molecular prediction. Random-TP rights and execution prerequisites, full MatterSim/MACE benchmarks, PFHub3, Cantera3.2 CSTR and the multiscale World Model remain incomplete."
+  ],
+  "remainingAcceptance": [
+    "Freeze complete candidate after any review fixes; close independent product and source-admission review; rerun focused tests and all mandatory lint, type, numerical, schema, atomistic, dependency, evaluator, source and production-build gates.",
+    "Perform one frozen real production-browser acceptance of the paired N8 0.5fs parent and 1fs endpoints, including signed readings, abstention, selection/invalidation, unchanged accepted states and WebGL/console checks.",
+    "Record exact complete candidate and actual evidence identities, independent final dispositions and durable saved evidence in one external dated closeout before promotion. Separately satisfy protected main, first successful CI, unique verified artifact, authorized Cloudflare deployment and canonical smoke."
+  ],
+  "closurePolicy": "Later actual results supersede the creation-time pending entries only through a durable external dated review under evaluation/reviews, binding this exact record and the full candidate freeze. Do not rewrite this record merely to claim its own final identity, silently transfer parent approval, or treat source-consistent/present-unvalidated as independent approval.",
+  "nextTasks": [
+    "Complete actual UI and negative-case evidence for this bounded comparison feature.",
+    "Add a separately locked independent-solver edited-future comparison and longer horizon only after its plan and prerequisites are reviewed.",
+    "Resolve authorized real-backend rights and compute prerequisites for full MatterSim/MACE execution; finite Ar does not replace that objective."
+  ],
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "historicalApprovalTransferred": false
+}

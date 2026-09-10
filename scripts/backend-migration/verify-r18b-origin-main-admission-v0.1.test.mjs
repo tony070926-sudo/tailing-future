@@ -119,10 +119,10 @@ describe('R18b no-history synthetic/unit checks', () => {
       'lib/simulation/atomistic-world-session.test.ts',
       'evaluation/reviews/2026-09-08-r18b-source-admission-v0.1-final-review.json',
     ];
-    expect(ledger.inputs).toHaveLength(40);
+    expect(ledger.inputs).toHaveLength(45);
     expect(current.status).toBe('source-consistent');
     expect(current.failures).toEqual([]);
-    expect(REVIEW).toBe('evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json');
+    expect(REVIEW).toBe('evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json');
     for (const relative of paths) {
       expect(ledger.inputs.filter(row => row.path === relative)).toEqual([identity(root, relative)]);
       expect(validateRecords(current.records.filter(row => row.path !== relative), base, ledger, []).join('\n')).toContain('missing-source:' + relative);
@@ -583,12 +583,12 @@ describe('R18b no-history synthetic/unit checks regression coverage', () => {
       const beforeReviewChange = verifySource(target);
       const records = beforeReviewChange.records;
       const manifest = { files: records.filter(row => !DERIVED_REPORT_PATHS.includes(row.path)) };
-      expect(beforeReviewChange.bindingRevision).toBe(3);
+      expect(beforeReviewChange.bindingRevision).toBe(4);
       expect(beforeReviewChange.sourceInputDigest).toBe(hash(JSON.stringify(manifest.files)));
       expect(validateManifest(records, manifest)).toMatchObject(flags());
       writeFileSync(review, '{"status":"failed"}\n');
       const afterReviewChange = verifySource(target);
-      expect(afterReviewChange).toMatchObject({ status: 'source-consistent', bindingRevision: 3, ...flags() });
+      expect(afterReviewChange).toMatchObject({ status: 'source-consistent', bindingRevision: 4, ...flags() });
       expect(afterReviewChange.records.find(row => row.path === REVIEW)).toEqual(identity(target, REVIEW));
       expect(afterReviewChange.records.find(row => row.path === REVIEW)).not.toEqual(records.find(row => row.path === REVIEW));
       expect(afterReviewChange.records.filter(row => row.path !== REVIEW)).toEqual(records.filter(row => row.path !== REVIEW));
@@ -640,22 +640,27 @@ describe('mandatory unchanged pinned-base history', () => {
   }, 305000);
 });
 
-describe('custom laboratory dynamics binding revision 3', () => {
+describe('custom laboratory branch comparison binding revision 4', () => {
   it('rejects revision and exact input drift without running history', () => {
     const ledger=readPolicy(root), base=baseRecords(root), current=verifySource(root);
     expect(current.status).toBe('source-consistent');
-    expect(current.bindingRevision).toBe(3);
-    expect(ledger.bindingRevision).toBe(3);
+    expect(current.bindingRevision).toBe(4);
+    expect(ledger.bindingRevision).toBe(4);
     const validate=new Ajv2020({strict:true}).compile(JSON.parse(readFileSync(path.join(root,SCHEMA))));
-    for(const revision of [undefined,1,2,4,'3',null]) {
+    for(const revision of [undefined,1,2,3,5,'4',null]) {
       const changed={...ledger,bindingRevision:revision};
       if(revision===undefined)delete changed.bindingRevision;
       expect(validate(changed)).toBe(false);
     }
-    expect(ledger.inputs).toHaveLength(40);
+    expect(ledger.inputs).toHaveLength(45);
     expect(ledger.inputs.some(r=>r.path==='evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json')).toBe(true);
     for(const relative of [
       'evaluation/reviews/2026-09-09-custom-lab-main-v01-review.json',
+      'evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json',
+      'lib/structure/custom-ar-branch-comparison.ts',
+      'lib/structure/custom-ar-branch-comparison.test.ts',
+      'lib/structure/custom-ar-branch-comparison-component.test.ts',
+      'app/components/custom-ar-branch-comparison.tsx',
       'lib/structure/ar-vv-core.ts',
       'lib/structure/ar-vv-adapter.ts',
       'lib/structure/ar-vv-core.test.ts',

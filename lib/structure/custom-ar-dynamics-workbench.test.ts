@@ -159,6 +159,24 @@ for (const invalidation of ['edit', 'format', 'hide', 'unmount', 'newer']) for (
   await act(async () => { if (ending === 'resolve') resolve(bytes.buffer as ArrayBuffer); else reject(new Error('stale checkpoint error')); });
   expect(container.textContent).toBe(text); expect(digest()).toBe(current);
 });
+it('compares explicit retained endpoints, follows the selected atom and clears on reinitialization and generic edit', async () => {
+  await ready();
+  change('Dynamics steps', '2'); click('Advance accepted state'); click('Advance accepted state');
+  change('Accepted dynamics history', '1'); click('Resume selected accepted state');
+  click('Fork accepted coordinates'); click('Advance accepted state');
+  const before = digest(), history = control<HTMLSelectElement>('Accepted dynamics history').value;
+  const spy = vi.spyOn(radial, 'evaluateForceShiftedRadialPotential');
+  change('Comparison endpoint A', '2'); change('Comparison endpoint B', '4');
+  expect(container.querySelector('[data-testid="branch-comparison-result"]')?.textContent).toContain('Exact common time: 1 fs');
+  act(() => (container.querySelector('[data-testid="dynamics-mock-webgl"]') as HTMLButtonElement).click());
+  expect(container.querySelector('[data-testid="branch-comparison-atom"]')?.textContent).toContain('ui-2');
+  expect(spy).not.toHaveBeenCalled(); expect(digest()).toBe(before); expect(control<HTMLSelectElement>('Accepted dynamics history').value).toBe(history);
+  click('Initialize Ar dynamics');
+  expect(control<HTMLSelectElement>('Comparison endpoint A').value).toBe('');
+  expect(container.querySelector('[data-testid="branch-comparison-result"]')).toBeNull();
+  change('x coordinate for atom 1', '0.01');
+  expect(container.querySelector('[aria-label="Accepted branch comparison"]')).toBeNull();
+});
 it('explicit zero initial conditions initialize only on the button and oversized checkpoint refuses before reading', async () => {
   await load(bytesFile(exportStructureNativeJson(fixture().document), 'fixture.tfstructure.json'));
   const spy = vi.spyOn(radial, 'evaluateForceShiftedRadialPotential');
