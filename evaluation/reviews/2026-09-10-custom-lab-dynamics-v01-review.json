@@ -1,0 +1,187 @@
+{
+  "schemaVersion": "tf.custom-lab-dynamics-review/0.1",
+  "date": "2026-09-10",
+  "status": "historical-evidence-closed-awaiting-final-delivery-gates",
+  "historicalStatus": "r1-reviewed-r3-test-fix-await-final-frozen-validation",
+  "scope": "exploratory finite neutral-Ar dynamics integration, independent custom dynamics 0.1 contracts",
+  "frozenPlanSha256": "500b20bea43fdd2ff6112390cf980c5e084ef66ff787f644f263df574ca227c0",
+  "baseMain": "48fea6836864014637eacd217912ce3935aed2d3",
+  "inheritedCandidateSourceDigest": "sha256:59951ad9bda3b379a7ccad450905c1058fedab30c7f09093c88e788768f851db",
+  "builder": "astra_dynamics_builder",
+  "readOnlyReviewers": ["packet_scientific_review", "qualification_software_review", "transition_sota"],
+  "candidateDiffIdentity": {
+    "reviewedRevision": "r1",
+    "freezeSha256": "2a56f577e7bb99f058bc59c96d652526ff514658bfae01717a7fe8ff0bee081a",
+    "sourceDigest": "sha256:452253a97d385a328bdac09d6416682940d719a2d0fdbf042220bb3e01310b84",
+    "pathCount": 557,
+    "binding": "Full source snapshot includes untracked files. Subsequent fixes require a new r3 freeze and gates; r1 approval is not transferred. This review is itself an input to that freeze and does not claim its own digest."
+  },
+  "testEvidence": [
+    {
+      "scope": "Builder focused component, session, core and compatibility tests",
+      "testsPassed": 95,
+      "independentExecution": false,
+      "realBrowser": false
+    },
+    {
+      "scope": "Root post-fix actual component and initialization-draft DOM tests",
+      "terminalTool": "e9db5a",
+      "exitCode": 0,
+      "testFilesPassed": 2,
+      "testsPassed": 24,
+      "realBrowser": false
+    },
+    {
+      "scope": "r1 gates; original wrapper inherited umask 077 into fixture and history children",
+      "passedCommands": ["lint", "typecheck", "atomistic:validate", "production-build", "lockfile-only-advisory-audit"],
+      "failedCommand": "npm test",
+      "testReceiptSha256": "eeb2be6dbf49f7f25a3b7cd5e5b1e6bad4168c4ca5041aabb8e0dd2e134fa023",
+      "jsCoreTests": {"failed": 17, "passed": 1726, "skipped": 5},
+      "subsequentSuitesExecuted": false,
+      "historicalChildSuiteExecuted": false,
+      "failurePreserved": true,
+      "allGatesPassed": false
+    },
+    {
+      "scope": "r2 corrected-wrapper gates; intentional malformed negative test lacked a static expected-error annotation",
+      "freezeSha256": "5c9ab2d569be995d3dc27d6e5668f4ba277155fb5e9973b67340ad15cb350617",
+      "passedCommands": ["lint", "atomistic:validate", "production-build", "lockfile-only-advisory-audit"],
+      "typecheck": {"exitCode": 2, "reason": "TS2769 on deliberately missing physicalDigest test input", "receiptSha256": "65480102676ebeba425788807b5dbed0ade304789ad1a6e293335cc013d32166"},
+      "test": {"status": "interrupted-incomplete", "signal": "SIGTERM", "reason": "Root stopped only the observed owned test process tree after typecheck failed", "receiptSha256": "5c81ab92c40a60bfe53a0769c2127f501aa8b4f55747e2db8020eb2c563df36f", "noSourceDrift": true},
+      "terminationVerification": "Observed npm child closure, stream EOF, caffeinate closure and absence of all signalled process IDs; no full-suite pass claimed.",
+      "fix": "Add one documented @ts-expect-error on the intentional malformed call only; production Props and runtime assertions unchanged.",
+      "postFixFocusedEvidence": {"typecheckExitCode": 0, "typecheckTerminalTool": "17edde", "domTestsPassed": 24, "testTerminalTool": "c63a5e", "realBrowser": false},
+      "postFixReadOnlyReview": "qualification_software_review tool 67ee59 verified the isolated annotation and exact reverse-restoration of previous test bytes; production and runtime assertions unchanged.",
+      "allGatesPassed": false
+    },
+    {
+      "scope": "Actual r1 N8 product computational-component integration; 0.25 fs, 100 fs, finite neutral Ar",
+      "receiptSha256": "53f0b7ea5cafaacf869cb9de0228aa50be4254dee2f38d23b6d077600fe5a3e4",
+      "productBundleSha256": "0c5347af728b311a7c5593e81a79a76e44175b568aed6b68bd338ce1e596dbb7",
+      "frames": 401,
+      "directVersusCheckpointSplit": "byte-identical complete physical frames",
+      "nativeComparison": "Saved locked native dump and thermo independently recomputed by packet_scientific_review; no native rerun",
+      "maxAbsoluteError": {
+        "position": {"value": 1.734723475976807e-17, "unit": "angstrom", "dimension": "length", "basis": "per Cartesian component"},
+        "velocity": {"value": 2.439454888092385e-19, "unit": "angstrom/fs", "dimension": "length/time", "basis": "per Cartesian component"},
+        "force": {"value": 2.275957200481571e-15, "unit": "kJ/mol/angstrom", "dimension": "energy/amount/length", "basis": "per atom Cartesian component in the molar simulation convention"}
+      },
+      "coordinateFork": "At 50 fs, first atom x +0.005 angstrom; velocities, KE and root momentum baseline retained; H0 reset. Energy jump is not work. Edited-branch future trajectory was not run in this study.",
+      "transferPolicy": "Unchanged core, adapter and session identities may retain this component-scoped evidence; not a fresh execution of r2 full source tree.",
+      "materialCalibration": false,
+      "realBrowser": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "AR-DYNAMICS-UI-SCI-P2-01",
+      "priority": "P2",
+      "reviewer": "packet_scientific_review",
+      "status": "closed",
+      "disposition": "Root distinguished next-initialization draft from current accepted dt/velocities. Read-only reviewer verified code and the actual 24-test terminal evidence; no new findings."
+    },
+    {
+      "id": "AR-DYNAMICS-SW-P2-01",
+      "priority": "P2",
+      "reviewer": "qualification_software_review",
+      "status": "closed",
+      "disposition": "Root added actual WebGL-component harness matching, mismatched and missing physical-digest cases at identical geometry and differing velocities. Read-only reviewer verified new coverage and byte preservation of all eight previous cases; actual 24-test terminal passed. Camera claim narrowed to same-model overlay updates."
+    },
+    {
+      "id": "AR-DYNAMICS-GATES-SW-P1-01",
+      "priority": "P1",
+      "reviewer": "qualification_software_review",
+      "status": "closed-for-r3-corrected-022-gates",
+      "historicalStatus": "open-until-corrected-full-gates-pass",
+      "disposition": "Versioned external gates-v2 removes inherited global 077 and requires existing 022 without changing it; explicit private evidence modes remain. Independent method review passed. Executed OS-child regression verified 077 produces 0600 and 022 produces 0644. Original failed checkout and wrapper preserved; no chmod repair or weakened assertion.",
+      "supersedingDisposition": "Actual r3 complete test receipt cb51a7aab3d9fd6fd1cd8c51ccbc097bde1fe3968c2ce15f0f981f2534e89a48 passed. Independent qualification_software_review cec982 closed this finding for r3/corrected 022 only. New delivery source/report bindings still require final validation; historical r1/r2 failures are not reclassified."
+    }
+  ],
+  "sotaComparison": {
+    "date": "2026-09-10",
+    "reviewer": "transition_sota",
+    "misleadingClaimFindings": {"P0": 0, "P1": 0, "P2": 0},
+    "championDelta": "Adds explicit finite-Ar initialize/advance, full accepted endpoint history, confirmed checkpoint replay and coordinate forks to r7 single-point product. New render models still recreate the camera.",
+    "numericalRanking": false,
+    "references": [
+      {"label": "reference", "url": "https://raw.githubusercontent.com/lammps/lammps/9c5ab448c78a14fd534619622162ba418d6a1fb1/doc/src/read_restart.rst", "revision": "9c5ab448c78a14fd534619622162ba418d6a1fb1", "sha256": "66519c5e84525520426dce090bee4d2b347c5721222f6f276e9da49cfaf11044"},
+      {"label": "reference", "url": "https://raw.githubusercontent.com/lammps/lammps/9c5ab448c78a14fd534619622162ba418d6a1fb1/doc/src/pair_lj_smooth_linear.rst", "revision": "9c5ab448c78a14fd534619622162ba418d6a1fb1", "sha256": "f12b2c2dd211fd211e2e494a6e49db57ee8edd9a77dd32b0f1c932858520c627"},
+      {"label": "reference", "url": "https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#animation-frames", "revision": null, "observedUpdatedDate": "2026-09-08", "sha256": "6e230236780c52f5c9a8ad9e4614108d56656fa283b76a37954406d0a26bd5a3"}
+    ]
+  },
+  "historicalRemainingAcceptance": [
+    "Freeze r3 after final review fixes; run all strict gates with corrected versioned wrapper, then actual root Sentinel and report/source consistency checks.",
+    "After unlock, exercise real browser reload/restore/fork/history and WebGL. Mock runtime or projection checks do not replace browser evidence.",
+    "Complete final read-only evidence closure and separate remote protection, authentication, CI/artifact and deployment gates; do not promote while a relevant gate fails."
+  ],
+  "remainingAcceptance": [
+    "Freeze the amended review and run final applicable gates; regenerate all four reports with GITHUB_SHA and all seven TAILING_*_STATUS variables absent, then verify source/report generation consistency and production isolation.",
+    "Obtain independent read-only science, software/numerical and dated SOTA closure against the final frozen candidate and external actual gate evidence.",
+    "Separately satisfy authenticated protection, commit/PR/candidate CI, protected main merge, first successful main CI, unique verified artifact, guarded Cloudflare deployment and canonical smoke; local evidence does not approve this chain."
+  ],
+  "deliveryClosure": {
+    "date": "2026-09-10",
+    "status": "prior-local-evidence-closed-final-delivery-validation-pending",
+    "scope": "Explicit supersession of historical pending local tests/browser/preservation statuses only; no implementation, scientific-domain, scorecard, rights or release-gate change.",
+    "builder": "root (review-control amendment only; not its independent approver)",
+    "baselineFreezeSha256": "45f5e3ed754e431a4850a29841aa3bfddd69d1ff6137440350e716fdea3e3358",
+    "baselineSourceDigest": "sha256:7ce8beb82329f6f2f557de7998e4f4273e9dca6e78fa7ca7eca869871e386f08",
+    "baselineBinding": "Fresh 557-file r5 snapshot equals prior r4 source bytes and modes before this amendment; final candidate identity and approval must be recorded externally to avoid self-referential source mutation.",
+    "localGateEvidence": {
+      "archive": "Tailing Future-evidence/2026-09-10-custom-lab-dynamics-v01",
+      "review": "evidence/evaluation/reviews/2026-09-10-custom-lab-dynamics-local-closeout.md",
+      "r3FreezeSha256": "54a53ec202b02291c9216ddf7ac9d1e758487db7ee7f1e3806b68428a173790c",
+      "r4FreezeSha256": "676a21b3313e7157966e92f44da57114fe80870eb178dafbdb05ecfe24f0d638",
+      "passedCommands": ["lint", "typecheck", "npm test", "atomistic:validate", "lockfile-only-advisory-audit", "production-isolation-build"],
+      "completeTestReceiptSha256": "cb51a7aab3d9fd6fd1cd8c51ccbc097bde1fe3968c2ce15f0f981f2534e89a48",
+      "tests": {"jsCorePassed": 1745, "observerPassed": 2, "nodePassed": 29, "pythonPassed": 135, "totalSkipped": 6},
+      "evaluatorReceiptSha256": "3eb4b114d5137db8cc1cdcb647df4cddf9c4ddd9ff1f7c4e9e152a80f0a384ca",
+      "r4BuildReceiptSha256": "8b81fc422007d4099377e9aa410677e51c7f986b2d24f1d13bb028580e581223",
+      "preservationInventorySha256": "cd516d21c0e2d7ef506ab3291ed25271d20a7d939c424cbd8d3d2f0caa223a63",
+      "scope": "r3 complete gates, actual evaluator, then r4 four generated reports and build. r4 was not a second full-suite execution. Audit is an advisory check, not license or installed-binary certification.",
+      "independentReviews": ["qualification_software_review cec982 and f2f846", "packet_scientific_review actual evaluator/r4 closure"],
+      "localReportCorrectionRequired": "The earlier external evaluator recorder injected six success statuses. Checked-in local reports must instead be generated with null sourceRevision and all seven upstream statuses not-reported-local; successful command receipts remain separate evidence."
+    },
+    "browserEvidence": {
+      "archive": "Tailing Future-evidence/2026-09-10-production-browser-v4",
+      "review": "evaluation/reviews/2026-09-10-v4-closeout.md",
+      "reviewSha256": "56ac478551cde6259575977182451184167960edde3479d606da4aebab9e99b0",
+      "actualReceiptSha256": "050310003c5c0a59a8b97a8176a968ecd689ef388baddb653458c275245b5707",
+      "actualIntervalUtc": ["2026-09-10T04:00:01.631Z", "2026-09-10T04:00:08.821Z"],
+      "verdict": "PASS within the independently reviewed v4 endpoint-equivalence policy",
+      "sequence": "Actual production UI imported N8 finite neutral Ar, initialized manual velocities, advanced to 0.5 fs and 1 fs, reloaded/restored with fresh consent, retained accepted state during next-initialization draft, made a coordinate fork at 0.5 fs, resumed parent/child history, advanced the edited branch to 1 fs and invalidated derived state after a generic edit.",
+      "step": {"value": 0.25, "unit": "fs", "dimension": "time", "basis": "per integration step"},
+      "editedCoordinate": {"value": 0.005, "unit": "angstrom", "dimension": "length", "basis": "first stable atom ID x-coordinate increment"},
+      "endpoint": {"value": 1, "unit": "fs", "dimension": "time", "basis": "elapsed time from common initialized state"},
+      "fiveCompleteBrowserNodeStatesMatch": true,
+      "exactNumericalComparisons": 441,
+      "scope": "Same-implementation cross-runtime regression, not a new independent solver, a 100 fs edited-future validation, or material calibration. Coordinate energy jump is not work. Separate prior native evidence retains its own four-recipe/two-step-size/100 fs scope.",
+      "sourceDistRuntimeUnchanged": false,
+      "runtimeEndpointEquivalent": true,
+      "endpointEvidenceSaved": true,
+      "methodsStable": true,
+      "identityBoundary": "Only observed Chrome main-executable ctime differed; other recorded identity and observable security fields matched. Cause, continuous immutability and complete OS security closure are not established.",
+      "webgl": "Four observed WebGL2 contexts present, not lost, error zero; no GPU qualification. Edge-arrow clipping remains a visual limitation.",
+      "consolePageAndRequestErrors": [],
+      "independentReviews": ["qualification_software_review actual 6b9ffd", "v4_science_closure actual saved-data review"],
+      "priorV3": {"verdict": "FAIL", "receiptSha256": "8d237993613c69c430c844bc7bbb3e30510c02aeaa40b180bc0b31e3f724fcf3", "reclassified": false},
+      "preservation": {"status": "completed-after-closeout-freeze", "inventorySha256": "a0fc6e84b726dd7d8982fdc0a89df845e300919d3bca0361103e7954306e645b", "independentSavedByteReview": "qualification_software_review 379d89 PASS; 54 files, no extra members or links, private modes and saved bytes verified"},
+      "releaseArtifact": false
+    },
+    "reusePolicy": "Retain native and actual-browser evidence only after final comparison confirms unchanged covered implementation, tests, dependencies and runtime inputs. Review/report changes require fresh source-bound gates and final build; source approval is not silently transferred. A later final closeout must state exactly which tests were rerun and which evidence was reused.",
+    "releaseState": {"candidateCommitted": false, "pullRequestCreated": false, "candidateCiPassed": false, "mainMerged": false, "newMainFirstCiPassed": false, "releaseArtifactVerified": false, "cloudflareDeployed": false, "canonicalUiSmokePassed": false},
+    "scientificBoundary": "118-element representation is not universal solver applicability. No calibrated uncertainty, electronic result, general material qualification, data-leakage certification or SOTA claim. Random-TP rights/compute authorization and full model benchmarks, PFHub3, Cantera 3.2 CSTR and the multiscale World Model remain incomplete."
+  },
+  "sourceBindingRevision": 3,
+  "historicalApprovalTransferred": false,
+  "scientificPromotionEligible": false,
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "limitations": [
+    "This review preserves r1/r2 failures and explicitly closes prior scoped r3/v4 evidence; final delivery gates and independent approval remain pending.",
+    "118-element structure representation is not universal model applicability.",
+    "Prior numerical agreement is limited to four recipes, two time steps and 100 fs; it is not material calibration.",
+    "The historical Mac-lock browser blocker is superseded by actual local v4 acceptance; this is not canonical-site smoke. Live branch-protection details remain unverified because API returned 403.",
+    "Random-TP rights and execution authority remain unresolved; no full-model dispatch is authorized by this record."
+  ]
+}

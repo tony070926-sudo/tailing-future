@@ -8,9 +8,15 @@ import {
   createDefaultStructureDraft,
   exportStructureNativeJson,
   finalizeStructureDocument,
+  createValidationReceipt,
+  makeFiniteNetCharge,
   type StructureDocumentDraft,
 } from './structure-document';
 import { STRUCTURE_MAX_FILE_BYTES } from './strict-json';
+import * as radialModule from '../simulation/periodic-potentials';
+import { AR_INTERPRETATION, createCustomArAction, computeCustomArSinglePoint, exportCustomArResult, validateCustomArExport, type CustomArForceOverlay } from './custom-ar-singlepoint';
+
+let observedArOverlay: CustomArForceOverlay | null | undefined;
 
 vi.mock('../../app/components/custom-structure-webgl', () => ({
   CustomStructureWebgl: (props: {
@@ -25,11 +31,13 @@ vi.mock('../../app/components/custom-structure-webgl', () => ({
 }));
 
 function MockStaticWebgl(props: {
+  forceOverlay?: CustomArForceOverlay | null;
   model: { sourceSemanticDigest: string; atoms: readonly { id: string }[] };
   selectedAtomId: string | null;
   onAtomSelect: (id: string) => void;
   onStatusChange?: (status: 'ready') => void;
 }) {
+  React.useEffect(() => { observedArOverlay = props.forceOverlay; }, [props.forceOverlay]);
   const { onStatusChange } = props;
   React.useEffect(() => onStatusChange?.('ready'), [onStatusChange]);
   return React.createElement(
@@ -71,6 +79,8 @@ describe('custom structure workbench component', () => {
     expect(elementSelect.options).toHaveLength(118);
     expect(container.textContent).toContain('STRUCTURE ONLY');
     expect(container.textContent).toContain('SOLVER NOT RUN');
+    expect(container.textContent).toContain('native JSON + limited plain XYZ');
+    expect(container.textContent).not.toContain('native JSON only');
     expect(container.querySelectorAll('.custom-structure-abstentions article')).toHaveLength(3);
 
     const viewer = container.querySelector('[data-testid="mock-static-webgl"]') as HTMLElement;
@@ -119,7 +129,8 @@ describe('custom structure workbench component', () => {
       fileInput.dispatchEvent(new Event('change', { bubbles: true }));
       await Promise.resolve();
     });
-    expect((container.querySelectorAll('input')[1] as HTMLInputElement).value).toBe('Imported native fixture');
+    const titleInput = [...container.querySelectorAll('label')].find((label) => label.textContent?.trim() === 'Title')?.querySelector('input');
+    expect(titleInput?.value).toBe('Imported native fixture');
     expect(container.textContent).toContain('projectVerified=false');
     expect(container.textContent).not.toContain('none — user-created state');
 
@@ -131,7 +142,7 @@ describe('custom structure workbench component', () => {
 
     act(() => setInputValue(x, '2.5'));
     act(() => findButton('Validate & update preview').click());
-    expect(container.textContent).toContain('none — no bound native import receipt');
+    expect(container.textContent).toContain('none — no bound import receipt');
 
     vi.useFakeTimers();
     act(() => findButton('Export native JSON').click());
@@ -195,6 +206,359 @@ describe('custom structure workbench component', () => {
     expect(container.querySelectorAll('input[list="custom-structure-atom-ids"]')).toHaveLength(128);
     expect(container.querySelectorAll('option').length).toBeLessThan(13_000);
   }, 30_000);
+});
+
+describe('plain XYZ real file import transaction', () => {
+  function chooseXyz(confirm = true) {
+    const select = container.querySelector('[aria-label="Import format"]');
+    if (!(select instanceof HTMLSelectElement)) throw new Error('Import format selector missing');
+    act(() => { select.value = 'xyz'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    if (confirm) act(() => (container.querySelector('[aria-label="Confirm XYZ interpretation"]') as HTMLInputElement).click());
+  }
+  function xyzFile(text = '2\n <script>hello</script> \nH 1.25 0 0\nOg -2.5 0 0', name = 'input.xyz') {
+    // No equals sign: accepted prose remains text, never HTML.
+    const buffer = new TextEncoder().encode(text).buffer;
+    const file = new File([buffer], name);
+    Object.defineProperty(file, 'arrayBuffer', { configurable: true, value: async () => buffer });
+    return { file, buffer };
+  }
+  async function importFile(file: File) {
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => { input.dispatchEvent(new Event('change', { bubbles: true })); });
+  }
+  const digest = () => container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+
+  it('requires confirmation then imports XYZ into viewer/readouts and rolls back refused input', async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseXyz(false);
+    const fixture = xyzFile('2\n <script>hello</script> \nH 1.25 0 0\nOg -2.5 0 0');
+    const initial = digest();
+    await importFile(fixture.file);
+    expect(digest()).toBe(initial);
+    expect(container.textContent).toContain('Confirm the XYZ interpretation');
+    act(() => (container.querySelector('[aria-label="Confirm XYZ interpretation"]') as HTMLInputElement).click());
+    await importFile(fixture.file);
+    expect(digest()).not.toBe(initial);
+    expect(container.textContent).toContain(' <script>hello</script> ');
+    expect(container.querySelector('script')).toBeNull();
+    expect(hasInputValue('1.25')).toBe(true);
+    expect(container.querySelector('.custom-structure-inspector')?.textContent).toContain('1.25 / 0 / 0 Å');
+    act(() => findButton('Mock select last atom').click());
+    expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-selected')).toBe('xyz-row-0002');
+    expect(hasInputValue('-2.5')).toBe(true);
+    expect(container.querySelector('.custom-structure-inspector')?.textContent).toContain('Z=118 · Og');
+    expect(container.querySelector('.custom-structure-inspector')?.textContent).toContain('-2.5 / 0 / 0 Å');
+    expect(container.textContent).toContain('not the XYZ comment or transport receipt');
+    const accepted = digest(), receipt = container.querySelector('.custom-structure-receipt')?.textContent;
+    await importFile(xyzFile('1\nProperties=bad\nH 0 0 0').file);
+    expect(digest()).toBe(accepted);
+    expect(container.querySelector('.custom-structure-receipt')?.textContent).toBe(receipt);
+    await importFile(xyzFile('1\n\nH 0 0 0', 'wrong.json').file);
+    expect(digest()).toBe(accepted);
+  });
+
+  it.each(['format', 'confirmation', 'draft', 'apply', 'newer', 'unmount'].flatMap(action =>
+    ['resolve', 'reject'].map(outcome => ({ action, outcome }))))('invalidates pending XYZ $outcome after $action', async ({ action, outcome }) => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseXyz();
+    await importFile(xyzFile().file);
+    const fixture = xyzFile('1\nlate\nOg 999 0 0');
+    let resolve!: (buffer: ArrayBuffer) => void;
+    let reject!: (reason: Error) => void;
+    Object.defineProperty(fixture.file, 'arrayBuffer', { value: () => new Promise<ArrayBuffer>((done, fail) => { resolve = done; reject = fail; }) });
+    await importFile(fixture.file);
+    if (action === 'format') act(() => {
+      const select = container.querySelector('[aria-label="Import format"]');
+      if (!(select instanceof HTMLSelectElement)) throw new Error('Import format selector missing');
+      select.value = 'native'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    if (action === 'confirmation') act(() => (container.querySelector('[aria-label="Confirm XYZ interpretation"]') as HTMLInputElement).click());
+    if (action === 'draft') act(() => setInputValue(container.querySelector('input[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '2'));
+    if (action === 'apply') {
+      act(() => setInputValue(container.querySelector('input[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '2'));
+      act(() => findButton('Validate').click());
+    }
+    if (action === 'newer') await importFile(xyzFile('1\nnew\nHe 3 0 0').file);
+    if (action === 'unmount') act(() => root.render(null));
+    const current = digest(), currentText = container.textContent;
+    const currentReceipt = container.querySelector('.custom-structure-receipt')?.textContent;
+    await act(async () => {
+      if (outcome === 'resolve') resolve(fixture.buffer);
+      else reject(new Error('stale XYZ read failed'));
+    });
+    expect(digest()).toBe(current);
+    expect(container.textContent).toBe(currentText);
+    expect(container.querySelector('.custom-structure-receipt')?.textContent).toBe(currentReceipt);
+    expect(hasInputValue('999')).toBe(false);
+  });
+
+  it('retains the accepted XYZ receipt when a current file read rejects', async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseXyz();
+    await importFile(xyzFile().file);
+    const accepted = digest(), receipt = container.querySelector('.custom-structure-receipt')?.textContent;
+    const failed = xyzFile();
+    Object.defineProperty(failed.file, 'arrayBuffer', { value: async () => { throw new Error('current XYZ read failed'); } });
+    await importFile(failed.file);
+    expect(digest()).toBe(accepted);
+    expect(container.querySelector('.custom-structure-receipt')?.textContent).toBe(receipt);
+    expect(container.textContent).toContain('Transport refused — accepted structure unchanged: current XYZ read failed');
+  });
+});
+
+describe('explicit finite Ar accepted-document UI action', () => {
+  function packageBytes(n: number) {
+    const draft = draftAr(n); draft.finiteSystem!.netCharge = makeFiniteNetCharge(0);
+    const document = finalizeStructureDocument(draft), receipt = createValidationReceipt(document);
+    const action = createCustomArAction(document, receipt, AR_INTERPRETATION);
+    const result = computeCustomArSinglePoint(document, receipt, action);
+    if (result.decision !== 'computed') throw new Error(result.reason);
+    return { bytes: exportCustomArResult(document, receipt, action, result), document, result };
+  }
+  async function loadPackage(bytes: Uint8Array, name = 'replay.tf-ar-singlepoint.json') {
+    const select = container.querySelector('[aria-label="Import format"]');
+    if (!(select instanceof HTMLSelectElement)) throw new Error('format selector missing');
+    act(() => { select.value = 'ar-result'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    const file = new File([bytes.buffer as ArrayBuffer], name);
+    const read = vi.fn(async () => bytes.buffer);
+    Object.defineProperty(file, 'arrayBuffer', { value: read });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+    return read;
+  }
+  it.each(['replay.tf-ar-singlepoint (2).json', 'replay.tf-ar-singlepoint (10).json'])('stages a numbered Ar download without invoking the solver: %s', async (name) => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const fixture = packageBytes(12);
+    const prior = container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+    const radialCalls = vi.spyOn(radialModule, 'evaluateForceShiftedRadialPotential');
+    const read = await loadPackage(fixture.bytes, name);
+    expect(read).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('[data-testid="ar-staged-package"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(observedArOverlay).toBeNull();
+    expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest')).toBe(prior);
+    expect(findButton('Recompute & accept Ar result package').disabled).toBe(true);
+    expect(radialCalls).not.toHaveBeenCalled();
+    act(() => (container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).click());
+    expect(radialCalls).not.toHaveBeenCalled();
+    act(() => findButton('Recompute & accept Ar result package').click());
+    expect(radialCalls.mock.calls.length).toBeGreaterThan(0);
+    expect(container.querySelector('[data-testid="ar-result-digest"]')?.textContent).toBe(fixture.result.resultDigest);
+    expect(observedArOverlay?.semanticDigest).toBe(fixture.document.semanticDigest);
+    expect(observedArOverlay?.vectors).toHaveLength(12);
+  });
+  it.each([
+    'replay.json', 'replay (2).json', 'replay.tf-ar-singlepoint (0).json',
+    'replay.tf-ar-singlepoint (01).json', 'replay.tf-ar-singlepoint (-2).json',
+    'replay.tf-ar-singlepoint (2.0).json', 'replay.tf-ar-singlepoint (2).json.txt',
+    'replay.tf-ar-singlepoint (2).json\n', 'replay.tf-ar-singlepoint (2) (3).json',
+  ])('refuses a non-admitted Ar filename before reading its bytes: %s', async (name) => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const fixture = packageBytes(12);
+    const prior = container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+    const radialCalls = vi.spyOn(radialModule, 'evaluateForceShiftedRadialPotential');
+    const read = await loadPackage(fixture.bytes, name);
+    expect(read).not.toHaveBeenCalled();
+    expect(radialCalls).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('Only .tf-ar-singlepoint.json files are accepted.');
+    expect(container.querySelector('[data-testid="ar-staged-package"]')).toBeNull();
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest')).toBe(prior);
+  });
+  for (const n of [12, 64]) it(`stages and explicitly replays N=${n} with stable first/last IDs, then invalidates on edit`, async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const fixture = packageBytes(n), prior = container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+    const radialCalls = vi.spyOn(radialModule, 'evaluateForceShiftedRadialPotential');
+    await loadPackage(fixture.bytes);
+    expect(radialCalls).not.toHaveBeenCalled();
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(observedArOverlay).toBeNull();
+    expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest')).toBe(prior);
+    expect(findButton('Recompute & accept Ar result package').disabled).toBe(true);
+    act(() => (container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).click());
+    expect(radialCalls).not.toHaveBeenCalled();
+    act(() => findButton('Recompute & accept Ar result package').click());
+    expect(radialCalls.mock.calls.length).toBeGreaterThan(0);
+    expect(container.querySelector('[data-testid="ar-result-digest"]')?.textContent).toBe(fixture.result.resultDigest);
+    expect(observedArOverlay?.semanticDigest).toBe(fixture.document.semanticDigest);
+    expect(observedArOverlay?.resultDigest).toBe(fixture.result.resultDigest);
+    expect(observedArOverlay?.vectors).toHaveLength(n);
+    const maximumForce = Math.max(...fixture.result.atomicForces.values.map((force) => Math.hypot(force.x, force.y, force.z)));
+    const scale = maximumForce === 0 ? null : 2 / maximumForce;
+    expect(observedArOverlay?.scale).toBe(scale);
+    for (const [index, force] of fixture.result.atomicForces.values.entries()) {
+      const atom = fixture.document.atoms.find((entry) => entry.id === force.atomId)!;
+      const start = [atom.position.x, atom.position.y, atom.position.z];
+      const end = start.map((value, axis) => value + (scale ?? 0) * [force.x, force.y, force.z][axis]);
+      expect(observedArOverlay?.vectors[index]).toEqual({ atomId: force.atomId, start, end });
+    }
+    for (const id of ['ar-000', `ar-${String(n - 1).padStart(3, '0')}`]) {
+      act(() => (container.querySelector(`[aria-label="Inspect atom ${id}"]`) as HTMLButtonElement).click());
+      expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-selected')).toBe(id);
+      const force = fixture.result.atomicForces.values.find((entry) => entry.atomId === id)!;
+      expect(container.querySelector('[data-testid="selected-ar-force"]')?.textContent).toBe(`${force.x} / ${force.y} / ${force.z} kJ mol^-1 Å^-1`);
+    }
+    act(() => setInputValue(container.querySelector('[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '0.05'));
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    if (n === 12) { act(() => findButton('Validate & update preview').click()); confirmAndCompute(); expect(container.querySelector('[data-testid="ar-result-digest"]')?.textContent).not.toBe(fixture.result.resultDigest); }
+  });
+  it.each(['replay.tf-ar-singlepoint.json', 'replay.tf-ar-singlepoint (2).json'])('refuses tampered staged results without changing accepted structure: %s', async (name) => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const prior = container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+    const packet = JSON.parse(new TextDecoder().decode(packageBytes(12).bytes)); packet.result.energy.value += 1;
+    await loadPackage(new TextEncoder().encode(JSON.stringify(packet)), name);
+    act(() => (container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).click());
+    act(() => findButton('Recompute & accept Ar result package').click());
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest')).toBe(prior);
+    expect(container.textContent).toContain('ABSTAIN');
+  });
+  for (const action of ['draft', 'format', 'hide', 'cancel-file']) for (const ending of ['resolve', 'reject']) it(`ignores stale Ar package ${ending} after ${action}`, async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const select = container.querySelector('[aria-label="Import format"]');
+    if (!(select instanceof HTMLSelectElement)) throw new Error('format missing');
+    act(() => { select.value = 'ar-result'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    const fixture = packageBytes(12);
+    let resolve!: (bytes: ArrayBuffer) => void, reject!: (error: Error) => void;
+    const file = new File([], 'pending.tf-ar-singlepoint.json');
+    Object.defineProperty(file, 'arrayBuffer', { value: () => new Promise<ArrayBuffer>((yes, no) => { resolve = yes; reject = no; }) });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+    if (action === 'draft') act(() => setInputValue(container.querySelector('[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '0.2'));
+    if (action === 'format') act(() => { select.value = 'native'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    if (action === 'hide') act(() => root.render(React.createElement(CustomStructureWorkbench, { active: false, onBack: vi.fn() })));
+    if (action === 'cancel-file') { Object.defineProperty(input, 'files', { configurable: true, value: [] }); await act(async () => input.dispatchEvent(new Event('change', { bubbles: true }))); }
+    await act(async () => { if (ending === 'resolve') resolve(fixture.bytes.buffer as ArrayBuffer); else reject(new Error('stale-result-read')); });
+    expect(container.querySelector('[data-testid="ar-staged-package"]')).toBeNull();
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(container.textContent).not.toContain('stale-result-read');
+  });
+  it('discards a staged package when current confirmation is revoked', async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    await loadPackage(packageBytes(12).bytes);
+    const checkbox = container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement;
+    act(() => checkbox.click()); act(() => checkbox.click());
+    expect(container.querySelector('[data-testid="ar-staged-package"]')).toBeNull();
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+  });
+  function draftAr(n: number) {
+    const draft = createDefaultStructureDraft();
+    draft.atoms = Array.from({ length: n }, (_, i) => {
+      const x = i % 4, y = Math.floor(i / 4) % 4, z = Math.floor(i / 16);
+      return { id: `ar-${String(i).padStart(3, '0')}`, element: { atomicNumber: 18, symbol: 'Ar' },
+        position: { x: 3.8 * x + 0.01 * y, y: 3.8 * y + 0.02 * z, z: 3.8 * z + 0.03 * x }, isotope: null, formalCharge: null };
+    });
+    return draft;
+  }
+  async function importAr(draft: StructureDocumentDraft) {
+    const bytes = exportStructureNativeJson(finalizeStructureDocument(draft));
+    const file = new File([bytes.buffer as ArrayBuffer], 'argon.tfstructure.json');
+    Object.defineProperty(file, 'arrayBuffer', { value: async () => bytes.buffer });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+  }
+  function confirmAndCompute() {
+    act(() => (container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).click());
+    act(() => findButton('Compute Ar single point').click());
+  }
+  async function ready(n = 12) {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    const draft = draftAr(n); await importAr(draft);
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    const charge = [...container.querySelectorAll('label')].find((l) => l.textContent?.startsWith('Net charge Q'))!.querySelector('input')!;
+    act(() => setInputValue(charge, '0'));
+    act(() => findButton('Validate & update preview').click());
+    draft.finiteSystem!.netCharge = makeFiniteNetCharge(0);
+    confirmAndCompute(); return draft;
+  }
+  for (const n of [12, 64]) it(`imports, explicitly declares charge and computes all accepted Ar forces N=${n}`, async () => {
+    const draft = await ready(n), document = finalizeStructureDocument(draft), receipt = createValidationReceipt(document);
+    const result = computeCustomArSinglePoint(document, receipt, createCustomArAction(document, receipt, AR_INTERPRETATION));
+    if (result.decision !== 'computed') throw new Error(result.reason);
+    expect(container.querySelector('[data-testid="ar-energy"]')?.textContent).toContain(String(result.energy.value));
+    expect(container.textContent).toContain('EXPLORATORY SINGLE POINT');
+    expect(container.textContent).toContain('zero automatic calls');
+    expect(container.querySelectorAll('.custom-structure-abstentions article')).toHaveLength(3);
+    for (const i of [0, n - 1]) {
+      act(() => (container.querySelector(`[aria-label="Inspect atom ${draft.atoms[i].id}"]`) as HTMLButtonElement).click());
+      const force = result.atomicForces.values[i];
+      expect(container.querySelector('[data-testid="selected-ar-force"]')?.textContent).toBe(`${force.x} / ${force.y} / ${force.z} kJ mol^-1 Å^-1`);
+    }
+    expect(observedArOverlay?.semanticDigest).toBe(document.semanticDigest);
+    expect(observedArOverlay?.vectors).toHaveLength(n);
+    const max = Math.max(...result.atomicForces.values.map((f) => Math.hypot(f.x, f.y, f.z)));
+    expect(observedArOverlay?.scale).toBe(2 / max);
+    observedArOverlay!.vectors.forEach((v, i) => {
+      const atom = draft.atoms[i], force = result.atomicForces.values[i];
+      expect(v.start).toEqual([atom.position.x, atom.position.y, atom.position.z]);
+      v.end.forEach((end, k) => expect(end - v.start[k]).toBeCloseTo([force.x, force.y, force.z][k] * observedArOverlay!.scale!, 12));
+    });
+    let blob: Blob | undefined;
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn((value: Blob) => { blob = value; return 'blob:ar-test'; }) });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
+    act(() => findButton('Export Ar single-point result').click());
+    expect(click).toHaveBeenCalledOnce();
+    const text = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsText(blob!); });
+    expect(validateCustomArExport(JSON.parse(text))).toEqual(result);
+  });
+
+  for (const mutation of ['draft', 'invalid-apply', 'valid-apply', 'format', 'confirmation', 'import-success', 'import-failure', 'hidden']) it(`revokes result, confirmation and overlay on ${mutation}`, async () => {
+    await ready();
+    if (mutation === 'draft' || mutation.endsWith('apply')) {
+      act(() => setInputValue(container.querySelector('[aria-label="x coordinate for atom 1"]') as HTMLInputElement, mutation === 'invalid-apply' ? '10001' : '0.01'));
+      if (mutation.endsWith('apply')) act(() => findButton('Validate & update preview').click());
+    } else if (mutation === 'format') {
+      const select = container.querySelector('[aria-label="Import format"]');
+      if (!(select instanceof HTMLSelectElement)) throw new Error('Missing selector');
+      act(() => { select.value = 'xyz'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    } else if (mutation === 'confirmation') act(() => (container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).click());
+    else if (mutation === 'hidden') act(() => root.render(React.createElement(CustomStructureWorkbench, { active: false, onBack: vi.fn() })));
+    else if (mutation === 'import-success') await importAr(draftAr(12));
+    else {
+      const file = new File(['bad'], 'bad.xyz');
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+      await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+    }
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(observedArOverlay).toBeNull();
+    expect(findButton('Compute Ar single point').disabled).toBe(true);
+    expect([...container.querySelectorAll('button')].some((b) => b.textContent === 'Export Ar single-point result')).toBe(false);
+  });
+  it('recomputes changed coordinates under new identities and displays a zero-force finite system without arrows', async () => {
+    await ready();
+    const initial = ['ar-input-digest', 'ar-action-digest', 'ar-result-digest', 'ar-energy', 'selected-ar-force'].map((id) => container.querySelector(`[data-testid="${id}"]`)?.textContent);
+    act(() => setInputValue(container.querySelector('[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '0.01'));
+    expect(observedArOverlay).toBeNull();
+    act(() => findButton('Validate & update preview').click()); confirmAndCompute();
+    ['ar-input-digest', 'ar-action-digest', 'ar-result-digest', 'ar-energy', 'selected-ar-force'].forEach((id, i) => expect(container.querySelector(`[data-testid="${id}"]`)?.textContent).not.toBe(initial[i]));
+    const distant = draftAr(12); distant.finiteSystem!.netCharge = makeFiniteNetCharge(0);
+    distant.atoms.forEach((atom, i) => { atom.position = { x: i * 5, y: 0, z: 0 }; });
+    await importAr(distant); confirmAndCompute();
+    expect(container.querySelector('[data-testid="ar-energy"]')?.textContent).toContain('Energy: 0 kJ/mol');
+    expect(container.querySelector('[data-testid="ar-force-scale"]')?.textContent).toBe('All forces zero: no arrows.');
+    expect(observedArOverlay?.scale).toBeNull();
+    expect(observedArOverlay?.vectors.every((v) => v.start.every((x, i) => x === v.end[i]))).toBe(true);
+  });
+  for (const outcome of ['resolve', 'reject']) it(`disables action during pending read and after ${outcome}`, async () => {
+    await ready(); let resolve!: (value: ArrayBuffer) => void; let reject!: (error: Error) => void;
+    const file = new File(['pending'], 'pending.tfstructure.json');
+    Object.defineProperty(file, 'arrayBuffer', { value: () => new Promise<ArrayBuffer>((yes, no) => { resolve = yes; reject = no; }) });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => { input.dispatchEvent(new Event('change', { bubbles: true })); });
+    expect(findButton('Compute Ar single point').disabled).toBe(true);
+    expect((container.querySelector('[aria-label="Confirm exploratory finite Ar model"]') as HTMLInputElement).disabled).toBe(true);
+    await act(async () => { if (outcome === 'reject') reject(new Error('read failed')); else resolve(exportStructureNativeJson(finalizeStructureDocument(draftAr(12))).buffer as ArrayBuffer); });
+    expect(container.querySelector('[data-testid="ar-energy"]')).toBeNull();
+    expect(observedArOverlay).toBeNull();
+    expect(findButton('Compute Ar single point').disabled).toBe(true);
+  });
 });
 
 function findButton(label: string): HTMLButtonElement {
