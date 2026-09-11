@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { CustomArBranchComparison } from './custom-ar-branch-comparison';
 import { AR_INTERPRETATION, UNITS, exportCheckpoint } from '@/lib/structure/ar-vv-adapter';
 import type { StructureDocument } from '@/lib/structure/structure-document';
 import {
@@ -14,13 +15,15 @@ type Props = Readonly<{
   document: StructureDocument;
   disabled: boolean;
   session: DynamicsSession | null;
+  selectedAtomId?: string | null;
   onCommit: (session: DynamicsSession) => void;
   onBegin: () => void;
 }>;
 
 /** All numerical calls originate in explicit button handlers. Unmount cancels pending transport. */
-export function CustomArDynamicsControls({ document: structure, disabled, session, onCommit, onBegin }: Props) {
+export function CustomArDynamicsControls({ document: structure, disabled, session, selectedAtomId = null, onCommit, onBegin }: Props) {
   const [velocityMode, setVelocityMode] = useState('');
+  const [comparisonEpoch, setComparisonEpoch] = useState(0);
   const [velocityText, setVelocityText] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [dtTicks, setDtTicks] = useState<1 | 2>(2);
@@ -47,6 +50,7 @@ export function CustomArDynamicsControls({ document: structure, disabled, sessio
   const begin = () => { sequence.current += 1; onBegin(); };
   const initialize = () => {
     if (blocked || !confirmed || !velocityMode) return;
+    setComparisonEpoch(value => value + 1);
     begin();
     try {
       const velocities = velocityMode === 'zero'
@@ -131,5 +135,6 @@ export function CustomArDynamicsControls({ document: structure, disabled, sessio
       <details><summary>Quantity units, dimensions and bases</summary>{Object.entries(UNITS).map(([name, quantity]) => <p key={name}>{name}: {quantity.unit}; dimension {quantity.dimension}; basis {quantity.basis}.</p>)}</details>
       <p>authenticatedProvenance=false; calibratedValidation=false; stress=null; pressure=null; electrons=null; uncertainty=null.</p>
     </div>}
+    {session && !disabled && <CustomArBranchComparison key={`${comparisonEpoch}-${session.history[0].stateDigest}`} session={session} selectedAtomId={selectedAtomId} />}
   </section>;
 }

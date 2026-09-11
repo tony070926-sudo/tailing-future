@@ -55,13 +55,13 @@
       "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
       "mode": 420,
       "size": 2686,
-      "sha256": "ce6a2329a3f850ce9845b43019b08e5979070575f03866aa7662dbbfc0781964"
+      "sha256": "96070f36fb96096ed33bd4bdee63a653a41e6e70db223cbcbc368052b0c84c53"
     },
     {
       "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
       "mode": 420,
-      "size": 51738,
-      "sha256": "3fedf85463d324db01f6c072eb71701f37c7643ed44e8536a0a98222ff2eef66"
+      "size": 52400,
+      "sha256": "831ba995efc09300e4bd9e43a590f13aa67a75a481bf4ee9a5aa442b90eed2d2"
     },
     {
       "path": "vitest.config.ts",
@@ -162,8 +162,8 @@
     {
       "path": "app/components/custom-structure-workbench.tsx",
       "mode": 420,
-      "size": 46061,
-      "sha256": "87db1a816be1253c90a60cac4d176e529a4530177c7877e6eb16ca8b061426f1"
+      "size": 46194,
+      "sha256": "7bb08b436595da6eea4a6d7dc5450a299ff40cdba832b914b8ed54592d356bf1"
     },
     {
       "path": "app/components/custom-structure-webgl.tsx",
@@ -186,8 +186,8 @@
     {
       "path": "lib/structure/custom-structure-boundary.test.ts",
       "mode": 420,
-      "size": 6353,
-      "sha256": "2d02c1d70e4e0d1b8b65f83b9a0ac60b540c8dcf6770029589bf805cb00f2024"
+      "size": 7804,
+      "sha256": "66ea8d4b19f569beb7d41c68d1e75df9210bd252d892acb550f371b53f69476b"
     },
     {
       "path": "evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json",
@@ -234,20 +234,86 @@
     {
       "path": "lib/structure/custom-ar-dynamics-workbench.test.ts",
       "mode": 420,
-      "size": 13414,
-      "sha256": "f959e02df42e5676c61bb4ebf4134cb4ef379595e8f246904471a3a8a24f3688"
+      "size": 14909,
+      "sha256": "d0c1dc5a8a6cc4710fb57dffe6b895d8b8c7d82e0e327f96acd1405c3f5e3035"
     },
     {
       "path": "app/components/custom-ar-dynamics-controls.tsx",
       "mode": 420,
-      "size": 12441,
-      "sha256": "424c135266f871b5250ea570449a553074dac58a9a08448a917f287b8e9e0c23"
+      "size": 12847,
+      "sha256": "5946bc7da009a919cf9d7c874e34184d5156155eeeadb2ff189c9a760e817f88"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json",
+      "mode": 420,
+      "size": 16787,
+      "sha256": "15ea7d8780afad9377729f05ce6f53a94095cf1eef25b8cf3c666532b2118987"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison.ts",
+      "mode": 420,
+      "size": 6832,
+      "sha256": "83ffbcc6ae45a91b3a2c183c3a454435849c31e4388a23ad4a18b4919e22fa57"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison.test.ts",
+      "mode": 420,
+      "size": 6946,
+      "sha256": "c3a0370ad142da9ea94966702313e15b44e6934777328866f4c6e6288dca9408"
+    },
+    {
+      "path": "lib/structure/custom-ar-branch-comparison-component.test.ts",
+      "mode": 420,
+      "size": 5887,
+      "sha256": "2fac36e03e374a92a4ae85e70250c64e86e19b0fe96edc8c6b947d346a894c97"
+    },
+    {
+      "path": "app/components/custom-ar-branch-comparison.tsx",
+      "mode": 420,
+      "size": 7534,
+      "sha256": "53b35acaca4de16ed0454d3ad0afaa0e2a943fae5d27a98bdebec99a38cb43e7"
+    },
+    {
+      "path": ".github/workflows/evaluate.yml",
+      "mode": 420,
+      "size": 4508,
+      "sha256": "b457b6fa58b41d83b8c45a6b189b5696bef22e3fa7eeef936cd9c5ccddffb7a5"
+    },
+    {
+      "path": "scripts/workflow-policy.mjs",
+      "mode": 420,
+      "size": 102331,
+      "sha256": "c1974bc95efec2106d5b4c86ab1fcfd3cf1573b7221319cd794497adb38426dc"
+    },
+    {
+      "path": "scripts/workflow-policy.test.mjs",
+      "mode": 420,
+      "size": 97099,
+      "sha256": "c94aa7d84b722c8c561524cacd1f1801b4baa24d672a04b8e90b91d083692d1c"
+    },
+    {
+      "path": "scripts/atomistic/provision-runtime-freeze-gh.mjs",
+      "mode": 420,
+      "size": 4527,
+      "sha256": "ff39cf672668d7db4cf563e37b3b9bbe4b1fc65cd4efd53563300875fd24eddd"
+    },
+    {
+      "path": "scripts/atomistic/provision-runtime-freeze-gh.test.mjs",
+      "mode": 420,
+      "size": 4033,
+      "sha256": "16979b1ab8816845ecf596cc9568f00e0f0993844c8deec47d8ef99d2b44d144"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json",
+      "mode": 420,
+      "size": 8946,
+      "sha256": "af7e793fdedd48e0fc92708cc5e0fa6bb70006e5f72f15bcecb99e2fb27c6f1e"
     }
   ],
   "controls": [
     "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
     "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
-    "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json"
+    "evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json"
   ],
   "node": {
     "version": "24.16.0"
@@ -268,5 +334,5 @@
   ],
   "legacyNumericEntryScope": "version-bound-history-only",
   "newR18bNumericExecutionEnabled": false,
-  "bindingRevision": 3
+  "bindingRevision": 5
 }

@@ -1,0 +1,67 @@
+{
+  "date": "2026-09-10",
+  "status": "implementation-review-complete-full-validation-required-before-promotion",
+  "scope": "Explicitly provision the existing pinned Linux gh for runtime-freeze verification, with source-admission binding revision 5. No scientific-model change.",
+  "baseCommit": "4cec10f28ab30f5297c222cb44fa41dcb5d16c56",
+  "mainObserved": "d34fc3a1b2bbb59faa0617e94bc6ada71521ac16",
+  "hypothesisSha256": "67475fba1567d8b877d1fb37b567bec7b6e9e181170712c39bde3d4cd188b53e",
+  "baseline": {
+    "localFocusedTests": { "passed": 75, "failed": 0, "scope": "Darwin existing pinned gh, not Linux provisioning" },
+    "candidateFirstCi": [
+      { "runId": 34508923362, "attempt": 1, "conclusion": "failure" },
+      { "runId": 34508970564, "attempt": 1, "conclusion": "failure" }
+    ],
+    "ciCoreTests": { "passed": 1741, "failed": 11, "skipped": 5 },
+    "ciFailedGates": ["TEST", "ATOMISTIC_MANIFEST", "SENTINEL", "RELEASE_MANIFEST"]
+  },
+  "builderSelfCheck": { "passed": 61, "failed": 0, "skipped": 0, "tools": ["c49370", "469b18"], "approval": false },
+  "frozenImplementation": {
+    "baseCommit": "4cec10f28ab30f5297c222cb44fa41dcb5d16c56",
+    "nonSelfChangedFileCount": 9,
+    "recordDigest": "037fd88d84d27eb2149fbc05296eabbb414f4b10014ab30bed4f6742a508d94f",
+    "protocol": "SHA256 of compact JSON array, ASCII path-sorted nine changed non-self records; each record keys path, sha256, size, mode in that order. The full candidate freeze also includes this review.",
+    "ledgerSha256": "95954713d7fe56d5056b5fbbb60959788616d85ce8b1d9cabd991572f30ebe03"
+  },
+  "independentReviews": {
+    "software": { "reviewer": "/root/branch_compare_software_review", "P0": 0, "P1": 0, "P2": 0, "evidence": ["aa53a7", "5fcff8", "57a9b8"], "scope": "Implementation and revision-5 source binding only; not Linux execution or promotion approval" },
+    "scientific": { "reviewer": "/root/qualification_software_review/remote_observation_review", "P0": 0, "P1": 0, "P2": 0, "evidence": ["e507f4", "3ab7a1", "357d7b", "ba34f0", "b8913b", "304e16", "d0da0e", "82b88d"], "scope": "No changed scientific model, score, applicability, rights or numerical-execution boundary; supports full validation only" },
+    "datedPrimaryReferenceAndGap": { "reviewer": "/root/astra_resumed_sota_gap", "P0": 0, "P1": 0, "P2": 0, "evidence": ["4a03d9", "f67337", "42b14f", "950cdf"], "scope": "Same-day primary reference and actual candidate scope; no SOTA or qualification upgrade" }
+  },
+  "findings": [{ "priority": "P2", "issue": "Workflow semantic negative controls could pass only because YAML reserialization changed the raw digest", "disposition": "Closed by pristine positive control and dedicated preparation/order diagnostics with original raw bytes; production raw hash gate unchanged", "rootTestEvidence": "66b050", "independentClosure": "aa53a7" }],
+  "directedValidation": {
+    "repairTests": { "passed": 61, "failed": 0, "skipped": 0, "rootEvidence": "66b050", "independentEvidence": "aa53a7" },
+    "admissionNoHistory": { "passed": 21, "failed": 0, "unselected": 1, "rootEvidence": "8baf0d", "scope": "Historical replay deliberately unselected here; still required in full test" },
+    "independentRevision5": { "passed": 1, "unselected": 21, "evidence": "5fcff8" },
+    "sourceAdmission": { "files": 565, "inputs": 51, "controls": 3, "status": "source-consistent", "failures": [], "evidence": "57a9b8", "scope": "Observed before this terminal implementation-review text; final bytes must be freshly frozen" }
+  },
+  "fullGates": "Not asserted by this pre-validation implementation review. Required post-review local command receipts, full source freeze, derived-report binding, build and artifact evidence must close separately before commit or promotion. A passing review never substitutes for those actual results.",
+  "sourceMigration": {
+    "from": 4,
+    "to": 5,
+    "inputCount": 51,
+    "reason": "Five exact CI repair path identities and the unchanged previous branch-comparison review become registered inputs; schema and test bindings update explicitly.",
+    "unchanged": ["historical base commit and tree", "R12 exclusions", "unaccounted-source rejection", "full source identity checks", "false promotion flags", "review included in source digest", "four derived-output exclusions"],
+    "oldReview": "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json"
+  },
+  "limitations": [
+    "Initial network/extractor tests use fake processes and do not execute the Linux package.",
+    "Actual Linux provisioning, fixed gh version and offline attestation remain unverified until a new corrected candidate CI completes.",
+    "Extractor timeout applies to the direct process; it is not proof of complete descendant-process cleanup or shared-library closure.",
+    "The original compound metadata failure does not reveal which stat field failed.",
+    "No evidence score, scientific applicability, dataset rights or release authorization changes.",
+    "118-element representation is not universal model qualification; full MatterSim/MACE, PFHub3 and Cantera remain incomplete."
+  ],
+  "references": [
+    { "url": "https://github.com/cli/cli/releases/tag/v2.98.0", "classification": "reference", "revision": "a255baf71d13fe5947a4eb7ad521ffd412d64cee", "bodyDigest": null },
+    { "url": "https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_checksums.txt", "classification": "auditable", "sha256": "275b90ae8a642fb8bdf4f21d7673e34643a445f7993f1821ac917ff8a2cc4db9", "scope": "Checksum text verified; not a newly verified executable" },
+    { "url": "https://manpages.debian.org/bookworm/dpkg/dpkg-deb.1.en.html", "classification": "reference", "bodyDigest": null },
+    { "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-environment-variable", "classification": "reference", "bodyDigest": null },
+    { "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#steps-context", "classification": "reference", "bodyDigest": null }
+  ],
+  "nextTasks": ["Complete and independently verify full local gates for the frozen candidate", "Verify a distinct new Linux candidate CI through terminal outcomes", "Only after gates close, resume protected main and authorized release stages"],
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "historicalApprovalTransferred": false,
+  "approvalAuthenticated": false
+}

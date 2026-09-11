@@ -1,8 +1,10 @@
 import { createHash } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dump as dumpYaml, load as parseYaml } from 'js-yaml';
 import { describe, expect, it } from 'vitest';
 import {
+  inspectSentinelEvaluationWorkflow,
   ATOMISTIC_DOCKERFILE_DIGESTS,
   ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST,
   ATOMISTIC_BOOTSTRAP_BASE_IMAGE,
@@ -148,6 +150,31 @@ const bootstrapOutcomeSource = readFileSync(
   new URL('./atomistic/write_bootstrap_outcome.py', import.meta.url),
 );
 const sentinelEvaluationWorkflow = parseYaml(sentinelEvaluationSource);
+it('pinned gh outcome alone fails the actual final aggregation',()=>{
+  const last=sentinelEvaluationWorkflow.jobs.evaluate.steps.at(-1);
+  const program=last.run.trim().match(/^node -e "([\s\S]*)"$/)[1];
+  const env=Object.fromEntries(Object.keys(last.env).map(k=>[k,'success']));
+  expect(spawnSync(process.execPath,['-e',program],{env}).status).toBe(0);
+  env.PROVISION_GH_STATUS='failure';
+  const result=spawnSync(process.execPath,['-e',program],{env});
+  expect(result.status).toBe(1);expect(result.stderr.toString()).toContain('PROVISION_GH');
+});
+it('rejects missing, reordered, or substituted pinned gh preparation',()=>{
+  expect(inspectSentinelEvaluationWorkflow(sentinelEvaluationWorkflow,sentinelEvaluationSource)).toEqual([]);
+  const cases=[
+    {diagnostic:'provision_gh gate drifted.',change:steps=>steps.splice(steps.findIndex(s=>s.id==='provision_gh'),1)},
+    {diagnostic:'pinned gh provisioning order drifted.',change:steps=>{const [s]=steps.splice(steps.findIndex(s=>s.id==='provision_gh'),1);steps.push(s);}},
+    {diagnostic:'provision_gh gate drifted.',change:steps=>{steps.find(s=>s.id==='provision_gh').run='true';}},
+  ];
+  for(const {change,diagnostic} of cases){
+    const workflow=structuredClone(sentinelEvaluationWorkflow);change(workflow.jobs.evaluate.steps);
+    // Preserve the raw-source positive control so semantic rejection cannot
+    // be satisfied solely by a YAML reserialization checksum mismatch.
+    const failures=inspectSentinelEvaluationWorkflow(workflow,sentinelEvaluationSource);
+    expect(failures).toContain(`.github/workflows/evaluate.yml: ${diagnostic}`);
+    expect(failures).not.toContain('.github/workflows/evaluate.yml: complete reviewed workflow bytes drifted.');
+  }
+});
 const sentinelReportWorkflow = parseYaml(sentinelReportSource);
 
 function inspectMutatedBootstrap(mutator) {
