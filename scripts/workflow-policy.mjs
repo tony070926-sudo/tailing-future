@@ -23,7 +23,7 @@ export const ATOMISTIC_RUNTIME_SOURCE_DATE_EPOCH = 1787977543;
 export const ATOMISTIC_SOURCE_MANIFEST_DIGEST = 'sha256:08b1ed2ae239ce5732cf565b5e7bd814727a99ad6e1e1a29aeaa21ea1ed529a1';
 export const ATOMISTIC_MATERIALIZATION_DIGEST = 'sha256:345d5e55227bbe873d567f5ea72b88db1f21c1d46e72f078db38e6a455d47721';
 export const SENTINEL_EVALUATION_WORKFLOW_PATH = '.github/workflows/evaluate.yml';
-export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = '57773b8ff757a5c3401bdaa8878bb43a6386921a7af351f0e5c1a5173e65a5d1';
+export const SENTINEL_EVALUATION_WORKFLOW_SHA256 = 'b457b6fa58b41d83b8c45a6b189b5696bef22e3fa7eeef936cd9c5ccddffb7a5';
 export const SENTINEL_REPORT_WORKFLOW_PATH = '.github/workflows/sentinel-report.yml';
 export const ATOMISTIC_BOOTSTRAP_BASE_IMAGE = 'python:3.12.13-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2';
 export const ATOMISTIC_BOOTSTRAP_BASE_AMD64_DIGEST = 'sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af';
@@ -495,6 +495,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
     with: { 'python-version': '3.12.11' },
   })) failures.push(`${prefix} Python runtime setup drifted.`);
   const expectedSimpleGates = {
+    provision_gh: { id: 'provision_gh', if: 'always()', 'continue-on-error': true, run: 'node scripts/atomistic/provision-runtime-freeze-gh.mjs' },
     install: { id: 'install', 'continue-on-error': true, run: 'npm ci' },
     lint: {
       id: 'lint', if: 'always()', 'continue-on-error': true, run: 'npm run lint',
@@ -530,6 +531,8 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
       failures.push(`${prefix} ${id} gate drifted.`);
     }
   }
+  const provisionIndex=steps.findIndex(step=>step?.id==='provision_gh');
+  if(provisionIndex<=steps.findIndex(step=>step?.id==='install') || ['test','atomistic_manifest','sentinel'].some(id=>provisionIndex>=steps.findIndex(step=>step?.id===id))) failures.push(`${prefix} pinned gh provisioning order drifted.`);
   for (const id of ['build', 'report_build']) {
     const matches = steps.filter((step) => step?.id === id);
     if (matches.length !== 1 || !sameJson(matches[0], {
@@ -566,7 +569,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
   })) failures.push(`${prefix} Sentinel upstream status binding drifted.`);
   const finalGate = steps.at(-1);
   const expectedFinalRun = 'node -e "const failed = ['
-    + "'INSTALL','LINT','TYPECHECK','TEST','ATOMISTIC_MANIFEST','BUILD','AUDIT',"
+    + "'INSTALL','PROVISION_GH','LINT','TYPECHECK','TEST','ATOMISTIC_MANIFEST','BUILD','AUDIT',"
     + "'SENTINEL','REPORT_BUILD','RELEASE_MANIFEST'].filter(name => "
     + "process.env[name + '_STATUS'] !== 'success'); if (failed.length) { "
     + "console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }\"";
@@ -574,6 +577,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
     if: 'always()',
     env: {
       INSTALL_STATUS: '${{ steps.install.outcome }}',
+      PROVISION_GH_STATUS: '${{ steps.provision_gh.outcome }}',
       LINT_STATUS: '${{ steps.lint.outcome }}',
       TYPECHECK_STATUS: '${{ steps.typecheck.outcome }}',
       TEST_STATUS: '${{ steps.test.outcome }}',
@@ -585,7 +589,7 @@ export function inspectSentinelEvaluationWorkflow(workflow, source = '') {
       RELEASE_MANIFEST_STATUS: '${{ steps.release_manifest.outcome }}',
     },
     run: `${expectedFinalRun}\n`,
-  })) failures.push(`${prefix} final ten-gate aggregation drifted.`);
+  })) failures.push(`${prefix} final eleven-gate aggregation drifted.`);
   const reportUploads = steps.filter((step) => step?.uses === UPLOAD_ARTIFACT_ACTION
     && step?.with?.name === 'tailing-sentinel-pr-report-${{ github.run_id }}-${{ github.run_attempt }}');
   if (reportUploads.length !== 1 || !sameJson(reportUploads[0], {

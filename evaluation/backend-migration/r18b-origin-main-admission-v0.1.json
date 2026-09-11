@@ -55,13 +55,13 @@
       "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
       "mode": 420,
       "size": 2686,
-      "sha256": "1e796684139ec46bc919ae530c880c91dda4ea58503d4c824c448ca4c362e29e"
+      "sha256": "96070f36fb96096ed33bd4bdee63a653a41e6e70db223cbcbc368052b0c84c53"
     },
     {
       "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
       "mode": 420,
-      "size": 52070,
-      "sha256": "0da38d0727c4d3e84c80cdaed003518227542dd9fbc1ac1f89fc8ab5c7e28e84"
+      "size": 52400,
+      "sha256": "831ba995efc09300e4bd9e43a590f13aa67a75a481bf4ee9a5aa442b90eed2d2"
     },
     {
       "path": "vitest.config.ts",
@@ -272,12 +272,48 @@
       "mode": 420,
       "size": 7534,
       "sha256": "53b35acaca4de16ed0454d3ad0afaa0e2a943fae5d27a98bdebec99a38cb43e7"
+    },
+    {
+      "path": ".github/workflows/evaluate.yml",
+      "mode": 420,
+      "size": 4508,
+      "sha256": "b457b6fa58b41d83b8c45a6b189b5696bef22e3fa7eeef936cd9c5ccddffb7a5"
+    },
+    {
+      "path": "scripts/workflow-policy.mjs",
+      "mode": 420,
+      "size": 102331,
+      "sha256": "c1974bc95efec2106d5b4c86ab1fcfd3cf1573b7221319cd794497adb38426dc"
+    },
+    {
+      "path": "scripts/workflow-policy.test.mjs",
+      "mode": 420,
+      "size": 97099,
+      "sha256": "c94aa7d84b722c8c561524cacd1f1801b4baa24d672a04b8e90b91d083692d1c"
+    },
+    {
+      "path": "scripts/atomistic/provision-runtime-freeze-gh.mjs",
+      "mode": 420,
+      "size": 4527,
+      "sha256": "ff39cf672668d7db4cf563e37b3b9bbe4b1fc65cd4efd53563300875fd24eddd"
+    },
+    {
+      "path": "scripts/atomistic/provision-runtime-freeze-gh.test.mjs",
+      "mode": 420,
+      "size": 4033,
+      "sha256": "16979b1ab8816845ecf596cc9568f00e0f0993844c8deec47d8ef99d2b44d144"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json",
+      "mode": 420,
+      "size": 8946,
+      "sha256": "af7e793fdedd48e0fc92708cc5e0fa6bb70006e5f72f15bcecb99e2fb27c6f1e"
     }
   ],
   "controls": [
     "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
     "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
-    "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json"
+    "evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json"
   ],
   "node": {
     "version": "24.16.0"
@@ -298,5 +334,5 @@
   ],
   "legacyNumericEntryScope": "version-bound-history-only",
   "newR18bNumericExecutionEnabled": false,
-  "bindingRevision": 4
+  "bindingRevision": 5
 }

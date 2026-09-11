@@ -34,6 +34,10 @@ jobs:
       - id: install
         continue-on-error: true
         run: npm ci
+      - id: provision_gh
+        if: always()
+        continue-on-error: true
+        run: node scripts/atomistic/provision-runtime-freeze-gh.mjs
       - id: lint
         if: always()
         continue-on-error: true
@@ -105,6 +109,7 @@ jobs:
       - if: always()
         env:
           INSTALL_STATUS: ${{ steps.install.outcome }}
+          PROVISION_GH_STATUS: ${{ steps.provision_gh.outcome }}
           LINT_STATUS: ${{ steps.lint.outcome }}
           TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
           TEST_STATUS: ${{ steps.test.outcome }}
@@ -115,4 +120,4 @@ jobs:
           REPORT_BUILD_STATUS: ${{ steps.report_build.outcome }}
           RELEASE_MANIFEST_STATUS: ${{ steps.release_manifest.outcome }}
         run: |
-          node -e "const failed = ['INSTALL','LINT','TYPECHECK','TEST','ATOMISTIC_MANIFEST','BUILD','AUDIT','SENTINEL','REPORT_BUILD','RELEASE_MANIFEST'].filter(name => process.env[name + '_STATUS'] !== 'success'); if (failed.length) { console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }"
+          node -e "const failed = ['INSTALL','PROVISION_GH','LINT','TYPECHECK','TEST','ATOMISTIC_MANIFEST','BUILD','AUDIT','SENTINEL','REPORT_BUILD','RELEASE_MANIFEST'].filter(name => process.env[name + '_STATUS'] !== 'success'); if (failed.length) { console.error('Failed gates: ' + failed.join(', ')); process.exit(1); }"

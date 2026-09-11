@@ -15,7 +15,7 @@
     "newR18bNumericExecutionEnabled"
   ],
   "properties": {
-    "bindingRevision": { "const": 4 },
+    "bindingRevision": { "const": 5 },
     "legacyNumericEntryScope": { "const": "version-bound-history-only" },
     "newR18bNumericExecutionEnabled": { "const": false },
     "schemaVersion": {
@@ -29,8 +29,8 @@
     },
     "inputs": {
       "type": "array",
-      "minItems": 45,
-      "maxItems": 45,
+      "minItems": 51,
+      "maxItems": 51,
       "items": {
         "type": "object",
         "additionalProperties": false,
