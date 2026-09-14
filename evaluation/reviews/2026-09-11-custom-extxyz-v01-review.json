@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "tf.custom-extxyz-review/0.1",
+  "date": "2026-09-11",
+  "status": "product-reviewed-P2-closed-awaiting-full-gates",
+  "scope": "Strict single-frame Cartesian-angstrom extXYZ geometry import, not general format compatibility, scientific label import or new solver qualification.",
+  "hypothesisPath": "evaluation/reviews/2026-09-11-custom-extxyz-v01-review.md",
+  "hypothesisSha256": "8d8e75a9404f648f098019bfddb413c9871cb79de4dc6f24cebef9ceba1c325d",
+  "baseline": {
+    "commit": "2cbc7bb927fa4db0acb6cfe27ded29d406b9edc7",
+    "tree": "155029420301fe1baba96a41a4ac8dfc34a427b7",
+    "freshFetchTool": "10a53c",
+    "targetedTests": { "passed": 107, "files": 4, "exitCode": 0, "terminalTool": "2da676" },
+    "install": { "packages": 557, "lifecycleScripts": false, "exitCode": 0, "terminalTool": "524c62" },
+    "mainFirstCi": { "runId": "34576996317", "attempt": 1, "stateAtFreeze": "in-progress-no-terminal-conclusion", "notCandidateValidation": true }
+  },
+  "builders": ["astra_branch_compare_builder: parser and parser tests", "root: workbench and component tests, parser hardening and admission migration"],
+  "frozenProductFiles": {
+    "lib/structure/extxyz-import.ts": "6246710af126d02efdbae48524d075da6740729c9dba20fdb0777cbbb5064e85",
+    "lib/structure/extxyz-import.test.ts": "e531c400ae3bc3acfda02991d7bea054b880ccfa883114076ea9b13b730ecf32",
+    "app/components/custom-structure-workbench.tsx": "055c53506311754426f642938b15da0267417a6051412386d7288b160b638343",
+    "lib/structure/custom-structure-workbench.test.ts": "31a455884d431560b2eb3f159cac400cbc9f8b733fceb08b47a3ee3ed26a8a3b"
+  },
+  "selfCheck": {
+    "finalTargeted": { "passed": 193, "failed": 0, "files": 6, "exitCode": 0, "terminalTool": "cbf130" },
+    "nonincrementalTypecheck": { "exitCode": 0, "terminalTool": "2c144c" },
+    "fullLint": { "exitCode": 0, "terminalTool": "5cef63" },
+    "targetedAdmission": { "passed": 3, "excludedByNameFilter": 19, "exitCode": 0, "terminalTool": "66bffe", "fullAdmissionSuite": false },
+    "earlierFailures": [
+      { "terminalTool": "b2746b", "passed": 190, "failed": 2, "cause": "Two new jsdom test fixtures compared or passed cross-realm typed arrays. Root normalized fixture byte views and compares byte values; the production parser type gate was not loosened." },
+      { "terminalTool": "429db5", "exitCode": 2, "cause": "Three new test select casts were not accepted by TypeScript. Root replaced them with a runtime instanceof guard; ccea8b passed afterward." }
+    ],
+    "independentExecution": false,
+    "actualBrowser": false,
+    "externalParserCompatibilityRun": false
+  },
+  "sourceAdmissionMigration": {
+    "fromBindingRevision": 5,
+    "toBindingRevision": 6,
+    "fromInputs": 51,
+    "toInputs": 55,
+    "policy": "Preserve historical BASE/TREE, dependency pins, excluded paths and false capability flags. Pin two parser files, frozen hypothesis and former review control; refresh only four changed existing source inputs. New JSON review is the sole successor review control and remains part of source identity, not self-authenticated approval.",
+    "preflightReviewer": "branch_compare_software_review",
+    "preflightEvidence": ["d67eb4", "670673", "9de421", "29c161"],
+    "implementationReview": "R1 read-only migration inspection passed; R2 exact test pin and ledger hash binding delta closed by c716ab"
+  },
+  "independentReviews": {
+    "scientificProduct": {
+      "reviewer": "qualification_software_review/remote_observation_review",
+      "P0": 0, "P1": 0, "P2": 0,
+      "scope": "Four frozen R1 product files and unchanged scientific representation boundaries; static review, not execution",
+      "evidence": ["b1a555", "d2854a", "f4cf0a", "8d4dce", "40f5a0", "04fcce", "641374"],
+      "r2Difference": "Only negative-test diagnostic assertions changed; production files unchanged"
+    },
+    "softwareProductAndAdmission": {
+      "reviewer": "branch_compare_software_review",
+      "round": "R1",
+      "P0": 0, "P1": 0, "P2": 1,
+      "evidence": ["1a2e2d"],
+      "scope": "Ten frozen R1 files, exact 55 inputs and three controls, 569 source files; no candidate execution",
+      "r2DeltaClosure": "closed-P0/P1/P2=0/0/0; c716ab and 29033c"
+    },
+    "datedSotaPlan": {
+      "reviewer": "astra_resumed_sota_gap",
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "scope": "Frozen hypothesis only, not implementation approval or execution evidence",
+      "classification": "reference",
+      "sourceRevision": null,
+      "rawPageDigest": null,
+      "sources": ["https://docs.ase-lib.org/ase/io/formatoptions.html#extxyz", "https://github.com/libAtoms/extxyz#extended-xyz-specification"]
+    }
+  },
+  "findings": [
+    {
+      "id": "EXTXYZ-SW-P2-01",
+      "priority": "P2",
+      "status": "closed",
+      "finding": "Properties negative cases shared a 13-column row, allowing a later column-count rejection to mask a wrongly admitted field/type.",
+      "fix": "Root added exact unsupported/duplicate/requires diagnostic assertions for every case. Parser production code unchanged.",
+      "testPath": "lib/structure/extxyz-import.test.ts",
+      "beforeSha256": "d419c25822c92db5d91d59d7fb4cf958db732a653ecd54befe1704c7a6bba694",
+      "afterSha256": "e531c400ae3bc3acfda02991d7bea054b880ccfa883114076ea9b13b730ecf32",
+      "postFixTargetedTerminal": "cbf130",
+      "closureEvidence": ["c716ab", "29033c"]
+    }
+  ],
+  "scientificBoundaries": [
+    "Source geometry is explicitly interpreted, never experimentally authenticated. No fractional-to-Cartesian, 2D-to-3D, wrapping, vacuum insertion, bond inference or physical atom tracking is performed.",
+    "Only explicit T T T with a validated nine-component cell or F F F without cell is accepted. Partial periodicity and additional metadata remain unsupported by this TF profile, even when valid in general extXYZ.",
+    "Imported energy, forces, stress, charge, spin, unknown properties and unit/source annotations are rejected. Import leaves all scientific outputs null and solver admission abstaining; no automatic backend call.",
+    "Raw download preserves the accepted original bytes. Native export preserves the accepted structural document but not the raw header, formatting or transport provenance.",
+    "118 represented element identities do not validate arbitrary combinations or reactions. Existing finite neutral-Ar LJ scope, Sentinel41, MACE qualification, Random-TP rights/full2772, calibrated UQ, PFHub3 and Cantera remain unchanged."
+  ],
+  "nextTasks": [
+    "Close independent product/admission findings and run final targeted/full applicable gates under a suitable execution window.",
+    "Verify an actual production UI import/download transaction and a version-locked external geometry interoperability case without claiming full format compatibility.",
+    "Return to the separately observed main first-CI release and authorized real MACE execution path; geometry input is not a substitute."
+  ],
+  "closurePolicy": "This frozen source review does not pin or approve itself. Later actual full-source, gate, browser and independent results must be bound in a dated external review with complete source and artifact identities before commit or promotion.",
+  "amendments": [
+    {
+      "date": "2026-09-14",
+      "hypothesis": "H-R18B-FAILURE-LOCATOR/0.1",
+      "scope": "Test-local bounded failure locator only; original dated product and review claims above are preserved and do not approve this amendment.",
+      "frozenHypothesisPath": "/Users/tonywilliam/Documents/ChatGPT/Tailing Future-evidence/evaluation/reviews/2026-09-14-r18b-failure-locator-review.md",
+      "frozenHypothesisSha256": "b5c6569abdd712453eec3f1bc260c651f4116891ebe27485eb1797827a7bccc3",
+      "beforeBaseline": { "terminalTool": "442a8d", "selectedAdmissionPassed": 1, "excludedByNameFilter": 21, "elapsedMs": 867, "historicalReplayExecuted": false },
+      "changes": "Allowlisted exception observations at the actual history test rejection, pure diagnostic tests, matching test input size/hash and checker ledger digest; no replay, deadline, binding revision, scientific contract or capability change.",
+      "limitations": "Locator is not proof of current filesystem existence, persistence or cleanup. Failure logging cannot replace the original thrown value. This amendment addresses diagnostic P2 only.",
+      "pending": "Builder short self-check, independent review and all remaining applicable final gates must be bound in the dated external review. Prior full run remains 1843 passed, 5 failed, 7 skipped plus failed periodic beforeAll; full-test P1 remains open. No long test until sustained safe-window confirmation. No commit or promotion."
+    }
+  ],
+  "releaseEligible": false,
+  "deploymentEligible": false,
+  "scientificPromotionEligible": false,
+  "historicalApprovalTransferred": false
+}

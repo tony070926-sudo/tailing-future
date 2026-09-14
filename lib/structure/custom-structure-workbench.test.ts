@@ -13,14 +13,18 @@ import {
   type StructureDocumentDraft,
 } from './structure-document';
 import { STRUCTURE_MAX_FILE_BYTES } from './strict-json';
+import { parseAndValidateExtXyz, EXTXYZ_INTERPRETATION } from './extxyz-import';
+import { sha256DigestBytes } from './canonical-json';
+import type { StructureRenderModel } from './structure-render-model';
 import * as radialModule from '../simulation/periodic-potentials';
 import { AR_INTERPRETATION, createCustomArAction, computeCustomArSinglePoint, exportCustomArResult, validateCustomArExport, type CustomArForceOverlay } from './custom-ar-singlepoint';
 
 let observedArOverlay: CustomArForceOverlay | null | undefined;
+let observedStructureModel: StructureRenderModel | null;
 
 vi.mock('../../app/components/custom-structure-webgl', () => ({
   CustomStructureWebgl: (props: {
-    model: { sourceSemanticDigest: string; atoms: readonly { id: string }[] };
+    model: StructureRenderModel;
     selectedAtomId: string | null;
     onAtomSelect: (id: string) => void;
     onStatusChange?: (status: 'ready') => void;
@@ -32,12 +36,13 @@ vi.mock('../../app/components/custom-structure-webgl', () => ({
 
 function MockStaticWebgl(props: {
   forceOverlay?: CustomArForceOverlay | null;
-  model: { sourceSemanticDigest: string; atoms: readonly { id: string }[] };
+  model: StructureRenderModel;
   selectedAtomId: string | null;
   onAtomSelect: (id: string) => void;
   onStatusChange?: (status: 'ready') => void;
 }) {
   React.useEffect(() => { observedArOverlay = props.forceOverlay; }, [props.forceOverlay]);
+  React.useEffect(() => { observedStructureModel = props.model; }, [props.model]);
   const { onStatusChange } = props;
   React.useEffect(() => onStatusChange?.('ready'), [onStatusChange]);
   return React.createElement(
@@ -59,6 +64,7 @@ let container: HTMLDivElement;
 let root: Root;
 
 beforeEach(() => {
+  observedStructureModel = null;
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -304,6 +310,170 @@ describe('plain XYZ real file import transaction', () => {
     expect(digest()).toBe(accepted);
     expect(container.querySelector('.custom-structure-receipt')?.textContent).toBe(receipt);
     expect(container.textContent).toContain('Transport refused — accepted structure unchanged: current XYZ read failed');
+  });
+});
+
+describe('strict extXYZ geometry file transaction', () => {
+  const fixtureText = '2\r\nProperties=id:S:1:species:S:1:pos:R:3 pbc="T T T" Lattice="4 1 0 0 5 2 1 0 6"\r\nsite-a H 1.25 0 0\r\nsite-b Og -2.5 0 0\r\n';
+  const digest = () => container.querySelector('[data-testid="mock-static-webgl"]')?.getAttribute('data-digest');
+  const receiptText = () => container.querySelector('.custom-structure-receipt')?.textContent;
+  function formatSelect(): HTMLSelectElement {
+    const select = container.querySelector('[aria-label="Import format"]');
+    if (!(select instanceof HTMLSelectElement)) throw new Error('Import format selector missing');
+    return select;
+  }
+  function chooseExtxyz(confirm = true) {
+    const select = formatSelect();
+    act(() => { select.value = 'extxyz'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    if (confirm) act(() => (container.querySelector('[aria-label="Confirm extXYZ geometry interpretation"]') as HTMLInputElement).click());
+  }
+  function fixture(text = fixtureText, name = 'input.extxyz') {
+    const bytes = new Uint8Array(new TextEncoder().encode(text)), buffer = bytes.buffer;
+    const file = new File([buffer], name);
+    Object.defineProperty(file, 'arrayBuffer', { configurable: true, value: async () => buffer });
+    return { file, buffer, bytes };
+  }
+  async function importFile(file: File) {
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+  }
+  async function readBlob(blob: Blob) {
+    return new Uint8Array(await new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsArrayBuffer(blob);
+    }));
+  }
+
+  it('requires explicit interpretation and binds nonorthogonal geometry, IDs and null outputs to the viewer', async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseExtxyz(false);
+    const input = fixture(), initial = digest();
+    const read = vi.spyOn(input.file, 'arrayBuffer');
+    await importFile(input.file);
+    expect(read).not.toHaveBeenCalled();
+    expect(digest()).toBe(initial);
+    expect(container.textContent).toContain('Confirm the extXYZ geometry interpretation');
+    act(() => (container.querySelector('[aria-label="Confirm extXYZ geometry interpretation"]') as HTMLInputElement).click());
+    await importFile(input.file);
+    const parsed = parseAndValidateExtXyz(input.bytes, input.file.name, EXTXYZ_INTERPRETATION);
+    expect(digest()).toBe(parsed.document.semanticDigest);
+    expect(receiptText()).toContain(parsed.transportReceipt.receiptDigest);
+    expect(receiptText()).toContain('tf.extxyz-geometry/0.1');
+    expect(observedStructureModel?.cellEdges).toHaveLength(12);
+    expect(observedStructureModel?.cellEdges.flatMap(edge => [edge.exactRepresentativeStartAngstrom, edge.exactRepresentativeEndAngstrom])).toContainEqual([5, 6, 8]);
+    expect(observedStructureModel?.atoms.map(atom => [atom.id, atom.exactPositionAngstrom])).toEqual([
+      ['site-a', [1.25, 0, 0]], ['site-b', [-2.5, 0, 0]],
+    ]);
+    expect(Object.values(observedStructureModel!.unavailableOutputs).every(value => value === null)).toBe(true);
+    expect(observedArOverlay).toBeNull();
+    expect(container.textContent).toContain('SOLVER NOT RUN');
+    expect(container.querySelectorAll('.custom-structure-abstentions article')).toHaveLength(3);
+    act(() => findButton('Mock select last atom').click());
+    expect(container.querySelector('.custom-structure-inspector')?.textContent).toContain('Z=118 · Og');
+    expect(container.querySelector('.custom-structure-inspector')?.textContent).toContain('-2.5 / 0 / 0 Å');
+    expect(digest()).toBe(parsed.document.semanticDigest);
+  });
+
+  it('downloads exact original CRLF bytes and retains them through rejected drafts, then clears after accepted edits', async () => {
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
+    const createUrl = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:extxyz-test');
+    const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseExtxyz();
+    const input = fixture();
+    await importFile(input.file);
+    expect(container.textContent).toContain('not the raw header, original formatting or transport receipt');
+    const originalDigest = digest(), originalReceipt = receiptText();
+    act(() => setInputValue(container.querySelector('input[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '10000.5'));
+    act(() => findButton('Validate').click());
+    expect(digest()).toBe(originalDigest);
+    expect(receiptText()).toBe(originalReceipt);
+    vi.useFakeTimers();
+    act(() => findButton('Download accepted original extXYZ').click());
+    expect(createUrl).toHaveBeenCalledOnce();
+    expect(revokeUrl).not.toHaveBeenCalled();
+    act(() => vi.advanceTimersByTime(1_000));
+    expect(revokeUrl).toHaveBeenCalledWith('blob:extxyz-test');
+    vi.useRealTimers();
+    const exported = await readBlob(createUrl.mock.calls[0][0] as Blob);
+    expect(Array.from(exported)).toEqual(Array.from(input.bytes));
+    expect(sha256DigestBytes(exported)).toBe(sha256DigestBytes(input.bytes));
+    act(() => setInputValue(container.querySelector('input[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '2.5'));
+    act(() => findButton('Validate').click());
+    expect(receiptText()).toContain('none — no bound import receipt');
+    expect(container.textContent).not.toContain('Download accepted original extXYZ');
+  });
+
+  it.each([
+    fixtureText.replace(' pbc=', ' energy=-999 pbc='),
+    fixtureText.replace('pos:R:3', 'pos:R:3:forces:R:3'),
+    fixtureText.replace('pbc="T T T"', 'pbc="T T F"'),
+    fixtureText.replace(' pbc=', ' units=bohr pbc='),
+    fixtureText.replace(' pbc=', ' source=2D-layout pbc='),
+    fixtureText + fixtureText,
+  ])('atomically refuses unsupported fields/boundaries without replacing accepted geometry or receipt', async text => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseExtxyz();
+    await importFile(fixture().file);
+    const accepted = digest(), receipt = receiptText();
+    await importFile(fixture(text).file);
+    expect(digest()).toBe(accepted);
+    expect(receiptText()).toBe(receipt);
+    expect(container.textContent).toContain('Transport refused — accepted structure unchanged');
+    expect(container.textContent).toContain('Download accepted original extXYZ');
+    expect(observedArOverlay).toBeNull();
+  });
+
+  it.each(['format', 'confirmation', 'draft', 'apply', 'newer', 'unmount'].flatMap(action =>
+    ['resolve', 'reject'].map(outcome => ({ action, outcome }))))('invalidates pending extXYZ $outcome after $action', async ({ action, outcome }) => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseExtxyz();
+    await importFile(fixture().file);
+    const late = fixture(fixtureText.replace('1.25', '999'));
+    let resolve!: (bytes: ArrayBuffer) => void, reject!: (reason: Error) => void;
+    Object.defineProperty(late.file, 'arrayBuffer', { value: () => new Promise<ArrayBuffer>((done, fail) => { resolve = done; reject = fail; }) });
+    await importFile(late.file);
+    if (action === 'format') act(() => {
+      const select = formatSelect();
+      select.value = 'native'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    if (action === 'confirmation') act(() => (container.querySelector('[aria-label="Confirm extXYZ geometry interpretation"]') as HTMLInputElement).click());
+    if (action === 'draft' || action === 'apply') act(() => setInputValue(container.querySelector('input[aria-label="x coordinate for atom 1"]') as HTMLInputElement, '2'));
+    if (action === 'apply') act(() => findButton('Validate').click());
+    if (action === 'newer') await importFile(fixture(fixtureText.replace('1.25', '3')).file);
+    if (action === 'unmount') act(() => root.render(null));
+    const accepted = digest(), receipt = receiptText(), currentText = container.textContent;
+    await act(async () => {
+      if (outcome === 'resolve') resolve(late.buffer);
+      else reject(new Error('stale extXYZ read failed'));
+    });
+    expect(digest()).toBe(accepted);
+    expect(receiptText()).toBe(receipt);
+    expect(container.textContent).toBe(currentText);
+    expect(hasInputValue('999')).toBe(false);
+  });
+
+  it('accepts geometry in .xyz, rejects wrong suffix and clears original bytes on a native replacement', async () => {
+    act(() => root.render(React.createElement(CustomStructureWorkbench, { active: true, onBack: vi.fn() })));
+    chooseExtxyz();
+    await importFile(fixture(fixtureText, 'input.xyz').file);
+    expect(container.textContent).toContain('Download accepted original extXYZ');
+    const accepted = digest();
+    const wrong = fixture(fixtureText, 'wrong.json');
+    const read = vi.spyOn(wrong.file, 'arrayBuffer');
+    await importFile(wrong.file);
+    expect(read).not.toHaveBeenCalled();
+    expect(digest()).toBe(accepted);
+    act(() => {
+      const select = formatSelect();
+      select.value = 'native'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await importFile(nativeFile('replacement', 'replacement.tfstructure.json').file);
+    expect(container.textContent).not.toContain('Download accepted original extXYZ');
+    expect(digest()).not.toBe(accepted);
   });
 });
 

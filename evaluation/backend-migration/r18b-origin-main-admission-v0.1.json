@@ -55,13 +55,13 @@
       "path": "schemas/backend-migration-r18b-admission-v0.1.schema.json",
       "mode": 420,
       "size": 2686,
-      "sha256": "96070f36fb96096ed33bd4bdee63a653a41e6e70db223cbcbc368052b0c84c53"
+      "sha256": "44e0e5d847e671c4a7a56d2585c8b50ec44918750ea1a800617f8eecc80d2643"
     },
     {
       "path": "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs",
       "mode": 420,
-      "size": 52400,
-      "sha256": "831ba995efc09300e4bd9e43a590f13aa67a75a481bf4ee9a5aa442b90eed2d2"
+      "size": 58693,
+      "sha256": "d882f87caebd76c724b2d10b1daa2d93b66ea0566c87f5b0ada80c166087456f"
     },
     {
       "path": "vitest.config.ts",
@@ -162,8 +162,8 @@
     {
       "path": "app/components/custom-structure-workbench.tsx",
       "mode": 420,
-      "size": 46194,
-      "sha256": "7bb08b436595da6eea4a6d7dc5450a299ff40cdba832b914b8ed54592d356bf1"
+      "size": 51323,
+      "sha256": "055c53506311754426f642938b15da0267417a6051412386d7288b160b638343"
     },
     {
       "path": "app/components/custom-structure-webgl.tsx",
@@ -174,8 +174,8 @@
     {
       "path": "lib/structure/custom-structure-workbench.test.ts",
       "mode": 420,
-      "size": 39371,
-      "sha256": "8a5d0e9e4ace862e6df978570a05e72b63d8021ca2d679ebb34a7ad37b3dbded"
+      "size": 49566,
+      "sha256": "31a455884d431560b2eb3f159cac400cbc9f8b733fceb08b47a3ee3ed26a8a3b"
     },
     {
       "path": "lib/structure/custom-structure-webgl-component.test.ts",
@@ -308,12 +308,36 @@
       "mode": 420,
       "size": 8946,
       "sha256": "af7e793fdedd48e0fc92708cc5e0fa6bb70006e5f72f15bcecb99e2fb27c6f1e"
+    },
+    {
+      "path": "lib/structure/extxyz-import.ts",
+      "mode": 420,
+      "size": 8494,
+      "sha256": "6246710af126d02efdbae48524d075da6740729c9dba20fdb0777cbbb5064e85"
+    },
+    {
+      "path": "lib/structure/extxyz-import.test.ts",
+      "mode": 420,
+      "size": 9553,
+      "sha256": "e531c400ae3bc3acfda02991d7bea054b880ccfa883114076ea9b13b730ecf32"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-11-custom-extxyz-v01-review.md",
+      "mode": 420,
+      "size": 5890,
+      "sha256": "8d8e75a9404f648f098019bfddb413c9871cb79de4dc6f24cebef9ceba1c325d"
+    },
+    {
+      "path": "evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json",
+      "mode": 420,
+      "size": 6485,
+      "sha256": "e3fe2d42989a654da526c4ea2f65965035c835c990ed31a47ecc6922b31794fd"
     }
   ],
   "controls": [
     "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json",
     "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs",
-    "evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json"
+    "evaluation/reviews/2026-09-11-custom-extxyz-v01-review.json"
   ],
   "node": {
     "version": "24.16.0"
@@ -334,5 +358,5 @@
   ],
   "legacyNumericEntryScope": "version-bound-history-only",
   "newR18bNumericExecutionEnabled": false,
-  "bindingRevision": 5
+  "bindingRevision": 6
 }
