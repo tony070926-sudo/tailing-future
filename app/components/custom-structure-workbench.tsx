@@ -27,6 +27,8 @@ import {
 import { STRUCTURE_MAX_FILE_BYTES, STRUCTURE_NATIVE_EXTENSION } from '@/lib/structure/strict-json';
 import { createStructureRenderModel, type StructureRenderModel } from '@/lib/structure/structure-render-model';
 import { parseAndValidateXyz, XYZ_INTERPRETATION, type XyzImportReceipt } from '@/lib/structure/xyz-import';
+import { parseAndValidateExtXyz, EXTXYZ_INTERPRETATION, type ExtXyzImportReceipt } from '@/lib/structure/extxyz-import';
+import { sha256DigestBytes } from '@/lib/structure/canonical-json';
 
 import { AR_INTERPRETATION, AR_RESULT_EXTENSION, stageCustomArResult, replayCustomArResult, createCustomArAction, computeCustomArSinglePoint, createCustomArForceOverlay, exportCustomArResult, type CustomArAction, type CustomArResult } from '@/lib/structure/custom-ar-singlepoint';
 
@@ -61,9 +63,11 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
   const [draftIssue, setDraftIssue] = useState<string | null>(null);
   const [draftDirty, setDraftDirty] = useState(false);
   const [transportIssue, setTransportIssue] = useState<string | null>(null);
-  const [transportReceipt, setTransportReceipt] = useState<StructureTransportReceipt | XyzImportReceipt | ReturnType<typeof stageCustomArResult>['transportReceipt'] | null>(null);
+  const [transportReceipt, setTransportReceipt] = useState<StructureTransportReceipt | XyzImportReceipt | ExtXyzImportReceipt | ReturnType<typeof stageCustomArResult>['transportReceipt'] | null>(null);
+  const [extxyzOriginal, setExtxyzOriginal] = useState<Readonly<{ bytes: Uint8Array; semanticDigest: string; rawSha256: string }> | null>(null);
   const [importFormat, setImportFormat] = useState('native');
   const [xyzConfirmed, setXyzConfirmed] = useState(false);
+  const [extxyzConfirmed, setExtxyzConfirmed] = useState(false);
   const [announcement, setAnnouncement] = useState('Static custom structure workbench ready.');
   const [webglStatus, setWebglStatus] = useState<CustomStructureWebglStatus>('checking-webgl2');
   const [arConfirmed, setArConfirmed] = useState(false);
@@ -122,6 +126,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
       setDraftIssue(null);
       setDraftDirty(false);
       setTransportReceipt(null);
+      setExtxyzOriginal(null);
       setTransportIssue(null);
       setSelectedAtomId((current) => (
         nextAccepted.document.atoms.some((atom) => atom.id === current)
@@ -224,14 +229,20 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
       setTransportIssue('Confirm the XYZ interpretation before importing.');
       return;
     }
-    const extension = selectedFormat === 'ar-result' ? AR_RESULT_EXTENSION : selectedFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION;
+    if (selectedFormat === 'extxyz' && !extxyzConfirmed) {
+      setTransportIssue('Confirm the extXYZ geometry interpretation before importing.');
+      return;
+    }
+    const extensions = selectedFormat === 'ar-result' ? [AR_RESULT_EXTENSION]
+      : selectedFormat === 'extxyz' ? ['.xyz', '.extxyz']
+        : selectedFormat === 'xyz' ? ['.xyz'] : [STRUCTURE_NATIVE_EXTENSION];
     // Browsers may insert a positive duplicate counter before the final .json.
     // Only the Ar filename hint is normalized; bytes and replay validation are unchanged.
     const importName = selectedFormat === 'ar-result'
       ? file.name.replace(/ \([1-9][0-9]*\)(?=\.json$)/u, '')
       : file.name;
-    if (!importName.endsWith(extension)) {
-      setTransportIssue(`Only ${extension} files are accepted.`);
+    if (!extensions.some(extension => importName.endsWith(extension))) {
+      setTransportIssue(`Only ${extensions.join(' or ')} files are accepted.`);
       return;
     }
     if (file.size > STRUCTURE_MAX_FILE_BYTES) {
@@ -251,16 +262,25 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
       }
       const parsed = selectedFormat === 'xyz'
         ? parseAndValidateXyz(bytes, file.name, XYZ_INTERPRETATION)
-        : parseAndValidateStructureNativeJson(bytes, file.name);
+        : selectedFormat === 'extxyz'
+          ? parseAndValidateExtXyz(bytes, file.name, EXTXYZ_INTERPRETATION)
+          : parseAndValidateStructureNativeJson(bytes, file.name);
       const nextAccepted: AcceptedState = {
         document: parsed.document,
         renderModel: createStructureRenderModel(parsed.document),
         validationReceipt: parsed.validationReceipt,
         admissionReceipt: parsed.solverAdmissionReceipt,
       };
+      // Keep exact transport bytes outside the immutable scientific document.
+      // Construct this snapshot before accepting either the geometry or its receipt.
+      const original = selectedFormat === 'extxyz' ? {
+        bytes: new Uint8Array(bytes), semanticDigest: parsed.document.semanticDigest,
+        rawSha256: parsed.transportReceipt.rawSha256,
+      } : null;
       setDraft(structureDocumentToDraft(parsed.document));
       setAccepted(nextAccepted);
       setTransportReceipt(parsed.transportReceipt);
+      setExtxyzOriginal(original);
       setTransportIssue(null);
       setDraftIssue(null);
       setDraftDirty(false);
@@ -293,6 +313,30 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
     }
   };
 
+  const exportOriginalExtxyz = () => {
+    try {
+      if (!extxyzOriginal || transportReceipt?.format !== 'extxyz-geometry-single-frame'
+        || extxyzOriginal.semanticDigest !== accepted.document.semanticDigest
+        || transportReceipt.semanticDigest !== accepted.document.semanticDigest
+        || extxyzOriginal.rawSha256 !== transportReceipt.rawSha256
+        || sha256DigestBytes(extxyzOriginal.bytes) !== transportReceipt.rawSha256) {
+        throw new Error('Original extXYZ bytes are not bound to the accepted structure.');
+      }
+      const snapshot = new Uint8Array(extxyzOriginal.bytes);
+      const url = URL.createObjectURL(new Blob([snapshot.buffer], { type: 'text/plain;charset=utf-8' }));
+      try {
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${accepted.document.documentId}.original.extxyz`;
+        anchor.click();
+      } finally { window.setTimeout(() => URL.revokeObjectURL(url), 1_000); }
+      setAnnouncement(`Downloaded original extXYZ bytes ${transportReceipt.rawSha256}; not a new solver result.`);
+      setTransportIssue(null);
+    } catch (error) {
+      setTransportIssue(error instanceof Error ? error.message : 'Original extXYZ export failed.');
+    }
+  };
+
   const arOverlay = useMemo(() => {
     if (!arState) return null;
     try { return createCustomArForceOverlay(accepted.document, accepted.validationReceipt, arState.action, arState.result); }
@@ -317,6 +361,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
       setAccepted(next); setDraft(structureDocumentToDraft(replay.document));
       setArState({ action: replay.action, result: replay.result });
       setTransportReceipt(stagedAr.transportReceipt); setStagedAr(null);
+      setExtxyzOriginal(null);
       setDraftIssue(null); setDraftDirty(false); setTransportIssue(null); setArIssue(null);
       setSelectedAtomId(replay.document.atoms[0]?.id ?? null); setAtomPage(0); setConnectionPage(0);
       setAnnouncement('Imported Ar package explicitly recomputed and accepted with bound structure and result. Local exploratory single point only; no external backend or trajectory invocation.');
@@ -343,6 +388,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
     setAccepted(document); setDraft(nextDraft); setDynamics(next);
     setArState(null); setArIssue(null); setArConfirmed(false); setStagedAr(null);
     setDraftDirty(false); setDraftIssue(null); setTransportIssue(null); setTransportReceipt(null);
+    setExtxyzOriginal(null);
     setSelectedAtomId(id => state.document.atoms.some(atom => atom.id === id) ? id : state.document.atoms[0]?.id ?? null);
     setAnnouncement(`Accepted discrete dynamics state ${state.physicalDigest}; ${state.physical.timeFs} fs. Exploratory model only.`);
   };
@@ -364,7 +410,7 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
         <div>
           <p className="custom-structure-kicker">H-CUSTOM-STRUCTURE / 0.1</p>
           <h1>Custom Structure Workbench</h1>
-          <p>All 118 element identities · finite or fully periodic topology · native JSON + limited plain XYZ</p>
+          <p>All 118 element identities · finite or fully periodic topology · native JSON + limited plain XYZ + strict extXYZ geometry</p>
         </div>
         <div className="custom-structure-lock" role="status">
           <strong>{dynamicsState ? 'EXPLORATORY DYNAMICS' : arState ? 'EXPLORATORY SINGLE POINT' : 'STRUCTURE ONLY'}</strong>
@@ -693,9 +739,11 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
                 invalidateAr(); setImportPending(false);
                 setImportFormat(event.target.value);
                 setXyzConfirmed(false);
+                setExtxyzConfirmed(false);
               }}>
                 <option value="native">Native JSON</option>
                 <option value="xyz">Limited plain XYZ</option>
+                <option value="extxyz">Strict extXYZ geometry v0.1</option>
                 <option value="ar-result">Ar single-point result package</option>
               </select>
             </label>
@@ -707,19 +755,31 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
               }} />
               I explicitly interpret coordinates as Å, finite/nonperiodic, and the comment as uninterpreted text.
             </label>}
+            {importFormat === 'extxyz' && <label>
+              <input type="checkbox" aria-label="Confirm extXYZ geometry interpretation" checked={extxyzConfirmed} onChange={(event) => {
+                importSequenceRef.current += 1;
+                invalidateAr(); setImportPending(false);
+                setExtxyzConfirmed(event.target.checked);
+              }} />
+              I explicitly interpret positions and lattice vectors as Cartesian Å, not fractional coordinates or a 2D layout. PBC must be explicit. Source-declared IDs are unverified; no scientific results are imported.
+            </label>}
             <div className="custom-structure-file-actions">
               <input
                 ref={fileInputRef}
                 className="custom-structure-file-input"
                 type="file"
-                accept={importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}
+                accept={importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'extxyz' ? '.xyz,.extxyz' : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}
                 onChange={importStructure}
               />
-              <button type="button" onClick={() => fileInputRef.current?.click()}>Import {importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}</button>
+              <button type="button" onClick={() => fileInputRef.current?.click()}>Import {importFormat === 'ar-result' ? AR_RESULT_EXTENSION : importFormat === 'extxyz' ? '.xyz / .extxyz' : importFormat === 'xyz' ? '.xyz' : STRUCTURE_NATIVE_EXTENSION}</button>
               <button type="button" onClick={exportNative}>Export native JSON</button>
+              {transportReceipt?.format === 'extxyz-geometry-single-frame' && extxyzOriginal &&
+                <button type="button" onClick={exportOriginalExtxyz}>Download accepted original extXYZ</button>}
             </div>
-            <p className="custom-structure-note">Limited plain XYZ only: one frame, four columns, no = in comments (even ordinary prose). extXYZ, CIF and V3000 remain unavailable. Decimal coordinates round to binary64; GPU display rounds to binary32. File transport never fabricates scientific source, revision or license clearance.</p>
+            <p className="custom-structure-note">Limited plain XYZ: one frame, four columns, no = in comments (even ordinary prose). CIF and V3000 remain unavailable. Decimal coordinates round to binary64; GPU display rounds to binary32. File transport never fabricates scientific source, revision or license clearance.</p>
             <p className="custom-structure-note">Native JSON export preserves the structure, not the XYZ comment or transport receipt. Generated XYZ row IDs are not persistent physical identities.</p>
+            <p className="custom-structure-note">Strict extXYZ geometry v0.1: one frame; Properties and explicit pbc required. Fully periodic T T T requires Lattice (a, b, c vectors in order); finite F F F requires no cell. Only species:S:1, Z:I:1, pos:R:3 and optional id:S:1 are accepted. Extra metadata, units, energy, forces, stress, charge and spin fields are refused, never silently discarded. This is not general extXYZ compatibility.</p>
+            <p className="custom-structure-note">Native JSON retains accepted extXYZ geometry and atom IDs, but not the raw header, original formatting or transport receipt. Download the accepted original separately to preserve those bytes. Imported coordinates and IDs do not certify an experimental structure or physical atom identity.</p>
             <p className="custom-structure-note">Accepted native size: {acceptedByteLength.toLocaleString('en-US')} / {STRUCTURE_MAX_FILE_BYTES.toLocaleString('en-US')} bytes.</p>
             <dl className="custom-structure-receipt">
               <div><dt>Raw import receipt</dt><dd>{transportReceipt?.rawSha256 ?? 'none — no bound import receipt'}</dd></div>
@@ -729,6 +789,14 @@ export function CustomStructureWorkbench({ active, onBack }: Props) {
                 <div><dt>XYZ interpretation</dt><dd>{transportReceipt.interpretation}</dd></div>
                 <div><dt>XYZ receipt</dt><dd>{transportReceipt.receiptDigest}</dd></div>
                 <div><dt>Not provided by XYZ</dt><dd>{transportReceipt.omittedProperties.join(', ')}</dd></div>
+              </>}
+              {transportReceipt?.format === 'extxyz-geometry-single-frame' && <>
+                <div><dt>extXYZ profile</dt><dd>{transportReceipt.profile}</dd></div>
+                <div><dt>extXYZ raw header</dt><dd style={{ whiteSpace: 'pre-wrap' }}>{transportReceipt.rawHeader}</dd></div>
+                <div><dt>extXYZ interpretation</dt><dd>{transportReceipt.interpretation}</dd></div>
+                <div><dt>extXYZ atom identity</dt><dd>{transportReceipt.atomIdentity}</dd></div>
+                <div><dt>extXYZ receipt</dt><dd>{transportReceipt.receiptDigest}</dd></div>
+                <div><dt>extXYZ native export loss</dt><dd>{transportReceipt.nativeExportLoss}</dd></div>
               </>}
               <div><dt>License</dt><dd>{accepted.document.provenance.license.spdxExpression} · projectVerified=false</dd></div>
               <div><dt>Validation</dt><dd>{accepted.validationReceipt.receiptDigest}</dd></div>

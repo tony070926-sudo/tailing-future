@@ -119,10 +119,10 @@ describe('R18b no-history synthetic/unit checks', () => {
       'lib/simulation/atomistic-world-session.test.ts',
       'evaluation/reviews/2026-09-08-r18b-source-admission-v0.1-final-review.json',
     ];
-    expect(ledger.inputs).toHaveLength(51);
+    expect(ledger.inputs).toHaveLength(55);
     expect(current.status).toBe('source-consistent');
     expect(current.failures).toEqual([]);
-    expect(REVIEW).toBe('evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json');
+    expect(REVIEW).toBe('evaluation/reviews/2026-09-11-custom-extxyz-v01-review.json');
     for (const relative of paths) {
       expect(ledger.inputs.filter(row => row.path === relative)).toEqual([identity(root, relative)]);
       expect(validateRecords(current.records.filter(row => row.path !== relative), base, ledger, []).join('\n')).toContain('missing-source:' + relative);
@@ -583,12 +583,12 @@ describe('R18b no-history synthetic/unit checks regression coverage', () => {
       const beforeReviewChange = verifySource(target);
       const records = beforeReviewChange.records;
       const manifest = { files: records.filter(row => !DERIVED_REPORT_PATHS.includes(row.path)) };
-      expect(beforeReviewChange.bindingRevision).toBe(5);
+      expect(beforeReviewChange.bindingRevision).toBe(6);
       expect(beforeReviewChange.sourceInputDigest).toBe(hash(JSON.stringify(manifest.files)));
       expect(validateManifest(records, manifest)).toMatchObject(flags());
       writeFileSync(review, '{"status":"failed"}\n');
       const afterReviewChange = verifySource(target);
-      expect(afterReviewChange).toMatchObject({ status: 'source-consistent', bindingRevision: 5, ...flags() });
+      expect(afterReviewChange).toMatchObject({ status: 'source-consistent', bindingRevision: 6, ...flags() });
       expect(afterReviewChange.records.find(row => row.path === REVIEW)).toEqual(identity(target, REVIEW));
       expect(afterReviewChange.records.find(row => row.path === REVIEW)).not.toEqual(records.find(row => row.path === REVIEW));
       expect(afterReviewChange.records.filter(row => row.path !== REVIEW)).toEqual(records.filter(row => row.path !== REVIEW));
@@ -632,29 +632,147 @@ describe('R18b no-history synthetic/unit checks regression coverage', () => {
   });
 });
 
+// Exception observations only: no filesystem persistence or cleanup attestation.
+function reportHistoryFailure(error, emit = value => console.error(value)) {
+  try {
+    const evidence = error?.evidence;
+    const directory = evidence?.directory;
+    const phase = evidence?.phase;
+    const reason = evidence?.reason;
+    const child = evidence?.child;
+    const status = child?.status;
+    const timedOut = child?.timedOut;
+    const outputTruncated = child?.outputTruncated;
+    const cleanupConfirmed = child?.cleanupConfirmed;
+    const diagnostic = {
+      directory: typeof directory === 'string' && directory.length <= 4096
+        && !/[\u0000-\u001f\u007f-\u009f]/u.test(directory) ? directory : null,
+      phase: ['create-evidence', 'materialize', 'child', 'persist-logs', 'validate', 'persist-observations', 'final-budget'].includes(phase) ? phase : null,
+      reasonCode: typeof reason === 'string' && /^[A-Z][A-Z0-9_]{0,95}$/u.test(reason)
+        && reason.trim() === reason ? reason : null,
+      child: {
+        status: Number.isSafeInteger(status) ? status : null,
+        timedOut: typeof timedOut === 'boolean' ? timedOut : null,
+        outputTruncated: typeof outputTruncated === 'boolean' ? outputTruncated : null,
+        cleanupConfirmed: typeof cleanupConfirmed === 'boolean' ? cleanupConfirmed : null,
+      },
+      failureEvidencePersisted: evidence?.failureEvidencePersisted === false ? false : null,
+    };
+    const line = JSON.stringify({ r18bHistoryFailure: diagnostic });
+    if (Buffer.byteLength(line, 'utf8') <= 32768) emit(line);
+  } catch {
+    // Even a throwing evidence getter or emitter must preserve the replay failure.
+  }
+  throw error;
+}
+
+describe('R18B-FAILURE-LOCATOR pure diagnostic', () => {
+  const capture = error => {
+    const lines = [];
+    let caught;
+    let didThrow = false;
+    try { reportHistoryFailure(error, line => lines.push(line)); } catch (value) { didThrow = true; caught = value; }
+    expect(didThrow).toBe(true);
+    expect(caught).toBe(error);
+    expect(lines).toHaveLength(1);
+    expect(Buffer.byteLength(lines[0], 'utf8')).toBeLessThanOrEqual(32768);
+    return { line: lines[0], value: JSON.parse(lines[0]).r18bHistoryFailure };
+  };
+
+  it('reports bounded allowlisted observations without attesting persistence', () => {
+    const error = Object.assign(new Error('unused'), { evidence: {
+      directory: '/synthetic/history', phase: 'validate', reason: 'HISTORY_INVALID',
+      child: { status: 1, timedOut: false, outputTruncated: true, cleanupConfirmed: false },
+      failureEvidencePersisted: false,
+    } });
+    expect(capture(error).value).toEqual({ directory: '/synthetic/history', phase: 'validate', reasonCode: 'HISTORY_INVALID',
+      child: { status: 1, timedOut: false, outputTruncated: true, cleanupConfirmed: false }, failureEvidencePersisted: false });
+    error.evidence.failureEvidencePersisted = true;
+    expect(capture(error).value.failureEvidencePersisted).toBeNull();
+    for (const directory of ['x'.repeat(4096), '\ud800'.repeat(4096), '😀'.repeat(2048)]) {
+      error.evidence.directory = directory;
+      expect(capture(error).value.directory).toBe(directory);
+    }
+  });
+
+  it('preserves missing evidence and primitive thrown values', () => {
+    for (const error of [new Error('unused'), { evidence: null }, null, undefined, 'failure', 7, false, Symbol('failure')]) {
+      expect(capture(error).value).toEqual({ directory: null, phase: null, reasonCode: null,
+        child: { status: null, timedOut: null, outputTruncated: null, cleanupConfirmed: null }, failureEvidencePersisted: null });
+    }
+  });
+
+  it('omits oversized or control-character locators and arbitrary reason text', () => {
+    for (const reason of ['CODE\n', 'CODE\r', 'CODE\u2028', 'arbitrary exception text']) {
+      expect(capture({ evidence: { reason } }).value.reasonCode).toBeNull();
+    }
+    for (const directory of ['x'.repeat(4097), '/synthetic/\npath', '/synthetic/\u007fpath', '/synthetic/\u0085path']) {
+      const value = capture({ evidence: { directory, reason: 'arbitrary exception text' } }).value;
+      expect(value.directory).toBeNull();
+      expect(value.reasonCode).toBeNull();
+    }
+  });
+
+  it('does not serialize messages logs commands environment or extra objects', () => {
+    const secret = 'private sentinel do not emit';
+    const value = capture(Object.assign(new Error(secret), { evidence: {
+      reason: secret, stdout: secret, stderr: secret, command: [secret], env: { secret }, extra: { secret },
+      child: { stdout: secret, stderr: secret, command: [secret], error: secret, extra: { secret } },
+    } }));
+    expect(value.line).not.toContain(secret);
+  });
+
+  it('preserves original identity when evidence access or emitting throws', () => {
+    const errors = [Object.defineProperty(new Error('original'), 'evidence', { get() { throw new Error('getter'); } }),
+      { evidence: { get directory() { throw new Error('nested getter'); } } },
+      { evidence: { child: { get status() { throw new Error('child getter'); } } } }];
+    for (const error of errors) {
+      let caught;
+      try { reportHistoryFailure(error, () => { throw new Error('emitter'); }); } catch (value) { caught = value; }
+      expect(caught).toBe(error);
+    }
+    const error = new Error('original');
+    let caught;
+    try { reportHistoryFailure(error, () => { throw new Error('emitter'); }); } catch (value) { caught = value; }
+    expect(caught).toBe(error);
+  });
+
+  it('keeps unknown phases and incorrect field types unknown', () => {
+    const value = capture({ evidence: { directory: {}, phase: 'unknown', reason: 'X'.repeat(97), failureEvidencePersisted: 0,
+      child: { status: Infinity, timedOut: 'true', outputTruncated: 1, cleanupConfirmed: {} } } }).value;
+    expect(value).toEqual({ directory: null, phase: null, reasonCode: null,
+      child: { status: null, timedOut: null, outputTruncated: null, cleanupConfirmed: null }, failureEvidencePersisted: null });
+  });
+});
+
 describe('mandatory unchanged pinned-base history', () => {
   it('A06/A07 actual dc6e17 + default84f15 + 5 + 20 and Node29, never a tiny PDE', async () => {
-    const result = await replayHistory(root);
+    let result;
+    try { result = await replayHistory(root); } catch (error) { reportHistoryFailure(error); }
     expect(result.status).toBe('pass-history');
     console.log(JSON.stringify({ r18bHistory: result }));
   }, 305000);
 });
 
-describe('pinned gh repair and preserved custom laboratory binding revision 5', () => {
+describe('strict extXYZ geometry and preserved custom laboratory binding revision 6', () => {
   it('rejects revision and exact input drift without running history', () => {
     const ledger=readPolicy(root), base=baseRecords(root), current=verifySource(root);
     expect(current.status).toBe('source-consistent');
-    expect(current.bindingRevision).toBe(5);
-    expect(ledger.bindingRevision).toBe(5);
+    expect(current.bindingRevision).toBe(6);
+    expect(ledger.bindingRevision).toBe(6);
     const validate=new Ajv2020({strict:true}).compile(JSON.parse(readFileSync(path.join(root,SCHEMA))));
-    for(const revision of [undefined,1,2,3,4,6,'5',null]) {
+    for(const revision of [undefined,1,2,3,4,5,7,'6',null]) {
       const changed={...ledger,bindingRevision:revision};
       if(revision===undefined)delete changed.bindingRevision;
       expect(validate(changed)).toBe(false);
     }
-    expect(ledger.inputs).toHaveLength(51);
+    expect(ledger.inputs).toHaveLength(55);
     expect(ledger.inputs.some(r=>r.path==='evaluation/reviews/2026-09-08-r18b-trajectory-snapshot-final-review.json')).toBe(true);
     for(const relative of [
+      'lib/structure/extxyz-import.ts',
+      'lib/structure/extxyz-import.test.ts',
+      'evaluation/reviews/2026-09-11-custom-extxyz-v01-review.md',
+      'evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json',
       '.github/workflows/evaluate.yml',
       'scripts/workflow-policy.mjs',
       'scripts/workflow-policy.test.mjs',

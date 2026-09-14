@@ -1,11 +1,11 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-11T06:11:14.533Z",
+  "generatedAt": "2026-09-14T14:12:06.121Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
-  "artifactDigest": "sha256:a403e4dc6ad5bfea8bde191635edd1e5e480568e6500a063ebc210b28856e96c",
-  "sourceFileCount": 560,
+  "artifactDigest": "sha256:2b7bef1bca7f5dc426cffaa68413c068e573ea8045c7b457bc5682c13a1bdc4e",
+  "sourceFileCount": 564,
   "sourceManifest": {
     ".dockerignore": "sha256:9d49b6272e10c9c791f6c1288f6df858141bda4613085cc3a811d6edd4aa3ab3",
     ".github/CODEOWNERS": "sha256:6c6d291738c5a6a5f4a0c7f6d03d7a930b5ed02963de2aa7a6c548887d15963c",
@@ -26,7 +26,7 @@
     "app/components/custom-ar-branch-comparison.tsx": "sha256:53b35acaca4de16ed0454d3ad0afaa0e2a943fae5d27a98bdebec99a38cb43e7",
     "app/components/custom-ar-dynamics-controls.tsx": "sha256:5946bc7da009a919cf9d7c874e34184d5156155eeeadb2ff189c9a760e817f88",
     "app/components/custom-structure-webgl.tsx": "sha256:32519e5451f71c563970332e53a067d583a88c951c2ad34ad552bf21fa1ebe62",
-    "app/components/custom-structure-workbench.tsx": "sha256:7bb08b436595da6eea4a6d7dc5450a299ff40cdba832b914b8ed54592d356bf1",
+    "app/components/custom-structure-workbench.tsx": "sha256:055c53506311754426f642938b15da0267417a6051412386d7288b160b638343",
     "app/components/molecular-canvas.tsx": "sha256:e4d1aa219e895a8fe3e050c529a0f95791406ae6fd3c0614665d14efcf74006f",
     "app/components/molecular-lab.tsx": "sha256:0aad0c089905e0425c5580335f9205d6cccbc523ba19b87ad1c998b057a27798",
     "app/components/molecular-visual-guides.test.ts": "sha256:0c45dd8fc690d4bbfa44d210c085d959a01718a60773220b7c6a925bab16186f",
@@ -88,7 +88,7 @@
     "evaluation/backend-migration/r18a-origin-main-admission-v0.3.json": "sha256:a02ed15bacbdca32b6f390536719ed77419ece909ec7fe435105bd2e8303ec86",
     "evaluation/backend-migration/r18a-v0.2-historical-config-snapshot-v0.1.json": "sha256:e4d9a458a17cb858f1a3dcf5eb1eff232ece94b7b5dfa759c193d5b9077a2955",
     "evaluation/backend-migration/r18a-wrangler-admission-v0.4.json": "sha256:1dd99ff9ffc9f1fbacfedbaba7e98f0d4de3845918a41d8634b270aaacf8f4bd",
-    "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json": "sha256:95954713d7fe56d5056b5fbbb60959788616d85ce8b1d9cabd991572f30ebe03",
+    "evaluation/backend-migration/r18b-origin-main-admission-v0.1.json": "sha256:d45b333ea3c8a2f82a0cfa0ea3e8e279e17d14f46af88df47b04495722d03932",
     "evaluation/baselines/registry.json": "sha256:883c59c2e9c826c80a12b854f10ab7fd479138e97cebc2b14a6079349865d0ed",
     "evaluation/current-scorecard.json": "sha256:ff0f47dd69ff3832468dc489119a59e5d42afff9c95ff6d16ba98fbc9dfb96a7",
     "evaluation/data/datasets.json": "sha256:ca6e7ca0187cf5584806f2684611b2b813b46bd7c434741d756df7947aef8fe7",
@@ -177,6 +177,8 @@
     "evaluation/reviews/2026-09-10-custom-ar-branch-comparison-v01-review.json": "sha256:af7e793fdedd48e0fc92708cc5e0fa6bb70006e5f72f15bcecb99e2fb27c6f1e",
     "evaluation/reviews/2026-09-10-custom-lab-dynamics-v01-review.json": "sha256:15ea7d8780afad9377729f05ce6f53a94095cf1eef25b8cf3c666532b2118987",
     "evaluation/reviews/2026-09-10-pr40-pinned-gh-repair-review.json": "sha256:e3fe2d42989a654da526c4ea2f65965035c835c990ed31a47ecc6922b31794fd",
+    "evaluation/reviews/2026-09-11-custom-extxyz-v01-review.json": "sha256:995938cf6f72461bac1cf8fd22b5a41c64f0fe1f7e55d65101e06e3ae21737ea",
+    "evaluation/reviews/2026-09-11-custom-extxyz-v01-review.md": "sha256:8d8e75a9404f648f098019bfddb413c9871cb79de4dc6f24cebef9ceba1c325d",
     "lib/molecular/aqueous-dynamics-lab-component.test.ts": "sha256:220406a2f98aad659121b78a8501168af8c00705e60e089ffdaf85897afd36be",
     "lib/molecular/aqueous-dynamics-render-frame.test.ts": "sha256:b7fe5a418833a983720e27dcf61ae3002853ef15d20db4498b7a6416cba3865b",
     "lib/molecular/aqueous-dynamics-render-frame.ts": "sha256:44eb1d0a1868bf4146c9da748d8be031d24842cfebdf2ba5ac8a9396e0464564",
@@ -285,10 +287,12 @@
     "lib/structure/custom-ar-singlepoint.ts": "sha256:7528f2ed4fc5ad61bb6c81ec042625ef61c22bbf81787e709dce795dcf171602",
     "lib/structure/custom-structure-boundary.test.ts": "sha256:66ea8d4b19f569beb7d41c68d1e75df9210bd252d892acb550f371b53f69476b",
     "lib/structure/custom-structure-webgl-component.test.ts": "sha256:f4fe415e491d413f3dee6d53bcfb1c4a0651ae409b8958c126e056d783855a31",
-    "lib/structure/custom-structure-workbench.test.ts": "sha256:8a5d0e9e4ace862e6df978570a05e72b63d8021ca2d679ebb34a7ad37b3dbded",
+    "lib/structure/custom-structure-workbench.test.ts": "sha256:31a455884d431560b2eb3f159cac400cbc9f8b733fceb08b47a3ee3ed26a8a3b",
     "lib/structure/data/iupac-element-identities-2022.json": "sha256:333a50d7af252433dca2056bda6db30fca8d53ce908150e1194bca0ab969e668",
     "lib/structure/element-catalog.test.ts": "sha256:9e55a2db578da70f4aa22c326c6abe7f392647a691e6ce8bc467b71f76eedd2d",
     "lib/structure/element-catalog.ts": "sha256:b5af7eb862e08cbe07806ad85ba2c3e8c7431e522c22c3eb46f8aac48d52e44b",
+    "lib/structure/extxyz-import.test.ts": "sha256:e531c400ae3bc3acfda02991d7bea054b880ccfa883114076ea9b13b730ecf32",
+    "lib/structure/extxyz-import.ts": "sha256:6246710af126d02efdbae48524d075da6740729c9dba20fdb0777cbbb5064e85",
     "lib/structure/strict-json.test.ts": "sha256:9cbf6a561e475a096f027fe8f5085175c1fa5cbacb48b4e7344dd593c78e07af",
     "lib/structure/strict-json.ts": "sha256:aed6b72076d74cc4acfb119b1de852ed9e5ecc27d09f6bea736e3eb18250777f",
     "lib/structure/structure-document-schema.test.ts": "sha256:50466f79559f9fc7045920f183f6d766f488712b2b31e1d22bc53084be6ad13a",
@@ -332,7 +336,7 @@
     "schemas/backend-migration-admission-v0.2.schema.json": "sha256:df7a30e50f1608904dc793eddfca23069b6d78f9f1a29e50ac7a67fea4e27684",
     "schemas/backend-migration-admission-v0.3.schema.json": "sha256:9efff3af296872d22f94dfbde94516b911a04518f2a1fed3b6bd3bcc745e4ac6",
     "schemas/backend-migration-admission-v0.4.schema.json": "sha256:53d9a512d32fe930c86082b1247cb75995707eda3d8465d65329ec6a962828fa",
-    "schemas/backend-migration-r18b-admission-v0.1.schema.json": "sha256:96070f36fb96096ed33bd4bdee63a653a41e6e70db223cbcbc368052b0c84c53",
+    "schemas/backend-migration-r18b-admission-v0.1.schema.json": "sha256:44e0e5d847e671c4a7a56d2585c8b50ec44918750ea1a800617f8eecc80d2643",
     "schemas/evaluation-report.schema.json": "sha256:40c78fbc4637922f4e52625a26a3cf85225e06ca82145ee1abca92b9f58731d2",
     "schemas/molecular-action.schema.json": "sha256:1f795dd35cb4ba33a256fb7fdf1829b93db81e4356c1af11840f06eb8e342384",
     "schemas/molecular-observation.schema.json": "sha256:006a9425500dfa5a73ea40b56e6869bce5d72def403174b29438c2b0184f3305",
@@ -516,8 +520,8 @@
     "scripts/backend-migration/verify-r18a-origin-main-admission.test.mjs": "sha256:e7ecf1206801a69493c05b4335b65bf3c4f636095e7b77817b23ff21b61b3cba",
     "scripts/backend-migration/verify-r18a-wrangler-admission-v0.4.mjs": "sha256:ac41ed5dd0bba44c5a6db657dfaf51f8ca600c1a07744c16ffac55197eeeab8d",
     "scripts/backend-migration/verify-r18a-wrangler-admission-v0.4.test.mjs": "sha256:1eeddfcce681819de30cbee1f1becdb5a01433e411b4d24b86aadb67d6c3999b",
-    "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs": "sha256:09a120a56b13ec70dde4934e10b6b800ce5371a0d81a3603b24b6bb1e79f547c",
-    "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs": "sha256:831ba995efc09300e4bd9e43a590f13aa67a75a481bf4ee9a5aa442b90eed2d2",
+    "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.mjs": "sha256:f89c53edc83e19db0403152c390c4f5916c1a4290ab545175e5a6478c2a2dacb",
+    "scripts/backend-migration/verify-r18b-origin-main-admission-v0.1.test.mjs": "sha256:d882f87caebd76c724b2d10b1daa2d93b66ea0566c87f5b0ada80c166087456f",
     "scripts/comparator-evidence-policy.mjs": "sha256:bc223f767078b29a63de2265fc98a0488bcfce0e1517e0239916b9675c89c598",
     "scripts/comparator-evidence-policy.test.mjs": "sha256:42cb7bd9846112048ae028a252a4c42e9cd47165209132306d01858e28ca3f4f",
     "scripts/derived-report-contract.mjs": "sha256:a9947eb01497a2e0fd793f129fe7e9348f3c8f462f882a4e3f518fa516ec9b98",
@@ -575,12 +579,12 @@
   },
   "upstreamGates": {
     "install": "not-reported-local",
-    "lint": "not-reported-local",
-    "typecheck": "not-reported-local",
-    "test": "not-reported-local",
-    "atomistic_manifest": "not-reported-local",
-    "build": "not-reported-local",
-    "audit": "not-reported-local"
+    "lint": "success",
+    "typecheck": "success",
+    "test": "success",
+    "atomistic_manifest": "success",
+    "build": "success",
+    "audit": "success"
   },
   "verification": {
     "physics": {
@@ -926,7 +930,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 184312.08
+    "elapsedMs": 164446.01
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
