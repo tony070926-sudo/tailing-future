@@ -1,7 +1,7 @@
 {
   "schemaVersion": "tf.evaluation/0.2",
   "candidateVersion": "0.4.11-nacl-water-semantic-import",
-  "generatedAt": "2026-09-14T14:12:06.121Z",
+  "generatedAt": "2026-09-14T16:25:45.099Z",
   "sourceRevision": null,
   "baselineSnapshotDate": "2026-09-02",
   "artifactDigest": "sha256:2b7bef1bca7f5dc426cffaa68413c068e573ea8045c7b457bc5682c13a1bdc4e",
@@ -579,12 +579,12 @@
   },
   "upstreamGates": {
     "install": "not-reported-local",
-    "lint": "success",
-    "typecheck": "success",
-    "test": "success",
-    "atomistic_manifest": "success",
-    "build": "success",
-    "audit": "success"
+    "lint": "not-reported-local",
+    "typecheck": "not-reported-local",
+    "test": "not-reported-local",
+    "atomistic_manifest": "not-reported-local",
+    "build": "not-reported-local",
+    "audit": "not-reported-local"
   },
   "verification": {
     "physics": {
@@ -930,7 +930,7 @@
       "workflowPolicy": true,
       "comparatorReceipts": true
     },
-    "elapsedMs": 164446.01
+    "elapsedMs": 162461.42
   },
   "evidenceManifest": {
     "schemas/world-state.schema.json": "sha256:0f0941fcd0cb66f491baeb32d1e9f9acc3af8f18ac939efeb3961f4a3fd48795",
